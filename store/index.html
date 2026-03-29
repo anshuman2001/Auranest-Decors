@@ -3,7 +3,93 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Auranest Decors – Feel the Beauty of Home</title>
+
+<!-- ══ PRIMARY SEO ══ -->
+<title>Auranest Decors – Handcrafted Indian Home Décor | Folk Art, Planters & Gifts</title>
+<meta name="description" content="Shop handcrafted Indian home décor at Auranest Decors. Unique folk art planters, wooden trays, ceramic pots, tribal art & artisan gifts. Delivered worldwide in 2–3 days. Free shipping on orders above ₹999."/>
+<meta name="keywords" content="handcrafted home decor, Indian folk art, ceramic planters, wooden trays, tribal art, warli art, mithila art, terracotta pots, artisan decor, home decor India, handmade gifts India, Auranest Decors"/>
+<meta name="author" content="Auranest Decors"/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#1e1810"/>
+<link rel="canonical" href="https://auranest-decors.vercel.app/store/"/>
+
+<!-- ══ OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ══ -->
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Auranest Decors"/>
+<meta property="og:title" content="Auranest Decors – Handcrafted Indian Home Décor"/>
+<meta property="og:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days. Free shipping above ₹999."/>
+<meta property="og:url" content="https://auranest-decors.vercel.app/store/"/>
+<meta property="og:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:locale" content="en_IN"/>
+
+<!-- ══ TWITTER CARD ══ -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Auranest Decors – Handcrafted Indian Home Décor"/>
+<meta name="twitter:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days."/>
+<meta name="twitter:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+
+<!-- ══ STRUCTURED DATA — Organization ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Auranest Decors",
+  "url": "https://auranest-decors.vercel.app/store/",
+  "logo": "https://auranest-decors.vercel.app/assets/logo.jpg",
+  "description": "Handcrafted Indian home décor — folk art planters, wooden trays, ceramic pots and artisan gifts delivered worldwide.",
+  "email": "info@auranestsdecor.com",
+  "sameAs": [],
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "IN"
+  }
+}
+</script>
+
+<!-- ══ STRUCTURED DATA — WebSite + Sitelinks Searchbox ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Auranest Decors",
+  "url": "https://auranest-decors.vercel.app/store/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://auranest-decors.vercel.app/store/?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- ══ STRUCTURED DATA — Online Store ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "Auranest Decors",
+  "image": "https://auranest-decors.vercel.app/assets/og-image.jpg",
+  "url": "https://auranest-decors.vercel.app/store/",
+  "description": "Handcrafted Indian home décor store — folk art, tribal art, ceramic planters, wooden trays delivered worldwide.",
+  "priceRange": "₹649 – ₹1899",
+  "currenciesAccepted": "INR, USD",
+  "paymentAccepted": "Cash, Credit Card, UPI, PayPal, COD",
+  "areaServed": "Worldwide",
+  "hasMap": "https://auranest-decors.vercel.app/store/contact.html"
+}
+</script>
+
+<!-- ══ PERFORMANCE — DNS Prefetch & Preconnect ══ -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://www.gstatic.com"/>
+<link rel="dns-prefetch" href="https://firestore.googleapis.com"/>
+<link rel="dns-prefetch" href="https://api.imgbb.com"/>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{--beige:#f7f1e8;--warm:#ede4d6;--sand:#d6c8b4;--cream:#faf6f0;--terracotta:#c07b4f;--rust:#9e5432;--gold:#b8933f;--gold-lt:#d4aa5f;--dark:#1e1810;--mid:#6b5a48;--muted:#9b8878;--white:#fffdf9;--border:rgba(176,152,124,0.25);--shadow:0 8px 40px rgba(30,24,16,0.10);}
@@ -366,8 +452,17 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
   .oe-item-img{width:50px;height:50px;font-size:1.4rem;}
 }
 /* TOAST */
-#toast{position:fixed;bottom:2rem;right:2rem;z-index:1000;background:var(--dark);color:var(--cream);padding:.9rem 1.5rem;font-size:.8rem;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;max-width:320px;}
+#toast{position:fixed;bottom:6rem;right:2rem;z-index:1000;background:var(--dark);color:var(--cream);padding:.9rem 1.5rem;font-size:.8rem;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;max-width:320px;}
 #toast.on{transform:translateY(0);opacity:1;}
+/* ── WHATSAPP FLOAT ── */
+.wa-float{position:fixed;bottom:2rem;right:2rem;z-index:998;display:flex;align-items:center;filter:drop-shadow(0 4px 16px rgba(37,211,102,.35));transition:all .3s;}
+.wa-float:hover{filter:drop-shadow(0 6px 22px rgba(37,211,102,.55));transform:translateY(-3px);}
+.wa-float:hover .wa-label{max-width:160px;opacity:1;padding:.7rem 1.1rem .7rem .9rem;}
+.wa-label{background:#25d366;color:#fff;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.04em;white-space:nowrap;max-width:0;opacity:0;overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1);border-radius:50px 0 0 50px;padding:.7rem 0 .7rem .9rem;line-height:1;}
+.wa-btn{width:56px;height:56px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;text-decoration:none;flex-shrink:0;position:relative;}
+.wa-btn svg{width:30px;height:30px;fill:#fff;}
+.wa-btn::before{content:'';position:absolute;width:56px;height:56px;border-radius:50%;background:rgba(37,211,102,.4);animation:waPulse 2s ease-out infinite;}
+@keyframes waPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
 /* FB STATUS */
 .fb-status{position:fixed;top:80px;right:1rem;background:var(--dark);color:var(--gold-lt);padding:.35rem .8rem;font-size:.65rem;letter-spacing:.06em;border-radius:2px;z-index:499;transition:opacity .5s;}
 /* ══ HAMBURGER & MOBILE DRAWER ══ */
@@ -634,6 +729,16 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 
 <div id="toast"></div>
 <div class="fb-status" id="fbStatus">⚡ Connecting to Firebase...</div>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a class="wa-float" href="https://wa.me/918679212984?text=Hello%20Auranest%20Decors!%20I%20have%20a%20query." target="_blank" rel="noopener" title="Chat on WhatsApp">
+  <span class="wa-label">Chat on WhatsApp</span>
+  <div class="wa-btn">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </div>
+</a>
 
 <!-- NAV -->
 <nav id="navbar">

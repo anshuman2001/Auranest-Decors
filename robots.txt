@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /store/
+Allow: /store/contact.html
+Disallow: /admin/
+Disallow: /js/
+Disallow: /assets/config.js
+
+Sitemap: https://auranest-decors.vercel.app/sitemap.xml
