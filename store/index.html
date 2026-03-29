@@ -705,6 +705,11 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .pp-related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;}
 @media(max-width:768px){.pp-nav{padding:0 1.5rem;}.pp-body{grid-template-columns:1fr;height:auto;overflow:visible;}.pp-gallery{height:60vw;}.pp-info{height:auto;padding:1.5rem;overflow:visible;}.pp-meta{grid-template-columns:1fr;}}
 </style>
+<!-- Always start at top on refresh -->
+<script>
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+</script>
 </head>
 <body>
 
