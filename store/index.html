@@ -676,7 +676,7 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .scat-card-all .scat-desc{color:var(--sand);}
 @media(max-width:768px){.cat-nav-bar{padding:.75rem 1.5rem;}.cat-hero{padding:3rem 1.5rem;grid-template-columns:1fr;gap:1rem;}.cat-hero-icon{font-size:3rem;}.cat-body{padding:2rem 1.5rem;}.scat-grid{grid-template-columns:repeat(2,1fr);}}
 /* ══ PRODUCT FULL PAGE (POM: ProductPage) ══ */
-.prod-page{position:fixed;inset:0;background:var(--beige);z-index:460;overflow:hidden;transform:translateY(100%);transition:transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.prod-page{position:fixed;inset:0;background:var(--beige);z-index:460;overflow-y:auto;overflow-x:hidden;transform:translateY(100%);transition:transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
 .prod-page.open{transform:translateY(0);pointer-events:auto;}
 .pp-nav{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:48px;gap:0;}
 .pp-back{background:none;border:none;border-right:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:.35rem;color:var(--dark);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;flex-shrink:0;padding:0 1.2rem 0 0;margin-right:1.2rem;height:100%;transition:color .2s;}
@@ -687,10 +687,10 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .pp-crumb-link:hover{color:var(--terracotta);}
 .pp-crumb-sep{color:var(--sand);flex-shrink:0;}
 .pp-crumb-cur{color:var(--dark);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
-/* Two-column layout — fills viewport below both navbars */
-.pp-body{display:grid;grid-template-columns:55% 45%;height:calc(100vh - 164px);overflow:hidden;}
-.pp-gallery{height:100%;display:flex;flex-direction:column;overflow:hidden;}
-.pp-main-img{flex:1;overflow:hidden;position:relative;background:var(--warm);}
+/* Two-column layout — both columns scroll with the page */
+.pp-body{display:grid;grid-template-columns:55% 45%;height:auto;overflow:visible;align-items:start;}
+.pp-gallery{display:flex;flex-direction:column;position:sticky;top:0;}
+.pp-main-img{height:calc(100vh - 116px);overflow:hidden;position:relative;background:var(--warm);}
 .pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s;}
 /* Wishlist on image */
 .pp-img-wish{position:absolute;top:12px;right:12px;z-index:10;background:rgba(255,255,255,.92);border:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(30,24,16,.18);color:var(--muted);transition:all .2s;line-height:1;}
@@ -701,8 +701,8 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .pp-thumb{width:62px;height:62px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s;flex-shrink:0;}
 .pp-thumb.active{border-color:var(--terracotta);}
 .pp-thumb img{width:100%;height:100%;object-fit:cover;}
-/* Right info column — independently scrollable */
-.pp-info{height:100%;overflow-y:auto;padding:2.5rem 3.5rem;display:flex;flex-direction:column;gap:1rem;}
+/* Right info column — natural height, page scrolls */
+.pp-info{height:auto;overflow:visible;padding:2.5rem 3.5rem 4rem;display:flex;flex-direction:column;gap:1rem;}
 .pp-badge{display:inline-block;background:var(--terracotta);color:#fff;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .7rem;margin-bottom:.2rem;}
 .pp-cat-lbl{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--terracotta);}
 .pp-name{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;line-height:1.2;color:var(--dark);}
@@ -732,11 +732,10 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
   .pp-back span{display:none;}
   .pp-crumb{font-size:.68rem;gap:.2rem;}
   .pp-crumb-link{font-size:.68rem;}
-  .prod-page{overflow-y:auto;}
-  .pp-body{display:block;height:auto;overflow:visible;}
-  .pp-gallery{height:72vw;min-height:260px;max-height:400px;display:flex;flex-direction:column;}
-  .pp-main-img{flex:1;}
-  .pp-info{height:auto;padding:1.4rem 1.1rem 3rem;overflow:visible;}
+  .pp-body{display:block;}
+  .pp-gallery{position:static;height:auto;}
+  .pp-main-img{height:72vw;min-height:260px;max-height:400px;}
+  .pp-info{padding:1.4rem 1.1rem 3rem;}
   .pp-meta{grid-template-columns:1fr;}
 }
 </style>
