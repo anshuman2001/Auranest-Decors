@@ -507,9 +507,11 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 
 /* ══ RESPONSIVE 768px ══ */
 @media(max-width:768px){
-  /* NAV — hide logo text (prevents ~200px overflow on small screens) */
+  /* NAV — show brand name, hide tagline on mobile */
   .nav-top{padding:0 .75rem;height:64px;}
-  .nav-logo-text{display:none;}
+  .nav-logo-text{display:flex;}
+  .nav-tagline{display:none;}
+  .nav-brand{font-size:1.1rem;}
   .nav-logo img{width:42px;height:42px;}
   .nav-actions{gap:.6rem;}
   .nav-search{display:none;}
@@ -607,6 +609,7 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 /* ══ RESPONSIVE 480px ══ */
 @media(max-width:480px){
   .nav-top{padding:0 .5rem;height:56px;}
+  .nav-brand{font-size:1rem;}
   .nav-logo img{width:38px;height:38px;}
   .nav-actions{gap:.4rem;}
   .nav-icon svg{width:19px;height:19px;}
@@ -673,18 +676,26 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .scat-card-all .scat-desc{color:var(--sand);}
 @media(max-width:768px){.cat-nav-bar{padding:.75rem 1.5rem;}.cat-hero{padding:3rem 1.5rem;grid-template-columns:1fr;gap:1rem;}.cat-hero-icon{font-size:3rem;}.cat-body{padding:2rem 1.5rem;}.scat-grid{grid-template-columns:repeat(2,1fr);}}
 /* ══ PRODUCT FULL PAGE (POM: ProductPage) ══ */
-.prod-page{position:fixed;inset:0;background:var(--beige);z-index:460;overflow:hidden;transform:translateY(100%);transition:transform .45s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.prod-page{position:fixed;inset:0;background:var(--beige);z-index:460;overflow:hidden;transform:translateY(100%);transition:transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
 .prod-page.open{transform:translateY(0);pointer-events:auto;}
-.pp-nav{background:rgba(247,241,232,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 4rem;display:flex;align-items:center;height:52px;}
-.pp-crumb{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;}
-.pp-crumb-link{color:var(--terracotta);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;font-size:.72rem;padding:0;transition:opacity .2s;}
+.pp-nav{background:rgba(247,241,232,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:52px;gap:.8rem;}
+.pp-back{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.3rem;color:var(--terracotta);font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.04em;flex-shrink:0;padding:.3rem .4rem .3rem 0;transition:opacity .2s;}
+.pp-back:hover{opacity:.7;}
+.pp-back svg{width:16px;height:16px;stroke:var(--terracotta);stroke-width:2;fill:none;flex-shrink:0;}
+.pp-crumb{font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;flex:1;overflow:hidden;white-space:nowrap;min-width:0;}
+.pp-crumb-link{color:var(--terracotta);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;font-size:.7rem;padding:0;transition:opacity .2s;white-space:nowrap;flex-shrink:0;}
 .pp-crumb-link:hover{opacity:.7;}
-.pp-crumb-sep{color:var(--sand);}
+.pp-crumb-sep{color:var(--sand);flex-shrink:0;}
+.pp-crumb-cur{color:var(--dark);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 /* Two-column layout — fills viewport below both navbars (116px main + 52px pp-nav) */
 .pp-body{display:grid;grid-template-columns:55% 45%;height:calc(100vh - 168px);overflow:hidden;}
 .pp-gallery{height:100%;display:flex;flex-direction:column;overflow:hidden;}
 .pp-main-img{flex:1;overflow:hidden;position:relative;background:var(--warm);}
-.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s;}
+/* Wishlist on image */
+.pp-img-wish{position:absolute;top:12px;right:12px;z-index:10;background:rgba(255,255,255,.92);border:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(30,24,16,.18);color:var(--muted);transition:all .2s;line-height:1;}
+.pp-img-wish:hover{transform:scale(1.12);background:#fff;}
+.pp-img-wish.wished{color:var(--terracotta);}
 .pp-main-fallback{display:flex;align-items:center;justify-content:center;height:100%;font-size:8rem;}
 .pp-thumbs{display:flex;gap:.5rem;padding:.65rem .8rem;overflow-x:auto;flex-shrink:0;background:var(--warm);}
 .pp-thumb{width:62px;height:62px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s;flex-shrink:0;}
@@ -715,7 +726,17 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 .pp-related{padding:2rem 0 3rem;border-top:1px solid var(--border);margin-top:.5rem;}
 .pp-related-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem;}
 .pp-related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;}
-@media(max-width:768px){.pp-nav{padding:0 1.5rem;}.pp-body{grid-template-columns:1fr;height:auto;overflow:visible;}.pp-gallery{height:60vw;}.pp-info{height:auto;padding:1.5rem;overflow:visible;}.pp-meta{grid-template-columns:1fr;}}
+@media(max-width:768px){
+  .pp-nav{padding:0 1rem;height:48px;}
+  .pp-back span{display:none;}
+  .prod-page{overflow-y:auto;}
+  .pp-body{display:block;height:auto;overflow:visible;}
+  .pp-gallery{height:72vw;min-height:260px;max-height:400px;display:flex;flex-direction:column;}
+  .pp-main-img{flex:1;}
+  .pp-info{height:auto;padding:1.4rem 1.1rem 3rem;overflow:visible;}
+  .pp-meta{grid-template-columns:1fr;}
+  .pp-crumb-link{max-width:80px;overflow:hidden;text-overflow:ellipsis;}
+}
 </style>
 <!-- Always start at top on refresh -->
 <script>
@@ -902,11 +923,18 @@ footer{background:var(--dark);padding:5rem 5rem 2rem;display:grid;grid-template-
 <!-- PRODUCT FULL PAGE (POM: ProductPage) -->
 <div class="prod-page" id="prodPage">
   <div class="pp-nav" style="margin-top:116px">
+    <button class="pp-back" onclick="ProductPage.close()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>Back</span>
+    </button>
     <nav class="pp-crumb" id="ppCrumb" aria-label="breadcrumb"></nav>
   </div>
   <div class="pp-body">
     <div class="pp-gallery">
-      <div class="pp-main-img" id="ppMainImg"><div class="pp-main-fallback">🎁</div></div>
+      <div class="pp-main-img" id="ppMainImg">
+        <div class="pp-main-fallback">🎁</div>
+        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">♡</button>
+      </div>
       <div class="pp-thumbs" id="ppThumbs"></div>
     </div>
     <div class="pp-info">
@@ -1861,14 +1889,15 @@ const ProductPage = {
     if (!p) return;
 
     // ── Breadcrumb ──
+    const catLabel = p.category === 'Aura décor' ? 'Aura Décor' : p.category;
     document.getElementById('ppCrumb').innerHTML =
       `<button class="pp-crumb-link" onclick="ProductPage.goHome()">Home</button>
        <span class="pp-crumb-sep">›</span>
-       <button class="pp-crumb-link" onclick="ProductPage.goCategory('${p.category}')">${p.category === 'Aura décor' ? 'Aura Décor' : p.category}</button>
+       <button class="pp-crumb-link" onclick="ProductPage.goCategory('${p.category}')">${catLabel}</button>
        <span class="pp-crumb-sep">›</span>
        <button class="pp-crumb-link" onclick="ProductPage.goSubcat('${p.category}','${p.subCategory}')">${p.subCategory}</button>
        <span class="pp-crumb-sep">›</span>
-       <span style="color:var(--dark);font-weight:500">${p.name}</span>`;
+       <span class="pp-crumb-cur">${p.name}</span>`;
 
     // ── Badge, category label, name ──
     const badgeEl = document.getElementById('ppBadge');
@@ -1904,19 +1933,21 @@ const ProductPage = {
       showToast(`✓ ${p.name.slice(0,30)}… added to cart!`);
     };
 
-    // ── Wishlist button ──
-    const wishBtn = document.getElementById('ppWishBtn');
-    if (wishBtn) {
-      const inWish = Wishlist.has(id);
-      wishBtn.textContent = inWish ? '♥ In Wishlist' : '♡ Save to Wishlist';
-      wishBtn.style.color = inWish ? 'var(--terracotta)' : '';
-      wishBtn.onclick = () => {
-        const added = Wishlist.toggle(p);
-        wishBtn.textContent = added ? '♥ In Wishlist' : '♡ Save to Wishlist';
-        wishBtn.style.color = added ? 'var(--terracotta)' : '';
-        showToast(added ? '♥ Added to wishlist!' : 'Removed from wishlist');
-      };
-    }
+    // ── Wishlist buttons (bottom btn + image float btn) ──
+    const wishBtn   = document.getElementById('ppWishBtn');
+    const imgWishBtn = document.getElementById('ppImgWish');
+    const _syncWish = (inW) => {
+      if (wishBtn) { wishBtn.textContent = inW ? '♥ In Wishlist' : '♡ Save to Wishlist'; wishBtn.style.color = inW ? 'var(--terracotta)' : ''; }
+      if (imgWishBtn) { imgWishBtn.textContent = inW ? '♥' : '♡'; imgWishBtn.classList.toggle('wished', inW); }
+    };
+    _syncWish(Wishlist.has(id));
+    const _doWish = () => {
+      const added = Wishlist.toggle(p);
+      _syncWish(added);
+      showToast(added ? '♥ Added to wishlist!' : 'Removed from wishlist');
+    };
+    if (wishBtn)    wishBtn.onclick = _doWish;
+    if (imgWishBtn) imgWishBtn.onclick = _doWish;
 
     // ── Related products ──
     const related = all.filter(x => x.subCategory === p.subCategory && (x.id||'') !== id).slice(0, 4);
@@ -1946,12 +1977,13 @@ const ProductPage = {
   _renderGallery(fallbackIcon) {
     const mainEl  = document.getElementById('ppMainImg');
     const thumbEl = document.getElementById('ppThumbs');
+    const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">♡</button>`;
     if (!this._imgs.length) {
-      mainEl.innerHTML  = `<div class="pp-main-fallback">${fallbackIcon}</div>`;
+      mainEl.innerHTML  = `<div class="pp-main-fallback">${fallbackIcon}</div>${wishHtml}`;
       thumbEl.innerHTML = '';
       return;
     }
-    mainEl.innerHTML  = `<img src="${this._imgs[0]}" alt="Product"/>`;
+    mainEl.innerHTML  = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
     thumbEl.innerHTML = this._imgs.map((src, i) =>
       `<div class="pp-thumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
          <img src="${src}" alt="View ${i+1}"/>
