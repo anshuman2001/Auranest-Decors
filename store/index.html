@@ -117,8 +117,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .wlc-ornament-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.7;}
 .wlc-logo-wrap{width:90px;height:90px;border-radius:50%;border:1.5px solid rgba(184,147,63,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;position:relative;}
 .wlc-logo-wrap::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(184,147,63,.12);}
-.wlc-logo-img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;}
-.wlc-logo-emoji{font-size:2.4rem;line-height:1;display:flex;align-items:center;justify-content:center;}
+.wlc-logo-img{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;}
+.wlc-logo-emoji{font-size:2.4rem;line-height:1;display:none;}
 .wlc-brand{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:300;color:#faf6f0;letter-spacing:.12em;margin-bottom:.7rem;}
 .wlc-divider{width:40px;height:1px;background:var(--gold);margin:0 auto 1rem;opacity:.6;}
 .wlc-tag{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(184,147,63,.65);}
@@ -797,7 +797,7 @@ footer{background:linear-gradient(180deg,#120c06 0%,#0d0804 100%);padding:5rem 5
       <div class="wlc-ornament-line r"></div>
     </div>
     <div class="wlc-logo-wrap">
-      <img class="wlc-logo-img" id="wlcLogoImg" alt="Auranest"/>
+      <img class="wlc-logo-img" id="wlcLogoImg" src="../assets/logo.jpg" alt="Auranest" onerror="this.style.display='none';document.getElementById('wlcLogoEmoji').style.display='flex';"/>
       <span class="wlc-logo-emoji" id="wlcLogoEmoji">🏺</span>
     </div>
     <div class="wlc-brand">Auranest Decors</div>
