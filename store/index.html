@@ -866,8 +866,8 @@ select.finp{cursor:pointer;}
       <div class="wlc-ornament-line r"></div>
     </div>
     <div class="wlc-logo-wrap">
-      <img class="wlc-logo-img" id="wlcLogoImg" src="../assets/logo.jpg" alt="Auranest" onerror="this.style.display='none';document.getElementById('wlcLogoEmoji').style.display='flex';"/>
-      <span class="wlc-logo-emoji" id="wlcLogoEmoji">🏺</span>
+      <img class="wlc-logo-img" id="wlcLogoImg" src="" alt="Auranest" style="display:none;"/>
+      <span class="wlc-logo-emoji" id="wlcLogoEmoji" style="display:none;">🏺</span>
     </div>
     <div class="wlc-brand">Auranest Decors</div>
     <div class="wlc-divider"></div>
@@ -1015,7 +1015,8 @@ select.finp{cursor:pointer;}
       </div>
     </div>
     <a class="mob-plain" onclick="goToSection('about');closeMobNav()">About Us</a>
-    <a class="mob-plain" onclick="goToSection('faqs');closeMobNav()">FAQs &amp; Contact</a>
+    <a class="mob-plain" onclick="goToSection('faqs');closeMobNav()">FAQs</a>
+    <a class="mob-plain" href="contact.html">Contact Us</a>
     <div class="mob-auth-row" id="mobAuthRow">
       <button class="mob-auth-btn" onclick="openAuth();closeMobNav()">Sign In</button>
       <button class="mob-auth-btn primary" onclick="openAuth();closeMobNav()">Register</button>
@@ -1414,15 +1415,18 @@ getDoc(doc(db, 'settings', 'branding')).then(snap => {
   if (!snap.exists()) return;
   const cfg = snap.data();
   // Logo: restore hidden img and set new src, or show fallback
+  const navImg   = document.getElementById('navLogoImg');
+  const wlcImg   = document.getElementById('wlcLogoImg');
+  const wlcEmoji = document.getElementById('wlcLogoEmoji');
   if (cfg.logoUrl) {
-    // Nav logo
-    const navImg = document.getElementById('navLogoImg');
     if (navImg) { navImg.src = cfg.logoUrl; navImg.style.display = ''; }
-    // Welcome screen logo
-    const wlcImg   = document.getElementById('wlcLogoImg');
-    const wlcEmoji = document.getElementById('wlcLogoEmoji');
-    if (wlcImg)   { wlcImg.src = cfg.logoUrl; wlcImg.style.display = ''; }
-    if (wlcEmoji) wlcEmoji.style.display = 'none';
+    if (wlcImg) {
+      wlcImg.onload  = () => { wlcImg.style.display = 'block'; if (wlcEmoji) wlcEmoji.style.display = 'none'; };
+      wlcImg.onerror = () => { wlcImg.style.display = 'none';  if (wlcEmoji) wlcEmoji.style.display = 'flex'; };
+      wlcImg.src = cfg.logoUrl;
+    }
+  } else {
+    if (wlcEmoji) wlcEmoji.style.display = 'flex';
   }
   // Banners
   const s0 = document.getElementById('slide0');
@@ -2413,13 +2417,18 @@ function loadBranding() {
   window.$fb.getDoc(window.$fb.doc(window.$db, 'settings', 'branding')).then(snap => {
     if (!snap.exists()) return;
     const cfg = snap.data();
+    const navImg2   = document.getElementById('navLogoImg');
+    const wlcImg2   = document.getElementById('wlcLogoImg');
+    const wlcEmoji2 = document.getElementById('wlcLogoEmoji');
     if (cfg.logoUrl) {
-      const navImg = document.getElementById('navLogoImg');
-      if (navImg) { navImg.src = cfg.logoUrl; navImg.style.display = ''; }
-      const wlcImg   = document.getElementById('wlcLogoImg');
-      const wlcEmoji = document.getElementById('wlcLogoEmoji');
-      if (wlcImg)   { wlcImg.src = cfg.logoUrl; wlcImg.style.display = ''; }
-      if (wlcEmoji) wlcEmoji.style.display = 'none';
+      if (navImg2) { navImg2.src = cfg.logoUrl; navImg2.style.display = ''; }
+      if (wlcImg2) {
+        wlcImg2.onload  = () => { wlcImg2.style.display = 'block'; if (wlcEmoji2) wlcEmoji2.style.display = 'none'; };
+        wlcImg2.onerror = () => { wlcImg2.style.display = 'none';  if (wlcEmoji2) wlcEmoji2.style.display = 'flex'; };
+        wlcImg2.src = cfg.logoUrl;
+      }
+    } else {
+      if (wlcEmoji2) wlcEmoji2.style.display = 'flex';
     }
     if (cfg.storeName) {
       document.querySelectorAll('.nav-brand').forEach(el => { el.textContent = cfg.storeName; });
