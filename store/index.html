@@ -701,7 +701,8 @@ select.finp{cursor:pointer;}
   /* CAT OVERLAY */
   .cat-nav-bar{padding:.75rem 1rem;}
   .cat-hero{padding:2.5rem 1.2rem;grid-template-columns:1fr;gap:.8rem;}
-  .cat-hero-icon{font-size:3rem;}
+  .cat-hero-icon{font-size:3rem;width:90px;height:90px;}
+  .cat-hero-icon img{width:90px;height:90px;}
   .cat-body{padding:1.5rem 1.2rem;}
   .scat-grid{grid-template-columns:repeat(2,1fr);}
   /* ORDERS */
@@ -765,7 +766,8 @@ select.finp{cursor:pointer;}
 .cat-back-btn:hover{border-color:var(--terracotta);color:var(--terracotta);}
 .cat-crumb{font-size:.72rem;color:var(--muted);}
 .cat-hero{background:var(--dark);padding:5rem 5rem 4rem;display:grid;grid-template-columns:auto 1fr;gap:3rem;align-items:center;}
-.cat-hero-icon{font-size:5.5rem;line-height:1;}
+.cat-hero-icon{font-size:5.5rem;line-height:1;width:130px;height:130px;flex-shrink:0;}
+.cat-hero-icon img{width:130px;height:130px;object-fit:cover;border-radius:50%;border:2px solid var(--gold);display:block;}
 .cat-hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.8rem);font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:.6rem;}
 .cat-hero-desc{font-size:.88rem;color:var(--sand);line-height:1.75;max-width:520px;}
 .cat-body{padding:4rem 5rem;}
@@ -2226,7 +2228,7 @@ const ProductPage = {
 const CategoryPage = {
   _data: {
     'Home & Kitchen': {
-      emoji:'🍽️', displayName:'Home & Kitchen',
+      emoji:'🍽️', img:'https://i.ibb.co/5XtP0Y3y/79f65688dfc7.jpg', displayName:'Home & Kitchen',
       desc:'Discover our handcrafted kitchenware and artisan dining essentials, made by skilled Indian artisans.',
       subcats:[
         {key:'Serveware',     emoji:'🍱', desc:'Trays, platters & serving pieces'},
@@ -2235,7 +2237,7 @@ const CategoryPage = {
       ]
     },
     'Aura décor': {
-      emoji:'🏺', displayName:'Aura Décor',
+      emoji:'🏺', img:'https://i.ibb.co/SDHjN1qJ/50dca94c30e1.jpg', displayName:'Aura Décor',
       desc:'Handcrafted decorative pieces that celebrate India\'s rich folk art traditions — for every corner of your home.',
       subcats:[
         {key:'Decorative Pots', emoji:'🌿', desc:'Planters & ceramic pots'},
@@ -2244,7 +2246,7 @@ const CategoryPage = {
       ]
     },
     'Aesthetic Furniture': {
-      emoji:'🪑', displayName:'Aesthetic Furniture',
+      emoji:'🪑', img:'https://i.ibb.co/s4ZkSv7/1ed461bdaf0b.png', displayName:'Aesthetic Furniture',
       desc:'Artisan-crafted furniture pieces that blend traditional craft with contemporary design sensibilities.',
       subcats:[
         {key:'Storage', emoji:'📦', desc:'Boxes, crates & storage units'},
@@ -2253,7 +2255,7 @@ const CategoryPage = {
       ]
     },
     'Giftings': {
-      emoji:'🎁', displayName:'Giftings',
+      emoji:'🎁', img:'https://i.ibb.co/BHFN5QJr/a75a256d51b3.png', displayName:'Giftings',
       desc:'Curated artisan gift sets perfect for every occasion — weddings, festivals, and celebrations.',
       subcats:[
         {key:'Festive', emoji:'🎊', desc:'Diwali, Holi & festival gifts'},
@@ -2268,7 +2270,12 @@ const CategoryPage = {
     if (!cat) return;
     const all = window.$products || PRODUCTS;
     document.getElementById('catCrumb').textContent    = cat.displayName;
-    document.getElementById('catHeroIcon').textContent = cat.emoji;
+    const heroIcon = document.getElementById('catHeroIcon');
+    if (cat.img) {
+      heroIcon.innerHTML = `<img src="${cat.img}" alt="${cat.displayName}" onerror="this.parentElement.textContent='${cat.emoji}'"/>`;
+    } else {
+      heroIcon.textContent = cat.emoji;
+    }
     document.getElementById('catHeroTitle').textContent= cat.displayName;
     document.getElementById('catHeroDesc').textContent = cat.desc;
     document.getElementById('scatTitle').textContent   = `Shop ${cat.displayName}`;
