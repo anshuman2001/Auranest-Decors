@@ -1495,6 +1495,7 @@ async function loadProducts() {
       await seedToFirebase();
     } else {
       window.$products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      try { localStorage.setItem('auranest_products', JSON.stringify(window.$products)); } catch(e) {}
       renderProducts(window.$products);
       loadTrending();
       document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
@@ -2552,6 +2553,30 @@ function _wishToggle(id, btn) {
     }
   };
   setInterval(checkMobAuth, 1500);
+})();
+
+// ── INSTANT PRODUCT PRE-RENDER (no Firebase wait) ──
+(function(){
+  if (window.$products) return; // Firebase already loaded, skip
+  var badge = document.getElementById('prodCountBadge');
+  try {
+    var cached = localStorage.getItem('auranest_products');
+    if (cached) {
+      var prods = JSON.parse(cached);
+      if (prods && prods.length) {
+        window.$products = prods;
+        renderProducts(prods);
+        loadTrending();
+        if (badge) badge.textContent = prods.length + '+';
+        return;
+      }
+    }
+  } catch(e) {}
+  // First-ever visit: show hardcoded products instantly
+  window.$products = PRODUCTS;
+  renderProducts(PRODUCTS);
+  loadTrending();
+  if (badge) badge.textContent = PRODUCTS.length + '+';
 })();
 
 // ── SCROLL & LOAD ──
