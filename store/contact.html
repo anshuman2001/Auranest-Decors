@@ -246,7 +246,8 @@ footer{background:var(--dark);border-top:1px solid rgba(184,147,63,.1);padding:2
   <div class="nav-divider"></div>
   <a href="index.html" class="nav-logo">
     <div class="nav-logo-circle" style="padding:0;overflow:hidden;background:none;border:2px solid var(--gold);">
-      <img src="../assets/logo.jpg" alt="Auranest Decors" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" onerror="this.outerHTML='🏺'"/>
+      <img id="contactNavLogo" src="" alt="Auranest Decors" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;"/>
+      <span id="contactNavEmoji" style="font-size:1.1rem;display:none;">🏺</span>
     </div>
     <span class="nav-brand">Auranest Decors</span>
   </a>
@@ -479,6 +480,20 @@ function showToast(msg) {
   t.classList.add('on');
   setTimeout(() => t.classList.remove('on'), 4500);
 }
+</script>
+<script>
+(function(){
+  const img   = document.getElementById('contactNavLogo');
+  const emoji = document.getElementById('contactNavEmoji');
+  const url   = localStorage.getItem('auranest_logo');
+  if (url && img) {
+    img.onload  = () => { img.style.display = 'block'; };
+    img.onerror = () => { img.style.display = 'none'; if(emoji) emoji.style.display = 'flex'; };
+    img.src = url;
+  } else {
+    if (emoji) emoji.style.display = 'flex';
+  }
+})();
 </script>
 </body>
 </html>

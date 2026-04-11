@@ -1419,6 +1419,7 @@ getDoc(doc(db, 'settings', 'branding')).then(snap => {
   const wlcImg   = document.getElementById('wlcLogoImg');
   const wlcEmoji = document.getElementById('wlcLogoEmoji');
   if (cfg.logoUrl) {
+    localStorage.setItem('auranest_logo', cfg.logoUrl);
     if (navImg) { navImg.src = cfg.logoUrl; navImg.style.display = ''; }
     if (wlcImg) {
       wlcImg.onload  = () => { wlcImg.style.display = 'block'; if (wlcEmoji) wlcEmoji.style.display = 'none'; };
@@ -2421,6 +2422,7 @@ function loadBranding() {
     const wlcImg2   = document.getElementById('wlcLogoImg');
     const wlcEmoji2 = document.getElementById('wlcLogoEmoji');
     if (cfg.logoUrl) {
+      localStorage.setItem('auranest_logo', cfg.logoUrl);
       if (navImg2) { navImg2.src = cfg.logoUrl; navImg2.style.display = ''; }
       if (wlcImg2) {
         wlcImg2.onload  = () => { wlcImg2.style.display = 'block'; if (wlcEmoji2) wlcEmoji2.style.display = 'none'; };
