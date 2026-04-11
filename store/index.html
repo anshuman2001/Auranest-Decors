@@ -9,9 +9,17 @@
 <meta name="description" content="Shop handcrafted Indian home décor at Auranest Decors. Unique folk art planters, wooden trays, ceramic pots, tribal art & artisan gifts. Delivered worldwide in 2–3 days. Free shipping on orders above ₹999."/>
 <meta name="keywords" content="handcrafted home decor, Indian folk art, ceramic planters, wooden trays, tribal art, warli art, mithila art, terracotta pots, artisan decor, home decor India, handmade gifts India, Auranest Decors"/>
 <meta name="author" content="Auranest Decors"/>
-<meta name="robots" content="index, follow"/>
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
 <meta name="theme-color" content="#1e1810"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="rating" content="general"/>
+<meta name="geo.region" content="IN"/>
+<meta name="geo.placename" content="India"/>
+<meta name="revisit-after" content="7 days"/>
 <link rel="canonical" href="https://auranest-decors.vercel.app/store/"/>
+<link rel="manifest" href="../manifest.json"/>
+<link rel="icon" type="image/jpeg" href="../assets/logo.jpg"/>
+<link rel="apple-touch-icon" href="../assets/logo.jpg"/>
 
 <!-- ══ OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ══ -->
 <meta property="og:type" content="website"/>
@@ -22,13 +30,19 @@
 <meta property="og:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
+<meta property="og:image:type" content="image/jpeg"/>
+<meta property="og:image:alt" content="Auranest Decors – Handcrafted Indian home décor products including ceramic planters, wooden trays and tribal art"/>
 <meta property="og:locale" content="en_IN"/>
+<meta property="og:locale:alternate" content="en_US"/>
 
 <!-- ══ TWITTER CARD ══ -->
 <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@auranestdecors"/>
+<meta name="twitter:creator" content="@auranestdecors"/>
 <meta name="twitter:title" content="Auranest Decors – Handcrafted Indian Home Décor"/>
-<meta name="twitter:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days."/>
+<meta name="twitter:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days. Free shipping above ₹999."/>
 <meta name="twitter:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+<meta name="twitter:image:alt" content="Auranest Decors – Handcrafted Indian Home Décor"/>
 
 <!-- ══ STRUCTURED DATA — Organization ══ -->
 <script type="application/ld+json">
@@ -80,6 +94,40 @@
   "paymentAccepted": "Cash, Credit Card, UPI, PayPal, COD",
   "areaServed": "Worldwide",
   "hasMap": "https://auranest-decors.vercel.app/store/contact.html"
+}
+</script>
+
+<!-- ══ STRUCTURED DATA — FAQPage ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"What is the shipping charge?","acceptedAnswer":{"@type":"Answer","text":"India: Free Shipping on prepaid orders above ₹999. Outside India: Charges as per applicable rates."}},
+    {"@type":"Question","name":"How long does delivery take?","acceptedAnswer":{"@type":"Answer","text":"All shipments (India & Worldwide) delivered in 2–3 business days once order is confirmed."}},
+    {"@type":"Question","name":"What is your return/exchange policy?","acceptedAnswer":{"@type":"Answer","text":"We have a hassle-free return & exchange policy. Please read our full refund policy on the website for complete details."}},
+    {"@type":"Question","name":"What currencies are available?","acceptedAnswer":{"@type":"Answer","text":"You can shop in INR (Indian Rupee). Prices remain the same globally — only shipping charges vary by location."}},
+    {"@type":"Question","name":"What payment options are available?","acceptedAnswer":{"@type":"Answer","text":"India: Credit & Debit Cards, Net Banking, UPI, COD. Other Countries: Credit Cards, Debit Cards, PayPal."}},
+    {"@type":"Question","name":"Are there any customs duties?","acceptedAnswer":{"@type":"Answer","text":"No! All customs duties and taxes are borne by Auranest Decors. You only pay the product price + shipping."}},
+    {"@type":"Question","name":"Can I buy wholesale or for reselling?","acceptedAnswer":{"@type":"Answer","text":"Yes! Email us at info@auranestsdecor.com for wholesale and reseller orders. We have a dedicated team."}},
+    {"@type":"Question","name":"How can I contact you?","acceptedAnswer":{"@type":"Answer","text":"Email: info@auranestsdecor.com | WhatsApp: +91 xxxxxxxxxx. We respond within 24 hours."}}
+  ]
+}
+</script>
+
+<!-- ══ STRUCTURED DATA — ItemList (Categories) ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Auranest Decors – Product Categories",
+  "url": "https://auranest-decors.vercel.app/store/",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home & Kitchen","url":"https://auranest-decors.vercel.app/store/#shop"},
+    {"@type":"ListItem","position":2,"name":"Aura Décor","url":"https://auranest-decors.vercel.app/store/#shop"},
+    {"@type":"ListItem","position":3,"name":"Aesthetic Furniture","url":"https://auranest-decors.vercel.app/store/#shop"},
+    {"@type":"ListItem","position":4,"name":"Giftings","url":"https://auranest-decors.vercel.app/store/#shop"}
+  ]
 }
 </script>
 
@@ -1088,7 +1136,7 @@ select.finp{cursor:pointer;}
 
 <!-- SALE COUNTDOWN -->
 <section class="sale-section" id="saleSection">
-  <img class="sale-bg" src="../assets/banner2.jpg" alt="" onerror="this.style.display='none'"/>
+  <img class="sale-bg" src="../assets/banner2.jpg" alt="Artisan Decor Sale – Auranest Decors" loading="lazy" width="1200" height="500" onerror="this.style.display='none'"/>
   <div class="sale-overlay">
     <p class="sale-eye">LIMITED TIME OFFER</p>
     <h2 class="sale-title">Artisan Decor Sale</h2>
@@ -1143,7 +1191,7 @@ select.finp{cursor:pointer;}
 </div>
 
 <div class="banner-sec">
-  <div class="banner-img-wrap"><img src="../assets/banner2.jpg" alt="Story"/></div>
+  <div class="banner-img-wrap"><img src="../assets/banner2.jpg" alt="Rooted in Heritage – Auranest Decors handcrafted home décor story" loading="lazy" width="1200" height="600"/></div>
   <div class="banner-content">
     <p class="banner-eye">Why Choose Auranest</p>
     <h2 class="banner-title">Rooted in <em>Heritage,</em><br>Designed for Today</h2>
@@ -1155,7 +1203,7 @@ select.finp{cursor:pointer;}
 <section class="section" id="about">
   <div class="about-grid">
     <div class="about-img-wrap">
-      <img class="about-img" src="../assets/banner1.jpg" alt="About Auranest"/>
+      <img class="about-img" src="../assets/banner1.jpg" alt="About Auranest Decors – Born from the timeless spirit of India" loading="lazy" width="600" height="400"/>
       <div class="about-badge"><span class="about-badge-num" id="prodCountBadge">22+</span><span class="about-badge-lbl">Artisan Products</span></div>
     </div>
     <div>
@@ -1180,7 +1228,7 @@ select.finp{cursor:pointer;}
 
 <footer>
   <div>
-    <div class="foot-logo"><img src="../assets/logo.jpg" alt="Logo" onerror="this.style.display='none'"/><div><div class="foot-brand">Auranest Decors</div><div class="foot-tagline">Feel the beauty of home</div></div></div>
+    <div class="foot-logo"><img src="../assets/logo.jpg" alt="Auranest Decors logo" loading="lazy" width="48" height="48" onerror="this.style.display='none'"/><div><div class="foot-brand">Auranest Decors</div><div class="foot-tagline">Feel the beauty of home</div></div></div>
     <p class="foot-desc">Bringing India's artisanal heritage into modern homes. Every piece is handcrafted with love, tradition, and purpose.</p>
     <div class="foot-contact">📧 <a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a><br>💬 WhatsApp: +91 xxxxxxxxxx</div>
     <div class="pay-row"><div class="pay-pill">Stripe</div><div class="pay-pill">Razorpay</div><div class="pay-pill">COD</div><div class="pay-pill">PayPal</div></div>
@@ -2073,6 +2121,47 @@ const ProductPage = {
           </div>`;
         }).join('')
       : `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1">No related products yet.</p>`;
+
+    // ── Dynamic Product + BreadcrumbList JSON-LD for SEO ──
+    const baseUrl = 'https://auranest-decors.vercel.app/store/';
+    const prodImg = this._imgs[0] || '';
+    const catLabel2 = p.category === 'Aura décor' ? 'Aura Décor' : p.category;
+    const savings2 = p.mrp > p.price ? Math.round((p.mrp - p.price) / p.mrp * 100) : 0;
+    let schEl = document.getElementById('_dynProdSchema');
+    if (!schEl) { schEl = document.createElement('script'); schEl.id = '_dynProdSchema'; schEl.type = 'application/ld+json'; document.head.appendChild(schEl); }
+    schEl.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Product",
+          "name": p.name,
+          "description": p.description || p.name,
+          "image": prodImg ? [prodImg] : [],
+          "brand": {"@type":"Brand","name":"Auranest Decors"},
+          "category": catLabel2,
+          "sku": p.id || String(id),
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "INR",
+            "price": String(p.price),
+            "priceValidUntil": "2027-12-31",
+            "availability": (p.stock || 0) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "url": baseUrl + '?product=' + encodeURIComponent(p.id || id),
+            "seller": {"@type":"Organization","name":"Auranest Decors"}
+          },
+          ...(savings2 > 0 ? {"discount": savings2 + "% OFF"} : {})
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type":"ListItem","position":1,"name":"Home","item":baseUrl},
+            {"@type":"ListItem","position":2,"name":catLabel2,"item":baseUrl + '#shop'},
+            {"@type":"ListItem","position":3,"name":p.subCategory,"item":baseUrl + '#shop'},
+            {"@type":"ListItem","position":4,"name":p.name}
+          ]
+        }
+      ]
+    });
 
     // ── Open overlay ──
     const page = document.getElementById('prodPage');

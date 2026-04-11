@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <url>
     <loc>https://auranest-decors.vercel.app/store/</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://auranest-decors.vercel.app/assets/og-image.jpg</image:loc>
+      <image:title>Auranest Decors – Handcrafted Indian Home Décor</image:title>
+      <image:caption>Unique folk art planters, wooden trays, ceramic pots and tribal art</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://auranest-decors.vercel.app/assets/logo.jpg</image:loc>
+      <image:title>Auranest Decors Logo</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://auranest-decors.vercel.app/store/contact.html</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-11</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
 </urlset>

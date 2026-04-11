@@ -1,0 +1,37 @@
+{
+  "name": "Auranest Decors",
+  "short_name": "Auranest",
+  "description": "Handcrafted Indian home décor — folk art planters, wooden trays, ceramic pots and artisan gifts delivered worldwide.",
+  "start_url": "/store/",
+  "display": "standalone",
+  "background_color": "#1a130d",
+  "theme_color": "#1e1810",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/assets/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "label": "Auranest Decors Store"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
