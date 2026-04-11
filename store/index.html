@@ -871,6 +871,21 @@ select.finp{cursor:pointer;}
       <img class="wlc-logo-img" id="wlcLogoImg" src="" alt="Auranest" style="display:none;"/>
       <span class="wlc-logo-emoji" id="wlcLogoEmoji" style="display:none;">🏺</span>
     </div>
+    <script>
+      // Instantly show logo from localStorage cache — no Firebase wait
+      (function(){
+        var url   = localStorage.getItem('auranest_logo');
+        var img   = document.getElementById('wlcLogoImg');
+        var emoji = document.getElementById('wlcLogoEmoji');
+        if (url && img) {
+          img.onload  = function(){ img.style.display='block'; if(emoji) emoji.style.display='none'; };
+          img.onerror = function(){ img.style.display='none';  if(emoji) emoji.style.display='flex'; };
+          img.src = url;
+        } else if (emoji) {
+          emoji.style.display = 'flex';
+        }
+      })();
+    </script>
     <div class="wlc-brand">Auranest Decors</div>
     <div class="wlc-divider"></div>
     <div class="wlc-tag">Feel the Beauty of Home</div>
@@ -897,6 +912,13 @@ select.finp{cursor:pointer;}
   <div class="nav-top">
     <a class="nav-logo" href="#">
       <img class="nav-logo-img" id="navLogoImg" src="" alt="Logo" style="display:none;width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex-shrink:0;"/>
+      <script>
+        (function(){
+          var url=localStorage.getItem('auranest_logo');
+          var img=document.getElementById('navLogoImg');
+          if(url&&img){img.onload=function(){img.style.display='';};img.onerror=function(){img.style.display='none';};img.src=url;}
+        })();
+      </script>
       <div class="nav-logo-text">
         <span class="nav-brand">Auranest Decors</span>
         <span class="nav-tagline">Feel the beauty of home</span>
