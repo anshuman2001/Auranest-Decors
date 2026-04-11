@@ -1301,7 +1301,8 @@ select.finp{cursor:pointer;}
         <div class="auth-orn-line r"></div>
       </div>
       <div class="auth-logo-ring">
-        <img src="../assets/logo.jpg" alt="Auranest" onerror="this.style.display='none'"/>
+        <img id="authLogoImg" src="" alt="Auranest" style="display:none;"/>
+        <span id="authLogoEmoji" style="font-size:2rem;display:none;">🏺</span>
       </div>
       <div class="auth-left-brand">Auranest Decors</div>
       <div class="auth-left-div"></div>
@@ -1413,9 +1414,11 @@ getDoc(doc(db, 'settings', 'branding')).then(snap => {
   if (!snap.exists()) return;
   const cfg = snap.data();
   // Logo: restore hidden img and set new src, or show fallback
-  const navImg   = document.getElementById('navLogoImg');
-  const wlcImg   = document.getElementById('wlcLogoImg');
-  const wlcEmoji = document.getElementById('wlcLogoEmoji');
+  const navImg    = document.getElementById('navLogoImg');
+  const wlcImg    = document.getElementById('wlcLogoImg');
+  const wlcEmoji  = document.getElementById('wlcLogoEmoji');
+  const authImg   = document.getElementById('authLogoImg');
+  const authEmoji = document.getElementById('authLogoEmoji');
   if (cfg.logoUrl) {
     localStorage.setItem('auranest_logo', cfg.logoUrl);
     if (navImg) { navImg.src = cfg.logoUrl; navImg.style.display = ''; }
@@ -1424,8 +1427,14 @@ getDoc(doc(db, 'settings', 'branding')).then(snap => {
       wlcImg.onerror = () => { wlcImg.style.display = 'none';  if (wlcEmoji) wlcEmoji.style.display = 'flex'; };
       wlcImg.src = cfg.logoUrl;
     }
+    if (authImg) {
+      authImg.onload  = () => { authImg.style.display = 'block'; if (authEmoji) authEmoji.style.display = 'none'; };
+      authImg.onerror = () => { authImg.style.display = 'none';  if (authEmoji) authEmoji.style.display = 'flex'; };
+      authImg.src = cfg.logoUrl;
+    }
   } else {
     if (wlcEmoji) wlcEmoji.style.display = 'flex';
+    if (authEmoji) authEmoji.style.display = 'flex';
   }
   // Banners
   const s0 = document.getElementById('slide0');
@@ -2421,9 +2430,11 @@ function loadBranding() {
   window.$fb.getDoc(window.$fb.doc(window.$db, 'settings', 'branding')).then(snap => {
     if (!snap.exists()) return;
     const cfg = snap.data();
-    const navImg2   = document.getElementById('navLogoImg');
-    const wlcImg2   = document.getElementById('wlcLogoImg');
-    const wlcEmoji2 = document.getElementById('wlcLogoEmoji');
+    const navImg2    = document.getElementById('navLogoImg');
+    const wlcImg2    = document.getElementById('wlcLogoImg');
+    const wlcEmoji2  = document.getElementById('wlcLogoEmoji');
+    const authImg2   = document.getElementById('authLogoImg');
+    const authEmoji2 = document.getElementById('authLogoEmoji');
     if (cfg.logoUrl) {
       localStorage.setItem('auranest_logo', cfg.logoUrl);
       if (navImg2) { navImg2.src = cfg.logoUrl; navImg2.style.display = ''; }
@@ -2432,8 +2443,14 @@ function loadBranding() {
         wlcImg2.onerror = () => { wlcImg2.style.display = 'none';  if (wlcEmoji2) wlcEmoji2.style.display = 'flex'; };
         wlcImg2.src = cfg.logoUrl;
       }
+      if (authImg2) {
+        authImg2.onload  = () => { authImg2.style.display = 'block'; if (authEmoji2) authEmoji2.style.display = 'none'; };
+        authImg2.onerror = () => { authImg2.style.display = 'none';  if (authEmoji2) authEmoji2.style.display = 'flex'; };
+        authImg2.src = cfg.logoUrl;
+      }
     } else {
       if (wlcEmoji2) wlcEmoji2.style.display = 'flex';
+      if (authEmoji2) authEmoji2.style.display = 'flex';
     }
     if (cfg.storeName) {
       document.querySelectorAll('.nav-brand').forEach(el => { el.textContent = cfg.storeName; });
