@@ -304,7 +304,7 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .prod-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-100%) skewX(-15deg);pointer-events:none;}
 .prod-card:hover .prod-img-wrap::after{animation:shimmer .75s ease forwards;}
 .prod-card:hover .prod-img-wrap{box-shadow:0 16px 48px rgba(18,12,6,.18);}
-.prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s cubic-bezier(.23,1,.32,1);}
+.prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:transform .55s cubic-bezier(.23,1,.32,1);padding:6px;}
 .prod-card:hover .prod-img-wrap img{transform:scale(1.08);}
 .prod-emoji{font-size:5.5rem;}
 .prod-tag{position:absolute;top:.7rem;right:.7rem;left:auto;background:linear-gradient(135deg,var(--gold-dk),var(--gold));color:#fff;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .7rem;}
@@ -803,7 +803,7 @@ select.finp{cursor:pointer;}
 .pp-body{display:grid;grid-template-columns:55% 45%;height:auto;overflow:visible;align-items:start;}
 .pp-gallery{display:flex;flex-direction:column;position:sticky;top:0;}
 .pp-main-img{height:calc(100vh - 116px);overflow:hidden;position:relative;background:var(--warm);}
-.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s;}
+.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .3s;padding:8px;}
 /* Wishlist on image */
 .pp-img-wish{position:absolute;top:12px;right:12px;z-index:10;background:rgba(255,255,255,.92);border:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(30,24,16,.18);color:var(--muted);transition:all .2s;line-height:1;}
 .pp-img-wish:hover{transform:scale(1.12);background:#fff;}
@@ -1813,7 +1813,7 @@ function renderProducts(list) {
     <div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:16px">
         ${img
-          ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`
+          ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6px" onerror="this.style.display='none'"/>`
           : `<div class="prod-emoji">${p.icon}</div>`}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
@@ -1918,7 +1918,7 @@ function openPModal(id) {
       </div>` : '';
     return `
       <div style="position:relative;flex:1">
-        ${mainImg ? `<img id="mainGalleryImg" src="${mainImg}" alt="${p.name}" style="width:100%;height:340px;object-fit:cover" onerror="this.style.display='none'"/>` : `<div style="font-size:7rem;display:flex;align-items:center;justify-content:center;height:340px">${p.icon}</div>`}
+        ${mainImg ? `<img id="mainGalleryImg" src="${mainImg}" alt="${p.name}" style="width:100%;height:340px;object-fit:contain;background:var(--warm);padding:8px" onerror="this.style.display='none'"/>` : `<div style="font-size:7rem;display:flex;align-items:center;justify-content:center;height:340px">${p.icon}</div>`}
       </div>
       ${thumbs}`;
   }
@@ -2147,7 +2147,7 @@ const ProductPage = {
           const rid  = r.id || String(all.indexOf(r));
           return `<div class="prod-card" style="animation-delay:${i*.07}s" onclick="ProductPage.open('${rid}')">
             <div class="prod-img-wrap">
-              ${rimg ? `<img src="${rimg}" alt="${r.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<div class="prod-emoji">${r.icon}</div>`}
+              ${rimg ? `<img src="${rimg}" alt="${r.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6px"/>` : `<div class="prod-emoji">${r.icon}</div>`}
               ${r.tag ? `<span class="prod-tag">${r.tag}</span>` : ''}
             </div>
             <p class="prod-sub">${r.subCategory}</p>
@@ -2370,7 +2370,7 @@ function loadTrending() {
     const pid = p.id || String(i);
     return `<div class="prod-card" style="animation-delay:${i*.06}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:14px">
-        ${img ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<div class="prod-emoji">${p.icon}</div>`}
+        ${img ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6px"/>` : `<div class="prod-emoji">${p.icon}</div>`}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
       </div>
