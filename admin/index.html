@@ -1357,11 +1357,18 @@ function previewImg(index, url) {
 }
 
 // ── IMGBB KEY MANAGEMENT ──
-function saveImgBBKey() {
+async function saveImgBBKey() {
   const key = document.getElementById('imgbbKey')?.value.trim();
   if (!key) { showToast('⚠️ Please paste your ImgBB API key first'); return; }
   localStorage.setItem('auranest_imgbb_key', key);
-  showToast('✅ ImgBB API key saved! Image uploads are now active.');
+  // Also save to Firebase so it persists across devices & browser clears
+  try {
+    const { doc, setDoc } = window.$fb;
+    await setDoc(doc(window.$db, 'config', 'imgbb'), { apiKey: key }, { merge: true });
+    showToast('✅ ImgBB API key saved permanently to Firebase!');
+  } catch(e) {
+    showToast('✅ ImgBB key saved locally. (Firebase save failed: ' + e.message + ')');
+  }
 }
 
 async function testImgBBKey() {
@@ -1383,6 +1390,11 @@ async function testImgBBKey() {
       statusEl.style.color   = 'var(--green)';
       statusEl.textContent   = '✅ Key is valid! Image uploads will work.';
       localStorage.setItem('auranest_imgbb_key', key);
+      try {
+        const { doc, setDoc } = window.$fb;
+        await setDoc(doc(window.$db, 'config', 'imgbb'), { apiKey: key }, { merge: true });
+        statusEl.textContent += ' Saved permanently to Firebase.';
+      } catch(e) {}
     } else {
       statusEl.style.color   = 'var(--red)';
       statusEl.textContent   = '❌ Invalid key: ' + (json.error?.message || 'Authentication failed');
@@ -1563,12 +1575,29 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const img0 = document.getElementById('mImage0');
   if (img0) img0.addEventListener('input', function() { previewImg(0, this.value); });
-  // Restore saved ImgBB key
-  const saved = localStorage.getItem('auranest_imgbb_key');
-  if (saved) {
+
+  // 1. Restore from localStorage immediately (instant)
+  const cached = localStorage.getItem('auranest_imgbb_key');
+  if (cached) {
     const el = document.getElementById('imgbbKey');
-    if (el) el.value = saved;
+    if (el) el.value = cached;
   }
+
+  // 2. Also load from Firebase (persists across devices/browser clears)
+  setTimeout(async () => {
+    try {
+      const { doc, getDoc } = window.$fb;
+      const snap = await getDoc(doc(window.$db, 'config', 'imgbb'));
+      if (snap.exists()) {
+        const key = snap.data().apiKey;
+        if (key) {
+          localStorage.setItem('auranest_imgbb_key', key);
+          const el = document.getElementById('imgbbKey');
+          if (el) el.value = key;
+        }
+      }
+    } catch(e) {}
+  }, 2000); // wait for Firebase to init
 });
 </script>
 </body>
