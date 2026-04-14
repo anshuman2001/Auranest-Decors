@@ -160,6 +160,29 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .bcl{background:none;border:1px solid var(--border2);color:var(--muted);padding:.7rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .bcl:hover{border-color:var(--red);color:var(--red);}
+/* BULK UPLOAD */
+.bulk-drop{border:2px dashed var(--border);padding:2.5rem;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--bg);position:relative;}
+.bulk-drop:hover,.bulk-drop.drag{border-color:var(--gold);background:var(--gold-dim);}
+.bulk-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.bulk-drop-icon{font-size:2.2rem;margin-bottom:.8rem;}
+.bulk-drop-title{font-size:.9rem;color:var(--text);margin-bottom:.3rem;}
+.bulk-drop-sub{font-size:.72rem;color:var(--muted);}
+.bulk-preview{margin-top:1.5rem;max-height:340px;overflow-y:auto;}
+.bulk-preview table{width:100%;border-collapse:collapse;font-size:.75rem;}
+.bulk-preview th{padding:.5rem .7rem;text-align:left;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);}
+.bulk-preview td{padding:.5rem .7rem;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.bulk-preview tr:hover td{background:var(--gold-dim);}
+.bulk-prog{margin-top:1.2rem;}
+.bulk-prog-bar{height:6px;background:var(--subtle);border-radius:3px;overflow:hidden;margin-bottom:.5rem;}
+.bulk-prog-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s;width:0%;}
+.bulk-prog-lbl{font-size:.72rem;color:var(--gold);}
+.bulk-actions{display:flex;gap:.8rem;justify-content:flex-end;margin-top:1.2rem;flex-wrap:wrap;}
+.btn-dl{background:none;border:1px solid var(--gold);color:var(--gold);padding:.6rem 1.2rem;font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-dl:hover{background:var(--gold-dim);}
+.bulk-stats{display:flex;gap:1.2rem;margin-top:.8rem;padding:.8rem;background:var(--bg);border:1px solid var(--border2);}
+.bulk-stat{text-align:center;flex:1;}
+.bulk-stat-n{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);}
+.bulk-stat-l{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
 /* TOAST */
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.85rem 1.4rem;font-size:.8rem;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
 #toast.on{transform:translateY(0);opacity:1;}
@@ -233,6 +256,45 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
   <div style="font-size:.75rem;color:var(--text);margin-bottom:.5rem" id="globalUploadLabel">Uploading…</div>
   <div style="height:3px;background:var(--subtle);border-radius:2px">
     <div id="globalUploadBar" style="height:100%;width:0%;background:var(--gold);border-radius:2px;transition:width .2s"></div>
+  </div>
+</div>
+
+<!-- BULK UPLOAD MODAL -->
+<div class="modal-bg" id="bulkModal">
+  <div class="mbox" style="width:720px;max-width:95vw;">
+    <button class="mc" onclick="closeBulkModal()">✕</button>
+    <div class="mt">📥 Bulk Upload Products via CSV</div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7;">
+      Step 1 — Download the template → Step 2 — Fill in Excel/Google Sheets → Step 3 — Upload the file → Step 4 — Click Import
+    </p>
+
+    <!-- Step 1: Download template -->
+    <div style="display:flex;gap:.8rem;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;">
+      <button class="btn-dl" onclick="BulkUpload.downloadTemplate()">⬇ Download CSV Template</button>
+      <span style="font-size:.72rem;color:var(--muted)">Columns: Name, Category, SubCategory, Price, MRP, Material, Color, Size, Tag, Stock, Description, Image1, Image2, Image3</span>
+    </div>
+
+    <!-- Step 2: Drop zone -->
+    <div class="bulk-drop" id="bulkDrop">
+      <input type="file" accept=".csv,.xlsx,.xls" onchange="BulkUpload.handleFile(this.files[0])"/>
+      <div class="bulk-drop-icon">📂</div>
+      <div class="bulk-drop-title">Drop your CSV file here or click to browse</div>
+      <div class="bulk-drop-sub">Supports .csv files · Max 500 rows</div>
+    </div>
+
+    <!-- Step 3: Preview -->
+    <div id="bulkPreviewWrap" style="display:none;">
+      <div class="bulk-stats" id="bulkStats"></div>
+      <div class="bulk-preview" id="bulkPreview"></div>
+      <div class="bulk-prog" id="bulkProgWrap" style="display:none;">
+        <div class="bulk-prog-bar"><div class="bulk-prog-fill" id="bulkProgFill"></div></div>
+        <div class="bulk-prog-lbl" id="bulkProgLbl">Importing...</div>
+      </div>
+      <div class="bulk-actions">
+        <button class="btn-dl" onclick="BulkUpload.reset()">↺ Upload Different File</button>
+        <button class="btn-save" id="bulkImportBtn" onclick="BulkUpload.importAll()">⬆ Import All Products</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -395,6 +457,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
           <option value="Aura décor">Aura Décor</option>
         </select>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
+        <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
       </div>
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
@@ -1329,6 +1392,172 @@ async function testImgBBKey() {
     statusEl.textContent   = '❌ Network error — check your connection';
   }
 }
+
+// ── BULK UPLOAD ──
+function openBulkModal()  { document.getElementById('bulkModal').classList.add('on'); }
+function closeBulkModal() { document.getElementById('bulkModal').classList.remove('on'); BulkUpload.reset(); }
+
+const BulkUpload = {
+  _rows: [],
+
+  downloadTemplate() {
+    const headers = ['Name','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','Image1','Image2','Image3'];
+    const example = [
+      'Folk Art Ceramic Planter','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','https://i.ibb.co/example1.jpg','','',
+    ];
+    const csv = [headers.join(','), example.map(v => `"${v}"`).join(',')].join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = 'auranest_products_template.csv';
+    a.click();
+    showToast('✅ Template downloaded! Fill it in Excel or Google Sheets.');
+  },
+
+  handleFile(file) {
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext !== 'csv') { showToast('⚠️ Please upload a .csv file only'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        this._rows = this._parseCSV(e.target.result);
+        if (!this._rows.length) { showToast('⚠️ No valid rows found in CSV'); return; }
+        this._showPreview();
+      } catch(err) { showToast('❌ Error reading CSV: ' + err.message); }
+    };
+    reader.readAsText(file);
+  },
+
+  _parseCSV(text) {
+    const lines = text.trim().split('\n').filter(l => l.trim());
+    if (lines.length < 2) return [];
+    // Parse header row to find column indexes
+    const headers = this._splitCSVLine(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
+    const idx = (name) => headers.findIndex(h => h.includes(name));
+    const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
+    const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
+    const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
+    const iStock = idx('stock'); const iDesc = idx('desc');
+    const iImg1  = idx('image1'); const iImg2 = idx('image2'); const iImg3 = idx('image3');
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = this._splitCSVLine(lines[i]);
+      const name = (cols[iName] || '').trim();
+      if (!name) continue;
+      const price = parseInt(cols[iPrice]) || 0;
+      if (!price) continue;
+      const images = [cols[iImg1], cols[iImg2], cols[iImg3]]
+        .map(u => (u||'').trim()).filter(u => u);
+      rows.push({
+        name,
+        category:    (cols[iCat]  || 'Aura décor').trim(),
+        subCategory: (cols[iSub]  || '').trim(),
+        price,
+        mrp:         parseInt(cols[iMrp]) || price,
+        material:    (cols[iMat]  || '').trim(),
+        color:       (cols[iColor]|| '').trim(),
+        size:        (cols[iSize] || '').trim(),
+        tag:         (cols[iTag]  || '').trim(),
+        stock:       parseInt(cols[iStock]) || 10,
+        description: (cols[iDesc] || '').trim(),
+        image:       images[0] || '',
+        images,
+        icon: '🎁', sold: 0,
+      });
+    }
+    return rows;
+  },
+
+  _splitCSVLine(line) {
+    const result = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur);
+    return result;
+  },
+
+  _showPreview() {
+    const wrap = document.getElementById('bulkPreviewWrap');
+    const stats = document.getElementById('bulkStats');
+    const preview = document.getElementById('bulkPreview');
+    const rows = this._rows;
+    // Stats
+    const cats = [...new Set(rows.map(r => r.category))];
+    const withImg = rows.filter(r => r.image).length;
+    stats.innerHTML = `
+      <div class="bulk-stat"><div class="bulk-stat-n">${rows.length}</div><div class="bulk-stat-l">Products</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${cats.length}</div><div class="bulk-stat-l">Categories</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${withImg}</div><div class="bulk-stat-l">With Images</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${rows.length - withImg}</div><div class="bulk-stat-l">No Image</div></div>`;
+    // Preview table (first 10)
+    const shown = rows.slice(0, 10);
+    preview.innerHTML = `<table>
+      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
+      <tbody>${shown.map((r,i) => `<tr>
+        <td style="color:var(--muted)">${i+1}</td>
+        <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
+        <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
+        <td style="color:var(--gold)">₹${r.price}</td>
+        <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
+        <td>${r.image ? `<img src="${r.image}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>No img</span>'"/>` : '<span style="font-size:.65rem;color:var(--muted)">—</span>'}</td>
+        <td>${r.stock}</td>
+      </tr>`).join('')}
+      ${rows.length > 10 ? `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">...and ${rows.length - 10} more products</td></tr>` : ''}
+      </tbody></table>`;
+    document.getElementById('bulkImportBtn').textContent = `⬆ Import All ${rows.length} Products`;
+    wrap.style.display = 'block';
+  },
+
+  async importAll() {
+    if (!this._rows.length) return;
+    if (!window.$db) { showToast('❌ Firebase not connected'); return; }
+    const btn = document.getElementById('bulkImportBtn');
+    const progWrap = document.getElementById('bulkProgWrap');
+    const fill = document.getElementById('bulkProgFill');
+    const lbl  = document.getElementById('bulkProgLbl');
+    btn.disabled = true; btn.textContent = 'Importing...';
+    progWrap.style.display = 'block';
+    let done = 0; let errors = 0;
+    const total = this._rows.length;
+    for (const row of this._rows) {
+      try {
+        await addDoc(collection(db, 'products'), { ...row, createdAt: serverTimestamp() });
+        done++;
+      } catch(e) { errors++; }
+      const pct = Math.round((done + errors) / total * 100);
+      fill.style.width = pct + '%';
+      lbl.textContent = `Importing... ${done + errors} / ${total}`;
+    }
+    lbl.textContent = `✅ Done! ${done} products imported${errors ? `, ${errors} failed` : ''}.`;
+    fill.style.background = errors ? 'var(--terra)' : 'var(--green)';
+    showToast(`✅ ${done} products added to Firebase!`);
+    btn.textContent = '✅ Import Complete';
+    await loadProducts();
+  },
+
+  reset() {
+    this._rows = [];
+    document.getElementById('bulkPreviewWrap').style.display = 'none';
+    document.getElementById('bulkProgWrap').style.display = 'none';
+    document.getElementById('bulkProgFill').style.width = '0%';
+    document.getElementById('bulkImportBtn').disabled = false;
+    document.getElementById('bulkImportBtn').textContent = '⬆ Import All Products';
+  }
+};
+
+// Drag-over highlight
+document.addEventListener('DOMContentLoaded', function() {
+  const drop = document.getElementById('bulkDrop');
+  if (drop) {
+    drop.addEventListener('dragover',  () => drop.classList.add('drag'));
+    drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+    drop.addEventListener('drop',      () => drop.classList.remove('drag'));
+  }
+});
 
 // ── RESTORE SAVED IMGBB KEY ON LOAD ──
 document.addEventListener('DOMContentLoaded', function() {
