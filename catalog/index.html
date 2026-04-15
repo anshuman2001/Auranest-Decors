@@ -202,15 +202,17 @@ img{display:block;max-width:100%;}
 
 .pcard-img{
   position:relative;overflow:hidden;background:var(--warm);
+  display:flex;align-items:center;justify-content:center;
 }
-.pcard:not(.wide) .pcard-img{aspect-ratio:3/4;}
-.pcard.wide .pcard-img{aspect-ratio:16/9;}
+.pcard:not(.wide) .pcard-img{aspect-ratio:4/5;}
+.pcard.wide .pcard-img{aspect-ratio:3/2;}
 
 .pcard-img img{
-  width:100%;height:100%;object-fit:cover;
+  width:100%;height:100%;object-fit:contain;
+  padding:10px;
   transition:transform .65s ease;
 }
-.pcard:hover .pcard-img img{transform:scale(1.06);}
+.pcard:hover .pcard-img img{transform:scale(1.04);}
 
 .pcard-no{
   position:absolute;top:.85rem;left:.85rem;
@@ -231,21 +233,22 @@ img{display:block;max-width:100%;}
 }
 .pcard-name{
   font-family:'Cormorant Garamond',serif;
-  font-size:1.1rem;font-weight:500;color:var(--dark);
-  line-height:1.2;margin-bottom:.7rem;
+  font-size:1.15rem;font-weight:500;color:var(--dark);
+  line-height:1.2;margin-bottom:.55rem;
 }
-.pcard.wide .pcard-name{font-size:1.35rem;}
-.pcard-prices{display:flex;align-items:baseline;gap:.55rem;margin-bottom:.55rem;}
-.pcard-price{font-size:.98rem;font-weight:600;color:var(--dark);}
-.pcard-mrp{font-size:.75rem;color:var(--muted);text-decoration:line-through;}
-.pcard-discount{
-  font-size:.58rem;background:rgba(196,154,60,.1);color:var(--gold-dk);
-  padding:.15rem .4rem;letter-spacing:.06em;
+.pcard.wide .pcard-name{font-size:1.45rem;}
+.pcard-line{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.88rem;font-weight:300;color:var(--muted);
+  line-height:1.55;margin-bottom:.6rem;
 }
+.pcard.wide .pcard-line{font-size:1rem;}
 .pcard-mat{
-  font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
-  padding-top:.5rem;border-top:1px solid var(--beige);
+  font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  padding-top:.55rem;border-top:1px solid var(--beige);
+  display:flex;align-items:center;gap:.5rem;
 }
+.pcard-mat::before{content:'';width:14px;height:1px;background:var(--border);}
 
 /* ─────────────────────────────
    QUOTE DIVIDER
@@ -318,7 +321,7 @@ img{display:block;max-width:100%;}
     gap:1rem!important;padding:1.5rem 2rem!important;
   }
   .pcard.wide{grid-column:span 1!important;}
-  .pcard.wide .pcard-img{aspect-ratio:3/4!important;}
+  .pcard.wide .pcard-img{aspect-ratio:4/5!important;}
   .stats-bar{padding:1rem 2rem!important;}
   @page{size:A4;margin:1.2cm;}
 }
@@ -338,7 +341,7 @@ img{display:block;max-width:100%;}
   .spread-img{min-height:280px;}
   .prod-grid{grid-template-columns:repeat(2,1fr);gap:1.1rem;padding:1.5rem 1.5rem;}
   .pcard.wide{grid-column:span 2;}
-  .pcard.wide .pcard-img{aspect-ratio:4/3;}
+  .pcard.wide .pcard-img{aspect-ratio:3/2;}
   .stats-bar{padding:1rem 1.5rem;gap:.8rem;}
   .stat-sep{display:none;}
   .sec-hdr,.quote-sec,.cat-footer{padding-left:1.5rem;padding-right:1.5rem;}
@@ -475,58 +478,50 @@ img{display:block;max-width:100%;}
 <script>
 // ── PRODUCT DATA ──
 const KITCHEN = [
-  {name:"Handcrafted Wooden Collection", sub:"Serveware",       tag:"New Arrival",      img:"https://i.ibb.co/fdPPYV02/67e75b14d269.jpg",        img2:"",                                                   price:999,  mrp:1299, mat:"Wood"},
-  {name:"Artisan Wood Tray Set",         sub:"Serveware",       tag:"Handcrafted",      img:"https://i.ibb.co/WNPWnKqj/f0e6c0bc85b5.png",         img2:"",                                                   price:849,  mrp:1099, mat:"Wood"},
-  {name:"Traditional Wood Craft",        sub:"Kitchen",         tag:"Folk Art",         img:"https://i.ibb.co/6ctvkFdx/c92deac4f2f5.png",          img2:"",                                                   price:749,  mrp:949,  mat:"Wood"},
-  {name:"3 Set of Tray",                 sub:"Serveware",       tag:"Bestseller",       img:"https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg",         img2:"",                                                   price:1499, mrp:1899, mat:"Wood"},
-  {name:"Farming on Wood Tray",          sub:"Serveware",       tag:"Folk Art",         img:"https://i.ibb.co/r2C2ZLyr/Farming-on-Wood-Tray.jpg",  img2:"https://i.ibb.co/Z1HSsLbs/Farming-on-Wood-Tray-Info.png", price:949, mrp:1199, mat:"Wood"},
-  {name:"Heart Wooden Tray",             sub:"Serveware",       tag:"Gift Idea",        img:"https://i.ibb.co/ns9bjyxq/Heart-Wooden-Tray.png",     img2:"",                                                   price:799,  mrp:999,  mat:"Wood"},
-  {name:"Masala Box 9 Partition",        sub:"Kitchen Tools",   tag:"Kitchen Essential",img:"https://i.ibb.co/4nfbzwM6/Masala-box-with-9-particion.jpg", img2:"https://i.ibb.co/Z62YF52Z/Masala-box-with-9-particion-info.jpg", price:1299, mrp:1599, mat:"Wood"},
-  {name:"Oval Shape Tray",               sub:"Serveware",       tag:"Unique Shape",     img:"https://i.ibb.co/SXkHJkxt/Oval-SHape-Tray.png",       img2:"https://i.ibb.co/QjkKgkXc/Oval-SHape-Tray-info.png", price:849, mrp:1099, mat:"Wood"},
-  {name:"Pizza Platter",                 sub:"Tableware",       tag:"Bestseller",       img:"https://i.ibb.co/bj0kQ3Vg/Pizza-Platter.jpg",         img2:"",                                                   price:1099, mrp:1399, mat:"Wood"},
-  {name:"Wood Spatula Set",              sub:"Kitchen Tools",   tag:"Kitchen",          img:"https://i.ibb.co/cRDNXDn/Wood-Spatula.jpg",            img2:"",                                                   price:649,  mrp:849,  mat:"Wood"},
-  {name:"Round Wooden Tray",             sub:"Serveware",       tag:"Tribal Art",       img:"https://i.ibb.co/Kjb9tdMK/Round-Wooden-Tray.png",      img2:"https://i.ibb.co/7JZQ8BDs/Wooden-Round-Tray.jpg",   price:899,  mrp:1149, mat:"Wood"},
-  {name:"Wooden Bowl",                   sub:"Tableware",       tag:"Artisan",          img:"https://i.ibb.co/KC6B4wQ/Wooden-Bowl.jpg",             img2:"",                                                   price:799,  mrp:999,  mat:"Wood"},
-  {name:"Wooden Tray",                   sub:"Serveware",       tag:"Handcrafted",      img:"https://i.ibb.co/pjXm3nxC/Wooden-Tray.png",            img2:"",                                                   price:849,  mrp:1099, mat:"Wood"},
+  {name:"Handcrafted Wooden Collection", sub:"Serveware",     tag:"New Arrival",       line:"A celebration of craft in every grain",               img:"https://i.ibb.co/fdPPYV02/67e75b14d269.jpg",              img2:"",                                                             mat:"Wood"},
+  {name:"Artisan Wood Tray Set",         sub:"Serveware",     tag:"Handcrafted",       line:"Serve with warmth, present with pride",               img:"https://i.ibb.co/WNPWnKqj/f0e6c0bc85b5.png",              img2:"",                                                             mat:"Wood"},
+  {name:"Traditional Wood Craft",        sub:"Kitchen",       tag:"Folk Art",          line:"Where tradition meets your table",                    img:"https://i.ibb.co/6ctvkFdx/c92deac4f2f5.png",               img2:"",                                                             mat:"Wood"},
+  {name:"3 Set of Tray",                 sub:"Serveware",     tag:"Bestseller",        line:"Three pieces, one timeless story",                    img:"https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg",              img2:"",                                                             mat:"Wood"},
+  {name:"Farming on Wood Tray",          sub:"Serveware",     tag:"Folk Art",          line:"Folk motifs carved into everyday moments",            img:"https://i.ibb.co/r2C2ZLyr/Farming-on-Wood-Tray.jpg",       img2:"https://i.ibb.co/Z1HSsLbs/Farming-on-Wood-Tray-Info.png",     mat:"Wood"},
+  {name:"Heart Wooden Tray",             sub:"Serveware",     tag:"Gift Idea",         line:"Love crafted, gifted with meaning",                   img:"https://i.ibb.co/ns9bjyxq/Heart-Wooden-Tray.png",          img2:"",                                                             mat:"Wood"},
+  {name:"Masala Box 9 Partition",        sub:"Kitchen Tools", tag:"Kitchen Essential", line:"Spice, order, and artisan finesse",                   img:"https://i.ibb.co/4nfbzwM6/Masala-box-with-9-particion.jpg",img2:"https://i.ibb.co/Z62YF52Z/Masala-box-with-9-particion-info.jpg",mat:"Wood"},
+  {name:"Oval Shape Tray",               sub:"Serveware",     tag:"Unique Shape",      line:"Graceful curves, rooted in craft",                    img:"https://i.ibb.co/SXkHJkxt/Oval-SHape-Tray.png",            img2:"https://i.ibb.co/QjkKgkXc/Oval-SHape-Tray-info.png",          mat:"Wood"},
+  {name:"Pizza Platter",                 sub:"Tableware",     tag:"Bestseller",        line:"Gather around something beautiful",                   img:"https://i.ibb.co/bj0kQ3Vg/Pizza-Platter.jpg",              img2:"",                                                             mat:"Wood"},
+  {name:"Wood Spatula Set",              sub:"Kitchen Tools", tag:"Kitchen",           line:"Stir love into every meal",                           img:"https://i.ibb.co/cRDNXDn/Wood-Spatula.jpg",                img2:"",                                                             mat:"Wood"},
+  {name:"Round Wooden Tray",             sub:"Serveware",     tag:"Tribal Art",        line:"A circle of craft and quiet care",                    img:"https://i.ibb.co/Kjb9tdMK/Round-Wooden-Tray.png",          img2:"https://i.ibb.co/7JZQ8BDs/Wooden-Round-Tray.jpg",             mat:"Wood"},
+  {name:"Wooden Bowl",                   sub:"Tableware",     tag:"Artisan",           line:"Simple, soulful, shaped by hand",                     img:"https://i.ibb.co/KC6B4wQ/Wooden-Bowl.jpg",                 img2:"",                                                             mat:"Wood"},
+  {name:"Wooden Tray",                   sub:"Serveware",     tag:"Handcrafted",       line:"Crafted to be lived with, every day",                 img:"https://i.ibb.co/pjXm3nxC/Wooden-Tray.png",                img2:"",                                                             mat:"Wood"},
 ];
 
 const DECOR = [
-  {name:"Brown Jharokha",        sub:"Wall Décor",    tag:"Statement Piece", img:"https://i.ibb.co/r2HVw0QG/Brown-Jharokha.png",         img2:"https://i.ibb.co/3yxRgLxn/Brown-Jharokha-Info.png",    price:1199, mrp:1499, mat:"Wood"},
-  {name:"Green Jharokha",        sub:"Wall Décor",    tag:"Folk Art",        img:"https://i.ibb.co/s9zc1x9f/Green-Jharokha.jpg",          img2:"https://i.ibb.co/ShKcgPv/Green-Jharokhai-nfo.png",      price:1199, mrp:1499, mat:"Wood"},
-  {name:"Small Turtle Stool",    sub:"Decorative",    tag:"Unique",          img:"https://i.ibb.co/NnsK14gS/Small-Turtel-Stool.jpg",      img2:"",                                                       price:749,  mrp:949,  mat:"Wood"},
-  {name:"Wooden Coaster",        sub:"Tableware",     tag:"Artisan",         img:"https://i.ibb.co/N69hZ3gb/Wooden-Coster.jpg",           img2:"",                                                       price:649,  mrp:849,  mat:"Wood"},
-  {name:"Wooden Stool",          sub:"Furniture",     tag:"Handcrafted",     img:"https://i.ibb.co/wrNZRyXV/Wooden-Stool.jpg",            img2:"",                                                       price:1499, mrp:1899, mat:"Wood"},
-  {name:"Wooden Tray with Strip",sub:"Decorative",    tag:"Artisan",         img:"https://i.ibb.co/PLyHTcM/Wooden-Tray-with-Strip.png",   img2:"",                                                       price:849,  mrp:1099, mat:"Wood"},
+  {name:"Brown Jharokha",        sub:"Wall Décor",  tag:"Statement Piece", line:"A window into India's artisan soul",               img:"https://i.ibb.co/r2HVw0QG/Brown-Jharokha.png",        img2:"https://i.ibb.co/3yxRgLxn/Brown-Jharokha-Info.png",  mat:"Wood"},
+  {name:"Green Jharokha",        sub:"Wall Décor",  tag:"Folk Art",        line:"Bold colour, timeless architecture",               img:"https://i.ibb.co/s9zc1x9f/Green-Jharokha.jpg",         img2:"https://i.ibb.co/ShKcgPv/Green-Jharokhai-nfo.png",    mat:"Wood"},
+  {name:"Small Turtle Stool",    sub:"Decorative",  tag:"Unique",          line:"Playful form, grounded in honest craft",           img:"https://i.ibb.co/NnsK14gS/Small-Turtel-Stool.jpg",     img2:"",                                                    mat:"Wood"},
+  {name:"Wooden Coaster",        sub:"Tableware",   tag:"Artisan",         line:"Small circles that hold big character",            img:"https://i.ibb.co/N69hZ3gb/Wooden-Coster.jpg",          img2:"",                                                    mat:"Wood"},
+  {name:"Wooden Stool",          sub:"Furniture",   tag:"Handcrafted",     line:"Seat yourself in the comfort of craftsmanship",    img:"https://i.ibb.co/wrNZRyXV/Wooden-Stool.jpg",           img2:"",                                                    mat:"Wood"},
+  {name:"Wooden Tray with Strip",sub:"Decorative",  tag:"Artisan",         line:"Elegance lives in every carved detail",            img:"https://i.ibb.co/PLyHTcM/Wooden-Tray-with-Strip.png",  img2:"",                                                    mat:"Wood"},
 ];
 
 // ── RENDER CARDS ──
-function discount(p, mrp){ return Math.round((1 - p/mrp)*100); }
-
 function makeCard(p, idx) {
-  // Every 5th card (0-indexed: 0, 5, 10) is wide (spans 2 cols)
   const isWide = idx % 5 === 0;
   const num    = String(idx + 1).padStart(2, '0');
   const img    = p.img;
   const img2   = p.img2 || p.img;
-  const disc   = discount(p.price, p.mrp);
   return `
   <div class="pcard${isWide ? ' wide' : ''}">
     <div class="pcard-img">
       <img src="${img}" alt="${p.name}" loading="lazy"
            onmouseover="this.src='${img2}'"
            onmouseout="this.src='${img}'"
-           onerror="this.style.opacity='.25';this.style.minHeight='80px'"/>
+           onerror="this.style.opacity='.2';this.style.minHeight='60px'"/>
       <span class="pcard-no">№ ${num}</span>
       ${p.tag ? `<span class="pcard-badge">${p.tag}</span>` : ''}
     </div>
     <div class="pcard-body">
       <div class="pcard-sub">${p.sub}</div>
       <div class="pcard-name">${p.name}</div>
-      <div class="pcard-prices">
-        <span class="pcard-price">₹${p.price.toLocaleString('en-IN')}</span>
-        <span class="pcard-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>
-        <span class="pcard-discount">${disc}% off</span>
-      </div>
+      <div class="pcard-line">${p.line}</div>
       <div class="pcard-mat">${p.mat} · Handcrafted in India</div>
     </div>
   </div>`;
