@@ -2,15 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
+  <!-- ── HOMEPAGE / STORE ── -->
   <url>
     <loc>https://auranest-decors.vercel.app/store/</loc>
-    <lastmod>2026-04-11</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://auranest-decors.vercel.app/assets/og-image.jpg</image:loc>
-      <image:title>Auranest Decors – Handcrafted Indian Home Décor</image:title>
-      <image:caption>Unique folk art planters, wooden trays, ceramic pots and tribal art</image:caption>
+      <image:title>Auranest Decors – Handcrafted Indian Folk Art Home Décor</image:title>
+      <image:caption>Unique folk art planters, wooden trays, ceramic pots and tribal art — delivered worldwide</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://auranest-decors.vercel.app/assets/logo.jpg</image:loc>
@@ -18,11 +19,25 @@
     </image:image>
   </url>
 
+  <!-- ── CONTACT PAGE ── -->
   <url>
     <loc>https://auranest-decors.vercel.app/store/contact.html</loc>
-    <lastmod>2026-04-11</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ── CATALOGUE PAGE ── -->
+  <url>
+    <loc>https://auranest-decors.vercel.app/catalog/</loc>
+    <lastmod>2026-04-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg</image:loc>
+      <image:title>Auranest Decors – 2026 Handcrafted Product Catalogue</image:title>
+      <image:caption>Premium handcrafted wooden trays, Jharokhas, kitchen serveware and home décor</image:caption>
+    </image:image>
   </url>
 
 </urlset>

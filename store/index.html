@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <!-- ══ PRIMARY SEO ══ -->
-<title>Auranest Decors – Handcrafted Indian Home Décor | Folk Art, Planters & Gifts</title>
-<meta name="description" content="Shop handcrafted Indian home décor at Auranest Decors. Unique folk art planters, wooden trays, ceramic pots, tribal art & artisan gifts. Delivered worldwide in 2–3 days. Free shipping on orders above ₹999."/>
+<title>Auranest Decors | Handcrafted Indian Folk Art Home Décor</title>
+<meta name="description" content="Shop handcrafted Indian home décor — folk art, wooden trays, ceramic pots & tribal art. Free shipping above ₹999. Delivered in 2–3 days worldwide."/>
 <meta name="keywords" content="handcrafted home decor, Indian folk art, ceramic planters, wooden trays, tribal art, warli art, mithila art, terracotta pots, artisan decor, home decor India, handmade gifts India, Auranest Decors"/>
 <meta name="author" content="Auranest Decors"/>
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
@@ -54,7 +54,18 @@
   "logo": "https://auranest-decors.vercel.app/assets/logo.jpg",
   "description": "Handcrafted Indian home décor — folk art planters, wooden trays, ceramic pots and artisan gifts delivered worldwide.",
   "email": "info@auranestsdecor.com",
-  "sameAs": [],
+  "telephone": "+91-86792-12984",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+91-86792-12984",
+    "contactType": "customer service",
+    "availableLanguage": ["English", "Hindi"],
+    "contactOption": "TollFree"
+  },
+  "sameAs": [
+    "https://www.instagram.com/auranestdecors",
+    "https://www.facebook.com/auranestdecors"
+  ],
   "address": {
     "@type": "PostalAddress",
     "addressCountry": "IN"
@@ -140,6 +151,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 :root{--beige:#f4ede1;--warm:#ebe0d0;--sand:#d2c0a6;--cream:#faf5ee;--terracotta:#b86d3a;--rust:#8c4522;--gold:#c49535;--gold-lt:#ddb84e;--gold-dk:#9a7220;--dark:#120c06;--mid:#5a4733;--muted:#8a7060;--white:#fffcf7;--border:rgba(170,140,95,0.22);--shadow:0 24px 80px rgba(18,12,6,0.18);--glow:0 0 40px rgba(196,149,53,0.15);--glass:rgba(255,252,247,0.88);}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%;}
@@ -1125,6 +1137,7 @@ select.finp{cursor:pointer;}
 
 <!-- HERO SLIDER -->
 <section class="hero">
+  <h1 class="sr-only">Handcrafted Indian Home Décor — Folk Art, Wooden Trays &amp; Artisan Gifts | Auranest Decors</h1>
   <div class="slide active" id="slide0" style="background-image:url('../assets/banner1.jpg')">
   </div>
   <div class="slide" id="slide1" style="background-image:url('../assets/banner2.jpg')">
@@ -1257,22 +1270,23 @@ select.finp{cursor:pointer;}
     <div class="pay-row"><div class="pay-pill">Stripe</div><div class="pay-pill">Razorpay</div><div class="pay-pill">COD</div><div class="pay-pill">PayPal</div></div>
   </div>
   <div><p class="foot-h">Shop</p><ul class="foot-ul">
-    <li><a href="javascript:void(0)" onclick="CategoryPage.open('Home & Kitchen')">Home & Kitchen</a></li>
-    <li><a href="javascript:void(0)" onclick="CategoryPage.open('Aura décor')">Aura Décor</a></li>
-    <li><a href="javascript:void(0)" onclick="CategoryPage.open('Aesthetic Furniture')">Aesthetic Furniture</a></li>
-    <li><a href="javascript:void(0)" onclick="CategoryPage.open('Giftings')">Giftings</a></li>
+    <li><a href="#shop" onclick="CategoryPage.open('Home & Kitchen');return false;">Home &amp; Kitchen</a></li>
+    <li><a href="#shop" onclick="CategoryPage.open('Aura décor');return false;">Aura Décor</a></li>
+    <li><a href="#shop" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Aesthetic Furniture</a></li>
+    <li><a href="#shop" onclick="CategoryPage.open('Giftings');return false;">Giftings</a></li>
+    <li><a href="../catalog/">📖 Catalogue</a></li>
   </ul></div>
   <div><p class="foot-h">Help</p><ul class="foot-ul">
-    <li><a href="javascript:void(0)" onclick="showToast('🚚 Track Order feature coming soon!')">Track Order</a></li>
-    <li><a href="javascript:void(0)" onclick="goToSection('faqs')">Shipping Policy</a></li>
-    <li><a href="javascript:void(0)" onclick="goToSection('faqs')">Returns</a></li>
-    <li><a href="javascript:void(0)" onclick="goToSection('faqs')">FAQs</a></li>
+    <li><a href="contact.html">Contact Us</a></li>
+    <li><a href="#faqs" onclick="goToSection('faqs');return false;">Shipping Policy</a></li>
+    <li><a href="#faqs" onclick="goToSection('faqs');return false;">Returns &amp; Exchanges</a></li>
+    <li><a href="#faqs" onclick="goToSection('faqs');return false;">FAQs</a></li>
   </ul></div>
   <div><p class="foot-h">Company</p><ul class="foot-ul">
-    <li><a href="javascript:void(0)" onclick="goToSection('about')">About Us</a></li>
-    <li><a href="javascript:void(0)" onclick="goToSection('about')">Our Artisans</a></li>
-    <li><a href="javascript:void(0)" onclick="showToast('Privacy Policy coming soon!')">Privacy Policy</a></li>
-    <li><a href="javascript:void(0)" onclick="showToast('Terms & Conditions coming soon!')">Terms</a></li>
+    <li><a href="#about" onclick="goToSection('about');return false;">About Us</a></li>
+    <li><a href="#about" onclick="goToSection('about');return false;">Our Artisans</a></li>
+    <li><a href="contact.html">Get in Touch</a></li>
+    <li><a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a></li>
   </ul></div>
   <div class="foot-bottom"><span class="foot-copy">© 2026 Auranest Decors. All rights reserved.</span><span class="foot-copy">Made with ❤️ for Indian Artisans</span></div>
 </footer>
