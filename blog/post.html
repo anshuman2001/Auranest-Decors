@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title id="pageTitle">Blog | Auranest Decors</title>
+<meta name="description" id="pageMeta" content="Read the Auranest Decors blog for Indian home décor tips, folk art guides and artisan stories."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" id="pageCanonical" href="https://auranest-decors.vercel.app/blog/post.html"/>
+<link rel="icon" type="image/jpeg" href="../assets/logo.jpg"/>
+<meta property="og:type" content="article" id="ogType"/>
+<meta property="og:site_name" content="Auranest Decors"/>
+<meta property="og:title" id="ogTitle" content="Blog | Auranest Decors"/>
+<meta property="og:description" id="ogDesc" content=""/>
+<meta property="og:url" id="ogUrl" content=""/>
+<meta property="og:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" id="twTitle" content=""/>
+<meta name="twitter:description" id="twDesc" content=""/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --dark:#17100a;--mid:#4a3728;--muted:#917c68;
+  --gold:#c49a3c;--gold-lt:#ddb95e;--gold-dk:#9a7628;
+  --cream:#faf6ef;--warm:#f3ece0;--beige:#e6dace;--white:#fff;
+  --border:rgba(196,154,60,.18);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--dark);-webkit-font-smoothing:antialiased;}
+img{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--gold);}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--dark);color:rgba(255,255,255,.45);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;text-align:center;padding:.5rem;}
+.topbar span{color:var(--gold-lt);}
+
+/* ── NAV ── */
+.nav{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:1rem 6rem;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.nav-brand{display:flex;align-items:center;gap:.8rem;}
+.nav-brand img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);}
+.nav-brand-text .brand{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;color:var(--dark);}
+.nav-brand-text .tagline{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.nav-links{display:flex;align-items:center;gap:2rem;}
+.nav-links a{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+.btn-back{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mid);border:1px solid var(--border);padding:.45rem 1rem;
+  transition:all .2s;
+}
+.btn-back:hover{border-color:var(--gold);color:var(--gold);}
+.btn-back::before{content:'←';}
+
+/* ── POST HEADER BANNER ── */
+.post-banner{
+  background:var(--dark);padding:4rem 6rem 3.5rem;
+  position:relative;overflow:hidden;
+}
+.post-banner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(196,154,60,.09),transparent 55%);
+}
+.post-banner-pattern{
+  position:absolute;inset:0;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c49a3c'%3E%3Cpath d='M20 0L0 20 20 40 40 20z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.post-banner-inner{position:relative;z-index:1;max-width:780px;}
+.post-crumb{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:1.5rem;
+}
+.post-crumb a{color:rgba(196,154,60,.6);transition:color .2s;}
+.post-crumb a:hover{color:var(--gold-lt);}
+.post-crumb-sep{opacity:.3;}
+.post-meta-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+.post-cat{
+  background:var(--gold);color:#fff;
+  font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;padding:.22rem .7rem;
+}
+.post-readtime{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+.post-date{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.post-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,5vw,3.8rem);font-weight:300;
+  color:#fff;line-height:1.05;margin-bottom:1.2rem;
+}
+.post-subtitle{
+  font-size:.88rem;color:rgba(255,255,255,.45);line-height:1.75;
+  max-width:65ch;font-style:italic;
+  font-family:'Cormorant Garamond',serif;
+}
+.gold-stripe{height:3px;background:linear-gradient(90deg,var(--dark),var(--gold),var(--gold-lt),var(--gold),var(--dark));}
+
+/* ── ARTICLE BODY ── */
+.article-wrap{max-width:780px;margin:0 auto;padding:4rem 2rem 5rem;}
+.article-content h2{
+  font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:400;
+  color:var(--dark);margin:2.5rem 0 .9rem;line-height:1.2;
+}
+.article-content h2:first-child{margin-top:0;}
+.article-content p{
+  font-size:.92rem;line-height:1.9;color:var(--mid);margin-bottom:1.1rem;
+}
+.article-content strong{color:var(--dark);font-weight:600;}
+.article-content ul{
+  margin:1rem 0 1.3rem 1.5rem;
+}
+.article-content ul li{
+  font-size:.88rem;line-height:1.8;color:var(--mid);margin-bottom:.35rem;
+}
+.article-content ul li::marker{color:var(--gold);}
+
+/* ── SHARE BAR ── */
+.share-bar{
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:1.5rem 0;margin:1rem 0 3rem;
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.share-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.share-btn{
+  display:inline-flex;align-items:center;gap:.45rem;
+  border:1px solid var(--border);padding:.4rem .95rem;
+  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mid);transition:all .2s;cursor:pointer;background:none;
+  font-family:'Outfit',sans-serif;
+}
+.share-btn:hover{border-color:var(--gold);color:var(--gold);}
+.share-btn.whatsapp:hover{border-color:#25d366;color:#25d366;}
+
+/* ── MORE POSTS ── */
+.more-sec{background:var(--warm);padding:4rem 6rem;}
+.more-eye{font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}
+.more-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--dark);margin-bottom:2rem;}
+.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.mcard{background:var(--white);cursor:pointer;transition:transform .25s,box-shadow .25s;}
+.mcard:hover{transform:translateY(-3px);box-shadow:0 10px 35px rgba(23,16,10,.09);}
+.mcard-thumb{
+  height:110px;background:var(--dark);position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.mcard-thumb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(196,154,60,.14),transparent);}
+.mcard-num{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(196,154,60,.15);position:relative;z-index:1;}
+.mcard-body{padding:1rem 1.1rem 1.2rem;}
+.mcard-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:500;color:var(--dark);line-height:1.3;margin-bottom:.4rem;}
+.mcard-read{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+
+/* ── FOOTER ── */
+.blog-footer{background:var(--dark);padding:2.5rem 6rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.bf-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#fff;}
+.bf-brand em{font-style:italic;color:var(--gold-lt);}
+.bf-links{display:flex;gap:2rem;}
+.bf-links a{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);transition:color .2s;}
+.bf-links a:hover{color:var(--gold-lt);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .post-banner,.more-sec,.blog-footer,.nav{padding-left:2.5rem;padding-right:2.5rem;}
+  .more-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .post-banner,.more-sec,.blog-footer,.nav{padding-left:1.5rem;padding-right:1.5rem;}
+  .more-grid{grid-template-columns:1fr;}
+  .article-wrap{padding:2.5rem 1.2rem 4rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">Free shipping above <span>₹999</span> &nbsp;·&nbsp; 100% Handcrafted by Indian Artisans</div>
+
+<nav class="nav">
+  <a class="nav-brand" href="../store/">
+    <img src="../assets/logo.jpg" alt="Auranest Decors" onerror="this.style.display='none'"/>
+    <div class="nav-brand-text">
+      <div class="brand">Auranest Decors</div>
+      <div class="tagline">Feel the beauty of home</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="btn-back">All Articles</a>
+    <a href="../store/" style="background:var(--dark);color:var(--gold-lt);padding:.5rem 1.4rem;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;">Shop Now</a>
+  </div>
+</nav>
+
+<!-- POST HEADER -->
+<div class="post-banner" id="postBanner">
+  <div class="post-banner-pattern"></div>
+  <div class="post-banner-inner">
+    <div class="post-crumb">
+      <a href="../store/">Home</a>
+      <span class="post-crumb-sep">/</span>
+      <a href="index.html">Journal</a>
+      <span class="post-crumb-sep">/</span>
+      <span id="crumbTitle">Article</span>
+    </div>
+    <div class="post-meta-row">
+      <span class="post-cat" id="postCat">Home Décor Tips</span>
+      <span class="post-readtime" id="postRead">6 min read</span>
+      <span class="post-date" id="postDate">April 2026</span>
+    </div>
+    <h1 class="post-title" id="postTitle">Loading…</h1>
+    <p class="post-subtitle" id="postSubtitle"></p>
+  </div>
+</div>
+<div class="gold-stripe"></div>
+
+<!-- ARTICLE BODY -->
+<main class="article-wrap">
+  <div class="article-content" id="articleContent">
+    <p style="color:var(--muted)">Loading article…</p>
+  </div>
+
+  <!-- SHARE BAR -->
+  <div class="share-bar">
+    <span class="share-label">Share this article</span>
+    <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+    <button class="share-btn" onclick="copyLink()">🔗 Copy Link</button>
+  </div>
+</main>
+
+<!-- MORE POSTS -->
+<section class="more-sec">
+  <p class="more-eye">Keep Reading</p>
+  <h2 class="more-title">More from the Journal</h2>
+  <div class="more-grid" id="moreGrid"></div>
+</section>
+
+<footer class="blog-footer">
+  <div class="bf-brand">Auranest <em>Decors</em></div>
+  <div class="bf-links">
+    <a href="../store/">Store</a>
+    <a href="../catalog/">Catalogue</a>
+    <a href="index.html">Blog</a>
+    <a href="../store/contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+const POSTS = [
+  {
+    slug:"10-ways-to-style-indian-folk-art-modern-home",
+    title:"10 Ways to Style Indian Folk Art in a Modern Home",
+    meta:"Discover 10 elegant ways to use indian folk art home decor in modern interiors with timeless Indian charm and artisan beauty.",
+    readTime:"6 min read",category:"Home Décor Tips",date:"April 2026",
+    content:`<h2>Bring Heritage into Contemporary Spaces</h2> <p>Modern homes often celebrate clean lines, neutral palettes, and uncluttered layouts. Yet many homeowners also want warmth, identity, and cultural richness. That is where <strong>indian folk art home decor</strong> becomes truly special. Rooted in centuries of storytelling, regional craftsmanship, and symbolic beauty, Indian folk art can transform a simple space into one with soul.</p> <p>From Madhubani paintings to Warli motifs and hand-painted wooden accents, folk art adds colour and meaning without overpowering modern interiors. At Auranest Decors, we believe handcrafted pieces help you truly feel the beauty of home.</p> <h2>1. Create a Statement Wall</h2> <p>Choose one large folk art painting or a curated gallery wall as the focal point of your living room. Keep surrounding walls neutral so the artwork stands out beautifully. This is one of the easiest ways to introduce <strong>indian folk art home decor</strong> into a modern apartment.</p> <h2>2. Pair with Minimal Furniture</h2> <p>Simple sofas, sleek tables, and subtle fabrics allow handcrafted art to shine. When bold folk art is paired with modern furniture, the contrast feels intentional and elegant.</p> <h2>3. Add Colour Through Small Accents</h2> <p>If you prefer subtle styling, use trays, stools, coasters, or decorative boxes featuring folk motifs. These smaller elements add character while keeping the room airy and uncluttered.</p> <h2>4. Use Traditional Frames in Hallways</h2> <p>Hallways and entry passages are often overlooked. Install framed miniature folk paintings or wooden panels along these spaces to create a warm welcome.</p> <h2>5. Style a Console Table</h2> <p>Place a handcrafted tray, a brass lamp, and a small folk art frame on a console table near the entrance. This instantly creates a sophisticated Indian-inspired corner.</p> <h2>6. Bring Folk Art into the Dining Area</h2> <p>Dining rooms benefit from warmth and storytelling. Use hand-painted serveware, placemats, or wall art behind the dining table. It creates a memorable setting for meals and gatherings.</p> <h2>7. Layer with Natural Materials</h2> <p>Wood, cane, linen, terracotta, and cotton pair beautifully with folk art. These textures complement the handmade nature of the pieces and create harmony.</p> <h2>8. Refresh Bedrooms with Calm Motifs</h2> <p>Choose softer-toned folk art for bedrooms. Nature-inspired themes, floral designs, or birds can add peaceful energy while maintaining a restful atmosphere.</p> <h2>9. Use Lighting to Highlight Craftsmanship</h2> <p>Warm lighting helps reveal texture, brushwork, and carved details. Spotlights or wall lamps can turn handcrafted art into an evening feature.</p> <h2>10. Mix Regions Thoughtfully</h2> <p>India offers many art traditions. Combine one or two styles rather than too many at once. For example:</p> <ul> <li>Madhubani with modern wood furniture</li> <li>Warli with monochrome interiors</li> <li>Rajasthani painted accents with warm earthy tones</li> </ul> <h2>How to Keep It Balanced</h2> <p>The key to styling <strong>indian folk art home decor</strong> in modern spaces is balance. Let one piece lead while other items support it. Avoid overcrowding surfaces or mixing too many bright colours in one area.</p> <h2>Why Handcrafted Décor Matters</h2> <p>When you choose artisan-made décor, you bring home more than an object. You support living traditions, skilled makers, and meaningful craftsmanship. Every brushstroke and carving reflects human hands and heritage.</p> <p>Auranest Decors curates handcrafted pieces that blend beautifully into modern homes while honouring India's artistic legacy. Whether you start with a tray, a wall frame, or a painted stool, timeless beauty can begin with one thoughtful piece.</p> <p>Modern design does not need to feel cold or impersonal. With <strong>indian folk art home decor</strong>, your home can feel refined, welcoming, and deeply connected to culture.</p>`
+  },
+  {
+    slug:"what-is-madhubani-art-beginners-guide-home-decorators",
+    title:"What is Madhubani Art? A Beginner's Guide for Home Decorators",
+    meta:"Learn how madhubani art home decor adds colour, symbolism, and handmade beauty to modern Indian interiors.",
+    readTime:"7 min read",category:"Home Décor Tips",date:"April 2026",
+    content:`<h2>An Art Form Full of Story and Colour</h2> <p>Madhubani art is one of India's most celebrated traditional painting styles, known for intricate patterns, bold colours, and symbolic storytelling. Originating in the Mithila region of Bihar, this art form has moved from walls and floors of village homes to galleries and modern interiors around the world.</p> <p>Today, <strong>madhubani art home decor</strong> is loved by homeowners who want spaces that feel expressive, cultured, and handcrafted.</p> <h2>Where Did Madhubani Art Begin?</h2> <p>The word Madhubani refers to a district in Bihar where the art gained recognition. Traditionally, women painted walls during weddings, festivals, and celebrations using natural pigments and handmade tools.</p> <p>Common themes include:</p> <ul> <li>Nature and trees</li> <li>Fish and birds</li> <li>Sun and moon</li> <li>Mythological scenes</li> <li>Fertility and prosperity symbols</li> </ul> <h2>What Makes Madhubani Unique?</h2> <p>Madhubani art is instantly recognisable because of its filled spaces, geometric borders, and expressive lines. Empty areas are often covered with patterns, making the artwork lively and rich.</p> <p>Unlike many minimalist art forms, Madhubani celebrates abundance and storytelling.</p> <h2>Why It Works in Modern Homes</h2> <p>You may wonder whether traditional art suits contemporary interiors. The answer is yes. <strong>madhubani art home decor</strong> works beautifully because it introduces colour, personality, and cultural depth into modern spaces.</p> <p>In neutral homes, a single Madhubani frame can become the centrepiece. In eclectic homes, it blends naturally with layered textures and vibrant accessories.</p> <h2>Best Ways to Use Madhubani Art at Home</h2> <h2>1. Living Room Feature Wall</h2> <p>Hang a framed Madhubani painting above a sofa or console table for instant character.</p> <h2>2. Entryway Welcome Corner</h2> <p>A smaller artwork near the entrance creates a warm first impression.</p> <h2>3. Bedroom Calm and Colour</h2> <p>Choose floral or nature-themed Madhubani pieces for a serene atmosphere.</p> <h2>4. Dining Space Accent</h2> <p>Place art near your dining table to spark conversation during meals.</p> <h2>5. Handcrafted Utility Pieces</h2> <p>Painted trays, boxes, and stools featuring Madhubani motifs combine beauty with function.</p> <h2>How to Style It Correctly</h2> <p>Use one or two key pieces rather than filling every wall. Pair with wood, cane, cotton, brass, and earthy ceramics. These materials complement the handmade spirit of the art.</p> <p>If the artwork is highly colourful, keep nearby furnishings simple.</p> <h2>Why Artisan-Made Matters</h2> <p>Choosing authentic handcrafted décor helps preserve skills passed through generations. It also brings a warmth that machine-made décor often lacks.</p> <p>At Auranest Decors, we admire how traditional crafts can live beautifully in present-day homes. Each handcrafted object carries both beauty and memory.</p> <h2>A Timeless Choice for Every Home</h2> <p>Whether your home style is modern, bohemian, classic, or minimal, <strong>madhubani art home decor</strong> adds authenticity and warmth. It is not just decoration—it is living heritage.</p>`
+  },
+  {
+    slug:"wooden-trays-serveware-style-dining-table-indian-way",
+    title:"Wooden Trays & Serveware: How to Style Your Dining Table the Indian Way",
+    meta:"Style elegant tables with handcrafted wooden trays India loves for dining, hosting, and festive entertaining.",
+    readTime:"6 min read",category:"Home Décor Tips",date:"April 2026",
+    content:`<h2>Dining with Warmth and Craftsmanship</h2> <p>The dining table is where conversations begin, festivals are shared, and guests feel welcomed. Thoughtful styling can turn everyday meals into memorable moments. One timeless choice is using <strong>handcrafted wooden trays India</strong> is known for—beautiful, durable, and rich in character.</p> <p>Wood brings warmth that glass or plastic rarely can. Handcrafted serveware adds authenticity, making every table feel inviting.</p> <h2>Why Wooden Serveware Remains Timeless</h2> <p>Wooden trays and platters suit both casual breakfasts and festive dinners. Their natural grain pairs well with ceramic bowls, brass accents, linen runners, and fresh flowers.</p> <p>They are practical for serving and beautiful enough to leave on display.</p> <h2>1. Use a Tray as a Centrepiece Base</h2> <p>Place a medium tray in the middle of the table with candles, flowers, or small bowls. It creates structure while keeping décor organised.</p> <h2>2. Serve Snacks in Style</h2> <p>Use sectioned trays or flat wooden platters for dry snacks, mithai, fruits, or tea-time treats.</p> <h2>3. Layer with Indian Textiles</h2> <p>Pair trays with cotton runners, block-print napkins, or handwoven placemats for a rich Indian-inspired setting.</p> <h2>4. Create a Festive Thali Corner</h2> <p>During celebrations, use trays to hold diyas, sweets, nuts, and flowers. This makes hosting elegant and effortless.</p> <h2>5. Breakfast Setup Made Easy</h2> <p>A tray with tea, toast, fruit, and flowers instantly elevates a simple morning meal.</p> <h2>Choosing the Right Wooden Tray</h2> <ul> <li>Rectangular trays for serving meals</li> <li>Round trays for centrepieces</li> <li>Handled trays for easy movement</li> <li>Carved trays for decorative use</li> <li>Painted trays for colourful accents</li> </ul> <h2>How to Maintain Wooden Serveware</h2> <ul> <li>Wipe clean with a soft damp cloth</li> <li>Dry immediately after cleaning</li> <li>Avoid soaking in water</li> <li>Keep away from harsh chemicals</li> <li>Oil occasionally if recommended</li> </ul> <h2>Everyday Beauty Matters</h2> <p>Often we save beautiful serveware for guests. Instead, use it daily. A thoughtfully styled table can make ordinary meals feel special.</p> <p>When chosen well, <strong>handcrafted wooden trays India</strong> offers are timeless pieces you will use for years. Functional, elegant, and rooted in craft, they help your dining table feel welcoming in every season.</p>`
+  },
+  {
+    slug:"what-is-a-jharokha-story-behind-indias-iconic-wall-decor",
+    title:"What is a Jharokha? The Story Behind India's Most Iconic Wall Décor",
+    meta:"Discover the heritage and styling ideas behind jharokha wall decor Indian home interiors love today.",
+    readTime:"7 min read",category:"Home Décor Tips",date:"April 2026",
+    content:`<h2>A Window into Heritage</h2> <p>A Jharokha is a traditional overhanging enclosed window or decorative frame found in historic Indian architecture, especially in Rajasthan and parts of North India. Once used in palaces and havelis, these beautifully carved structures are now reimagined as timeless décor pieces.</p> <p>Today, <strong>jharokha wall decor Indian home</strong> enthusiasts admire combines architecture, artistry, and cultural elegance.</p> <h2>The Origins of the Jharokha</h2> <p>Jharokhas were designed to project outward from walls, allowing air, light, and views while preserving privacy. Royal families and noble households often used them in grand buildings.</p> <p>They became symbols of grace, craftsmanship, and prestige.</p> <h2>Why Jharokhas Became Décor Icons</h2> <p>Carved arches, lattice detailing, and ornate frames make Jharokhas visually striking. Even when detached from architecture and used as wall art, they retain their regal presence.</p> <p>This is why <strong>jharokha wall decor Indian home</strong> styling remains popular in both traditional and modern spaces.</p> <h2>How to Use Jharokhas at Home</h2> <h2>1. Statement Wall Piece</h2> <p>Place one large Jharokha above a console, sofa, or bed as the focal point of the room.</p> <h2>2. Entryway Accent</h2> <p>A handcrafted Jharokha near the entrance creates a warm and memorable welcome.</p> <h2>3. Mirror Frame Style</h2> <p>Some Jharokhas include mirrors, making them practical and decorative.</p> <h2>4. Pair in Symmetry</h2> <p>Use two matching smaller Jharokhas on either side of artwork or a doorway.</p> <h2>Best Materials and Finishes</h2> <ul> <li>Natural carved wood for warmth</li> <li>Distressed finishes for vintage charm</li> <li>Whitewashed styles for softer interiors</li> <li>Bold painted colours for eclectic rooms</li> </ul> <h2>How to Style with Modern Interiors</h2> <p>Keep surrounding décor simple. A Jharokha already carries visual richness, so let it stand proudly. Neutral walls, warm lighting, and minimal furniture work especially well.</p> <h2>Why Handcrafted Pieces Matter</h2> <p>Machine-made décor may copy the shape, but handcrafted work captures depth, carving detail, and individuality. Each artisan-made frame carries character that mass production cannot fully replicate.</p> <p>Auranest Decors celebrates heritage-inspired handcrafted décor that helps modern homes feel rooted and refined.</p> <h2>A Lasting Symbol of Beauty</h2> <p>The appeal of <strong>jharokha wall decor Indian home</strong> design lies in its story. It is more than a decorative frame—it is an echo of palaces, courtyards, and centuries of craftsmanship.</p>`
+  },
+  {
+    slug:"10-thoughtful-handcrafted-gifts-for-diwali-2026-indian-artisans",
+    title:"10 Thoughtful Handcrafted Gifts for Diwali 2026 from Indian Artisans",
+    meta:"Explore handcrafted diwali gifts india families will love in 2026, made by skilled artisans with festive charm.",
+    readTime:"7 min read",category:"Home Décor Tips",date:"April 2026",
+    content:`<h2>Celebrate Diwali with Meaningful Gifting</h2> <p>Diwali is a festival of light, gratitude, and togetherness. It is also a time to share thoughtful gifts with family, friends, clients, and loved ones. Instead of generic presents, many people now prefer artisan-made gifts that carry warmth and story.</p> <p>That is why <strong>handcrafted diwali gifts india</strong> searches rise every festive season. Handmade pieces feel personal, timeless, and full of character.</p> <h2>1. Handcrafted Wooden Trays</h2> <p>Elegant trays are practical for serving sweets, tea, or festive snacks. They also become beautiful décor after the celebrations.</p> <h2>2. Decorative Jharokha Frames</h2> <p>A heritage-inspired wall piece makes a memorable gift for new homeowners or décor lovers.</p> <h2>3. Hand-Painted Tea Light Holders</h2> <p>Perfect for Diwali evenings, these add glow and festive charm.</p> <h2>4. Folk Art Wall Pieces</h2> <p>Celebrate India's artistic traditions with handcrafted paintings or framed motifs.</p> <h2>5. Decorative Wooden Stools</h2> <p>Useful as side tables, plant stands, or accent seating.</p> <h2>6. Festive Serveware Sets</h2> <p>Great for hosts who love entertaining guests during celebrations.</p> <h2>7. Artisan Storage Boxes</h2> <p>Ideal for jewellery, dry fruits, keepsakes, or pooja essentials.</p> <h2>8. Candle and Décor Hampers</h2> <p>Curated hampers feel premium and convenient for corporate gifting.</p> <h2>9. Handmade Kitchen Accessories</h2> <p>Useful gifts often become the most loved. Choose tasteful handcrafted utility items.</p> <h2>10. Personal Home Accent Pieces</h2> <p>Select décor based on the recipient's style—minimal, colourful, classic, or modern.</p> <h2>Why Handmade Gifts Feel Better</h2> <ul> <li>They support artisans and traditional skills</li> <li>Each piece feels unique</li> <li>They are often longer lasting</li> <li>They carry emotional value</li> <li>They stand out from mass-produced gifts</li> </ul> <h2>Celebrate with Purpose</h2> <p>Auranest Decors values gifts that bring beauty into everyday homes while honouring Indian craftsmanship. During Diwali, a handcrafted gift becomes more than a gesture—it becomes part of someone's celebrations.</p> <p>If you want gifts that feel warm, memorable, and rooted in culture, choose <strong>handcrafted diwali gifts india</strong> artisans create with care. This festive season, let your presents reflect thoughtfulness, artistry, and the true spirit of Diwali.</p>`
+  }
+];
+
+function getSlug() {
+  return new URLSearchParams(window.location.search).get('slug') || POSTS[0].slug;
+}
+
+function loadPost() {
+  const slug = getSlug();
+  const post = POSTS.find(p => p.slug === slug) || POSTS[0];
+  const others = POSTS.filter(p => p.slug !== post.slug).slice(0, 3);
+
+  // Update meta
+  document.getElementById('pageTitle').textContent = post.title + ' | Auranest Decors';
+  document.getElementById('pageMeta').setAttribute('content', post.meta);
+  document.getElementById('pageCanonical').setAttribute('href', 'https://auranest-decors.vercel.app/blog/post.html?slug=' + post.slug);
+  document.getElementById('ogTitle').setAttribute('content', post.title);
+  document.getElementById('ogDesc').setAttribute('content', post.meta);
+  document.getElementById('ogUrl').setAttribute('content', 'https://auranest-decors.vercel.app/blog/post.html?slug=' + post.slug);
+  document.getElementById('twTitle').setAttribute('content', post.title);
+  document.getElementById('twDesc').setAttribute('content', post.meta);
+
+  // Update header
+  document.getElementById('crumbTitle').textContent = post.title.substring(0, 40) + '…';
+  document.getElementById('postCat').textContent = post.category;
+  document.getElementById('postRead').textContent = post.readTime;
+  document.getElementById('postDate').textContent = post.date;
+  document.getElementById('postTitle').textContent = post.title;
+  document.getElementById('postSubtitle').textContent = post.meta;
+
+  // Render content
+  document.getElementById('articleContent').innerHTML = post.content;
+
+  // Render more posts
+  document.getElementById('moreGrid').innerHTML = others.map((p, i) => `
+    <div class="mcard" onclick="location.href='post.html?slug=${p.slug}'">
+      <div class="mcard-thumb"><div class="mcard-num">0${POSTS.indexOf(p)+1}</div></div>
+      <div class="mcard-body">
+        <div class="mcard-title">${p.title}</div>
+        <div class="mcard-read">${p.readTime}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Add Article structured data
+  const schema = {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline": post.title,
+    "description": post.meta,
+    "author": {"@type":"Organization","name":"Auranest Decors"},
+    "publisher": {"@type":"Organization","name":"Auranest Decors","logo":{"@type":"ImageObject","url":"https://auranest-decors.vercel.app/assets/logo.jpg"}},
+    "url": "https://auranest-decors.vercel.app/blog/post.html?slug=" + post.slug,
+    "datePublished": "2026-04-21",
+    "dateModified": "2026-04-21"
+  };
+  const s = document.createElement('script');
+  s.type = 'application/ld+json';
+  s.textContent = JSON.stringify(schema);
+  document.head.appendChild(s);
+}
+
+function shareWhatsApp() {
+  const url = encodeURIComponent(location.href);
+  const txt = encodeURIComponent(document.getElementById('postTitle').textContent + ' — via Auranest Decors');
+  window.open('https://wa.me/?text=' + txt + '%0A' + url, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(location.href).then(() => alert('Link copied!'));
+}
+
+loadPost();
+</script>
+</body>
+</html>

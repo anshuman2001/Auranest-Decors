@@ -5,6 +5,7 @@ User-agent: *
 Allow: /store/
 Allow: /store/contact.html
 Allow: /catalog/
+Allow: /blog/
 Allow: /assets/
 Allow: /manifest.json
 Disallow: /admin/
