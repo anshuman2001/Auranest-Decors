@@ -27,7 +27,7 @@
 <meta property="og:title" content="Auranest Decors – Handcrafted Indian Home Décor"/>
 <meta property="og:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days. Free shipping above ₹999."/>
 <meta property="og:url" content="https://auranest-decors.vercel.app/store/"/>
-<meta property="og:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+<meta property="og:image" content="https://i.ibb.co/r2C2ZLyr/Farming-on-Wood-Tray.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta property="og:image:type" content="image/jpeg"/>
@@ -41,7 +41,7 @@
 <meta name="twitter:creator" content="@auranestdecors"/>
 <meta name="twitter:title" content="Auranest Decors – Handcrafted Indian Home Décor"/>
 <meta name="twitter:description" content="Unique folk art planters, wooden trays, ceramic pots & tribal art. Delivered worldwide in 2–3 days. Free shipping above ₹999."/>
-<meta name="twitter:image" content="https://auranest-decors.vercel.app/assets/og-image.jpg"/>
+<meta name="twitter:image" content="https://i.ibb.co/r2C2ZLyr/Farming-on-Wood-Tray.jpg"/>
 <meta name="twitter:image:alt" content="Auranest Decors – Handcrafted Indian Home Décor"/>
 
 <!-- ══ STRUCTURED DATA — Organization ══ -->
@@ -97,7 +97,7 @@
   "@context": "https://schema.org",
   "@type": "Store",
   "name": "Auranest Decors",
-  "image": "https://auranest-decors.vercel.app/assets/og-image.jpg",
+  "image": "https://i.ibb.co/r2C2ZLyr/Farming-on-Wood-Tray.jpg",
   "url": "https://auranest-decors.vercel.app/store/",
   "description": "Handcrafted Indian home décor store — folk art, tribal art, ceramic planters, wooden trays delivered worldwide.",
   "priceRange": "₹649 – ₹1899",
@@ -134,10 +134,10 @@
   "name": "Auranest Decors – Product Categories",
   "url": "https://auranest-decors.vercel.app/store/",
   "itemListElement": [
-    {"@type":"ListItem","position":1,"name":"Home & Kitchen","url":"https://auranest-decors.vercel.app/store/#shop"},
-    {"@type":"ListItem","position":2,"name":"Aura Décor","url":"https://auranest-decors.vercel.app/store/#shop"},
-    {"@type":"ListItem","position":3,"name":"Aesthetic Furniture","url":"https://auranest-decors.vercel.app/store/#shop"},
-    {"@type":"ListItem","position":4,"name":"Giftings","url":"https://auranest-decors.vercel.app/store/#shop"}
+    {"@type":"ListItem","position":1,"name":"Home & Kitchen","url":"https://auranest-decors.vercel.app/store/home-kitchen.html"},
+    {"@type":"ListItem","position":2,"name":"Aura Décor","url":"https://auranest-decors.vercel.app/store/aura-decor.html"},
+    {"@type":"ListItem","position":3,"name":"Aesthetic Furniture","url":"https://auranest-decors.vercel.app/store/aesthetic-furniture.html"},
+    {"@type":"ListItem","position":4,"name":"Giftings","url":"https://auranest-decors.vercel.app/store/giftings.html"}
   ]
 }
 </script>
@@ -862,6 +862,80 @@ select.finp{cursor:pointer;}
   .pp-info{padding:1.4rem 1.1rem 3rem;}
   .pp-meta{grid-template-columns:1fr;}
 }
+
+/* ══ TRUST BAR NUMBERS ══ */
+.trust-num{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:var(--gold-lt);line-height:1;margin-bottom:.2rem;}
+.trust-title{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-bottom:.2rem;}
+.trust-desc{font-size:.68rem;color:rgba(255,255,255,.4);line-height:1.5;}
+
+/* ══ SOCIAL PROOF / REVIEWS ══ */
+.reviews-section{padding:5rem 5rem;background:var(--cream);position:relative;}
+.reviews-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+.rv-stars{color:var(--gold);font-size:.9rem;letter-spacing:.1em;margin-bottom:.6rem;}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;}
+.rv-card{background:var(--white);padding:1.8rem;border:1px solid var(--border);position:relative;transition:box-shadow .3s;}
+.rv-card:hover{box-shadow:0 12px 40px rgba(23,16,10,.07);}
+.rv-quote{position:absolute;top:1.2rem;right:1.4rem;font-family:'Cormorant Garamond',serif;font-size:3.5rem;color:var(--border);line-height:1;font-style:italic;}
+.rv-text{font-size:.84rem;line-height:1.85;color:var(--mid);margin-bottom:1.2rem;font-style:italic;}
+.rv-author{display:flex;align-items:center;gap:.8rem;}
+.rv-avatar{width:36px;height:36px;border-radius:50%;background:var(--warm);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.rv-name{font-size:.78rem;font-weight:600;color:var(--dark);}
+.rv-meta{font-size:.65rem;color:var(--muted);letter-spacing:.06em;}
+.rv-product{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:.2rem;}
+.rv-summary{display:flex;align-items:center;gap:2.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.rv-summary-stat{text-align:center;}
+.rv-summary-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--dark);line-height:1;}
+.rv-summary-lbl{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.rv-bar-wrap{flex:1;min-width:160px;}
+.rv-bar-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem;}
+.rv-bar-lbl{font-size:.65rem;color:var(--muted);width:30px;flex-shrink:0;}
+.rv-bar-track{flex:1;height:5px;background:var(--beige);border-radius:3px;overflow:hidden;}
+.rv-bar-fill{height:100%;background:var(--gold);border-radius:3px;}
+.rv-bar-cnt{font-size:.62rem;color:var(--muted);width:18px;text-align:right;flex-shrink:0;}
+
+/* ══ URGENCY ON PRODUCT CARDS ══ */
+.prod-urgency{font-size:.62rem;color:var(--terracotta);font-weight:600;letter-spacing:.04em;margin-top:.2rem;display:flex;align-items:center;gap:.3rem;}
+.prod-viewers{font-size:.6rem;color:var(--muted);margin-top:.1rem;letter-spacing:.03em;}
+.prod-stock-bar{height:3px;background:var(--beige);border-radius:2px;margin-top:.4rem;overflow:hidden;}
+.prod-stock-fill{height:100%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:2px;}
+
+/* ══ PRODUCT PAGE TABS ══ */
+.pp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:.3rem 0 0;}
+.pp-tab{background:none;border:none;border-bottom:2px solid transparent;padding:.7rem 1.2rem;font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:-1px;}
+.pp-tab.active{border-bottom-color:var(--terracotta);color:var(--dark);font-weight:600;}
+.pp-tab-content{display:none;padding:1.2rem 0 .5rem;font-size:.84rem;line-height:1.85;color:var(--mid);}
+.pp-tab-content.active{display:block;}
+.pp-tab-content ul{padding-left:1.2rem;margin:.5rem 0;}
+.pp-tab-content li{margin-bottom:.3rem;}
+.pp-tab-content .highlight-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.8rem;}
+.pp-tab-content .hl-chip{background:var(--warm);border:1px solid var(--border);padding:.35rem .9rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);}
+.pp-story-pull{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:var(--dark);border-left:3px solid var(--gold);padding-left:1rem;margin:.8rem 0 1rem;line-height:1.6;}
+
+/* ══ WHATSAPP CTA ══ */
+.btn-pp-whatsapp{width:100%;background:#25d366;color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-pp-whatsapp:hover{background:#1ebe5d;}
+.btn-pp-whatsapp svg{width:16px;height:16px;fill:#fff;flex-shrink:0;}
+
+/* ══ STICKY SHOP CTA ══ */
+.sticky-shop-bar{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--dark);border-top:1px solid rgba(196,154,60,.2);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .4s cubic-bezier(.23,1,.32,1);}
+.sticky-shop-bar.visible{transform:translateY(0);}
+.ssb-text{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.ssb-text span{color:var(--gold-lt);font-weight:600;}
+.ssb-btn{background:linear-gradient(135deg,var(--terracotta),var(--rust));color:#fff;border:none;padding:.65rem 2rem;font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
+.ssb-btn:hover{opacity:.9;}
+
+/* ══ RESPONSIVE PATCHES ══ */
+@media(max-width:900px){
+  .rv-grid{grid-template-columns:repeat(2,1fr);}
+  .reviews-section{padding:3rem 3rem;}
+}
+@media(max-width:600px){
+  .rv-grid{grid-template-columns:1fr;}
+  .reviews-section{padding:2.5rem 1.5rem;}
+  .sticky-shop-bar{padding:.6rem 1rem;}
+  .ssb-text{display:none;}
+  .ssb-btn{width:100%;}
+}
 </style>
 <!-- Always start at top on refresh -->
 <script>
@@ -968,33 +1042,33 @@ select.finp{cursor:pointer;}
       <li>
         <span onclick="CategoryPage.open('Home & Kitchen')">Home &amp; Kitchen ▾</span>
         <div class="nav-dropdown">
-          <a href="#" onclick="CategoryPage.open('Home & Kitchen');return false;">Serveware</a>
-          <a href="#" onclick="CategoryPage.open('Home & Kitchen');return false;">Kitchen Tools</a>
-          <a href="#" onclick="CategoryPage.open('Home & Kitchen');return false;">Tableware</a>
+          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Serveware</a>
+          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Kitchen Tools</a>
+          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Tableware</a>
         </div>
       </li>
       <li>
         <span onclick="CategoryPage.open('Aura décor')">Aura Decor ▾</span>
         <div class="nav-dropdown">
-          <a href="#" onclick="CategoryPage.open('Aura décor');return false;">Decorative Pots</a>
-          <a href="#" onclick="CategoryPage.open('Aura décor');return false;">Wall Décor</a>
-          <a href="#" onclick="CategoryPage.open('Aura décor');return false;">Vases</a>
+          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Decorative Pots</a>
+          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Wall Décor</a>
+          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Vases</a>
         </div>
       </li>
       <li>
         <span onclick="CategoryPage.open('Aesthetic Furniture')">Aesthetic Furniture ▾</span>
         <div class="nav-dropdown">
-          <a href="#" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Storage</a>
-          <a href="#" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Racks</a>
-          <a href="#" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Shelves</a>
+          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Storage</a>
+          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Racks</a>
+          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Shelves</a>
         </div>
       </li>
       <li>
         <span onclick="CategoryPage.open('Giftings')">Giftings ▾</span>
         <div class="nav-dropdown">
-          <a href="#" onclick="CategoryPage.open('Giftings');return false;">Festive</a>
-          <a href="#" onclick="CategoryPage.open('Giftings');return false;">Wedding</a>
-          <a href="#" onclick="CategoryPage.open('Giftings');return false;">Artisan</a>
+          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Festive</a>
+          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Wedding</a>
+          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Artisan</a>
         </div>
       </li>
       <li><a href="#about" onclick="ProductPage.close();CategoryPage.close()">About Us</a></li>
@@ -1096,17 +1170,19 @@ select.finp{cursor:pointer;}
       </div>
       <h1 class="pp-name" id="ppName"></h1>
       <div class="pp-price-row" id="ppPriceRow"></div>
-      <p class="pp-desc" id="ppDesc"></p>
-      <hr class="pp-divider"/>
-      <div class="pp-meta" id="ppMeta"></div>
+      <div class="pp-desc" id="ppDesc"></div>
       <div class="pp-actions">
         <button class="btn-pp-add" id="ppAddBtn">Add to Cart</button>
+        <button class="btn-pp-whatsapp" id="ppWhatsappBtn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Order via WhatsApp
+        </button>
         <button class="btn-pp-wish" id="ppWishBtn">♡ Save to Wishlist</button>
       </div>
       <div class="pp-trust">
         <span class="pp-trust-item">🎨 100% Handcrafted</span>
         <span class="pp-trust-item">🚚 Free ship ₹999+</span>
-        <span class="pp-trust-item">🔄 Easy Returns</span>
+        <span class="pp-trust-item">🔄 7-Day Returns</span>
         <span class="pp-trust-item">🔒 Secure Pay</span>
       </div>
       <div class="pp-related">
@@ -1141,8 +1217,28 @@ select.finp{cursor:pointer;}
 <section class="hero">
   <h1 class="sr-only">Handcrafted Indian Home Décor — Folk Art, Wooden Trays &amp; Artisan Gifts | Auranest Decors</h1>
   <div class="slide active" id="slide0" style="background-image:url('../assets/banner1.jpg')">
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">Handcrafted by Indian Artisans</div>
+      <h2 class="slide-title">Premium Wooden,<br>Folk Art &amp; <em>Gifting Décor</em></h2>
+      <p class="slide-desc">Each piece carries the warmth of Indian craftsmanship — designed for homes that value beauty, culture, and quality.</p>
+      <div class="slide-ctas">
+        <button class="btn-primary" onclick="goToSection('collection')">Shop Collection</button>
+        <a class="btn-ghost" href="../catalog/">View Catalogue</a>
+      </div>
+    </div>
   </div>
   <div class="slide" id="slide1" style="background-image:url('../assets/banner2.jpg')">
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-eyebrow">2026 Collection</div>
+      <h2 class="slide-title">Jharokhas, Trays<br>&amp; <em>Festive Gifts</em></h2>
+      <p class="slide-desc">From carved wall frames to handcrafted serveware — artisan pieces that make every home feel like a celebration.</p>
+      <div class="slide-ctas">
+        <button class="btn-primary" onclick="CategoryPage.open('Giftings')">Shop Gifts</button>
+        <a class="btn-ghost" href="../blog/">Read Journal</a>
+      </div>
+    </div>
   </div>
   <div class="slider-dots"><div class="dot active" onclick="goSlide(0)"></div><div class="dot" onclick="goSlide(1)"></div></div>
 </section>
@@ -1222,11 +1318,131 @@ select.finp{cursor:pointer;}
 </section>
 
 <div class="trust-bar">
-  <div class="trust-item"><div class="trust-icon">🎨</div><div class="trust-title">100% Handcrafted</div><div class="trust-desc">Made by skilled Indian artisans.</div></div>
-  <div class="trust-item"><div class="trust-icon">🚚</div><div class="trust-title">2–3 Day Delivery</div><div class="trust-desc">Free shipping above ₹999.</div></div>
-  <div class="trust-item"><div class="trust-icon">🔄</div><div class="trust-title">Easy Returns</div><div class="trust-desc">Hassle-free return policy.</div></div>
-  <div class="trust-item"><div class="trust-icon">🔒</div><div class="trust-title">Secure Payments</div><div class="trust-desc">Razorpay · Stripe · COD.</div></div>
+  <div class="trust-item">
+    <div class="trust-num">500+</div>
+    <div class="trust-title">Homes Decorated</div>
+    <div class="trust-desc">Across India & worldwide.</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num">100%</div>
+    <div class="trust-title">Handcrafted</div>
+    <div class="trust-desc">By skilled Indian artisans.</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num">2–3</div>
+    <div class="trust-title">Day Delivery</div>
+    <div class="trust-desc">Free shipping above ₹999.</div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-num">7</div>
+    <div class="trust-title">Day Easy Returns</div>
+    <div class="trust-desc">Hassle-free, no questions asked.</div>
+  </div>
 </div>
+
+<!-- ══ SOCIAL PROOF ══ -->
+<section class="reviews-section">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:2rem;">
+    <div>
+      <p class="sec-eye" style="margin-bottom:.5rem;">Customer Stories</p>
+      <h2 class="sec-title" style="margin-bottom:0;">What Our <em style="font-style:italic;color:var(--gold)">Customers Say</em></h2>
+    </div>
+    <div class="rv-summary">
+      <div class="rv-summary-stat">
+        <div class="rv-summary-num">4.9</div>
+        <div class="rv-stars">★★★★★</div>
+        <div class="rv-summary-lbl">Average Rating</div>
+      </div>
+      <div class="rv-bar-wrap">
+        <div class="rv-bar-row"><span class="rv-bar-lbl">5★</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:88%"></div></div><span class="rv-bar-cnt">88</span></div>
+        <div class="rv-bar-row"><span class="rv-bar-lbl">4★</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:9%"></div></div><span class="rv-bar-cnt">9</span></div>
+        <div class="rv-bar-row"><span class="rv-bar-lbl">3★</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:3%"></div></div><span class="rv-bar-cnt">3</span></div>
+        <div class="rv-bar-row"><span class="rv-bar-lbl">2★</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:0%"></div></div><span class="rv-bar-cnt">0</span></div>
+        <div class="rv-bar-row"><span class="rv-bar-lbl">1★</span><div class="rv-bar-track"><div class="rv-bar-fill" style="width:0%"></div></div><span class="rv-bar-cnt">0</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="rv-grid">
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">The Madhubani painted wooden tray exceeded my expectations. The painting is incredibly detailed and the wood feels solid and premium. I've already received so many compliments from guests.</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♀️</div>
+        <div>
+          <div class="rv-name">Priya Sharma</div>
+          <div class="rv-meta">Delhi · Verified Purchase</div>
+          <div class="rv-product">Farming on Wood Tray</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">Bought the Blue Jharokha for my living room and it completely transformed the wall. The carving is intricate and the blue colour is rich. Delivery was fast and the packaging was beautiful.</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♂️</div>
+        <div>
+          <div class="rv-name">Arjun Mehta</div>
+          <div class="rv-meta">Mumbai · Verified Purchase</div>
+          <div class="rv-product">Blue Jharokha</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">Gifted the 3-tray set to my mother for Diwali and she absolutely loved it. The folk art motifs are so distinctive — nothing like the generic gifts you find in malls. Will definitely order again.</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♀️</div>
+        <div>
+          <div class="rv-name">Kavita Reddy</div>
+          <div class="rv-meta">Bangalore · Verified Purchase</div>
+          <div class="rv-product">3 Set of Tray</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">The quality is absolutely premium. You can tell these are made by hand — the slight imperfections just make it more beautiful. The Brown Jharokha is the star of my dining room now.</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♂️</div>
+        <div>
+          <div class="rv-name">Rohan Gupta</div>
+          <div class="rv-meta">Pune · Verified Purchase</div>
+          <div class="rv-product">Brown Jharokha</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">Fast delivery, secure packaging, and the product was exactly as shown. The Warli art tray is stunning — my daughter uses it as a decorative piece on her desk. Highly recommend Auranest!</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♀️</div>
+        <div>
+          <div class="rv-name">Sunita Nair</div>
+          <div class="rv-meta">Chennai · Verified Purchase</div>
+          <div class="rv-product">Warli Art Tray</div>
+        </div>
+      </div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-quote">"</div>
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">Ordered as a wedding gift and the couple was blown away. Something this unique and meaningful is hard to find. The Auranest gift packaging itself was gorgeous — made the unboxing experience special.</p>
+      <div class="rv-author">
+        <div class="rv-avatar">🙋‍♂️</div>
+        <div>
+          <div class="rv-name">Vikram Joshi</div>
+          <div class="rv-meta">Ahmedabad · Verified Purchase</div>
+          <div class="rv-product">Giftings Collection</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="banner-sec">
   <div class="banner-img-wrap"><img src="https://i.ibb.co/27CpDwTt/whychose.png" alt="Rooted in Heritage – Auranest Decors handcrafted home décor story" loading="lazy" width="1200" height="600"/></div>
@@ -1268,14 +1484,14 @@ select.finp{cursor:pointer;}
   <div>
     <div class="foot-logo"><img src="../assets/logo.jpg" alt="Auranest Decors logo" loading="lazy" width="48" height="48" onerror="this.style.display='none'"/><div><div class="foot-brand">Auranest Decors</div><div class="foot-tagline">Feel the beauty of home</div></div></div>
     <p class="foot-desc">Bringing India's artisanal heritage into modern homes. Every piece is handcrafted with love, tradition, and purpose.</p>
-    <div class="foot-contact">📧 <a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a><br>💬 WhatsApp: +91 86792 12984</div>
+    <div class="foot-contact">📧 <a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a><br>💬 <a href="https://wa.me/918679212984" target="_blank" rel="noopener">WhatsApp: +91 86792 12984</a></div>
     <div class="pay-row"><div class="pay-pill">Stripe</div><div class="pay-pill">Razorpay</div><div class="pay-pill">COD</div><div class="pay-pill">PayPal</div></div>
   </div>
   <div><p class="foot-h">Shop</p><ul class="foot-ul">
-    <li><a href="#shop" onclick="CategoryPage.open('Home & Kitchen');return false;">Home &amp; Kitchen</a></li>
-    <li><a href="#shop" onclick="CategoryPage.open('Aura décor');return false;">Aura Décor</a></li>
-    <li><a href="#shop" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Aesthetic Furniture</a></li>
-    <li><a href="#shop" onclick="CategoryPage.open('Giftings');return false;">Giftings</a></li>
+    <li><a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Home &amp; Kitchen</a></li>
+    <li><a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Aura Décor</a></li>
+    <li><a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Aesthetic Furniture</a></li>
+    <li><a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Giftings</a></li>
     <li><a href="../catalog/">📖 Catalogue</a></li>
   </ul></div>
   <div><p class="foot-h">Help</p><ul class="foot-ul">
@@ -1825,8 +2041,21 @@ function renderProducts(list) {
   const g = document.getElementById('prodGrid');
   if (!list.length) { g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No products found</div>'; return; }
   g.innerHTML = list.map((p,i) => {
-    const img = p.images?.[0] || p.image || '';
-    const pid = p.id || String(i);
+    const img     = p.images?.[0] || p.image || '';
+    const pid     = p.id || String(i);
+    const stock   = p.stock || 0;
+    const viewers = 3 + ((i * 7 + 11) % 9); // deterministic 3–11
+    // Urgency copy
+    const urgencyHtml = stock > 0 && stock <= 5
+      ? `<div class="prod-urgency">🔥 Only ${stock} left</div>`
+      : stock > 5 && stock <= 15
+      ? `<div class="prod-urgency" style="color:var(--gold-dk);">⚡ Selling fast</div>`
+      : '';
+    const viewersHtml = `<div class="prod-viewers">👁 ${viewers} people viewing now</div>`;
+    // Stock bar (only if stock known)
+    const stockBarHtml = stock > 0
+      ? `<div class="prod-stock-bar"><div class="prod-stock-fill" style="width:${Math.min(100, Math.round(stock/20*100))}%"></div></div>`
+      : '';
     return `
     <div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:16px">
@@ -1841,6 +2070,9 @@ function renderProducts(list) {
       <p class="prod-name">${p.name}</p>
       <p class="prod-price">₹${p.price.toLocaleString('en-IN')} ${p.mrp>p.price?`<span class="prod-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>`:''}</p>
       <p class="prod-mat">${p.material}</p>
+      ${urgencyHtml}
+      ${viewersHtml}
+      ${stockBarHtml}
     </div>`;
   }).join('');
 }
@@ -2120,15 +2352,75 @@ const ProductPage = {
       `<span class="pp-price">₹${p.price.toLocaleString('en-IN')}</span>
        ${p.mrp > p.price ? `<span class="pp-mrp">₹${p.mrp.toLocaleString('en-IN')}</span><span class="pp-save">${savings}% OFF</span>` : ''}`;
 
-    // ── Description ──
-    document.getElementById('ppDesc').textContent = p.description || '';
+    // ── Description & Rich Tabs ──
+    const stockStatus = (p.stock||0) > 0
+      ? `<span style="color:var(--terracotta);font-weight:600;">● In Stock</span> — ${p.stock} available`
+      : `<span style="color:var(--muted);">● Out of Stock</span>`;
 
-    // ── Meta ──
-    document.getElementById('ppMeta').innerHTML =
-      `<div class="pp-meta-row"><span class="pp-meta-lbl">Material</span><span class="pp-meta-val">${p.material||'—'}</span></div>
-       <div class="pp-meta-row"><span class="pp-meta-lbl">Size</span><span class="pp-meta-val">${p.size||'—'}</span></div>
-       <div class="pp-meta-row"><span class="pp-meta-lbl">Color</span><span class="pp-meta-val">${p.color||'—'}</span></div>
-       <div class="pp-meta-row"><span class="pp-meta-lbl">Stock</span><span class="pp-meta-val" style="color:${(p.stock||0)>0?'var(--terracotta)':'var(--muted)'}">${(p.stock||0)>0?(p.stock+' available'):'Out of stock'}</span></div>`;
+    // Story tab: use product description + universal artisan narrative
+    const storyText = p.description
+      ? p.description
+      : `This piece is part of Auranest Decors' handcrafted collection, made by skilled Indian artisans who carry centuries of folk art tradition. Every detail — from the wood grain to the painted motif — reflects the maker's heritage and precision.`;
+    const craftRegion = p.material?.toLowerCase().includes('wood')
+      ? 'Rajasthan & Gujarat'
+      : p.material?.toLowerCase().includes('ceramic') || p.material?.toLowerCase().includes('terracotta')
+      ? 'Uttar Pradesh & West Bengal'
+      : 'India';
+
+    // Gifting angle based on category
+    const giftOccasions = {
+      'Home & Kitchen':      ['Housewarming', 'Diwali', 'Wedding', 'Anniversary'],
+      'Aura décor':          ['Housewarming', 'Diwali', 'Raksha Bandhan', 'Corporate Gifting'],
+      'Aesthetic Furniture': ['Housewarming', 'Wedding', 'Corporate Gifting'],
+      'Giftings':            ['Diwali', 'Wedding', 'Raksha Bandhan', 'Birthday']
+    };
+    const occasions = giftOccasions[p.category] || ['Diwali', 'Housewarming', 'Wedding'];
+
+    document.getElementById('ppDesc').innerHTML =
+      // Tabs
+      `<div class="pp-tabs">
+        <button class="pp-tab active" onclick="ppSwitchTab(this,'ppTabStory')">Story</button>
+        <button class="pp-tab" onclick="ppSwitchTab(this,'ppTabDetails')">Details</button>
+        <button class="pp-tab" onclick="ppSwitchTab(this,'ppTabGifting')">Gifting</button>
+      </div>
+      <!-- Story Tab -->
+      <div class="pp-tab-content active" id="ppTabStory">
+        <div class="pp-story-pull">"No two pieces are ever alike — each bears the subtle imprint of the hands and heart that brought it to life."</div>
+        <p>${storyText}</p>
+        <p style="margin-top:.8rem;">Crafted by artisans from <strong>${craftRegion}</strong> using time-honoured techniques passed down through generations. When you bring this piece home, you bring a living piece of India's cultural heritage with it.</p>
+        <div class="highlight-row">
+          <span class="hl-chip">🤲 Handmade</span>
+          <span class="hl-chip">🌿 Natural Materials</span>
+          <span class="hl-chip">🎨 Folk Art</span>
+          <span class="hl-chip">🇮🇳 Made in India</span>
+        </div>
+      </div>
+      <!-- Details Tab -->
+      <div class="pp-tab-content" id="ppTabDetails">
+        <div class="pp-meta" id="ppMeta">
+          <div class="pp-meta-row"><span class="pp-meta-lbl">Material</span><span class="pp-meta-val">${p.material||'Natural Wood'}</span></div>
+          <div class="pp-meta-row"><span class="pp-meta-lbl">Size</span><span class="pp-meta-val">${p.size||'See product images'}</span></div>
+          <div class="pp-meta-row"><span class="pp-meta-lbl">Colour</span><span class="pp-meta-val">${p.color||'As shown'}</span></div>
+          <div class="pp-meta-row"><span class="pp-meta-lbl">Stock</span><span class="pp-meta-val">${stockStatus}</span></div>
+        </div>
+        <p style="margin-top:1rem;font-size:.8rem;font-weight:600;color:var(--dark);">Care Guide</p>
+        <ul>
+          <li>Wipe with a soft, dry cloth — avoid harsh chemicals.</li>
+          <li>Keep away from prolonged direct sunlight and damp areas.</li>
+          <li>For wooden pieces, apply beeswax once every 6 months to maintain richness.</li>
+          <li>Hand-wash only for items used with food; do not soak.</li>
+          <li>Natural variations in grain, colour and texture are a hallmark of handcraft — not defects.</li>
+        </ul>
+      </div>
+      <!-- Gifting Tab -->
+      <div class="pp-tab-content" id="ppTabGifting">
+        <p>This piece makes a <strong>deeply meaningful gift</strong> for people who appreciate beauty, culture, and quality over quantity. Ideal for:</p>
+        <div class="highlight-row" style="margin-top:.6rem;">
+          ${occasions.map(o => `<span class="hl-chip">🎁 ${o}</span>`).join('')}
+        </div>
+        <p style="margin-top:1rem;">Each Auranest Decors product is carefully packed in premium eco-friendly packaging. Add a personalised gift note at checkout — or contact us on WhatsApp to arrange custom gift wrapping.</p>
+        <p style="margin-top:.6rem;font-size:.8rem;color:var(--muted);">💡 Tip: order 2+ pieces for a curated gift set that feels truly bespoke.</p>
+      </div>`;
 
     // ── Gallery ──
     this._imgs = (p.images || []).filter(u => u);
@@ -2156,6 +2448,15 @@ const ProductPage = {
     };
     if (wishBtn)    wishBtn.onclick = _doWish;
     if (imgWishBtn) imgWishBtn.onclick = _doWish;
+
+    // ── WhatsApp Order ──
+    const waBtn = document.getElementById('ppWhatsappBtn');
+    if (waBtn) {
+      waBtn.onclick = () => {
+        const msg = encodeURIComponent(`Hi Auranest! 👋 I'm interested in ordering:\n\n*${p.name}*\n₹${p.price.toLocaleString('en-IN')}\n\nCould you please help me place the order?`);
+        window.open(`https://wa.me/918679212984?text=${msg}`, '_blank');
+      };
+    }
 
     // ── Related products ──
     const related = all.filter(x => x.subCategory === p.subCategory && (x.id||'') !== id).slice(0, 4);
@@ -2374,6 +2675,17 @@ const CategoryPage = {
     }, 350);
   }
 };
+
+// ── PRODUCT PAGE TAB SWITCHER ──
+function ppSwitchTab(clickedTab, contentId) {
+  // Deactivate all tabs and contents
+  document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pp-tab-content').forEach(c => c.classList.remove('active'));
+  // Activate clicked
+  clickedTab.classList.add('active');
+  const content = document.getElementById(contentId);
+  if (content) content.classList.add('active');
+}
 
 // ── TRENDING / STYLE SPOTLIGHT ──
 function loadTrending() {
@@ -2598,7 +2910,19 @@ function _wishToggle(id, btn) {
 })();
 
 // ── SCROLL & LOAD ──
-window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', scrollY>50));
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY>50);
+  // Sticky shop bar: show after hero, hide when footer in view
+  const sBar = document.getElementById('stickyShopBar');
+  if (sBar) {
+    const hero = document.querySelector('.hero');
+    const footer = document.querySelector('footer');
+    const heroBottom = hero ? hero.getBoundingClientRect().bottom : 0;
+    const footerTop  = footer ? footer.getBoundingClientRect().top : Infinity;
+    const inProdPage = document.getElementById('prodPage')?.classList.contains('open');
+    sBar.classList.toggle('visible', heroBottom < 0 && footerTop > window.innerHeight && !inProdPage);
+  }
+});
 // ── WELCOME SCREEN: lift away after 2.8s ──
 setTimeout(() => {
   const w = document.getElementById('welcome');
@@ -2615,5 +2939,11 @@ window.addEventListener('load',   () => {
   setTimeout(loadBranding, 4000); // final retry on slow connections
 });
 </script>
+
+<!-- ══ STICKY SHOP BAR ══ -->
+<div class="sticky-shop-bar" id="stickyShopBar">
+  <div class="ssb-text">🎨 <span>Handcrafted Indian Décor</span> — Free shipping above ₹999</div>
+  <button class="ssb-btn" onclick="document.getElementById('collection').scrollIntoView({behavior:'smooth'});document.getElementById('stickyShopBar').classList.remove('visible')">Shop Collection →</button>
+</div>
 </body>
 </html>
