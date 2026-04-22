@@ -1,5 +1,5 @@
 # Auranest Decors – robots.txt
-# https://auranest-decors.vercel.app/
+# https://www.auranestdecors.com/
 
 User-agent: *
 Allow: /store/
@@ -25,4 +25,4 @@ Disallow: /
 User-agent: anthropic-ai
 Disallow: /
 
-Sitemap: https://auranest-decors.vercel.app/sitemap.xml
+Sitemap: https://www.auranestdecors.com/sitemap.xml
