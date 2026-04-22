@@ -2039,6 +2039,8 @@ const Cart = {
 // ── RENDER PRODUCTS ──
 function renderProducts(list) {
   const g = document.getElementById('prodGrid');
+  // Always make sure the collection section is visible regardless of scroll position
+  document.getElementById('collection')?.classList.add('visible');
   if (!list.length) { g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No products found</div>'; return; }
   g.innerHTML = list.map((p,i) => {
     const img     = p.images?.[0] || p.image || '';
@@ -2283,7 +2285,7 @@ setInterval(() => goSlide((sIdx+1) % 2), 5000);
 (function(){
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
-  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+  }, {threshold:0.05, rootMargin:'0px 0px 120px 0px'});
   document.querySelectorAll('.section, .sec-hdr, .cat-card, .trust-item, .about-block, .faq-item, .banner-content').forEach(el => { el.classList.add('reveal'); io.observe(el); });
 })();
 
