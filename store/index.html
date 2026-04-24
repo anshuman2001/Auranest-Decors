@@ -149,7 +149,11 @@
 <link rel="dns-prefetch" href="https://firestore.googleapis.com"/>
 <link rel="dns-prefetch" href="https://api.imgbb.com"/>
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<!-- Load fonts async to eliminate render blocking -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/></noscript>
+<!-- Preload hero banner for fast LCP -->
+<link rel="preload" as="image" href="../assets/banner1.jpg" fetchpriority="high"/>
 <style>
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 :root{--beige:#f4ede1;--warm:#ebe0d0;--sand:#d2c0a6;--cream:#faf5ee;--terracotta:#b86d3a;--rust:#8c4522;--gold:#c49535;--gold-lt:#ddb84e;--gold-dk:#9a7220;--dark:#120c06;--mid:#5a4733;--muted:#8a7060;--white:#fffcf7;--border:rgba(170,140,95,0.22);--shadow:0 24px 80px rgba(18,12,6,0.18);--glow:0 0 40px rgba(196,149,53,0.15);--glass:rgba(255,252,247,0.88);}
@@ -1143,7 +1147,7 @@ select.finp{cursor:pointer;}
 <div id="offerBar">
   <span class="ob-text" id="obText">🎉 Summer Sale — Get 20% off on all products!</span>
   <button class="ob-code" id="obCode" onclick="copyOfferCode(this)">USE: AURANEST20</button>
-  <button class="ob-close" onclick="document.getElementById('offerBar').classList.remove('show')" title="Close">✕</button>
+  <button class="ob-close" onclick="document.getElementById('offerBar').classList.remove('show')" title="Close" aria-label="Close offer bar">✕</button>
 </div>
 
 <!-- PRODUCT FULL PAGE (POM: ProductPage) -->
@@ -1159,7 +1163,7 @@ select.finp{cursor:pointer;}
     <div class="pp-gallery">
       <div class="pp-main-img" id="ppMainImg">
         <div class="pp-main-fallback">🎁</div>
-        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">♡</button>
+        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
       </div>
       <div class="pp-thumbs" id="ppThumbs"></div>
     </div>
@@ -1213,6 +1217,7 @@ select.finp{cursor:pointer;}
   </div>
 </div>
 
+<main>
 <!-- HERO SLIDER -->
 <section class="hero">
   <h1 class="sr-only">Handcrafted Indian Home Décor — Folk Art, Wooden Trays &amp; Artisan Gifts | Auranest Decors</h1>
@@ -1249,22 +1254,22 @@ select.finp{cursor:pointer;}
 <section class="section" id="shop">
   <div class="sec-hdr"><p class="sec-eye">Browse by Category</p><h2 class="sec-title">Shop by Category</h2></div>
   <div class="cat-circles">
-    <div class="cat-circle" onclick="CategoryPage.open('Home & Kitchen')">
+    <a class="cat-circle" href="home-kitchen.html" onclick="event.preventDefault();CategoryPage.open('Home & Kitchen')">
       <div class="cat-circle-img"><img src="https://i.ibb.co/5XtP0Y3y/79f65688dfc7.jpg" alt="Home & Kitchen" loading="lazy"/></div>
       <div class="cat-circle-name">Home &amp; Kitchen</div>
-    </div>
-    <div class="cat-circle" onclick="CategoryPage.open('Aura décor')">
+    </a>
+    <a class="cat-circle" href="aura-decor.html" onclick="event.preventDefault();CategoryPage.open('Aura décor')">
       <div class="cat-circle-img"><img src="https://i.ibb.co/SDHjN1qJ/50dca94c30e1.jpg" alt="Aura Décor" loading="lazy"/></div>
       <div class="cat-circle-name">Aura Décor</div>
-    </div>
-    <div class="cat-circle" onclick="CategoryPage.open('Aesthetic Furniture')">
+    </a>
+    <a class="cat-circle" href="aesthetic-furniture.html" onclick="event.preventDefault();CategoryPage.open('Aesthetic Furniture')">
       <div class="cat-circle-img"><img src="https://i.ibb.co/s4ZkSv7/1ed461bdaf0b.png" alt="Aesthetic Furniture" loading="lazy"/></div>
       <div class="cat-circle-name">Aesthetic Furniture</div>
-    </div>
-    <div class="cat-circle" onclick="CategoryPage.open('Giftings')">
+    </a>
+    <a class="cat-circle" href="giftings.html" onclick="event.preventDefault();CategoryPage.open('Giftings')">
       <div class="cat-circle-img"><img src="https://i.ibb.co/BHFN5QJr/a75a256d51b3.png" alt="Giftings" loading="lazy"/></div>
       <div class="cat-circle-name">Giftings</div>
-    </div>
+    </a>
   </div>
 </section>
 
@@ -1480,6 +1485,7 @@ select.finp{cursor:pointer;}
   <div class="faq-grid" id="faqGrid"></div>
 </section>
 
+</main>
 <footer>
   <div>
     <div class="foot-logo"><img src="../assets/logo.jpg" alt="Auranest Decors logo" loading="lazy" width="48" height="48" onerror="this.style.display='none'"/><div><div class="foot-brand">Auranest Decors</div><div class="foot-tagline">Feel the beauty of home</div></div></div>
@@ -2064,7 +2070,7 @@ function renderProducts(list) {
         ${img
           ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`
           : `<div class="prod-emoji">${p.icon}</div>`}
-        <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)">♡</button>
+        <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
         <button class="prod-qadd" onclick="event.stopPropagation();addToCart('${pid}')">Add to Cart</button>
       </div>
@@ -2703,7 +2709,7 @@ function loadTrending() {
     return `<div class="prod-card" style="animation-delay:${i*.06}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:14px">
         ${img ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<div class="prod-emoji">${p.icon}</div>`}
-        <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)">♡</button>
+        <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
       </div>
       <p class="prod-sub">${p.subCategory || ''}</p>
