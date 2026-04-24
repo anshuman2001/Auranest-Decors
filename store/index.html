@@ -1097,41 +1097,41 @@ select.finp{cursor:pointer;}
     <div class="mob-cat-wrap">
       <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Home &amp; Kitchen <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a onclick="CategoryPage.open('Home & Kitchen');closeMobNav()">All Home &amp; Kitchen</a>
-        <a onclick="filterProds('Serveware',null);goToSection('collection');closeMobNav()">Serveware</a>
-        <a onclick="filterProds('Kitchen Tools',null);goToSection('collection');closeMobNav()">Kitchen Tools</a>
-        <a onclick="filterProds('Tableware',null);goToSection('collection');closeMobNav()">Tableware</a>
+        <a href="home-kitchen.html" onclick="event.preventDefault();CategoryPage.open('Home & Kitchen');closeMobNav()">All Home &amp; Kitchen</a>
+        <a href="home-kitchen.html#serveware" onclick="event.preventDefault();filterProds('Serveware',null);goToSection('collection');closeMobNav()">Serveware</a>
+        <a href="home-kitchen.html#kitchen-tools" onclick="event.preventDefault();filterProds('Kitchen Tools',null);goToSection('collection');closeMobNav()">Kitchen Tools</a>
+        <a href="home-kitchen.html#tableware" onclick="event.preventDefault();filterProds('Tableware',null);goToSection('collection');closeMobNav()">Tableware</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
       <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Aura Décor <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a onclick="CategoryPage.open('Aura décor');closeMobNav()">All Aura Décor</a>
-        <a onclick="filterProds('Decorative Pots',null);goToSection('collection');closeMobNav()">Decorative Pots</a>
-        <a onclick="filterProds('Wall Décor',null);goToSection('collection');closeMobNav()">Wall Décor</a>
-        <a onclick="filterProds('Vases',null);goToSection('collection');closeMobNav()">Vases</a>
+        <a href="aura-decor.html" onclick="event.preventDefault();CategoryPage.open('Aura décor');closeMobNav()">All Aura Décor</a>
+        <a href="aura-decor.html#pots" onclick="event.preventDefault();filterProds('Decorative Pots',null);goToSection('collection');closeMobNav()">Decorative Pots</a>
+        <a href="aura-decor.html#wall-decor" onclick="event.preventDefault();filterProds('Wall Décor',null);goToSection('collection');closeMobNav()">Wall Décor</a>
+        <a href="aura-decor.html#vases" onclick="event.preventDefault();filterProds('Vases',null);goToSection('collection');closeMobNav()">Vases</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
       <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Aesthetic Furniture <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a onclick="CategoryPage.open('Aesthetic Furniture');closeMobNav()">All Furniture</a>
-        <a onclick="filterProds('Storage',null);goToSection('collection');closeMobNav()">Storage</a>
-        <a onclick="filterProds('Racks',null);goToSection('collection');closeMobNav()">Racks</a>
-        <a onclick="filterProds('Shelves',null);goToSection('collection');closeMobNav()">Shelves</a>
+        <a href="aesthetic-furniture.html" onclick="event.preventDefault();CategoryPage.open('Aesthetic Furniture');closeMobNav()">All Furniture</a>
+        <a href="aesthetic-furniture.html#storage" onclick="event.preventDefault();filterProds('Storage',null);goToSection('collection');closeMobNav()">Storage</a>
+        <a href="aesthetic-furniture.html#racks" onclick="event.preventDefault();filterProds('Racks',null);goToSection('collection');closeMobNav()">Racks</a>
+        <a href="aesthetic-furniture.html#shelves" onclick="event.preventDefault();filterProds('Shelves',null);goToSection('collection');closeMobNav()">Shelves</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
       <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Giftings <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a onclick="CategoryPage.open('Giftings');closeMobNav()">All Giftings</a>
-        <a onclick="filterProds('Festive',null);goToSection('collection');closeMobNav()">Festive Gifts</a>
-        <a onclick="filterProds('Wedding',null);goToSection('collection');closeMobNav()">Wedding Gifts</a>
-        <a onclick="filterProds('Artisan',null);goToSection('collection');closeMobNav()">Artisan Collection</a>
+        <a href="giftings.html" onclick="event.preventDefault();CategoryPage.open('Giftings');closeMobNav()">All Giftings</a>
+        <a href="giftings.html#festive" onclick="event.preventDefault();filterProds('Festive',null);goToSection('collection');closeMobNav()">Festive Gifts</a>
+        <a href="giftings.html#wedding" onclick="event.preventDefault();filterProds('Wedding',null);goToSection('collection');closeMobNav()">Wedding Gifts</a>
+        <a href="giftings.html#artisan" onclick="event.preventDefault();filterProds('Artisan',null);goToSection('collection');closeMobNav()">Artisan Collection</a>
       </div>
     </div>
-    <a class="mob-plain" onclick="goToSection('about');closeMobNav()">About Us</a>
-    <a class="mob-plain" onclick="goToSection('faqs');closeMobNav()">FAQs</a>
+    <a class="mob-plain" href="#about" onclick="event.preventDefault();goToSection('about');closeMobNav()">About Us</a>
+    <a class="mob-plain" href="#faqs" onclick="event.preventDefault();goToSection('faqs');closeMobNav()">FAQs</a>
     <a class="mob-plain" href="contact.html">Contact Us</a>
     <a class="mob-plain" href="../blog/" style="color:var(--gold);font-weight:600;">✍️ Blog</a>
     <a class="mob-plain" href="../catalog/" style="color:var(--gold);font-weight:600;">📖 Catalogue</a>
