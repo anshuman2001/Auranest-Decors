@@ -817,13 +817,15 @@ select.finp{cursor:pointer;}
 .pp-crumb-cur{color:var(--dark);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 /* Two-column layout — both columns scroll with the page */
 .pp-body{display:grid;grid-template-columns:50% 50%;height:auto;overflow:visible;align-items:start;}
-.pp-gallery{display:flex;flex-direction:row;position:sticky;top:0;background:var(--warm);}
-.pp-vthumbs{display:flex;flex-direction:column;gap:5px;padding:8px 5px 8px 8px;overflow-y:auto;width:72px;flex-shrink:0;max-height:520px;}
-.pp-vthumb{width:58px;height:58px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s;flex-shrink:0;}
+.pp-gallery{display:flex;flex-direction:column;position:sticky;top:0;}
+.pp-main-img{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:260px 260px;gap:3px;background:#ccc;overflow:hidden;max-height:70vh;}
+.pp-grid-cell{overflow:hidden;cursor:pointer;position:relative;background:var(--warm);}
+.pp-grid-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s;}
+.pp-grid-cell:hover img{transform:scale(1.03);}
+.pp-vthumbs{display:flex;flex-direction:row;gap:5px;padding:6px 8px;overflow-x:auto;background:var(--warm);flex-shrink:0;}
+.pp-vthumb{width:52px;height:52px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s;flex-shrink:0;}
 .pp-vthumb.active{border-color:var(--terracotta);}
 .pp-vthumb img{width:100%;height:100%;object-fit:cover;}
-.pp-main-img{flex:1;height:520px;max-height:70vh;overflow:hidden;position:relative;background:var(--warm);}
-.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .3s;padding:12px;}
 /* Wishlist on image */
 .pp-img-wish{position:absolute;top:12px;right:12px;z-index:10;background:rgba(255,255,255,.92);border:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(30,24,16,.18);color:var(--muted);transition:all .2s;line-height:1;}
 .pp-img-wish:hover{transform:scale(1.12);background:#fff;}
@@ -862,10 +864,10 @@ select.finp{cursor:pointer;}
   .pp-crumb{font-size:.68rem;gap:.2rem;}
   .pp-crumb-link{font-size:.68rem;}
   .pp-body{display:block;}
-  .pp-gallery{position:static;height:auto;flex-direction:column-reverse;}
-  .pp-vthumbs{flex-direction:row;width:100%;max-height:none;padding:6px 8px;overflow-x:auto;overflow-y:hidden;}
-  .pp-vthumb{width:50px;height:50px;flex-shrink:0;}
-  .pp-main-img{flex:none;height:72vw;min-height:260px;max-height:400px;}
+  .pp-gallery{position:static;height:auto;}
+  .pp-main-img{grid-template-rows:44vw 44vw;max-height:none;}
+  .pp-vthumbs{padding:4px 6px;}
+  .pp-vthumb{width:44px;height:44px;}
   .pp-info{padding:1.4rem 1.1rem 3rem;}
   .pp-actions{grid-template-columns:1fr 1fr;}
   .pp-meta{grid-template-columns:1fr;}
@@ -1183,11 +1185,13 @@ select.finp{cursor:pointer;}
   </div>
   <div class="pp-body">
     <div class="pp-gallery">
-      <div class="pp-vthumbs" id="ppVThumbs"></div>
       <div class="pp-main-img" id="ppMainImg">
-        <div class="pp-main-fallback">🎁</div>
-        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
+        <div class="pp-grid-cell"><div class="pp-main-fallback">🎁</div></div>
+        <div class="pp-grid-cell"></div>
+        <div class="pp-grid-cell"></div>
+        <div class="pp-grid-cell"></div>
       </div>
+      <div class="pp-vthumbs" id="ppVThumbs"></div>
     </div>
     <div class="pp-info">
       <div>
@@ -2595,13 +2599,21 @@ const ProductPage = {
   _renderGallery(fallbackIcon) {
     const mainEl   = document.getElementById('ppMainImg');
     const vthumbEl = document.getElementById('ppVThumbs');
-    const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">♡</button>`;
     if (!this._imgs.length) {
-      mainEl.innerHTML   = `<div class="pp-main-fallback">${fallbackIcon}</div>${wishHtml}`;
+      mainEl.innerHTML = `<div class="pp-grid-cell"><div class="pp-main-fallback">${fallbackIcon}</div></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div>`;
       vthumbEl.innerHTML = '';
       return;
     }
-    mainEl.innerHTML   = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
+    // 2×2 grid — cycle images to fill 4 cells
+    mainEl.innerHTML = [0,1,2,3].map(ci => {
+      const src = this._imgs[ci % this._imgs.length];
+      const imgIdx = ci % this._imgs.length;
+      return `<div class="pp-grid-cell" onclick="ProductPage.selectImg(${imgIdx})">
+        <img src="${src}" alt="View ${ci+1}"/>
+        ${ci===0 ? `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">&#9825;</button>` : ''}
+      </div>`;
+    }).join('');
+    // Horizontal thumb strip
     vthumbEl.innerHTML = this._imgs.map((src, i) =>
       `<div class="pp-vthumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
          <img src="${src}" alt="View ${i+1}"/>
@@ -2610,10 +2622,9 @@ const ProductPage = {
 
   selectImg(idx) {
     if (!this._imgs[idx]) return;
-    const mainEl   = document.getElementById('ppMainImg');
-    const wishBtn  = mainEl.querySelector('.pp-img-wish');
-    const wishHtml = wishBtn ? wishBtn.outerHTML : '';
-    mainEl.innerHTML = `<img src="${this._imgs[idx]}" alt="Product"/>${wishHtml}`;
+    // Rotate grid so tapped image leads
+    const imgs = document.querySelectorAll('.pp-grid-cell img');
+    imgs.forEach((img, ci) => { img.src = this._imgs[(idx + ci) % this._imgs.length]; });
     document.querySelectorAll('.pp-vthumb').forEach((t, i) => t.classList.toggle('active', i === idx));
   },
 
