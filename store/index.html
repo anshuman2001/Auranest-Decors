@@ -1187,10 +1187,8 @@ select.finp{cursor:pointer;}
     <div class="pp-gallery">
       <div class="pp-thumbs" id="ppThumbs"></div>
       <div class="pp-main-img" id="ppMainImg">
-        <div class="pp-grid-cell"><div class="pp-main-fallback">🎁</div></div>
-        <div class="pp-grid-cell"></div>
-        <div class="pp-grid-cell"></div>
-        <div class="pp-grid-cell"></div>
+        <div class="pp-main-fallback">🎁</div>
+        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
       </div>
     </div>
     <div class="pp-info">
@@ -2597,25 +2595,17 @@ const ProductPage = {
   },
 
   _renderGallery(fallbackIcon) {
-    const mainEl   = document.getElementById('ppMainImg');
-    const vthumbEl = document.getElementById('ppVThumbs');
+    const mainEl  = document.getElementById('ppMainImg');
+    const thumbEl = document.getElementById('ppThumbs');
+    const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>`;
     if (!this._imgs.length) {
-      mainEl.innerHTML = `<div class="pp-grid-cell"><div class="pp-main-fallback">${fallbackIcon}</div></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div>`;
-      vthumbEl.innerHTML = '';
+      mainEl.innerHTML  = `<div class="pp-main-fallback">${fallbackIcon}</div>${wishHtml}`;
+      thumbEl.innerHTML = '';
       return;
     }
-    // 2×2 grid — cycle images to fill 4 cells
-    mainEl.innerHTML = [0,1,2,3].map(ci => {
-      const src = this._imgs[ci % this._imgs.length];
-      const imgIdx = ci % this._imgs.length;
-      return `<div class="pp-grid-cell" onclick="ProductPage.selectImg(${imgIdx})">
-        <img src="${src}" alt="View ${ci+1}"/>
-        ${ci===0 ? `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">&#9825;</button>` : ''}
-      </div>`;
-    }).join('');
-    // Horizontal thumb strip
-    vthumbEl.innerHTML = this._imgs.map((src, i) =>
-      `<div class="pp-vthumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
+    mainEl.innerHTML  = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
+    thumbEl.innerHTML = this._imgs.map((src, i) =>
+      `<div class="pp-thumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
          <img src="${src}" alt="View ${i+1}"/>
        </div>`).join('');
   },
@@ -2625,7 +2615,7 @@ const ProductPage = {
     const inW = WishList.has(this._currentId);
     const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">${inW?'♥':'♡'}</button>`;
     document.getElementById('ppMainImg').innerHTML = `<img src="${this._imgs[idx]}" alt="Product"/>${wishHtml}`;
-    if(inW) document.getElementById('ppImgWish')?.classList.add('wished');
+    if (inW) document.getElementById('ppImgWish')?.classList.add('wished');
     document.querySelectorAll('.pp-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
   },
 
