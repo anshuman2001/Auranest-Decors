@@ -2073,9 +2073,9 @@ const Cart = {
 // Wraps any ImgBB (or other) URL through Cloudinary fetch CDN
 // f_auto = auto WebP, q_auto = auto quality, w_ = resize
 function cdnImg(url, w) {
-  if (!url) return url;
-  const W = w || 800;
-  return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${W}/${encodeURIComponent(url)}`;
+  // Cloudinary fetch disabled — needs "Allowed fetch domains" configured in Cloudinary console
+  // TODO: enable once https://console.cloudinary.com → Settings → Security → Allowed fetch domains includes i.ibb.co
+  return url || '';
 }
 
 // ── RENDER PRODUCTS ──
