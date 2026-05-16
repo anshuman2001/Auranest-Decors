@@ -832,27 +832,28 @@ select.finp{cursor:pointer;}
 .pp-img-wish.wished{color:var(--terracotta);}
 .pp-main-fallback{display:flex;align-items:center;justify-content:center;height:100%;font-size:8rem;}
 /* Right info column — natural height, page scrolls */
-.pp-info{height:auto;overflow:visible;padding:2.5rem 3.5rem 4rem;display:flex;flex-direction:column;gap:1rem;}
-.pp-badge{display:inline-block;background:var(--terracotta);color:#fff;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.25rem .7rem;margin-bottom:.2rem;}
-.pp-cat-lbl{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--terracotta);}
-.pp-name{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;line-height:1.2;color:var(--dark);}
-.pp-price-row{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;}
-.pp-price{font-size:1.6rem;color:var(--terracotta);font-weight:500;}
-.pp-mrp{font-size:.9rem;color:var(--muted);text-decoration:line-through;}
-.pp-save{font-size:.68rem;background:var(--terracotta);color:#fff;padding:.22rem .6rem;font-weight:500;}
-.pp-desc{font-size:.88rem;line-height:1.85;color:var(--mid);}
-.pp-divider{border:none;border-top:1px solid var(--border);margin:.3rem 0;}
+.pp-info{height:auto;overflow:visible;padding:1.8rem 2.5rem 4rem;display:flex;flex-direction:column;gap:.8rem;}
+.pp-badge{display:inline-block;background:var(--gold);color:#fff;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.28rem .82rem;margin-bottom:.3rem;font-weight:500;}
+.pp-cat-lbl{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);font-weight:500;}
+.pp-name{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:600;line-height:1.3;color:var(--dark);}
+.pp-price-row{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;margin-top:.2rem;}
+.pp-price{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--terracotta);font-weight:600;}
+.pp-mrp{font-size:1rem;color:var(--muted);text-decoration:line-through;font-weight:400;}
+.pp-save{font-size:.75rem;background:#2d7a3a;color:#fff;padding:.28rem .75rem;font-weight:600;letter-spacing:.06em;}
+.pp-desc{font-size:.97rem;line-height:1.9;color:var(--mid);font-weight:400;}
+.pp-divider{border:none;border-top:1px solid var(--border);margin:.5rem 0;}
 .pp-meta{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-.pp-meta-row{display:flex;gap:.5rem;font-size:.78rem;padding:.55rem 0;border-bottom:1px solid var(--border);}
-.pp-meta-lbl{color:var(--muted);min-width:68px;flex-shrink:0;}
-.pp-meta-val{color:var(--dark);font-weight:500;}
-.pp-actions{display:flex;flex-direction:column;gap:.7rem;margin-top:.4rem;}
-.btn-pp-add{width:100%;background:var(--terracotta);color:#fff;border:none;padding:1.1rem;font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.pp-meta-row{display:flex;gap:.6rem;font-size:.85rem;padding:.65rem 0;border-bottom:1px solid var(--border);}
+.pp-meta-lbl{color:var(--muted);min-width:75px;flex-shrink:0;font-weight:400;}
+.pp-meta-val{color:var(--dark);font-weight:600;}
+.pp-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.25rem;}
+.btn-pp-add{background:var(--terracotta);color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;font-weight:600;}
 .btn-pp-add:hover{background:var(--rust);}
-.btn-pp-wish{width:100%;background:transparent;color:var(--dark);border:1px solid var(--sand);padding:1rem;font-family:'Outfit',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.btn-pp-wish:hover{border-color:var(--gold);color:var(--gold);}
-.pp-trust{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.8rem 0;border-top:1px solid var(--border);}
-.pp-trust-item{font-size:.7rem;color:var(--muted);}
+.btn-pp-buy{background:var(--dark);color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;font-weight:600;}
+.btn-pp-buy:hover{background:#3a2e1e;}
+.btn-pp-wish{display:none;}
+.pp-trust{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.9rem 0;border-top:1px solid var(--border);}
+.pp-trust-item{font-size:.8rem;color:var(--muted);font-weight:400;}
 .pp-related{padding:2rem 0 3rem;border-top:1px solid var(--border);margin-top:.5rem;}
 .pp-related-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem;}
 .pp-related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;}
@@ -868,6 +869,7 @@ select.finp{cursor:pointer;}
   .pp-thumb{width:68px;height:68px;}
   .pp-main-img{height:72vw;min-height:260px;max-width:400px;width:100%;}
   .pp-info{padding:1.4rem 1.1rem 3rem;}
+  .pp-actions{grid-template-columns:1fr 1fr;}
   .pp-meta{grid-template-columns:1fr;}
 }
 
@@ -908,16 +910,34 @@ select.finp{cursor:pointer;}
 .prod-stock-fill{height:100%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:2px;}
 
 /* ══ PRODUCT PAGE TABS ══ */
-.pp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:.3rem 0 0;}
-.pp-tab{background:none;border:none;border-bottom:2px solid transparent;padding:.7rem 1.2rem;font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:-1px;}
-.pp-tab.active{border-bottom-color:var(--terracotta);color:var(--dark);font-weight:600;}
-.pp-tab-content{display:none;padding:1.2rem 0 .5rem;font-size:.84rem;line-height:1.85;color:var(--mid);}
+.pp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:.5rem 0 0;}
+.pp-tab{background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:-1px;font-weight:500;}
+.pp-tab.active{border-bottom-color:var(--terracotta);color:var(--dark);font-weight:700;}
+.pp-tab-content{display:none;padding:1.4rem 0 .6rem;font-size:.95rem;line-height:1.9;color:var(--mid);}
 .pp-tab-content.active{display:block;}
-.pp-tab-content ul{padding-left:1.2rem;margin:.5rem 0;}
-.pp-tab-content li{margin-bottom:.3rem;}
-.pp-tab-content .highlight-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.8rem;}
-.pp-tab-content .hl-chip{background:var(--warm);border:1px solid var(--border);padding:.35rem .9rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);}
-.pp-story-pull{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:var(--dark);border-left:3px solid var(--gold);padding-left:1rem;margin:.8rem 0 1rem;line-height:1.6;}
+.pp-tab-content ul{padding-left:1.2rem;margin:.6rem 0;}
+.pp-tab-content li{margin-bottom:.45rem;}
+.pp-tab-content .highlight-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.9rem;}
+.pp-tab-content .hl-chip{background:var(--warm);border:1px solid var(--border);padding:.4rem 1rem;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);font-weight:500;}
+.pp-story-pull{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--dark);border-left:3px solid var(--gold);padding-left:1.1rem;margin:1rem 0 1.2rem;line-height:1.7;}
+/* ══ KEY HIGHLIGHTS CARD ══ */
+.pp-hl-card{border:1px solid var(--border);padding:.85rem 1.1rem;background:#fff;margin-bottom:.1rem;}
+.pp-hl-title{font-size:.67rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:.65rem;}
+.pp-hl-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.2rem;}
+.pp-hl-item{display:flex;flex-direction:column;gap:.1rem;padding:.4rem 0;border-bottom:1px solid var(--border);}
+.pp-hl-item:nth-last-child(-n+2){border-bottom:none;}
+.pp-hl-lbl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.pp-hl-val{font-size:.88rem;font-weight:600;color:var(--dark);}
+/* ══ ACCORDION ══ */
+.pp-accordion{border-top:1px solid var(--border);margin-top:.5rem;}
+.pp-acc-item{border-bottom:1px solid var(--border);}
+.pp-acc-btn{width:100%;background:none;border:none;padding:.82rem 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.1em;color:var(--dark);text-transform:uppercase;text-align:left;}
+.pp-acc-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.5;fill:none;flex-shrink:0;transition:transform .25s;}
+.pp-acc-btn.open svg{transform:rotate(180deg);}
+.pp-acc-body{display:none;padding-bottom:1rem;font-size:.88rem;line-height:1.85;color:var(--mid);}
+.pp-acc-body.open{display:block;}
+.pp-acc-body ul{padding-left:1.1rem;margin:.4rem 0;}
+.pp-acc-body li{margin-bottom:.35rem;}
 
 /* ══ WHATSAPP CTA ══ */
 .btn-pp-whatsapp{width:100%;background:#25d366;color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
@@ -1167,8 +1187,10 @@ select.finp{cursor:pointer;}
     <div class="pp-gallery">
       <div class="pp-thumbs" id="ppThumbs"></div>
       <div class="pp-main-img" id="ppMainImg">
-        <div class="pp-main-fallback">🎁</div>
-        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
+        <div class="pp-grid-cell"><div class="pp-main-fallback">🎁</div></div>
+        <div class="pp-grid-cell"></div>
+        <div class="pp-grid-cell"></div>
+        <div class="pp-grid-cell"></div>
       </div>
     </div>
     <div class="pp-info">
@@ -1181,18 +1203,20 @@ select.finp{cursor:pointer;}
       <div class="pp-desc" id="ppDesc"></div>
       <div class="pp-actions">
         <button class="btn-pp-add" id="ppAddBtn">Add to Cart</button>
-        <button class="btn-pp-whatsapp" id="ppWhatsappBtn">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Order via WhatsApp
-        </button>
-        <button class="btn-pp-wish" id="ppWishBtn">♡ Save to Wishlist</button>
+        <button class="btn-pp-buy" id="ppBuyBtn">Buy Now</button>
       </div>
+      <button class="btn-pp-whatsapp" id="ppWhatsappBtn" style="width:100%">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Order via WhatsApp
+      </button>
+      <button class="btn-pp-wish" id="ppWishBtn" style="display:none">♡ Save to Wishlist</button>
       <div class="pp-trust">
         <span class="pp-trust-item">🎨 100% Handcrafted</span>
         <span class="pp-trust-item">🚚 Free ship ₹999+</span>
         <span class="pp-trust-item">🔄 7-Day Returns</span>
         <span class="pp-trust-item">🔒 Secure Pay</span>
       </div>
+      <div id="ppAccordion"></div>
       <div class="pp-related">
         <div class="pp-related-title">You May Also Like</div>
         <div class="pp-related-grid" id="ppRelated"></div>
@@ -2388,50 +2412,77 @@ const ProductPage = {
     };
     const occasions = giftOccasions[p.category] || ['Diwali', 'Housewarming', 'Wedding'];
 
+    // ── Key Highlights card ──
     document.getElementById('ppDesc').innerHTML =
-      // Tabs
-      `<div class="pp-tabs">
-        <button class="pp-tab active" onclick="ppSwitchTab(this,'ppTabStory')">Story</button>
-        <button class="pp-tab" onclick="ppSwitchTab(this,'ppTabDetails')">Details</button>
-        <button class="pp-tab" onclick="ppSwitchTab(this,'ppTabGifting')">Gifting</button>
-      </div>
-      <!-- Story Tab -->
-      <div class="pp-tab-content active" id="ppTabStory">
-        <div class="pp-story-pull">"No two pieces are ever alike — each bears the subtle imprint of the hands and heart that brought it to life."</div>
-        <p>${storyText}</p>
-        <p style="margin-top:.8rem;">Crafted by artisans from <strong>${craftRegion}</strong> using time-honoured techniques passed down through generations. When you bring this piece home, you bring a living piece of India's cultural heritage with it.</p>
-        <div class="highlight-row">
-          <span class="hl-chip">🤲 Handmade</span>
-          <span class="hl-chip">🌿 Natural Materials</span>
-          <span class="hl-chip">🎨 Folk Art</span>
-          <span class="hl-chip">🇮🇳 Made in India</span>
+      `<div class="pp-hl-card">
+        <div class="pp-hl-title">Key Highlights</div>
+        <div class="pp-hl-grid">
+          <div class="pp-hl-item"><span class="pp-hl-lbl">Material</span><span class="pp-hl-val">${p.material||'Natural Wood'}</span></div>
+          <div class="pp-hl-item"><span class="pp-hl-lbl">Colour</span><span class="pp-hl-val">${p.color||'As shown'}</span></div>
+          <div class="pp-hl-item"><span class="pp-hl-lbl">Category</span><span class="pp-hl-val">${p.subCategory||p.category}</span></div>
+          <div class="pp-hl-item"><span class="pp-hl-lbl">Origin</span><span class="pp-hl-val">${craftRegion}</span></div>
         </div>
-      </div>
-      <!-- Details Tab -->
-      <div class="pp-tab-content" id="ppTabDetails">
-        <div class="pp-meta" id="ppMeta">
-          <div class="pp-meta-row"><span class="pp-meta-lbl">Material</span><span class="pp-meta-val">${p.material||'Natural Wood'}</span></div>
-          <div class="pp-meta-row"><span class="pp-meta-lbl">Size</span><span class="pp-meta-val">${p.size||'See product images'}</span></div>
-          <div class="pp-meta-row"><span class="pp-meta-lbl">Colour</span><span class="pp-meta-val">${p.color||'As shown'}</span></div>
-          <div class="pp-meta-row"><span class="pp-meta-lbl">Stock</span><span class="pp-meta-val">${stockStatus}</span></div>
+      </div>`;
+
+    // ── Accordion sections ──
+    document.getElementById('ppAccordion').innerHTML =
+      `<div class="pp-accordion">
+        <div class="pp-acc-item">
+          <button class="pp-acc-btn open" onclick="ppToggleAcc(this)">
+            Product Details
+            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <div class="pp-acc-body open">
+            <ul>
+              <li><strong>Material:</strong> ${p.material||'Natural Wood'}</li>
+              <li><strong>Colour:</strong> ${p.color||'As shown'}</li>
+              <li><strong>Size:</strong> ${p.size||'See product images'}</li>
+              <li><strong>Stock:</strong> ${stockStatus}</li>
+            </ul>
+            <p style="margin-top:.6rem;font-size:.8rem;font-weight:600;color:var(--dark);">Care Guide</p>
+            <ul>
+              <li>Wipe with a soft, dry cloth — avoid harsh chemicals.</li>
+              <li>Keep away from prolonged direct sunlight and damp areas.</li>
+              <li>For wooden pieces, apply beeswax once every 6 months.</li>
+              <li>Natural variations in grain and colour are a hallmark of handcraft — not defects.</li>
+            </ul>
+          </div>
         </div>
-        <p style="margin-top:1rem;font-size:.8rem;font-weight:600;color:var(--dark);">Care Guide</p>
-        <ul>
-          <li>Wipe with a soft, dry cloth — avoid harsh chemicals.</li>
-          <li>Keep away from prolonged direct sunlight and damp areas.</li>
-          <li>For wooden pieces, apply beeswax once every 6 months to maintain richness.</li>
-          <li>Hand-wash only for items used with food; do not soak.</li>
-          <li>Natural variations in grain, colour and texture are a hallmark of handcraft — not defects.</li>
-        </ul>
-      </div>
-      <!-- Gifting Tab -->
-      <div class="pp-tab-content" id="ppTabGifting">
-        <p>This piece makes a <strong>deeply meaningful gift</strong> for people who appreciate beauty, culture, and quality over quantity. Ideal for:</p>
-        <div class="highlight-row" style="margin-top:.6rem;">
-          ${occasions.map(o => `<span class="hl-chip">🎁 ${o}</span>`).join('')}
+        <div class="pp-acc-item">
+          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
+            Product Story
+            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <div class="pp-acc-body">
+            <div class="pp-story-pull">"No two pieces are ever alike — each bears the subtle imprint of the hands and heart that brought it to life."</div>
+            <p>${storyText}</p>
+            <p style="margin-top:.6rem;">Crafted by artisans from <strong>${craftRegion}</strong> using time-honoured techniques passed down through generations.</p>
+          </div>
         </div>
-        <p style="margin-top:1rem;">Each Auranest Decors product is carefully packed in premium eco-friendly packaging. Add a personalised gift note at checkout — or contact us on WhatsApp to arrange custom gift wrapping.</p>
-        <p style="margin-top:.6rem;font-size:.8rem;color:var(--muted);">💡 Tip: order 2+ pieces for a curated gift set that feels truly bespoke.</p>
+        <div class="pp-acc-item">
+          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
+            Gifting &amp; Occasions
+            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <div class="pp-acc-body">
+            <p>A deeply meaningful gift — ideal for: <strong>${occasions.join(', ')}</strong>.</p>
+            <p style="margin-top:.6rem;">Packed in premium eco-friendly packaging. Add a personalised gift note at checkout or contact us on WhatsApp for custom gift wrapping.</p>
+          </div>
+        </div>
+        <div class="pp-acc-item">
+          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
+            Return Policy
+            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <div class="pp-acc-body">
+            <ul>
+              <li>7-day returns from date of delivery.</li>
+              <li>Item must be unused and in original packaging.</li>
+              <li>Handcrafted items may have minor natural variations — these are not defects.</li>
+              <li>Contact us on WhatsApp to initiate a return.</li>
+            </ul>
+          </div>
+        </div>
       </div>`;
 
     // ── Gallery ──
@@ -2444,6 +2495,15 @@ const ProductPage = {
       addToCart(id);
       showToast(`✓ ${p.name.slice(0,30)}… added to cart!`);
     };
+
+    // ── Buy Now (WhatsApp direct order) ──
+    const buyBtn = document.getElementById('ppBuyBtn');
+    if (buyBtn) {
+      buyBtn.onclick = () => {
+        const msg = encodeURIComponent(`Hi Auranest! 👋 I want to buy:\n\n*${p.name}*\n₹${p.price.toLocaleString('en-IN')}\n\nPlease help me place the order.`);
+        window.open(`https://wa.me/918679212984?text=${msg}`, '_blank');
+      };
+    }
 
     // ── Wishlist buttons (bottom btn + image float btn) ──
     const wishBtn   = document.getElementById('ppWishBtn');
@@ -2537,17 +2597,25 @@ const ProductPage = {
   },
 
   _renderGallery(fallbackIcon) {
-    const mainEl  = document.getElementById('ppMainImg');
-    const thumbEl = document.getElementById('ppThumbs');
-    const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">♡</button>`;
+    const mainEl   = document.getElementById('ppMainImg');
+    const vthumbEl = document.getElementById('ppVThumbs');
     if (!this._imgs.length) {
-      mainEl.innerHTML  = `<div class="pp-main-fallback">${fallbackIcon}</div>${wishHtml}`;
-      thumbEl.innerHTML = '';
+      mainEl.innerHTML = `<div class="pp-grid-cell"><div class="pp-main-fallback">${fallbackIcon}</div></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div><div class="pp-grid-cell"></div>`;
+      vthumbEl.innerHTML = '';
       return;
     }
-    mainEl.innerHTML  = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
-    thumbEl.innerHTML = this._imgs.map((src, i) =>
-      `<div class="pp-thumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
+    // 2×2 grid — cycle images to fill 4 cells
+    mainEl.innerHTML = [0,1,2,3].map(ci => {
+      const src = this._imgs[ci % this._imgs.length];
+      const imgIdx = ci % this._imgs.length;
+      return `<div class="pp-grid-cell" onclick="ProductPage.selectImg(${imgIdx})">
+        <img src="${src}" alt="View ${ci+1}"/>
+        ${ci===0 ? `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist">&#9825;</button>` : ''}
+      </div>`;
+    }).join('');
+    // Horizontal thumb strip
+    vthumbEl.innerHTML = this._imgs.map((src, i) =>
+      `<div class="pp-vthumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})">
          <img src="${src}" alt="View ${i+1}"/>
        </div>`).join('');
   },
@@ -2693,13 +2761,17 @@ const CategoryPage = {
 
 // ── PRODUCT PAGE TAB SWITCHER ──
 function ppSwitchTab(clickedTab, contentId) {
-  // Deactivate all tabs and contents
   document.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.pp-tab-content').forEach(c => c.classList.remove('active'));
-  // Activate clicked
   clickedTab.classList.add('active');
   const content = document.getElementById(contentId);
   if (content) content.classList.add('active');
+}
+function ppToggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
 }
 
 // ── TRENDING / STYLE SPOTLIGHT ──
