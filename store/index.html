@@ -1282,19 +1282,19 @@ select.finp{cursor:pointer;}
   <div class="sec-hdr"><p class="sec-eye">Browse by Category</p><h2 class="sec-title">Shop by Category</h2></div>
   <div class="cat-circles">
     <a class="cat-circle" href="home-kitchen.html" onclick="event.preventDefault();CategoryPage.open('Home & Kitchen')">
-      <div class="cat-circle-img"><img src="https://i.ibb.co/5XtP0Y3y/79f65688dfc7.jpg" alt="Home & Kitchen" loading="lazy"/></div>
+      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_200/https%3A%2F%2Fi.ibb.co%2F5XtP0Y3y%2F79f65688dfc7.jpg" alt="Home & Kitchen" loading="lazy"/></div>
       <div class="cat-circle-name">Home &amp; Kitchen</div>
     </a>
     <a class="cat-circle" href="aura-decor.html" onclick="event.preventDefault();CategoryPage.open('Aura décor')">
-      <div class="cat-circle-img"><img src="https://i.ibb.co/SDHjN1qJ/50dca94c30e1.jpg" alt="Aura Décor" loading="lazy"/></div>
+      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_200/https%3A%2F%2Fi.ibb.co%2FSDHjN1qJ%2F50dca94c30e1.jpg" alt="Aura Décor" loading="lazy"/></div>
       <div class="cat-circle-name">Aura Décor</div>
     </a>
     <a class="cat-circle" href="aesthetic-furniture.html" onclick="event.preventDefault();CategoryPage.open('Aesthetic Furniture')">
-      <div class="cat-circle-img"><img src="https://i.ibb.co/s4ZkSv7/1ed461bdaf0b.png" alt="Aesthetic Furniture" loading="lazy"/></div>
+      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_200/https%3A%2F%2Fi.ibb.co%2Fs4ZkSv7%2F1ed461bdaf0b.png" alt="Aesthetic Furniture" loading="lazy"/></div>
       <div class="cat-circle-name">Aesthetic Furniture</div>
     </a>
     <a class="cat-circle" href="giftings.html" onclick="event.preventDefault();CategoryPage.open('Giftings')">
-      <div class="cat-circle-img"><img src="https://i.ibb.co/BHFN5QJr/a75a256d51b3.png" alt="Giftings" loading="lazy"/></div>
+      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_200/https%3A%2F%2Fi.ibb.co%2FBHFN5QJr%2Fa75a256d51b3.png" alt="Giftings" loading="lazy"/></div>
       <div class="cat-circle-name">Giftings</div>
     </a>
   </div>
@@ -1302,7 +1302,7 @@ select.finp{cursor:pointer;}
 
 <!-- SALE COUNTDOWN -->
 <section class="sale-section" id="saleSection">
-  <img class="sale-bg" src="https://i.ibb.co/V0s4Xd42/sale.jpg" alt="Artisan Decor Sale – Auranest Decors" loading="lazy" width="1200" height="500" onerror="this.style.display='none'"/>
+  <img class="sale-bg" src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2FV0s4Xd42%2Fsale.jpg" alt="Artisan Decor Sale – Auranest Decors" loading="lazy" width="1200" height="500" onerror="this.style.display='none'"/>
   <div class="sale-overlay">
     <p class="sale-eye">LIMITED TIME OFFER</p>
     <h2 class="sale-title">Artisan Decor Sale</h2>
@@ -1477,7 +1477,7 @@ select.finp{cursor:pointer;}
 </section>
 
 <div class="banner-sec">
-  <div class="banner-img-wrap"><img src="https://i.ibb.co/mM6QC1F/whychose.jpg" alt="Rooted in Heritage – Auranest Decors handcrafted home décor story" loading="lazy" width="1200" height="600"/></div>
+  <div class="banner-img-wrap"><img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2FmM6QC1F%2Fwhychose.jpg" alt="Rooted in Heritage – Auranest Decors handcrafted home décor story" loading="lazy" width="1200" height="600"/></div>
   <div class="banner-content">
     <p class="banner-eye">Why Choose Auranest</p>
     <h2 class="banner-title">Rooted in <em>Heritage,</em><br>Designed for Today</h2>
@@ -1489,7 +1489,7 @@ select.finp{cursor:pointer;}
 <section class="section" id="about">
   <div class="about-grid">
     <div class="about-img-wrap">
-      <img class="about-img" src="https://i.ibb.co/ym7bRQ7C/story.jpg" alt="About Auranest Decors – Born from the timeless spirit of India" loading="lazy" width="600" height="400"/>
+      <img class="about-img" src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_800/https%3A%2F%2Fi.ibb.co%2Fym7bRQ7C%2Fstory.jpg" alt="About Auranest Decors – Born from the timeless spirit of India" loading="lazy" width="600" height="400"/>
       <div class="about-badge"><span class="about-badge-num" id="prodCountBadge">22+</span><span class="about-badge-lbl">Artisan Products</span></div>
     </div>
     <div>
@@ -1926,7 +1926,7 @@ window.openMyOrders = async function() {
       // Items HTML
       const itemsHtml = items.length ? items.map(it => `
         <div class="oe-item">
-          <div class="oe-item-img">${it.image ? `<img src="${it.image}" alt="${it.name}" onerror="this.style.display='none'"/>` : (it.icon||'🏺')}</div>
+          <div class="oe-item-img">${it.image ? `<img src="${cdnImg(it.image,120)}" alt="${it.name}" onerror="this.style.display='none'"/>` : (it.icon||'🏺')}</div>
           <div class="oe-item-info">
             <div class="oe-item-name">${it.name}</div>
             <div class="oe-item-meta">Qty: ${it.qty} &nbsp;·&nbsp; ₹${(it.price).toLocaleString('en-IN')} each</div>
@@ -2069,6 +2069,15 @@ const Cart = {
   count:  () => Cart.get().reduce((a,x) => a + x.qty, 0),
 };
 
+// ── CLOUDINARY CDN IMAGE HELPER ──
+// Wraps any ImgBB (or other) URL through Cloudinary fetch CDN
+// f_auto = auto WebP, q_auto = auto quality, w_ = resize
+function cdnImg(url, w) {
+  if (!url) return url;
+  const W = w || 800;
+  return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${W}/${encodeURIComponent(url)}`;
+}
+
 // ── RENDER PRODUCTS ──
 function renderProducts(list) {
   const g = document.getElementById('prodGrid');
@@ -2095,7 +2104,7 @@ function renderProducts(list) {
     <div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:16px">
         ${img
-          ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`
+          ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'"/>`
           : `<div class="prod-emoji">${p.icon}</div>`}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
@@ -2173,7 +2182,7 @@ function updateCartUI() {
   if (!cart.length) { el.innerHTML = '<div class="cart-empty">Your cart is empty<br><small style="font-size:.78rem;color:var(--muted)">Add some beautiful pieces!</small></div>'; return; }
   el.innerHTML = cart.map(item => `
     <div class="ci">
-      <div class="ci-img">${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.outerHTML='${item.icon}'"/>` : item.icon}</div>
+      <div class="ci-img">${item.image ? `<img src="${cdnImg(item.image,120)}" alt="${item.name}" onerror="this.outerHTML='${item.icon}'"/>` : item.icon}</div>
       <div>
         <p class="ci-name">${item.name.slice(0,34)}</p>
         <p class="ci-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</p>
@@ -2266,7 +2275,7 @@ const Wishlist = {
     if (!list.length) { body.innerHTML = '<div class="wish-empty">Your wishlist is empty ♡</div>'; return; }
     body.innerHTML = list.map(w => `
       <div class="wi" id="wi_${w.id}">
-        <div class="wi-img">${w.image ? `<img src="${w.image}" alt="${w.name}" onerror="this.style.display='none'"/>` : (w.icon||'🏺')}</div>
+        <div class="wi-img">${w.image ? `<img src="${cdnImg(w.image,120)}" alt="${w.name}" onerror="this.style.display='none'"/>` : (w.icon||'🏺')}</div>
         <div style="min-width:0">
           <p style="font-family:'Cormorant Garamond',serif;font-size:1rem;line-height:1.3;margin-bottom:.3rem">${w.name}</p>
           <p style="font-size:.85rem;font-weight:500">₹${w.price.toLocaleString('en-IN')}</p>
@@ -2537,7 +2546,7 @@ const ProductPage = {
           const rid  = r.id || String(all.indexOf(r));
           return `<div class="prod-card" style="animation-delay:${i*.07}s" onclick="ProductPage.open('${rid}')">
             <div class="prod-img-wrap">
-              ${rimg ? `<img src="${rimg}" alt="${r.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<div class="prod-emoji">${r.icon}</div>`}
+              ${rimg ? `<img src="${cdnImg(rimg,400)}" alt="${r.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>` : `<div class="prod-emoji">${r.icon}</div>`}
               ${r.tag ? `<span class="prod-tag">${r.tag}</span>` : ''}
             </div>
             <p class="prod-sub">${r.subCategory}</p>
@@ -2605,11 +2614,11 @@ const ProductPage = {
       thumbEl.innerHTML = '';
       return;
     }
-    mainEl.innerHTML = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
+    mainEl.innerHTML = `<img src="${cdnImg(this._imgs[0],900)}" alt="Product"/>${wishHtml}`;
     // Build thumbnails with data-idx, attach listeners after render
     thumbEl.innerHTML = this._imgs.map((src, i) =>
       `<button class="pp-thumb${i===0?' active':''}" data-idx="${i}" aria-label="View image ${i+1}" type="button">
-         <img src="${src}" alt="View ${i+1}" loading="lazy" decoding="async"/>
+         <img src="${cdnImg(src,150)}" alt="View ${i+1}" loading="lazy" decoding="async"/>
        </button>`).join('');
     // Event delegation — one listener on container, never misses clicks
     thumbEl.onclick = (e) => {
@@ -2622,7 +2631,7 @@ const ProductPage = {
     if (!this._imgs[idx]) return;
     const inW = (typeof WishList !== 'undefined') ? WishList.has(this._currentId) : false;
     const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">${inW?'♥':'♡'}</button>`;
-    document.getElementById('ppMainImg').innerHTML = `<img src="${this._imgs[idx]}" alt="Product"/>${wishHtml}`;
+    document.getElementById('ppMainImg').innerHTML = `<img src="${cdnImg(this._imgs[idx],900)}" alt="Product"/>${wishHtml}`;
     if (inW) document.getElementById('ppImgWish')?.classList.add('wished');
     document.querySelectorAll('#ppThumbs .pp-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
   },
@@ -2789,7 +2798,7 @@ function loadTrending() {
     const pid = p.id || String(i);
     return `<div class="prod-card" style="animation-delay:${i*.06}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:14px">
-        ${img ? `<img src="${img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/>` : `<div class="prod-emoji">${p.icon}</div>`}
+        ${img ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>` : `<div class="prod-emoji">${p.icon}</div>`}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
       </div>
