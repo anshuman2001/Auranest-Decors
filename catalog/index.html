@@ -445,7 +445,7 @@ img{display:block;max-width:100%;}
     <div class="spread-meta">10 Handcrafted Pieces</div>
   </div>
   <div class="spread-img">
-    <img src="https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg" alt="Home & Kitchen Collection" loading="eager"/>
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2FVWVkXDm7%2F3-Set-of-Tray.jpg" alt="Home & Kitchen Collection" loading="eager"/>
   </div>
 </div>
 
@@ -478,7 +478,7 @@ img{display:block;max-width:100%;}
     <div class="spread-meta">7 Statement Pieces</div>
   </div>
   <div class="spread-img">
-    <img src="https://i.ibb.co/r2HVw0QG/Brown-Jharokha.png" alt="Aura Décor Collection" loading="lazy"/>
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2Fr2HVw0QG%2FBrown-Jharokha.png" alt="Aura Décor Collection" loading="lazy"/>
   </div>
 </div>
 
@@ -513,6 +513,13 @@ img{display:block;max-width:100%;}
 </footer>
 
 <script>
+// ── CLOUDINARY CDN ──
+function cdnImg(url, w) {
+  if (!url) return url;
+  const W = w || 800;
+  return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${W}/${encodeURIComponent(url)}`;
+}
+
 // ── PRODUCT DATA ──
 const KITCHEN = [
   {name:"3 Set of Tray",                 sub:"Serveware",     tag:"Bestseller",        line:"Three pieces, one timeless story",                    img:"https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg",              img2:"",                                                             mat:"Wood"},
@@ -541,8 +548,9 @@ const DECOR = [
 function makeCard(p, idx) {
   const isWide = idx % 5 === 0;
   const num    = String(idx + 1).padStart(2, '0');
-  const img    = p.img;
-  const img2   = p.img2 || p.img;
+  const w      = isWide ? 800 : 600;
+  const img    = cdnImg(p.img, w);
+  const img2   = cdnImg(p.img2 || p.img, w);
   return `
   <div class="pcard${isWide ? ' wide' : ''}">
     <div class="pcard-img">
