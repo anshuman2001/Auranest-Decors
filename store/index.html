@@ -2619,7 +2619,7 @@ const ProductPage = {
 
   selectImg(idx) {
     if (!this._imgs[idx]) return;
-    const inW = WishList.has(this._currentId);
+    const inW = (typeof WishList !== 'undefined') ? WishList.has(this._currentId) : false;
     const wishHtml = `<button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">${inW?'♥':'♡'}</button>`;
     document.getElementById('ppMainImg').innerHTML = `<img src="${this._imgs[idx]}" alt="Product"/>${wishHtml}`;
     if (inW) document.getElementById('ppImgWish')?.classList.add('wished');
