@@ -823,7 +823,8 @@ select.finp{cursor:pointer;}
 .pp-thumb{width:74px;height:74px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s,opacity .2s;flex-shrink:0;opacity:.7;pointer-events:auto;position:relative;z-index:5;}
 .pp-thumb:hover{opacity:1;}
 .pp-thumb.active{border-color:var(--terracotta);opacity:1;}
-.pp-thumb img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;}
+.pp-thumb img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;background:linear-gradient(90deg,#f0ebe3 25%,#e6dace 50%,#f0ebe3 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .pp-main-img{flex:1;overflow:hidden;position:relative;background:var(--warm);height:100%;}
 .pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .3s;padding:12px;}
 /* Wishlist on image */
@@ -2608,7 +2609,7 @@ const ProductPage = {
     // Build thumbnails with data-idx, attach listeners after render
     thumbEl.innerHTML = this._imgs.map((src, i) =>
       `<button class="pp-thumb${i===0?' active':''}" data-idx="${i}" aria-label="View image ${i+1}" type="button">
-         <img src="${src}" alt="View ${i+1}"/>
+         <img src="${src}" alt="View ${i+1}" loading="lazy" decoding="async"/>
        </button>`).join('');
     // Event delegation — one listener on container, never misses clicks
     thumbEl.onclick = (e) => {
