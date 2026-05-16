@@ -2587,7 +2587,8 @@ const ProductPage = {
       ]
     });
 
-    // ── Open overlay ──
+    // ── Open overlay ── push history so back button closes it
+    history.pushState({ auranestProd: id }, '', '?product=' + encodeURIComponent(id));
     const page = document.getElementById('prodPage');
     page.classList.add('open');
     page.scrollTop = 0;
@@ -2603,11 +2604,17 @@ const ProductPage = {
       thumbEl.innerHTML = '';
       return;
     }
-    mainEl.innerHTML  = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
+    mainEl.innerHTML = `<img src="${this._imgs[0]}" alt="Product"/>${wishHtml}`;
+    // Build thumbnails with data-idx, attach listeners after render
     thumbEl.innerHTML = this._imgs.map((src, i) =>
-      `<button class="pp-thumb${i===0?' active':''}" onclick="ProductPage.selectImg(${i})" aria-label="View image ${i+1}" type="button" style="background:none;padding:0;border:2px solid transparent;">
+      `<button class="pp-thumb${i===0?' active':''}" data-idx="${i}" aria-label="View image ${i+1}" type="button">
          <img src="${src}" alt="View ${i+1}"/>
        </button>`).join('');
+    // Event delegation — one listener on container, never misses clicks
+    thumbEl.onclick = (e) => {
+      const btn = e.target.closest('[data-idx]');
+      if (btn) ProductPage.selectImg(parseInt(btn.dataset.idx));
+    };
   },
 
   selectImg(idx) {
@@ -2622,6 +2629,10 @@ const ProductPage = {
   close() {
     document.getElementById('prodPage').classList.remove('open');
     document.body.style.overflow = '';
+    // clean URL without pushing another history entry
+    if (location.search.includes('product=')) {
+      history.replaceState(null, '', location.pathname);
+    }
   },
 
   goHome() {
@@ -2924,6 +2935,19 @@ const _origPPopen  = ProductPage.open.bind(ProductPage);
 ProductPage.open   = function(id){ closeMobNav(); _origPPopen(id); };
 const _origCatOpen = CategoryPage.open.bind(CategoryPage);
 CategoryPage.open  = function(k){ closeMobNav(); _origCatOpen(k); };
+
+// ── Back button closes product page instead of leaving site ──
+window.addEventListener('popstate', function(e) {
+  const prodPage = document.getElementById('prodPage');
+  const catPage  = document.getElementById('categoryPage');
+  if (prodPage && prodPage.classList.contains('open')) {
+    prodPage.classList.remove('open');
+    document.body.style.overflow = '';
+  } else if (catPage && catPage.classList.contains('open')) {
+    catPage.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
 
 // ══════════════════════════════════════════════════
 // WISHLIST TOGGLE HELPER — safe for inline onclick
