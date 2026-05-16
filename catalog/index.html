@@ -445,7 +445,7 @@ img{display:block;max-width:100%;}
     <div class="spread-meta">10 Handcrafted Pieces</div>
   </div>
   <div class="spread-img">
-    <img src="https://i.ibb.co/VWVkXDm7/3-Set-of-Tray.jpg" alt="Home & Kitchen Collection" loading="eager"/>
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2FVWVkXDm7%2F3-Set-of-Tray.jpg" alt="Home & Kitchen Collection" loading="eager"/>
   </div>
 </div>
 
@@ -478,7 +478,7 @@ img{display:block;max-width:100%;}
     <div class="spread-meta">7 Statement Pieces</div>
   </div>
   <div class="spread-img">
-    <img src="https://i.ibb.co/r2HVw0QG/Brown-Jharokha.png" alt="Aura Décor Collection" loading="lazy"/>
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_1200/https%3A%2F%2Fi.ibb.co%2Fr2HVw0QG%2FBrown-Jharokha.png" alt="Aura Décor Collection" loading="lazy"/>
   </div>
 </div>
 
@@ -515,8 +515,9 @@ img{display:block;max-width:100%;}
 <script>
 // ── CLOUDINARY CDN ──
 function cdnImg(url, w) {
-  // Cloudinary fetch disabled — needs "Allowed fetch domains" configured in Cloudinary console
-  return url || '';
+  if (!url) return '';
+  const W = w || 800;
+  return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${W}/${encodeURIComponent(url)}`;
 }
 
 // ── PRODUCT DATA ──
