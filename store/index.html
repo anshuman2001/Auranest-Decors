@@ -971,6 +971,8 @@ select.finp{cursor:pointer;}
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 </script>
+<!-- Razorpay Checkout SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -1787,7 +1789,7 @@ async function seedToFirebase() {
   setFbStatus('🟢 Firebase Connected & Seeded!', true);
 }
 
-// ── PLACE ORDER → SAVED TO FIREBASE ──
+// ── PLACE ORDER — COD + RAZORPAY ──────────────────────────────────────────
 window.placeOrder = async function() {
   const name    = document.getElementById('coName').value.trim();
   const phone   = document.getElementById('coPhone').value.trim();
@@ -1796,42 +1798,149 @@ window.placeOrder = async function() {
   const pincode = document.getElementById('coPincode').value.trim();
   const state   = document.getElementById('coState').value.trim();
   const payment = document.getElementById('coPayment').value;
+
   if (!name || !phone || !address || !city || !pincode) { showToast('⚠️ Please fill all required fields'); return; }
   const cart = Cart.get();
   if (!cart.length) { showToast('Your cart is empty!'); return; }
+
   const subtotal = Cart.total();
   const shipping = subtotal >= 999 ? 0 : 99;
   const total    = subtotal + shipping;
+  const orderId  = 'AN' + Date.now().toString().slice(-8);
+  const customer = { name, phone, address, city, state, pincode, country: 'India' };
+
   const btn = document.getElementById('placeOrderBtn');
-  btn.textContent = 'Placing Order...'; btn.disabled = true;
-  try {
+  btn.textContent = 'Processing...'; btn.disabled = true;
+
+  // ── HELPER: Save order to Firestore & update sold count ──────────────────
+  async function saveOrderToFirebase(extraFields = {}) {
     const orderData = {
-      orderId: 'AN' + Date.now().toString().slice(-6),
-      customer: { name, phone, address, city, state, pincode, country: 'India' },
+      orderId,
+      customer,
       items: cart,
-      subtotal, shippingCost: shipping, totalAmount: total,
+      subtotal,
+      shippingCost: shipping,
+      totalAmount: total,
       paymentMethod: payment,
-      paymentStatus: payment === 'cod' ? 'pending' : 'pending',
       orderStatus: 'pending',
       userId: window.$user?.uid || 'guest',
       userEmail: window.$user?.email || 'guest',
       createdAt: serverTimestamp(),
+      ...extraFields,
     };
-    const ref = await addDoc(collection(db, 'orders'), orderData);
-    Cart.clear(); updateCartUI();
-    closeModal('checkoutModal');
-    showToast(`🎉 Order placed! ID: ${orderData.orderId}`);
-    // Update product sold count
+    await addDoc(collection(db, 'orders'), orderData);
     for (const item of cart) {
       if (item.id) {
         try { await updateDoc(doc(db, 'products', item.id), { sold: (item.sold||0) + item.qty }); } catch(e){}
       }
     }
-  } catch (err) {
-    showToast('❌ Order failed: ' + err.message);
-  } finally {
-    btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+    Cart.clear(); updateCartUI();
+    closeModal('checkoutModal');
+    return orderData;
   }
+
+  // ── COD FLOW ─────────────────────────────────────────────────────────────
+  if (payment === 'cod') {
+    try {
+      await saveOrderToFirebase({ paymentStatus: 'pending' });
+      showToast(`🎉 Order placed! ID: ${orderId} — Pay on delivery`);
+    } catch (err) {
+      showToast('❌ Order failed: ' + err.message);
+    } finally {
+      btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+    }
+    return;
+  }
+
+  // ── RAZORPAY FLOW ─────────────────────────────────────────────────────────
+  if (payment === 'razorpay') {
+    try {
+      // 1. Create Razorpay order on backend
+      const createRes = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total, orderId }),
+      });
+      const createData = await createRes.json();
+      if (!createRes.ok || !createData.razorpayOrderId) throw new Error(createData.error || 'Could not create payment order');
+
+      // 2. Open Razorpay checkout popup
+      const rzpOptions = {
+        key:         createData.keyId,
+        amount:      createData.amount,
+        currency:    createData.currency,
+        name:        'Auranest Decors',
+        description: `Order #${orderId}`,
+        image:       '/assets/logo.jpg',
+        order_id:    createData.razorpayOrderId,
+        prefill: {
+          name:    name,
+          contact: phone,
+        },
+        theme: { color: '#C0392B' },
+
+        // 3. Payment Success
+        handler: async function(response) {
+          try {
+            showToast('⏳ Verifying payment...');
+
+            // 4. Verify signature + create Shiprocket order
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id:   response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature:  response.razorpay_signature,
+                orderData: { orderId, customer, items: cart, subtotal, totalAmount: total },
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyData.success) throw new Error('Payment verification failed');
+
+            // 5. Save to Firebase
+            await saveOrderToFirebase({
+              paymentStatus:        'paid',
+              razorpayPaymentId:    response.razorpay_payment_id,
+              razorpayOrderId:      response.razorpay_order_id,
+              shiprocketOrderId:    verifyData.shiprocketOrderId || null,
+              shiprocketShipmentId: verifyData.shiprocketShipmentId || null,
+            });
+
+            showToast(`✅ Payment successful! Order #${orderId} confirmed`);
+          } catch (err) {
+            showToast('❌ ' + err.message);
+          } finally {
+            btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+          }
+        },
+
+        // 4. Payment Dismissed / Failed
+        modal: {
+          ondismiss: function() {
+            showToast('⚠️ Payment cancelled');
+            btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(rzpOptions);
+      rzp.on('payment.failed', function(response) {
+        showToast('❌ Payment failed: ' + response.error.description);
+        btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+      });
+      rzp.open();
+
+    } catch (err) {
+      showToast('❌ ' + err.message);
+      btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+    }
+    return;
+  }
+
+  // ── OTHER METHODS (Stripe/PayPal) ─────────────────────────────────────────
+  showToast('⚠️ This payment method is coming soon. Please use COD or Razorpay.');
+  btn.textContent = '🛍️ Place Order'; btn.disabled = false;
 };
 
 // ── FIREBASE AUTH ──
@@ -2228,6 +2337,7 @@ function openPModal(id) {
   document.getElementById('pmPrice').innerHTML   = `₹${p.price.toLocaleString('en-IN')} ${p.mrp>p.price?`<span style="font-size:.85rem;color:var(--muted);text-decoration:line-through;margin-left:.4rem">₹${p.mrp.toLocaleString('en-IN')}</span>`:''}`;
   document.getElementById('pmDesc').textContent  = p.description;
   document.getElementById('pmMeta').innerHTML    = `
+    ${p.partNumber ? `<div class="pm-row"><span class="pm-lbl">Part No.:</span><span class="pm-val">${p.partNumber}</span></div>` : ''}
     <div class="pm-row"><span class="pm-lbl">Material:</span><span class="pm-val">${p.material}</span></div>
     <div class="pm-row"><span class="pm-lbl">Size:</span><span class="pm-val">${p.size}</span></div>
     <div class="pm-row"><span class="pm-lbl">Color:</span><span class="pm-val">${p.color}</span></div>
@@ -2429,6 +2539,7 @@ const ProductPage = {
           <div class="pp-hl-item"><span class="pp-hl-lbl">Colour</span><span class="pp-hl-val">${p.color||'As shown'}</span></div>
           <div class="pp-hl-item"><span class="pp-hl-lbl">Category</span><span class="pp-hl-val">${p.subCategory||p.category}</span></div>
           <div class="pp-hl-item"><span class="pp-hl-lbl">Origin</span><span class="pp-hl-val">${craftRegion}</span></div>
+          ${p.partNumber ? `<div class="pp-hl-item"><span class="pp-hl-lbl">Part No.</span><span class="pp-hl-val">${p.partNumber}</span></div>` : ''}
         </div>
       </div>`;
 
@@ -2442,6 +2553,7 @@ const ProductPage = {
           </button>
           <div class="pp-acc-body open">
             <ul>
+              ${p.partNumber ? `<li><strong>Part No.:</strong> ${p.partNumber}</li>` : ''}
               <li><strong>Material:</strong> ${p.material||'Natural Wood'}</li>
               <li><strong>Colour:</strong> ${p.color||'As shown'}</li>
               <li><strong>Size:</strong> ${p.size||'See product images'}</li>

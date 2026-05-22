@@ -318,6 +318,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
       <div class="sg"><label class="sl">Size</label><input class="si" id="mSize" placeholder="e.g. 20cm × 15cm"/></div>
       <div class="sg"><label class="sl">Tag/Badge</label><input class="si" id="mTag" placeholder="e.g. Bestseller"/></div>
       <div class="sg"><label class="sl">Stock</label><input class="si" id="mStock" type="number" placeholder="10"/></div>
+      <div class="sg"><label class="sl">Part Number</label><input class="si" id="mPartNumber" placeholder="e.g. AN-001"/></div>
     </div>
     <!-- MULTIPLE IMAGES SECTION -->
     <div class="sg" style="margin-top:.8rem">
@@ -462,8 +463,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
           <table class="ptable">
-            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="prodTableBody"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
+            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Part No.</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="prodTableBody"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
           </table>
         </div>
         <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
@@ -808,6 +809,7 @@ window.saveProduct = async function() {
     size:        document.getElementById('mSize').value,
     tag:         document.getElementById('mTag').value,
     stock:       parseInt(document.getElementById('mStock').value)||10,
+    partNumber:  document.getElementById('mPartNumber').value.trim(),
     image:       images[0] || '',
     images:      images,
     description: document.getElementById('mDesc').value,
@@ -901,6 +903,7 @@ function renderProductsTable(list) {
       <td><span class="p-name-cell">${p.name}</span><div class="p-sub">${p.tag||''}</div></td>
       <td>${p.category}</td>
       <td>${p.subCategory}</td>
+      <td style="font-size:.72rem;color:var(--muted)">${p.partNumber||'—'}</td>
       <td>${p.material}</td>
       <td class="price-cell">₹${p.price?.toLocaleString('en-IN')}</td>
       <td>${p.stock||0}</td>
@@ -1007,8 +1010,9 @@ window.editProduct = function(id) {
   document.getElementById('mColor').value = p.color||'';
   document.getElementById('mSize').value  = p.size||'';
   document.getElementById('mTag').value   = p.tag||'';
-  document.getElementById('mStock').value = p.stock||'';
-  document.getElementById('mDesc').value  = p.description||'';
+  document.getElementById('mStock').value      = p.stock||'';
+  document.getElementById('mDesc').value       = p.description||'';
+  document.getElementById('mPartNumber').value = p.partNumber||'';
   // Load all images into the 5 fields
   const imgs = p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []);
   [0,1,2,3,4].forEach(i => {
@@ -1325,7 +1329,7 @@ function goPage(id, navEl) {
 function openAddModal() {
   window.$editingId = null;
   document.getElementById('modalTitle').textContent = 'Add New Product';
-  ['mName','mPrice','mMrp','mMat','mColor','mSize','mTag','mStock','mDesc'].forEach(id=>document.getElementById(id).value='');
+  ['mName','mPrice','mMrp','mMat','mColor','mSize','mTag','mStock','mDesc','mPartNumber'].forEach(id=>document.getElementById(id).value='');
   [0,1,2,3,4].forEach(i => {
     const el = document.getElementById('mImage'+i);
     if (el) el.value = '';
@@ -1413,9 +1417,9 @@ const BulkUpload = {
   _rows: [],
 
   downloadTemplate() {
-    const headers = ['Name','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','Image1','Image2','Image3'];
+    const headers = ['Name','PartNumber','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','Image1','Image2','Image3'];
     const example = [
-      'Folk Art Ceramic Planter','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','https://i.ibb.co/example1.jpg','','',
+      'Folk Art Ceramic Planter','AN-001','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','https://i.ibb.co/example1.jpg','','',
     ];
     const csv = [headers.join(','), example.map(v => `"${v}"`).join(',')].join('\n');
     const a = document.createElement('a');
@@ -1449,7 +1453,7 @@ const BulkUpload = {
     const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
     const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
     const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
-    const iStock = idx('stock'); const iDesc = idx('desc');
+    const iStock = idx('stock'); const iDesc = idx('desc');  const iPart = idx('part');
     const iImg1  = idx('image1'); const iImg2 = idx('image2'); const iImg3 = idx('image3');
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
@@ -1472,6 +1476,7 @@ const BulkUpload = {
         tag:         (cols[iTag]  || '').trim(),
         stock:       parseInt(cols[iStock]) || 10,
         description: (cols[iDesc] || '').trim(),
+        partNumber:  (iPart >= 0 ? cols[iPart] || '' : '').trim(),
         image:       images[0] || '',
         images,
         icon: '🎁', sold: 0,
@@ -1508,17 +1513,18 @@ const BulkUpload = {
     // Preview table (first 10)
     const shown = rows.slice(0, 10);
     preview.innerHTML = `<table>
-      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
+      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Part No.</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
       <tbody>${shown.map((r,i) => `<tr>
         <td style="color:var(--muted)">${i+1}</td>
         <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
         <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
+        <td style="font-size:.72rem;color:var(--muted)">${r.partNumber || '—'}</td>
         <td style="color:var(--gold)">₹${r.price}</td>
         <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
         <td>${r.image ? `<img src="${r.image}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>No img</span>'"/>` : '<span style="font-size:.65rem;color:var(--muted)">—</span>'}</td>
         <td>${r.stock}</td>
       </tr>`).join('')}
-      ${rows.length > 10 ? `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">...and ${rows.length - 10} more products</td></tr>` : ''}
+      ${rows.length > 10 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">...and ${rows.length - 10} more products</td></tr>` : ''}
       </tbody></table>`;
     document.getElementById('bulkImportBtn').textContent = `⬆ Import All ${rows.length} Products`;
     wrap.style.display = 'block';
