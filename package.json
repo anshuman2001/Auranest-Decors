@@ -8,6 +8,6 @@
     "razorpay": "^2.9.2"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
