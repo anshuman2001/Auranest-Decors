@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Checkout – Auranest Decors</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/jpeg" href="../assets/logo.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { inter: ['Inter','sans-serif'], playfair: ['Playfair Display','serif'] },
+      colors: {
+        gold: { DEFAULT:'#c49330', light:'#f6d070', dark:'#8a6520' },
+        ink:  { DEFAULT:'#1a1208', soft:'#3d2f12' }
+      }
+    }
+  }
+}
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "react":            "https://esm.sh/react@18",
+    "react-dom/client": "https://esm.sh/react-dom@18/client",
+    "react/jsx-runtime":"https://esm.sh/react@18/jsx-runtime"
+  }
+}
+</script>
+
+<style>
+/* ── Base ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:100vh}
+:root{--gold:#c49330;--gold-lt:#f6d070;--ink:#1a1208;--muted:#7a6a4e;--border:#e8dfc8}
+
+/* ── Animations ───────────────────────────────────────── */
+@keyframes fadeIn   {from{opacity:0}to{opacity:1}}
+@keyframes slideUp  {from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn  {from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn  {from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes spin     {to{transform:rotate(360deg)}}
+@keyframes pulse    {0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes checkDraw{to{stroke-dashoffset:0}}
+@keyframes circleDraw{to{stroke-dashoffset:0}}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+.animate-fade  {animation:fadeIn .35s ease both}
+.animate-slide {animation:slideUp .4s cubic-bezier(.22,1,.36,1) both}
+.animate-scale {animation:scaleIn .35s cubic-bezier(.22,1,.36,1) both}
+
+/* ── Spinner ──────────────────────────────────────────── */
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+
+/* ── Floating label ───────────────────────────────────── */
+.fl-wrap{position:relative;margin-bottom:1.1rem}
+.fl-input,.fl-select{
+  width:100%;padding:18px 14px 6px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:.93rem;font-family:inherit;background:#fff;color:var(--ink);
+  outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none
+}
+.fl-input:focus,.fl-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,147,48,.13)}
+.fl-label{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:.88rem;color:var(--muted);pointer-events:none;
+  transition:all .18s cubic-bezier(.22,1,.36,1);background:#fff;padding:0 3px
+}
+.fl-input:focus~.fl-label,
+.fl-input:not(:placeholder-shown)~.fl-label,
+.fl-select:focus~.fl-label,
+.fl-select.has-val~.fl-label{
+  top:8px;transform:translateY(0);font-size:.73rem;color:var(--gold);font-weight:600
+}
+.fl-select-arrow{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  pointer-events:none;color:var(--muted);font-size:.8rem
+}
+
+/* ── Progress bar ─────────────────────────────────────── */
+.progress-track{position:relative;display:flex;align-items:center;justify-content:center;gap:0}
+.progress-line{position:absolute;top:14px;left:10%;right:10%;height:2px;background:var(--border);z-index:0}
+.progress-fill{height:2px;background:var(--gold);transition:width .5s ease;position:absolute;top:14px;left:10%;z-index:1}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;border:2px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--muted);z-index:2;
+  transition:all .3s ease;flex-shrink:0;cursor:default
+}
+.step-dot.active{border-color:var(--gold);background:var(--gold);color:#fff;box-shadow:0 0 0 4px rgba(196,147,48,.18)}
+.step-dot.done{border-color:var(--gold);background:var(--gold);color:#fff}
+
+/* ── Cart item ───────────────────────────────────────── */
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.ci-img{width:72px;height:72px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#f0e8d8;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.ci-img img{width:100%;height:100%;object-fit:cover}
+
+/* ── Qty controls ─────────────────────────────────────── */
+.qty-wrap{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content}
+.qty-btn{width:30px;height:30px;border:none;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s;color:var(--ink)}
+.qty-btn:hover{background:var(--border)}
+.qty-val{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;border-left:1.5px solid var(--border);border-right:1.5px solid var(--border)}
+
+/* ── Pay method tabs ──────────────────────────────────── */
+.pay-tab{padding:9px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;background:#fff;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.pay-tab.active{border-color:var(--gold);background:#fffbf0;color:var(--gold)}
+
+/* ── Card preview ─────────────────────────────────────── */
+.card-preview{
+  background:linear-gradient(135deg,#1a1208 0%,#3d2f12 50%,#1a1208 100%);
+  border-radius:16px;padding:24px 22px;color:#fff;
+  position:relative;overflow:hidden;min-height:160px;
+  box-shadow:0 16px 40px rgba(0,0,0,.35)
+}
+.card-preview::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 20%,rgba(196,147,48,.25),transparent 60%);
+}
+.card-chip{width:36px;height:26px;border-radius:5px;background:linear-gradient(135deg,#f6d070,#c49330);margin-bottom:20px}
+
+/* ── OTP boxes ────────────────────────────────────────── */
+.otp-box{
+  width:52px;height:58px;border:2px solid var(--border);border-radius:12px;
+  text-align:center;font-size:1.5rem;font-weight:700;font-family:inherit;
+  outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:var(--ink)
+}
+.otp-box:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,147,48,.18)}
+
+/* ── Success checkmark ────────────────────────────────── */
+.check-circle{stroke-dasharray:170;stroke-dashoffset:170;animation:circleDraw .8s .2s cubic-bezier(.22,1,.36,1) forwards}
+.check-mark{stroke-dasharray:50;stroke-dashoffset:50;animation:checkDraw .5s 1s cubic-bezier(.22,1,.36,1) forwards}
+
+/* ── Confetti ─────────────────────────────────────────── */
+.confetti-piece{
+  position:fixed;width:8px;height:8px;border-radius:2px;
+  animation:confettiFall linear forwards;pointer-events:none;z-index:9999
+}
+
+/* ── Promo input ──────────────────────────────────────── */
+.promo-wrap{display:flex;gap:8px}
+.promo-input{flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.promo-input:focus{border-color:var(--gold)}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:10px}
+
+/* ── Order summary sidebar ────────────────────────────── */
+.os-row{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;padding:4px 0}
+.os-label{color:var(--muted)}
+.os-val{font-weight:600;color:var(--ink)}
+
+/* ── Gender pill ──────────────────────────────────────── */
+.gender-pill{padding:8px 20px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;background:#fff}
+.gender-pill.active{border-color:var(--gold);background:#fffbf0;color:var(--gold)}
+
+/* ── Nav bar ──────────────────────────────────────────── */
+.checkout-nav{
+  position:sticky;top:0;z-index:100;background:rgba(247,244,239,.92);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  padding:14px 24px;display:flex;align-items:center;gap:16px
+}
+
+/* ── Pay method panel ─────────────────────────────────── */
+.pay-panel{animation:fadeIn .25s ease both}
+
+/* ── Mobile responsiveness ────────────────────────────── */
+@media(max-width:768px){
+  .checkout-layout{flex-direction:column!important}
+  .order-sidebar{position:static!important;width:100%!important}
+  .otp-box{width:44px;height:52px;font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="module">
+import { createRoot } from 'react-dom/client';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+/* ────────────────────────────────────────────────────────────────
+   DATA
+──────────────────────────────────────────────────────────────── */
+const INDIA_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
+  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'
+];
+const US_STATES = [
+  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware',
+  'Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky',
+  'Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi',
+  'Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico',
+  'New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania',
+  'Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont',
+  'Virginia','Washington','West Virginia','Wisconsin','Wyoming'
+];
+
+function cdnImg(url, w) {
+  if (!url) return '';
+  return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${w}/${encodeURIComponent(url)}`;
+}
+function fmtINR(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+function fmtUSD(n) { return '$' + Number(n).toFixed(2); }
+
+/* ────────────────────────────────────────────────────────────────
+   CART HELPERS (mirrors store/index.html)
+──────────────────────────────────────────────────────────────── */
+const CartStore = {
+  get:   ()  => JSON.parse(localStorage.getItem('auranest_cart') || '[]'),
+  save:  (c) => localStorage.setItem('auranest_cart', JSON.stringify(c)),
+  clear: ()  => localStorage.removeItem('auranest_cart'),
+  changeQty(id, delta) {
+    const c = this.get(), i = c.find(x => x.id === id);
+    if (!i) return;
+    i.qty += delta;
+    if (i.qty < 1) this.save(c.filter(x => x.id !== id));
+    else this.save(c);
+  },
+  remove: (id) => CartStore.save(CartStore.get().filter(x => x.id !== id))
+};
+
+/* ────────────────────────────────────────────────────────────────
+   SHARED COMPONENTS
+──────────────────────────────────────────────────────────────── */
+function Btn({ children, onClick, disabled, loading, variant='gold', className='' }) {
+  const base = 'flex items-center justify-center gap-2 rounded-xl font-semibold text-sm transition-all duration-200 select-none px-5 py-3.5';
+  const variants = {
+    gold:    'bg-gold text-white hover:bg-gold-dark active:scale-95 disabled:opacity-50',
+    outline: 'border-2 border-gold text-gold hover:bg-amber-50 active:scale-95',
+    ghost:   'text-muted hover:text-ink hover:bg-amber-50 active:scale-95',
+    dark:    'bg-ink text-white hover:bg-ink/80 active:scale-95 disabled:opacity-50',
+  };
+  return (
+    <button
+      className={`${base} ${variants[variant]} ${className}`}
+      onClick={onClick}
+      disabled={disabled || loading}
+    >
+      {loading && <span className="spinner"/>}
+      {children}
+    </button>
+  );
+}
+
+function FloatInput({ label, id, type='text', value, onChange, required, maxLength, inputMode, pattern, autoComplete }) {
+  return (
+    <div className="fl-wrap">
+      <input
+        id={id} type={type} className="fl-input" placeholder=" "
+        value={value} onChange={e => onChange(e.target.value)}
+        required={required} maxLength={maxLength}
+        inputMode={inputMode} pattern={pattern} autoComplete={autoComplete}
+      />
+      <label htmlFor={id} className="fl-label">{label}{required && ' *'}</label>
+    </div>
+  );
+}
+
+function FloatSelect({ label, id, value, onChange, options, required }) {
+  return (
+    <div className="fl-wrap relative">
+      <select
+        id={id}
+        className={`fl-select${value ? ' has-val' : ''}`}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        required={required}
+      >
+        <option value=""> </option>
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+      <label htmlFor={id} className="fl-label">{label}{required && ' *'}</label>
+      <span className="fl-select-arrow">▾</span>
+    </div>
+  );
+}
+
+function OrderSidebar({ cart, country, discount }) {
+  const sub   = cart.reduce((a, x) => a + x.price * x.qty, 0);
+  const disc  = discount ? Math.round(sub * 0.1) : 0;
+  const total = sub - disc;
+  const isFree = (country !== 'US' && sub >= 999) || sub >= 100;
+  return (
+    <aside className="order-sidebar bg-white rounded-2xl p-5 shadow-sm border border-amber-100 lg:sticky lg:top-24 lg:w-80 flex-shrink-0">
+      <p className="font-playfair text-base font-semibold text-ink mb-4">Order Summary</p>
+      <div className="space-y-1 max-h-52 overflow-y-auto pr-1 mb-4">
+        {cart.map(it => (
+          <div key={it.id} className="flex gap-3 py-2 border-b border-amber-50 last:border-0">
+            <div className="ci-img w-11 h-11 rounded-lg flex-shrink-0">
+              {it.image
+                ? <img src={cdnImg(it.image, 120)} alt={it.name} onError={e => e.target.style.display='none'}/>
+                : <span className="text-lg">{it.icon || '🏺'}</span>
+              }
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium truncate text-ink">{it.name}</p>
+              <p className="text-xs text-muted">Qty {it.qty}</p>
+            </div>
+            <p className="text-xs font-semibold text-ink flex-shrink-0">{fmtINR(it.price * it.qty)}</p>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-1 pt-2 border-t border-amber-100">
+        <div className="os-row"><span className="os-label">Subtotal</span><span className="os-val">{fmtINR(sub)}</span></div>
+        {disc > 0 && <div className="os-row"><span className="os-label">Discount (10%)</span><span className="text-green-600 font-semibold text-sm">−{fmtINR(disc)}</span></div>}
+        <div className="os-row"><span className="os-label">Shipping</span><span className="text-green-600 font-semibold text-sm">{isFree ? 'FREE' : fmtINR(79)}</span></div>
+        <div className="os-row border-t border-amber-100 pt-2 mt-1">
+          <span className="font-bold text-ink">Total</span>
+          <span className="font-bold text-gold text-base">{fmtINR(total + (isFree ? 0 : 79))}</span>
+        </div>
+      </div>
+      <p className="text-xs text-muted mt-3 text-center">🔒 Secured by 256-bit SSL encryption</p>
+    </aside>
+  );
+}
+
+function ProgressStepper({ step, steps }) {
+  const pct = ((step - 1) / (steps.length - 1)) * 80;
+  return (
+    <div className="relative flex justify-between items-start px-4 mb-8">
+      <div className="progress-line"/>
+      <div className="progress-fill" style={{ width: `${pct}%` }}/>
+      {steps.map((s, i) => (
+        <div key={i} className="flex flex-col items-center gap-1.5 z-10">
+          <div className={`step-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}>
+            {i + 1 < step ? '✓' : i + 1}
+          </div>
+          <span className={`text-xs font-medium hidden sm:block ${i + 1 === step ? 'text-gold' : 'text-muted'}`}>{s}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   STEP 1 — CART
+──────────────────────────────────────────────────────────────── */
+function CartPage({ cart, setCart, onNext }) {
+  const [promo, setPromo]       = useState('');
+  const [promoMsg, setPromoMsg] = useState(null);
+  const [discount, setDiscount] = useState(false);
+
+  const updateQty = (id, delta) => {
+    CartStore.changeQty(id, delta);
+    setCart(CartStore.get());
+  };
+  const removeItem = (id) => {
+    CartStore.remove(id);
+    setCart(CartStore.get());
+  };
+
+  const applyPromo = () => {
+    if (promo.toUpperCase() === 'AURA10') {
+      setDiscount(true);
+      setPromoMsg({ ok: true, text: '10% discount applied! 🎉' });
+    } else {
+      setDiscount(false);
+      setPromoMsg({ ok: false, text: 'Invalid promo code' });
+    }
+  };
+
+  const sub   = cart.reduce((a, x) => a + x.price * x.qty, 0);
+  const disc  = discount ? Math.round(sub * 0.1) : 0;
+  const total = sub - disc + (sub >= 999 ? 0 : 79);
+
+  if (cart.length === 0) return (
+    <div className="animate-fade flex flex-col items-center justify-center py-20 text-center">
+      <div className="text-6xl mb-5">🛒</div>
+      <p className="font-playfair text-2xl font-semibold text-ink mb-2">Your cart is empty</p>
+      <p className="text-muted text-sm mb-6">Discover our handcrafted collection</p>
+      <a href="/store/" className="inline-block">
+        <Btn>Shop Now</Btn>
+      </a>
+    </div>
+  );
+
+  return (
+    <div className="animate-slide">
+      <h2 className="font-playfair text-2xl font-semibold text-ink mb-6">
+        Shopping Cart <span className="text-muted text-lg font-normal">({cart.length} {cart.length === 1 ? 'item' : 'items'})</span>
+      </h2>
+      <div className="checkout-layout flex gap-6 items-start">
+        {/* Items */}
+        <div className="flex-1 min-w-0">
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 mb-4">
+            {cart.map(it => (
+              <div key={it.id} className="cart-item animate-fade">
+                <div className="ci-img">
+                  {it.image
+                    ? <img src={cdnImg(it.image, 200)} alt={it.name} onError={e => e.target.style.display='none'}/>
+                    : <span>{it.icon || '🏺'}</span>
+                  }
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-ink mb-0.5 truncate">{it.name}</p>
+                  <p className="text-gold font-bold text-sm mb-3">{fmtINR(it.price)}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="qty-wrap">
+                      <button className="qty-btn" onClick={() => updateQty(it.id, -1)}>−</button>
+                      <span className="qty-val">{it.qty}</span>
+                      <button className="qty-btn" onClick={() => updateQty(it.id, 1)}>+</button>
+                    </div>
+                    <button
+                      className="text-xs text-muted hover:text-red-500 transition-colors"
+                      onClick={() => removeItem(it.id)}
+                    >Remove</button>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-bold text-sm text-ink">{fmtINR(it.price * it.qty)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Promo */}
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-amber-100">
+            <p className="text-sm font-semibold text-ink mb-3">🏷 Promo Code</p>
+            <div className="promo-wrap">
+              <input
+                className="promo-input"
+                placeholder="Enter code (try AURA10)"
+                value={promo}
+                onChange={e => setPromo(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && applyPromo()}
+              />
+              <Btn variant="outline" onClick={applyPromo} className="flex-shrink-0">Apply</Btn>
+            </div>
+            {promoMsg && (
+              <p className={`text-xs mt-2 font-medium ${promoMsg.ok ? 'text-green-600' : 'text-red-500'}`}>
+                {promoMsg.text}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Summary */}
+        <OrderSidebar cart={cart} country="IN" discount={discount}/>
+      </div>
+
+      <div className="mt-6 flex justify-between items-center">
+        <a href="/store/" className="text-sm text-muted hover:text-gold transition-colors">← Continue Shopping</a>
+        <Btn onClick={() => onNext({ discount })} className="px-8">
+          Proceed to Checkout →
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   OTP MODAL
+──────────────────────────────────────────────────────────────── */
+function OTPModal({ onVerified, onGuest }) {
+  const [phase, setPhase]       = useState('phone'); // 'phone' | 'otp'
+  const [phone, setPhone]       = useState('');
+  const [otp, setOtp]           = useState(['','','','']);
+  const [timer, setTimer]       = useState(30);
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+  const inputsRef               = useRef([]);
+
+  useEffect(() => {
+    if (phase !== 'otp') return;
+    setTimer(30);
+    const id = setInterval(() => setTimer(t => t <= 1 ? (clearInterval(id), 0) : t - 1), 1000);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  const sendOTP = () => {
+    if (phone.replace(/\D/g,'').length < 10) { setError('Enter a valid phone number'); return; }
+    setError('');
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setPhase('otp'); }, 1200);
+  };
+
+  const handleOtpKey = (i, val, e) => {
+    if (!/^\d?$/.test(val)) return;
+    const next = [...otp]; next[i] = val;
+    setOtp(next);
+    if (val && i < 3) inputsRef.current[i + 1]?.focus();
+    if (e?.key === 'Backspace' && !val && i > 0) inputsRef.current[i - 1]?.focus();
+  };
+
+  const verifyOTP = () => {
+    const code = otp.join('');
+    if (code.length < 4) { setError('Enter the 4-digit OTP'); return; }
+    setError('');
+    setLoading(true);
+    setTimeout(() => { setLoading(false); onVerified(phone); }, 1000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+         style={{background:'rgba(0,0,0,.55)',backdropFilter:'blur(6px)'}}>
+      <div className="animate-scale bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8">
+        {/* Logo */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <img src="../assets/logo.jpg" alt="Auranest" className="w-8 h-8 rounded-full object-cover"/>
+            <span className="font-playfair font-semibold text-ink">Auranest Decors</span>
+          </div>
+          <p className="font-playfair text-xl font-semibold text-ink">
+            {phase === 'phone' ? 'Sign in to continue' : 'Verify your number'}
+          </p>
+          <p className="text-sm text-muted mt-1">
+            {phase === 'phone'
+              ? 'Get order updates on WhatsApp'
+              : `OTP sent to +91 ${phone}`
+            }
+          </p>
+        </div>
+
+        {phase === 'phone' ? (
+          <>
+            <div className="fl-wrap">
+              <div className="flex">
+                <span className="flex items-center px-3 border border-r-0 border-amber-200 rounded-l-xl bg-amber-50 text-sm font-semibold text-ink">+91</span>
+                <input
+                  className="fl-input rounded-l-none" type="tel" placeholder="Phone number"
+                  value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
+                  onKeyDown={e => e.key === 'Enter' && sendOTP()}
+                  maxLength={10} inputMode="numeric"
+                />
+              </div>
+            </div>
+            {error && <p className="text-xs text-red-500 -mt-2 mb-3">{error}</p>}
+            <Btn onClick={sendOTP} loading={loading} className="w-full mb-3">Send OTP</Btn>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-center gap-3 mb-2">
+              {otp.map((d, i) => (
+                <input
+                  key={i}
+                  ref={el => inputsRef.current[i] = el}
+                  className="otp-box"
+                  type="text" inputMode="numeric" maxLength={1}
+                  value={d}
+                  onChange={e => handleOtpKey(i, e.target.value, null)}
+                  onKeyDown={e => handleOtpKey(i, e.target.value, e)}
+                />
+              ))}
+            </div>
+            {error && <p className="text-xs text-red-500 mb-3 text-center">{error}</p>}
+            <Btn onClick={verifyOTP} loading={loading} className="w-full mb-3">Verify OTP</Btn>
+            <div className="text-center">
+              {timer > 0
+                ? <p className="text-xs text-muted">Resend OTP in {timer}s</p>
+                : <button className="text-xs text-gold font-semibold" onClick={() => { setPhase('phone'); setOtp(['','','','']); }}>Resend OTP</button>
+              }
+            </div>
+          </>
+        )}
+
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-amber-100"/>
+          <span className="text-xs text-muted">or</span>
+          <div className="flex-1 h-px bg-amber-100"/>
+        </div>
+        <button
+          className="w-full text-sm text-muted hover:text-ink transition-colors py-2"
+          onClick={onGuest}
+        >Continue as Guest →</button>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   STEP 2 — PERSONAL DETAILS
+──────────────────────────────────────────────────────────────── */
+function PersonalPage({ data, setData, cart, onNext, onBack }) {
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const e = {};
+    if (!data.firstName.trim()) e.firstName = 'Required';
+    if (!data.lastName.trim())  e.lastName  = 'Required';
+    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Valid email required';
+    setErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  return (
+    <div className="animate-slide">
+      <h2 className="font-playfair text-2xl font-semibold text-ink mb-2">Personal Details</h2>
+      <p className="text-sm text-muted mb-6">Tell us a little about yourself</p>
+
+      <div className="checkout-layout flex gap-6 items-start">
+        <div className="flex-1 min-w-0 bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
+            <div>
+              <FloatInput label="First Name" id="firstName" value={data.firstName}
+                onChange={v => setData(d => ({...d, firstName: v}))} required/>
+              {errors.firstName && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.firstName}</p>}
+            </div>
+            <div>
+              <FloatInput label="Last Name" id="lastName" value={data.lastName}
+                onChange={v => setData(d => ({...d, lastName: v}))} required/>
+              {errors.lastName && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.lastName}</p>}
+            </div>
+          </div>
+          <FloatInput label="Email Address" id="email" type="email" value={data.email}
+            onChange={v => setData(d => ({...d, email: v}))} required autoComplete="email"/>
+          {errors.email && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.email}</p>}
+
+          <FloatInput label="Mobile Number" id="phone" type="tel" value={data.phone}
+            onChange={v => setData(d => ({...d, phone: v.replace(/\D/g,'').slice(0,10)}))}
+            inputMode="numeric" maxLength={10}/>
+
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Gender</p>
+            <div className="flex gap-3 flex-wrap">
+              {['Male','Female','Non-binary','Prefer not to say'].map(g => (
+                <button key={g}
+                  className={`gender-pill ${data.gender === g ? 'active' : ''}`}
+                  onClick={() => setData(d => ({...d, gender: g}))}
+                >{g}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2">
+            <span className="text-gold text-lg leading-none">🎁</span>
+            <div>
+              <p className="text-xs font-semibold text-ink">Birthday treat</p>
+              <p className="text-xs text-muted">Add your birthday and get an exclusive gift on your special day!</p>
+            </div>
+          </div>
+        </div>
+
+        <OrderSidebar cart={cart} country="IN" discount={false}/>
+      </div>
+
+      <div className="mt-6 flex justify-between">
+        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
+        <Btn onClick={() => validate() && onNext()} className="px-8">Save & Continue →</Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   STEP 3 — ADDRESS
+──────────────────────────────────────────────────────────────── */
+function AddressPage({ data, setData, cart, onNext, onBack }) {
+  const [errors, setErrors]     = useState({});
+  const states = data.country === 'US' ? US_STATES : INDIA_STATES;
+
+  const validate = () => {
+    const e = {};
+    if (!data.line1.trim())   e.line1   = 'Required';
+    if (!data.city.trim())    e.city    = 'Required';
+    if (!data.state)          e.state   = 'Required';
+    if (!data.pincode.trim()) e.pincode = 'Required';
+    setErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  const handleCountry = (c) => {
+    setData(d => ({...d, country: c, state: ''}));
+  };
+
+  return (
+    <div className="animate-slide">
+      <h2 className="font-playfair text-2xl font-semibold text-ink mb-2">Delivery Address</h2>
+      <p className="text-sm text-muted mb-6">Where should we deliver your order?</p>
+
+      <div className="checkout-layout flex gap-6 items-start">
+        <div className="flex-1 min-w-0 bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+          {/* Country toggle */}
+          <div className="mb-5">
+            <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Country</p>
+            <div className="flex gap-3">
+              <button
+                className={`gender-pill flex items-center gap-2 ${data.country !== 'US' ? 'active' : ''}`}
+                onClick={() => handleCountry('IN')}
+              >🇮🇳 India</button>
+              <button
+                className={`gender-pill flex items-center gap-2 ${data.country === 'US' ? 'active' : ''}`}
+                onClick={() => handleCountry('US')}
+              >🇺🇸 United States</button>
+            </div>
+          </div>
+
+          <FloatInput label="Address Line 1" id="line1" value={data.line1}
+            onChange={v => setData(d => ({...d, line1: v}))} required/>
+          {errors.line1 && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.line1}</p>}
+
+          <FloatInput label="Address Line 2 (Apt, Suite, etc.)" id="line2" value={data.line2}
+            onChange={v => setData(d => ({...d, line2: v}))}/>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
+            <div>
+              <FloatInput label={data.country === 'US' ? 'City' : 'City / Town'} id="city"
+                value={data.city} onChange={v => setData(d => ({...d, city: v}))} required/>
+              {errors.city && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.city}</p>}
+            </div>
+            <div>
+              <FloatInput
+                label={data.country === 'US' ? 'ZIP Code' : 'Pincode'}
+                id="pincode" value={data.pincode}
+                onChange={v => setData(d => ({...d, pincode: v.replace(/\D/g,'').slice(0,6)}))}
+                inputMode="numeric" required
+              />
+              {errors.pincode && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.pincode}</p>}
+            </div>
+          </div>
+
+          <FloatSelect label="State / Province" id="state" value={data.state}
+            onChange={v => setData(d => ({...d, state: v}))}
+            options={states} required/>
+          {errors.state && <p className="text-xs text-red-500 -mt-3 mb-2">{errors.state}</p>}
+
+          {/* Delivery info */}
+          <div className="mt-2 flex items-center gap-3 bg-green-50 border border-green-100 rounded-xl p-3">
+            <span className="text-xl">🚚</span>
+            <div>
+              <p className="text-xs font-semibold text-green-800">Estimated Delivery</p>
+              <p className="text-xs text-green-700">
+                {data.country === 'US' ? '7–12 business days' : '2–4 business days'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <OrderSidebar cart={cart} country={data.country} discount={false}/>
+      </div>
+
+      <div className="mt-6 flex justify-between">
+        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
+        <Btn onClick={() => validate() && onNext()} className="px-8">Continue to Payment →</Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   STEP 4 — PAYMENT
+──────────────────────────────────────────────────────────────── */
+function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
+  const [method, setMethod]     = useState('upi');
+  const [upiId, setUpiId]       = useState('');
+  const [card, setCard]         = useState({ num:'', name:'', exp:'', cvv:'' });
+  const [bank, setBank]         = useState('');
+  const [emiTenure, setEmi]     = useState(3);
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+
+  const sub   = cart.reduce((a, x) => a + x.price * x.qty, 0);
+  const disc  = discount ? Math.round(sub * 0.1) : 0;
+  const free  = address.country !== 'US' ? sub >= 999 : sub >= 100;
+  const total = sub - disc + (free ? 0 : 79);
+
+  const fmtCard = v => v.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();
+  const fmtExp  = v => {
+    const d = v.replace(/\D/g,'').slice(0,4);
+    return d.length > 2 ? d.slice(0,2) + '/' + d.slice(2) : d;
+  };
+
+  const placeOrder = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      if (method === 'cod') {
+        await new Promise(r => setTimeout(r, 1200));
+        CartStore.clear();
+        onSuccess({ orderId: 'COD-' + Date.now().toString(36).toUpperCase(), method: 'COD', total });
+        return;
+      }
+      // Razorpay flow
+      const res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total, currency: 'INR' })
+      });
+      if (!res.ok) throw new Error('Order creation failed');
+      const { razorpayOrderId, amount, currency, keyId } = await res.json();
+
+      await new Promise((resolve, reject) => {
+        const rzp = new window.Razorpay({
+          key: keyId,
+          amount,
+          currency,
+          order_id: razorpayOrderId,
+          name: 'Auranest Decors',
+          description: `${cart.length} item${cart.length > 1 ? 's' : ''}`,
+          image: 'https://www.auranestdecors.com/assets/logo.jpg',
+          prefill: {
+            name: `${personal.firstName} ${personal.lastName}`,
+            email: personal.email,
+            contact: personal.phone ? `+91${personal.phone}` : undefined
+          },
+          theme: { color: '#c49330' },
+          handler: async (response) => {
+            try {
+              const v = await fetch('/api/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id:   response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature:  response.razorpay_signature,
+                  cart,
+                  customer: {
+                    name:    `${personal.firstName} ${personal.lastName}`,
+                    email:   personal.email,
+                    phone:   personal.phone,
+                    address: address.line1,
+                    address2:address.line2,
+                    city:    address.city,
+                    state:   address.state,
+                    country: address.country,
+                    pincode: address.pincode
+                  }
+                })
+              });
+              if (!v.ok) throw new Error('Verification failed');
+              CartStore.clear();
+              resolve(response.razorpay_payment_id);
+            } catch(e) { reject(e); }
+          },
+          modal: { ondismiss: () => reject(new Error('Payment dismissed')) }
+        });
+        rzp.open();
+      }).then(payId => {
+        onSuccess({ orderId: payId, method: method.toUpperCase(), total });
+      });
+    } catch (e) {
+      setError(e.message === 'Payment dismissed' ? '' : (e.message || 'Payment failed. Please try again.'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const TABS = [
+    { id: 'upi',    icon: '📲', label: 'UPI' },
+    { id: 'card',   icon: '💳', label: 'Card' },
+    { id: 'net',    icon: '🏦', label: 'Net Banking' },
+    { id: 'emi',    icon: '📅', label: 'EMI' },
+    { id: 'cod',    icon: '📦', label: 'COD' },
+  ];
+
+  return (
+    <div className="animate-slide">
+      <h2 className="font-playfair text-2xl font-semibold text-ink mb-2">Payment</h2>
+      <p className="text-sm text-muted mb-6">Choose your preferred payment method</p>
+
+      <div className="checkout-layout flex gap-6 items-start">
+        <div className="flex-1 min-w-0">
+          {/* Tabs */}
+          <div className="flex gap-2 flex-wrap mb-5 pb-4 border-b border-amber-100">
+            {TABS.map(t => (
+              <button key={t.id} className={`pay-tab ${method === t.id ? 'active' : ''}`}
+                onClick={() => setMethod(t.id)}>
+                <span>{t.icon}</span>{t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* UPI */}
+          {method === 'upi' && (
+            <div className="pay-panel bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-ink mb-3">Pay via UPI ID</p>
+                  <FloatInput label="UPI ID (eg. name@paytm)" id="upiId" value={upiId}
+                    onChange={setUpiId}/>
+                  <div className="flex items-center gap-3 my-3">
+                    <div className="flex-1 h-px bg-amber-100"/><span className="text-xs text-muted">or scan</span><div className="flex-1 h-px bg-amber-100"/>
+                  </div>
+                  <div className="flex gap-3 flex-wrap">
+                    {['Google Pay','PhonePe','Paytm','BHIM'].map(app => (
+                      <button key={app} className={`pay-tab text-xs ${upiId === app.toLowerCase() ? 'active' : ''}`}
+                        onClick={() => setUpiId(app.toLowerCase())}>
+                        {app}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* QR placeholder */}
+                <div className="w-32 h-32 bg-amber-50 border-2 border-dashed border-amber-200 rounded-xl flex flex-col items-center justify-center flex-shrink-0">
+                  <span className="text-3xl mb-1">📲</span>
+                  <span className="text-xs text-muted text-center leading-tight">QR Code<br/>appears here</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Card */}
+          {method === 'card' && (
+            <div className="pay-panel bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              {/* Card Preview */}
+              <div className="card-preview mb-6">
+                <div className="card-chip"/>
+                <p className="text-lg font-mono tracking-widest mb-4 text-white/90 min-h-6">
+                  {card.num || '•••• •••• •••• ••••'}
+                </p>
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="text-xs text-white/50 uppercase tracking-wider mb-0.5">Card Holder</p>
+                    <p className="text-sm font-semibold text-white">{card.name || 'YOUR NAME'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-white/50 uppercase tracking-wider mb-0.5">Expires</p>
+                    <p className="text-sm font-semibold text-white">{card.exp || 'MM/YY'}</p>
+                  </div>
+                  <div className="absolute top-5 right-5 text-2xl opacity-60">💳</div>
+                </div>
+              </div>
+              <FloatInput label="Card Number" id="cardNum" value={card.num}
+                onChange={v => setCard(c => ({...c, num: fmtCard(v)}))} inputMode="numeric"/>
+              <FloatInput label="Card Holder Name" id="cardName" value={card.name}
+                onChange={v => setCard(c => ({...c, name: v}))}/>
+              <div className="grid grid-cols-2 gap-4">
+                <FloatInput label="MM/YY" id="cardExp" value={card.exp}
+                  onChange={v => setCard(c => ({...c, exp: fmtExp(v)}))} inputMode="numeric"/>
+                <FloatInput label="CVV" id="cardCvv" type="password" value={card.cvv}
+                  onChange={v => setCard(c => ({...c, cvv: v.replace(/\D/g,'').slice(0,4)}))} inputMode="numeric"/>
+              </div>
+              <p className="text-xs text-muted flex items-center gap-1 mt-1">🔒 Your card details are encrypted</p>
+            </div>
+          )}
+
+          {/* Net Banking */}
+          {method === 'net' && (
+            <div className="pay-panel bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <p className="text-sm font-semibold text-ink mb-4">Select your bank</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                {['SBI','HDFC','ICICI','Axis','Kotak','Yes Bank'].map(b => (
+                  <button key={b}
+                    className={`p-3 rounded-xl border-2 text-sm font-semibold transition-all ${bank === b ? 'border-gold bg-amber-50 text-gold' : 'border-amber-100 hover:border-amber-300 text-ink'}`}
+                    onClick={() => setBank(b)}
+                  >{b} Bank</button>
+                ))}
+              </div>
+              <FloatSelect label="Other bank" id="otherBank" value={bank}
+                onChange={setBank}
+                options={['Punjab National Bank','Union Bank','Bank of Baroda','Canara Bank','IndusInd Bank','Federal Bank']}/>
+            </div>
+          )}
+
+          {/* EMI */}
+          {method === 'emi' && (
+            <div className="pay-panel bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <p className="text-sm font-semibold text-ink mb-4">Choose EMI tenure</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                {[3,6,9,12,18,24].map(m => {
+                  const emi = Math.ceil((total * (1 + m * 0.012)) / m);
+                  return (
+                    <button key={m}
+                      className={`p-3 rounded-xl border-2 text-sm transition-all ${emiTenure === m ? 'border-gold bg-amber-50' : 'border-amber-100 hover:border-amber-300'}`}
+                      onClick={() => setEmi(m)}
+                    >
+                      <p className="font-bold text-ink">{fmtINR(emi)}/mo</p>
+                      <p className="text-xs text-muted">{m} months</p>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted">EMI available on credit cards. Bank charges may apply.</p>
+            </div>
+          )}
+
+          {/* COD */}
+          {method === 'cod' && (
+            <div className="pay-panel bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">📦</span>
+                <div>
+                  <p className="font-semibold text-ink">Cash on Delivery</p>
+                  <p className="text-sm text-muted">Pay when your order arrives at your doorstep. COD fee ₹40 may apply.</p>
+                </div>
+              </div>
+              <div className="mt-4 bg-amber-50 rounded-xl p-3">
+                <p className="text-xs text-muted">✅ No advance payment required &nbsp;·&nbsp; ✅ Pay in cash at delivery</p>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-4 bg-red-50 border border-red-100 rounded-xl p-3 text-sm text-red-700">
+              ⚠️ {error}
+            </div>
+          )}
+        </div>
+
+        <OrderSidebar cart={cart} country={address.country} discount={discount}/>
+      </div>
+
+      <div className="mt-6 flex justify-between items-center">
+        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
+        <Btn onClick={placeOrder} loading={loading} className="px-8 text-base">
+          {loading ? 'Processing…' : `Pay ${fmtINR(total)}`}
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   STEP 5 — SUCCESS
+──────────────────────────────────────────────────────────────── */
+function SuccessPage({ orderId, method, total }) {
+  useEffect(() => {
+    // Confetti
+    const colors = ['#c49330','#f6d070','#fce9a8','#1a1208','#fff'];
+    const pieces = Array.from({length: 60}, (_, i) => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left:${Math.random()*100}vw;
+        top:${-10 - Math.random()*20}px;
+        background:${colors[i % colors.length]};
+        border-radius:${Math.random() > .5 ? '50%' : '2px'};
+        width:${6 + Math.random()*6}px;
+        height:${6 + Math.random()*6}px;
+        animation-duration:${2 + Math.random()*3}s;
+        animation-delay:${Math.random()*.8}s;
+        transform:rotate(${Math.random()*360}deg);
+      `;
+      document.body.appendChild(el);
+      return el;
+    });
+    const t = setTimeout(() => pieces.forEach(p => p.remove()), 6000);
+    return () => { clearTimeout(t); pieces.forEach(p => p.remove()); };
+  }, []);
+
+  return (
+    <div className="animate-scale flex flex-col items-center justify-center py-12 text-center max-w-md mx-auto">
+      {/* Animated check */}
+      <svg width="120" height="120" viewBox="0 0 120 120" className="mb-6">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#f0e8d8" strokeWidth="5"/>
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#c49330" strokeWidth="5"
+          strokeDasharray="339" strokeDashoffset="339" className="check-circle"
+          strokeLinecap="round" transform="rotate(-90 60 60)"/>
+        <polyline points="38,62 54,78 84,46" fill="none" stroke="#c49330" strokeWidth="5.5"
+          strokeDasharray="70" strokeDashoffset="70" className="check-mark"
+          strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+
+      <div className="bg-amber-50 border border-amber-100 rounded-2xl px-6 py-2 mb-4 inline-block">
+        <p className="text-xs font-semibold text-gold uppercase tracking-widest">Order Confirmed</p>
+      </div>
+      <h2 className="font-playfair text-3xl font-bold text-ink mb-2">Thank You! 🙏</h2>
+      <p className="text-muted text-sm mb-6 leading-relaxed">
+        Your order has been placed successfully. You'll receive a confirmation
+        on WhatsApp &amp; email shortly.
+      </p>
+
+      <div className="w-full bg-white rounded-2xl border border-amber-100 p-5 mb-6 shadow-sm text-left">
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Order ID</p>
+            <p className="font-mono font-bold text-ink text-xs">{orderId}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Amount Paid</p>
+            <p className="font-bold text-gold">{fmtINR(total)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Payment</p>
+            <p className="font-semibold text-ink">{method}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted uppercase tracking-wide mb-0.5">Delivery</p>
+            <p className="font-semibold text-green-700">2–4 business days</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-3 w-full">
+        <a href="/store/" className="flex-1">
+          <Btn variant="outline" className="w-full">Continue Shopping</Btn>
+        </a>
+        <a href="/store/contact.html" className="flex-1">
+          <Btn variant="ghost" className="w-full border border-amber-200">Need Help?</Btn>
+        </a>
+      </div>
+
+      <p className="text-xs text-muted mt-6">
+        Questions? Write to <a href="mailto:info@auranestsdecor.com" className="text-gold hover:underline">info@auranestsdecor.com</a>
+      </p>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   MAIN APP
+──────────────────────────────────────────────────────────────── */
+const STEP_LABELS = ['Cart','Login','Details','Address','Payment','Done'];
+
+function CheckoutApp() {
+  const [step, setStep]         = useState(1);
+  const [cart, setCart]         = useState(() => CartStore.get());
+  const [showOTP, setShowOTP]   = useState(false);
+  const [discount, setDiscount] = useState(false);
+  const [orderResult, setOrderResult] = useState(null);
+
+  const [personal, setPersonal] = useState({ firstName:'', lastName:'', email:'', phone:'', gender:'' });
+  const [address,  setAddress]  = useState({ line1:'', line2:'', city:'', state:'', country:'IN', pincode:'' });
+
+  // Scroll top on step change
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
+
+  // Razorpay script
+  useEffect(() => {
+    if (document.getElementById('rzp-script')) return;
+    const s = document.createElement('script');
+    s.id  = 'rzp-script';
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    document.head.appendChild(s);
+  }, []);
+
+  return (
+    <div className="min-h-screen">
+      {/* Nav */}
+      <nav className="checkout-nav">
+        <a href="/store/" className="font-playfair text-lg font-semibold text-ink flex items-center gap-2">
+          <img src="../assets/logo.jpg" alt="Auranest" className="w-7 h-7 rounded-full object-cover"/>
+          <span className="hidden sm:inline">Auranest Decors</span>
+        </a>
+        <div className="flex-1"/>
+        <p className="text-xs text-muted font-medium">🔒 Secure Checkout</p>
+      </nav>
+
+      {/* Main */}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        {/* Progress */}
+        {step < 6 && (
+          <ProgressStepper
+            step={step === 2 ? 2 : step}
+            steps={STEP_LABELS.slice(0, 5)}
+          />
+        )}
+
+        {/* OTP Modal */}
+        {showOTP && (
+          <OTPModal
+            onVerified={(phone) => {
+              setPersonal(p => ({...p, phone}));
+              setShowOTP(false);
+              setStep(3);
+            }}
+            onGuest={() => {
+              setShowOTP(false);
+              setStep(3);
+            }}
+          />
+        )}
+
+        {/* Steps */}
+        {step === 1 && (
+          <CartPage
+            cart={cart}
+            setCart={setCart}
+            onNext={({ discount: d }) => {
+              setDiscount(d);
+              setShowOTP(true);
+              setStep(2);
+            }}
+          />
+        )}
+        {step === 2 && !showOTP && (
+          /* Fallback: if OTP was dismissed */
+          <CartPage cart={cart} setCart={setCart}
+            onNext={({ discount: d }) => { setDiscount(d); setShowOTP(true); }}/>
+        )}
+        {step === 3 && (
+          <PersonalPage
+            data={personal} setData={setPersonal}
+            cart={cart}
+            onNext={() => setStep(4)}
+            onBack={() => setStep(1)}
+          />
+        )}
+        {step === 4 && (
+          <AddressPage
+            data={address} setData={setAddress}
+            cart={cart}
+            onNext={() => setStep(5)}
+            onBack={() => setStep(3)}
+          />
+        )}
+        {step === 5 && (
+          <PaymentPage
+            cart={cart}
+            address={address}
+            personal={personal}
+            discount={discount}
+            onSuccess={(result) => { setOrderResult(result); setStep(6); }}
+            onBack={() => setStep(4)}
+          />
+        )}
+        {step === 6 && orderResult && (
+          <SuccessPage
+            orderId={orderResult.orderId}
+            method={orderResult.method}
+            total={orderResult.total}
+          />
+        )}
+      </main>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────
+   BOOTSTRAP
+──────────────────────────────────────────────────────────────── */
+createRoot(document.getElementById('root')).render(
+  React.createElement(CheckoutApp)
+);
+</script>
+</body>
+</html>

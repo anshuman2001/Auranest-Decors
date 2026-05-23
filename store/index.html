@@ -2177,48 +2177,8 @@ function ckVal(el, type) {
   if (fld) fld.classList.toggle('has-err', filled && !ok);
 }
 
-// ─── Override openCheckout to populate new summary ───
-const _origOpen = window.openCheckout;
-window.openCheckout = function() {
-  if (!Cart.count()) { showToast('Your cart is empty!'); return; }
-  updateCartUI(); toggleCart();
-
-  // Build order summary
-  const cart  = Cart.get();
-  const prods = window.$products || [];
-  const sumEl = document.getElementById('osSummary');
-  if (sumEl) {
-    sumEl.innerHTML = cart.map(item => {
-      // cart stores: { image, icon, name, price, qty, id }
-      const imgSrc = item.image ? cdnImg(item.image, 140) : '';
-      return `<div class="ck-item">
-        <div class="ck-item-img">
-          ${imgSrc
-            ? `<img src="${imgSrc}" alt="${item.name}" loading="eager" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`
-            : `<span style="font-size:26px;line-height:62px;text-align:center;display:block">${item.icon||'🛍'}</span>`}
-          <span class="ck-qty-b">${item.qty}</span>
-        </div>
-        <div class="ck-item-info">
-          <div class="ck-item-name">${item.name}</div>
-          <div class="ck-item-cat">₹${item.price.toLocaleString('en-IN')} each</div>
-        </div>
-        <div class="ck-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
-      </div>`;
-    }).join('');
-  }
-  const totalEl = document.getElementById('osTotal');
-  if (totalEl) totalEl.textContent = '₹' + Cart.total().toLocaleString('en-IN');
-
-  // Reset states for default country (India)
-  ckPopStates(document.getElementById('coCountry')?.value || 'India');
-
-  // Reset payment pill to razorpay
-  document.querySelectorAll('.ck-pm').forEach(p => p.classList.toggle('sel', p.dataset.val === 'razorpay'));
-  const payEl = document.getElementById('coPayment');
-  if (payEl) payEl.value = 'razorpay';
-
-  document.getElementById('checkoutModal').classList.add('on');
-};
+// ─── openCheckout now routes to the dedicated React checkout page ───
+// (Legacy modal left in DOM but no longer used as primary checkout path)
 
 // ─── Override closeModal to handle new overlay class ───
 const _origClose = window.closeModal;
@@ -2818,7 +2778,7 @@ function toggleWishlist() {
 
 // ── UI HELPERS ──
 function toggleCart()  { document.getElementById('cartPanel').classList.toggle('on'); document.getElementById('cartOverlay').classList.toggle('on'); }
-function openCheckout(){ if(!Cart.count()){showToast('Your cart is empty!');return;} updateCartUI(); toggleCart(); document.getElementById('checkoutModal').classList.add('on'); }
+function openCheckout(){ if(!Cart.count()){showToast('Your cart is empty!');return;} toggleCart(); window.location.href='/store/checkout.html'; }
 function openAuth()    { document.getElementById('authModal').classList.add('on'); }
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
 function switchTab(t)  {
