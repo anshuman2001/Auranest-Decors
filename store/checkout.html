@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Checkout – Auranest Decors</title>
 <meta name="robots" content="noindex,nofollow"/>
-<link rel="icon" type="image/jpeg" href="https://www.auranestdecors.com/assets/logo.jpg"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23c49330'/><text y='.9em' x='50%' text-anchor='middle' font-size='60' font-family='serif' fill='white'>A</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
@@ -143,6 +143,33 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
+
+/* ─── LOGO — reads from localStorage (set by store page) ── */
+const LOGO_URL = localStorage.getItem('auranest_logo') || '';
+
+function BrandLogo({ size = 36 }) {
+  const [broken, setBroken] = useState(!LOGO_URL);
+  if (!broken && LOGO_URL) {
+    return (
+      <img
+        src={LOGO_URL}
+        alt="Auranest"
+        onError={() => setBroken(true)}
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+      />
+    );
+  }
+  /* Elegant text fallback — always visible even without a logo file */
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%', flexShrink: 0,
+      background: 'linear-gradient(135deg,#c49330,#f6d070)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: "'Playfair Display',serif", fontWeight: 700,
+      fontSize: size * 0.4, color: '#fff', letterSpacing: '-.02em'
+    }}>A</div>
+  );
+}
 
 /* ─── DATA ─────────────────────────────────────────────── */
 const IN_STATES = [
@@ -439,7 +466,7 @@ function OTPModal({ onVerified, onGuest }) {
     }}>
       <div className="a-scale" style={{ background: '#fff', borderRadius: 24, padding: '36px 32px', width: '100%', maxWidth: 380, boxShadow: '0 24px 60px rgba(0,0,0,.18)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src="https://www.auranestdecors.com/assets/logo.jpg" alt="Auranest" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', marginBottom: 10 }} />
+          <BrandLogo size={40} />
           <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.25rem', fontWeight: 700, color: 'var(--ink)' }}>
             {phase === 'phone' ? 'Sign in to continue' : 'Verify your number'}
           </p>
@@ -686,7 +713,7 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
           key: keyId, amount, currency, order_id: razorpayOrderId,
           name: 'Auranest Decors',
           description: `${cart.length} item${cart.length > 1 ? 's' : ''}`,
-          image: 'https://www.auranestdecors.com/assets/logo.jpg',
+          image: LOGO_URL || undefined,
           prefill: {
             name: `${personal.firstName} ${personal.lastName}`.trim(),
             email: personal.email,
@@ -978,7 +1005,7 @@ function App() {
       {/* Navbar */}
       <nav className="co-nav">
         <a href="/store/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)' }}>
-          <img src="https://www.auranestdecors.com/assets/logo.jpg" alt="Auranest" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover' }} />
+          <BrandLogo size={30} />
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.05rem', fontWeight: 700 }}>Auranest Decors</span>
         </a>
         <div style={{ flex: 1 }} />
