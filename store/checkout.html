@@ -9,6 +9,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
+<!-- Firebase Phone Auth (ES module — exposes helpers to window) -->
+<script type="module">
+import { initializeApp }                                  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+const _app  = initializeApp({
+  apiKey:            'AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk',
+  authDomain:        'auranest-decors.firebaseapp.com',
+  projectId:         'auranest-decors',
+  storageBucket:     'auranest-decors.firebasestorage.app',
+  messagingSenderId: '55244789649',
+  appId:             '1:55244789649:web:0aab804a8933ce0cf6ec30'
+});
+const _auth = getAuth(_app);
+window._fbAuth              = _auth;
+window._fbSignInWithPhone   = (phone, verifier) => signInWithPhoneNumber(_auth, phone, verifier);
+window._fbRecaptchaVerifier = (containerId, cfg) => new RecaptchaVerifier(_auth, containerId, cfg);
+</script>
+
 <!-- React UMD + Babel for in-browser JSX transpilation -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -139,6 +157,8 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 </style>
 </head>
 <body>
+<!-- Invisible reCAPTCHA anchor for Firebase Phone Auth -->
+<div id="recaptcha-container" style="position:fixed;bottom:0;right:0;z-index:9999"></div>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -405,57 +425,84 @@ function CartPage({ cart, setCart, onNext }) {
   );
 }
 
-/* ─── OTP MODAL ─────────────────────────────────────────── */
+/* ─── OTP MODAL — Firebase Phone Auth ───────────────────── */
 function OTPModal({ onVerified, onGuest }) {
-  const [phase, setPhase]     = useState('phone');
-  const [phone, setPhone]     = useState('');
-  const [otp, setOtp]         = useState(['', '', '', '']);
-  const [timer, setTimer]     = useState(30);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr]         = useState('');
-  const refs = [useRef(), useRef(), useRef(), useRef()];
+  const [phase, setPhase]       = useState('phone');
+  const [phone, setPhone]       = useState('');
+  const [otp, setOtp]           = useState(['','','','','','']); // Firebase sends 6-digit OTP
+  const [timer, setTimer]       = useState(0);
+  const [loading, setLoading]   = useState(false);
+  const [err, setErr]           = useState('');
+  const confirmRef              = useRef(null);  // Firebase ConfirmationResult
+  const recaptchaRef            = useRef(null);  // RecaptchaVerifier instance
+  const refs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
+  /* Start countdown when OTP phase begins */
   useEffect(() => {
     if (phase !== 'otp') return;
-    setTimer(30);
+    setTimer(60);
     refs[0].current?.focus();
     const id = setInterval(() => setTimer(t => { if (t <= 1) { clearInterval(id); return 0; } return t - 1; }), 1000);
     return () => clearInterval(id);
   }, [phase]);
 
-  // Demo OTP: no SMS service wired — auto-verify any 4-digit code
-  const [demoCode, setDemoCode] = useState('');
+  /* Set up invisible reCAPTCHA (once) */
+  const setupRecaptcha = () => {
+    if (recaptchaRef.current) return;
+    recaptchaRef.current = window._fbRecaptchaVerifier('recaptcha-container', {
+      size: 'invisible',
+      callback: () => {}
+    });
+  };
 
-  const sendOTP = () => {
+  const sendOTP = async () => {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
-    // Generate a visible demo code
-    const code = String(Math.floor(1000 + Math.random() * 9000));
-    setDemoCode(code);
-    // Auto-fill OTP boxes after a short delay for demo effect
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      setupRecaptcha();
+      confirmRef.current = await window._fbSignInWithPhone('+91' + phone, recaptchaRef.current);
       setPhase('otp');
-      setOtp(code.split(''));
-      setTimeout(() => refs[3].current?.focus(), 100);
-    }, 900);
+    } catch (e) {
+      // Reset reCAPTCHA so user can retry
+      recaptchaRef.current?.clear();
+      recaptchaRef.current = null;
+      const msg = e.code === 'auth/invalid-phone-number'   ? 'Invalid phone number.'
+                : e.code === 'auth/too-many-requests'       ? 'Too many attempts. Try later.'
+                : e.code === 'auth/captcha-check-failed'    ? 'reCAPTCHA failed. Reload and retry.'
+                : 'Could not send OTP. Please try again.';
+      setErr(msg);
+    } finally { setLoading(false); }
   };
 
   const handleKey = (i, val) => {
     if (!/^\d?$/.test(val)) return;
     const next = [...otp]; next[i] = val;
     setOtp(next);
-    if (val && i < 3) refs[i + 1].current?.focus();
+    if (val && i < 5) refs[i + 1].current?.focus();
   };
 
   const handleBackspace = (i, e) => {
     if (e.key === 'Backspace' && !otp[i] && i > 0) refs[i - 1].current?.focus();
   };
 
-  const verify = () => {
-    if (otp.join('').length < 4) { setErr('Enter the 4-digit OTP'); return; }
+  const verify = async () => {
+    const code = otp.join('');
+    if (code.length < 6) { setErr('Enter the 6-digit OTP'); return; }
     setErr(''); setLoading(true);
-    setTimeout(() => { setLoading(false); onVerified(phone); }, 700);
+    try {
+      await confirmRef.current.confirm(code);
+      onVerified(phone);
+    } catch (e) {
+      setErr(e.code === 'auth/invalid-verification-code' ? 'Wrong OTP. Please check and retry.' : 'Verification failed. Try again.');
+    } finally { setLoading(false); }
+  };
+
+  const resend = () => {
+    setPhase('phone');
+    setOtp(['','','','','','']);
+    setErr('');
+    recaptchaRef.current?.clear();
+    recaptchaRef.current = null;
   };
 
   return (
@@ -466,50 +513,53 @@ function OTPModal({ onVerified, onGuest }) {
     }}>
       <div className="a-scale" style={{ background: '#fff', borderRadius: 24, padding: '36px 32px', width: '100%', maxWidth: 380, boxShadow: '0 24px 60px rgba(0,0,0,.18)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <BrandLogo size={40} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
+            <BrandLogo size={44} />
+          </div>
           <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.25rem', fontWeight: 700, color: 'var(--ink)' }}>
             {phase === 'phone' ? 'Sign in to continue' : 'Verify your number'}
           </p>
           <p style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: 4 }}>
-            {phase === 'phone' ? 'Get order updates on WhatsApp' : `Sent to +91 ${phone}`}
+            {phase === 'phone' ? 'OTP will be sent via SMS' : `6-digit OTP sent to +91 ${phone}`}
           </p>
-          {phase === 'otp' && demoCode && (
-            <div style={{ background: '#fdf8ed', border: '1.5px solid var(--gold)', borderRadius: 10, padding: '8px 14px', marginTop: 10, display: 'inline-block' }}>
-              <p style={{ fontSize: '.72rem', color: 'var(--muted)', marginBottom: 2 }}>Demo OTP (auto-filled)</p>
-              <p style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '.25em', color: 'var(--gold)', fontFamily: 'monospace' }}>{demoCode}</p>
-            </div>
-          )}
         </div>
 
         {phase === 'phone' ? (
           <>
-            <div className="fl-wrap" style={{ display: 'flex' }}>
-              <span style={{ display: 'flex', alignItems: 'center', padding: '0 12px', background: '#fdf8ed', border: '1.5px solid var(--border)', borderRight: 'none', borderRadius: '10px 0 0 10px', fontSize: '.85rem', fontWeight: 700 }}>+91</span>
+            <div style={{ display: 'flex', marginBottom: 4 }}>
+              <span style={{ display: 'flex', alignItems: 'center', padding: '0 12px', background: '#fdf8ed', border: '1.5px solid var(--border)', borderRight: 'none', borderRadius: '10px 0 0 10px', fontSize: '.85rem', fontWeight: 700 }}>🇮🇳 +91</span>
               <input className="fl-input" style={{ borderRadius: '0 10px 10px 0', paddingTop: 12, paddingBottom: 12 }}
-                type="tel" placeholder="Phone number" value={phone}
+                type="tel" placeholder="10-digit mobile number" value={phone}
                 onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                onKeyDown={e => e.key === 'Enter' && sendOTP()} inputMode="numeric" />
+                onKeyDown={e => e.key === 'Enter' && sendOTP()} inputMode="numeric" autoComplete="tel" />
             </div>
-            {err && <p style={{ color: '#dc2626', fontSize: '.78rem', marginTop: -8, marginBottom: 10 }}>{err}</p>}
-            <Btn onClick={sendOTP} loading={loading} style={{ width: '100%', marginBottom: 12 }}>Send OTP</Btn>
+            {err && <p style={{ color: '#dc2626', fontSize: '.78rem', marginBottom: 10 }}>{err}</p>}
+            <Btn onClick={sendOTP} loading={loading} style={{ width: '100%', marginBottom: 12 }}>
+              {loading ? 'Sending OTP…' : 'Send OTP via SMS'}
+            </Btn>
           </>
         ) : (
           <>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
+            <p style={{ fontSize: '.8rem', color: 'var(--muted)', textAlign: 'center', marginBottom: 12 }}>
+              Enter the 6-digit OTP sent to your phone
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
               {otp.map((d, i) => (
                 <input key={i} ref={refs[i]} className="otp-box" type="text"
                   inputMode="numeric" maxLength={1} value={d}
+                  style={{ width: 44, height: 52, fontSize: '1.4rem' }}
                   onChange={e => handleKey(i, e.target.value)}
                   onKeyDown={e => handleBackspace(i, e)} />
               ))}
             </div>
             {err && <p style={{ color: '#dc2626', fontSize: '.78rem', textAlign: 'center', marginBottom: 8 }}>{err}</p>}
-            <Btn onClick={verify} loading={loading} style={{ width: '100%', marginBottom: 12 }}>Verify OTP</Btn>
+            <Btn onClick={verify} loading={loading} style={{ width: '100%', marginBottom: 12 }}>
+              {loading ? 'Verifying…' : 'Verify OTP'}
+            </Btn>
             <div style={{ textAlign: 'center' }}>
               {timer > 0
-                ? <p style={{ fontSize: '.78rem', color: 'var(--muted)' }}>Resend in {timer}s</p>
-                : <button onClick={() => { setPhase('phone'); setOtp(['', '', '', '']); }}
-                    style={{ fontSize: '.78rem', color: 'var(--gold)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+                ? <p style={{ fontSize: '.78rem', color: 'var(--muted)' }}>Resend OTP in {timer}s</p>
+                : <button onClick={resend} style={{ fontSize: '.78rem', color: 'var(--gold)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                     Resend OTP
                   </button>
               }
