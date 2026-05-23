@@ -1624,34 +1624,322 @@ select.finp{cursor:pointer;}
   </div><!-- /auth-box -->
 </div><!-- /authModal -->
 
+<!-- ══════════════════════════════════════════════════
+     PREMIUM CHECKOUT MODAL — Nike / Apple / Luxury
+══════════════════════════════════════════════════ -->
+<style>
+.ck-overlay{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0);backdrop-filter:blur(0) saturate(100%);
+  pointer-events:none;opacity:0;transition:opacity .35s ease,backdrop-filter .35s ease,background .35s ease;}
+.ck-overlay.on{pointer-events:all;opacity:1;background:rgba(8,8,8,.58);backdrop-filter:blur(14px) saturate(150%);}
+.ck-modal{display:grid;grid-template-columns:340px 1fr;width:min(960px,96vw);max-height:92vh;
+  background:#fff;border-radius:24px;overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.24),0 8px 24px rgba(0,0,0,.12);
+  transform:translateY(28px) scale(.97);transition:transform .42s cubic-bezier(.16,1,.3,1);}
+.ck-overlay.on .ck-modal{transform:translateY(0) scale(1);}
+.ck-left{background:#0a0a0a;display:flex;flex-direction:column;padding:36px 28px;overflow-y:auto;}
+.ck-brand-name{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:3.5px;
+  text-transform:uppercase;color:#fff;margin-bottom:4px;}
+.ck-brand-tagline{font-size:10.5px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:34px;}
+.ck-sum-title{font-size:10.5px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:18px;}
+.ck-item{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.ck-item:last-child{border-bottom:none;}
+.ck-item-img{width:62px;height:62px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#1c1c1c;position:relative;}
+.ck-item-img img{width:100%;height:100%;object-fit:cover;}
+.ck-qty-b{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.92);color:#0a0a0a;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;padding:0 3px;}
+.ck-item-info{flex:1;min-width:0;}
+.ck-item-name{font-size:13.5px;font-weight:500;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.ck-item-cat{font-size:11px;color:rgba(255,255,255,.35);}
+.ck-item-price{font-size:14px;font-weight:600;color:#fff;flex-shrink:0;}
+.ck-total-row{display:flex;justify-content:space-between;align-items:center;
+  padding-top:20px;margin-top:6px;border-top:1px solid rgba(255,255,255,.1);}
+.ck-total-lbl{font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);}
+.ck-total-val{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.5px;}
+.ck-secure{margin-top:auto;padding-top:28px;}
+.ck-sec-line{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.28);margin-bottom:7px;}
+.ck-pay-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;}
+.ck-bdg{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:8px;
+  padding:5px 10px;font-size:10px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.5px;}
+.ck-right{display:flex;flex-direction:column;background:#fff;overflow-y:auto;position:relative;}
+.ck-right-inner{padding:36px 32px 32px;flex:1;}
+.ck-close-btn{position:absolute;top:18px;right:18px;z-index:10;width:36px;height:36px;border-radius:50%;
+  background:#f2f2f2;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:#444;transition:background .2s;}
+.ck-close-btn:hover{background:#e4e4e4;}
+.ck-form-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#0a0a0a;
+  line-height:1.15;margin-bottom:3px;}
+.ck-form-sub{font-size:12.5px;color:#aaa;margin-bottom:24px;}
+.ck-express{display:flex;gap:10px;margin-bottom:18px;}
+.ck-xbtn{flex:1;height:46px;border-radius:12px;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:12.5px;font-weight:600;transition:transform .2s,box-shadow .2s;}
+.ck-xbtn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.13);}
+.ck-x-apple{background:#000;color:#fff;}
+.ck-x-google{background:#fff;color:#3c4043;border:1.5px solid #e0e0e0;}
+.ck-or{display:flex;align-items:center;gap:14px;font-size:11.5px;color:#bbb;margin-bottom:22px;}
+.ck-or::before,.ck-or::after{content:'';flex:1;height:1px;background:#ebebeb;}
+.ck-slbl{font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:#c8c8c8;margin:12px 0 14px;padding-top:14px;border-top:1px solid #f2f2f2;}
+.ck-slbl:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+.ck-row{display:grid;gap:12px;margin-bottom:14px;}
+.ck-r2{grid-template-columns:1fr 1fr;}
+.ck-fld{display:flex;flex-direction:column;gap:5px;}
+.ck-lbl{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:#666;display:flex;align-items:center;gap:3px;}
+.ck-req{color:#e04040;font-weight:700;}
+.ck-inp{height:48px;border-radius:12px;border:1.5px solid #ebebeb;background:#fafafa;
+  padding:0 14px;font-size:14px;color:#111;font-family:'Outfit',sans-serif;
+  outline:none;transition:border-color .2s,background .2s,box-shadow .2s;
+  width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none;}
+.ck-inp:focus{border-color:#111;background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
+.ck-inp.v-ok{border-color:#16a34a;}
+.ck-inp.v-err{border-color:#dc2626;}
+.ck-inp::placeholder{color:#c0c0c0;font-size:13px;}
+.ck-err{font-size:11px;color:#dc2626;display:none;margin-top:2px;}
+.ck-fld.has-err .ck-err{display:block;}
+.ck-fld.has-err .ck-inp{border-color:#dc2626;}
+.ck-selw{position:relative;}
+.ck-selw::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  pointer-events:none;font-size:11px;color:#999;}
+.ck-inp.selv{padding-right:32px;cursor:pointer;}
+.ck-cw{position:relative;}
+.ck-cd{height:48px;border-radius:12px;border:1.5px solid #ebebeb;background:#fafafa;
+  padding:0 36px 0 14px;font-size:14px;color:#111;font-family:'Outfit',sans-serif;
+  cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;transition:border-color .2s;}
+.ck-cd:hover{border-color:#ccc;}
+.ck-cflag{font-size:19px;line-height:1;}
+.ck-cchev{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:11px;color:#999;transition:transform .2s;pointer-events:none;}
+.ck-cw.open .ck-cchev{transform:translateY(-50%) rotate(180deg);}
+.ck-cdrop{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:200;
+  background:#fff;border:1.5px solid #ebebeb;border-radius:14px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.12);opacity:0;transform:translateY(-8px);
+  pointer-events:none;transition:opacity .2s,transform .2s;}
+.ck-cw.open .ck-cdrop{opacity:1;transform:translateY(0);pointer-events:all;}
+.ck-csrch{padding:10px 14px;border-bottom:1px solid #f0f0f0;}
+.ck-csrch input{width:100%;border:none;outline:none;font-size:13.5px;
+  color:#111;background:transparent;font-family:'Outfit',sans-serif;}
+.ck-copt{display:flex;align-items:center;gap:12px;padding:11px 16px;
+  cursor:pointer;transition:background .15s;font-size:13.5px;}
+.ck-copt:hover{background:#f8f8f8;}
+.ck-copt.sel{background:#f0f9ff;color:#0070c0;}
+.ck-copt .cflag{font-size:19px;}
+.ck-copt .cn{flex:1;}
+.ck-copt .chk{font-size:13px;color:#0070c0;margin-left:auto;}
+.ck-pmg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.ck-pm{border:1.5px solid #ebebeb;border-radius:12px;padding:10px 6px;text-align:center;
+  cursor:pointer;font-size:10.5px;font-weight:600;color:#777;
+  transition:all .2s;background:#fafafa;user-select:none;}
+.ck-pm:hover{border-color:#bbb;}
+.ck-pm.sel{border-color:#0a0a0a;background:#0a0a0a;color:#fff;}
+.ck-pm .pmi{font-size:18px;margin-bottom:4px;display:block;}
+.ck-submit{width:100%;height:56px;border-radius:16px;border:none;
+  background:#0a0a0a;color:#fff;cursor:pointer;
+  font-size:13.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  font-family:'Outfit',sans-serif;transition:background .25s,transform .2s,box-shadow .25s;
+  margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;
+  position:relative;overflow:hidden;}
+.ck-submit::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.07) 60%,transparent 80%);
+  transform:translateX(-100%);transition:transform .6s ease;}
+.ck-submit:hover:not(:disabled)::before{transform:translateX(100%);}
+.ck-submit:hover:not(:disabled){background:#1a1a1a;transform:translateY(-1px);box-shadow:0 10px 30px rgba(0,0,0,.24);}
+.ck-submit:active:not(:disabled){transform:translateY(0);}
+.ck-submit:disabled{background:#aaa;cursor:not-allowed;}
+.ck-spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.25);
+  border-top-color:#fff;border-radius:50%;animation:ckSpin .75s linear infinite;display:none;}
+.ck-submit.loading .ck-spin{display:block;}
+.ck-submit.loading .ck-btxt{display:none;}
+@keyframes ckSpin{to{transform:rotate(360deg);}}
+.ck-back{width:100%;height:46px;border-radius:14px;border:1.5px solid #e8e8e8;
+  background:transparent;font-size:13px;font-weight:500;color:#777;cursor:pointer;
+  font-family:'Outfit',sans-serif;margin-top:10px;transition:border-color .2s,color .2s;}
+.ck-back:hover{border-color:#999;color:#333;}
+@media(max-width:780px){
+  .ck-overlay{align-items:flex-end;}
+  .ck-modal{grid-template-columns:1fr;max-height:100svh;border-radius:24px 24px 0 0;align-self:flex-end;width:100%;}
+  .ck-left{padding:22px 20px 18px;}
+  .ck-right-inner{padding:22px 20px 28px;}
+  .ck-r2{grid-template-columns:1fr;}
+  .ck-express{flex-direction:column;}
+  .ck-pmg{grid-template-columns:repeat(2,1fr);}
+  .ck-close-btn{top:14px;right:14px;}
+}
+</style>
+
 <!-- CHECKOUT MODAL -->
-<div class="modal-bg" id="checkoutModal" onclick="if(event.target===this)closeModal('checkoutModal')">
-  <div class="modal-box checkout-box">
-    <button class="modal-close" onclick="closeModal('checkoutModal')">✕</button>
-    <h2 class="lm-title" style="margin-bottom:1.5rem">Complete Your Order</h2>
-    <div class="order-summary">
-      <div class="os-title">Order Summary</div>
-      <div id="osSummary"></div>
-      <div class="os-total"><span>Total (incl. shipping)</span><span id="osTotal" style="color:var(--terracotta)">₹0</span></div>
+<div class="ck-overlay" id="checkoutModal" onclick="if(event.target===this)closeModal('checkoutModal')">
+<div class="ck-modal" onclick="event.stopPropagation()">
+
+  <!-- LEFT: Order Summary -->
+  <div class="ck-left">
+    <div class="ck-brand-name">Auranest Decors</div>
+    <div class="ck-brand-tagline">Handcrafted · Soulful · Timeless</div>
+    <div class="ck-sum-title">Order Summary</div>
+    <div id="osSummary"></div>
+    <div class="ck-total-row">
+      <span class="ck-total-lbl">Total</span>
+      <span class="ck-total-val" id="osTotal">₹0</span>
     </div>
-    <div class="checkout-grid">
-      <div class="fgrp"><label class="flbl">Full Name *</label><input class="finp" id="coName" placeholder="Your Name"/></div>
-      <div class="fgrp"><label class="flbl">Phone *</label><input class="finp" id="coPhone" placeholder="+91 XXXXXXXXXX"/></div>
-      <div class="fgrp" style="grid-column:1/-1"><label class="flbl">Address *</label><input class="finp" id="coAddress" placeholder="House/Flat, Street, Area"/></div>
-      <div class="fgrp"><label class="flbl">City *</label><input class="finp" id="coCity" placeholder="City"/></div>
-      <div class="fgrp"><label class="flbl">State</label><input class="finp" id="coState" placeholder="State"/></div>
-      <div class="fgrp"><label class="flbl">Pincode *</label><input class="finp" id="coPincode" placeholder="000000"/></div>
-      <div class="fgrp"><label class="flbl">Payment Method</label>
-        <select class="finp" id="coPayment">
-          <option value="cod">💵 Cash on Delivery (COD)</option>
-          <option value="razorpay">📱 Razorpay (UPI/Card/NetBanking)</option>
-          <option value="stripe">💳 Stripe (International Card)</option>
-          <option value="paypal">🌐 PayPal</option>
-        </select>
+    <div class="ck-secure">
+      <div class="ck-sec-line">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2.5 3.5v4C2.5 11 5 13.5 8 14.5 11 13.5 13.5 11 13.5 7.5v-4L8 1z"/></svg>
+        SSL encrypted · Secure checkout
+      </div>
+      <div class="ck-sec-line">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4h12a1 1 0 011 1v7a1 1 0 01-1 1H2a1 1 0 01-1-1V5a1 1 0 011-1zm-1 3h14" stroke="currentColor" stroke-width=".5"/></svg>
+        Razorpay · Stripe · COD · UPI
+      </div>
+      <div class="ck-pay-badges">
+        <span class="ck-bdg">Visa</span><span class="ck-bdg">Mastercard</span>
+        <span class="ck-bdg">UPI</span><span class="ck-bdg">COD</span><span class="ck-bdg">Stripe</span>
       </div>
     </div>
-    <button class="btn-form" id="placeOrderBtn" onclick="placeOrder()">🛍️ Place Order</button>
   </div>
+
+  <!-- RIGHT: Form -->
+  <div class="ck-right">
+    <button class="ck-close-btn" onclick="closeModal('checkoutModal')" aria-label="Close">✕</button>
+    <div class="ck-right-inner">
+      <div class="ck-form-title">Complete Your Order</div>
+      <div class="ck-form-sub">Fast · Secure · Delivered in 2–3 days</div>
+
+      <div class="ck-express">
+        <button class="ck-xbtn ck-x-apple" type="button"
+                onclick="showToast('⚠️ Apple Pay coming soon — use card or COD')">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Apple Pay
+        </button>
+        <button class="ck-xbtn ck-x-google" type="button"
+                onclick="showToast('⚠️ Google Pay coming soon — use card or COD')">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" fill="#4285F4"/></svg>
+          Google Pay
+        </button>
+      </div>
+      <div class="ck-or">or continue with details below</div>
+
+      <form id="ckForm" onsubmit="return false" autocomplete="on">
+        <div class="ck-slbl">Contact Information</div>
+        <div class="ck-row ck-r2">
+          <div class="ck-fld" id="fld-coName">
+            <label class="ck-lbl">Full Name <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coName" type="text" placeholder="Jane Smith"
+                   autocomplete="name" oninput="ckVal(this,'text')"/>
+          </div>
+          <div class="ck-fld" id="fld-coEmail">
+            <label class="ck-lbl">Email <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coEmail" type="email" placeholder="jane@example.com"
+                   autocomplete="email" oninput="ckVal(this,'email')"/>
+            <span class="ck-err">Enter a valid email address</span>
+          </div>
+        </div>
+        <div class="ck-row">
+          <div class="ck-fld" id="fld-coPhone">
+            <label class="ck-lbl">Phone Number <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coPhone" type="tel" placeholder="+91 98765 43210"
+                   autocomplete="tel" oninput="ckVal(this,'phone')"/>
+            <span class="ck-err">Enter a valid phone number (min 7 digits)</span>
+          </div>
+        </div>
+
+        <div class="ck-slbl">Shipping Address</div>
+        <div class="ck-row">
+          <div class="ck-fld" id="fld-coAddress">
+            <label class="ck-lbl">Address Line 1 <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coAddress" type="text"
+                   placeholder="House / Flat, Street, Area"
+                   autocomplete="address-line1" oninput="ckVal(this,'text')"/>
+          </div>
+        </div>
+        <div class="ck-row">
+          <div class="ck-fld">
+            <label class="ck-lbl">Address Line 2 <em style="color:#bbb;font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;font-size:10px">(optional)</em></label>
+            <input class="ck-inp" id="coAddress2" type="text"
+                   placeholder="Landmark, Apartment, Suite"
+                   autocomplete="address-line2"/>
+          </div>
+        </div>
+        <div class="ck-row ck-r2">
+          <div class="ck-fld">
+            <label class="ck-lbl">Country <span class="ck-req">*</span></label>
+            <div class="ck-cw" id="ckCtryWrap">
+              <div class="ck-cd" id="ckCtryDisplay" onclick="ckToggleCtry()">
+                <span class="ck-cflag" id="ckCtryFlag">🇮🇳</span>
+                <span id="ckCtryName">India</span>
+                <span class="ck-cchev">▾</span>
+              </div>
+              <input type="hidden" id="coCountry" value="India"/>
+              <div class="ck-cdrop" id="ckCtryDrop">
+                <div class="ck-csrch">
+                  <input type="text" placeholder="Search country…" id="ckCtrySearch"
+                         oninput="ckFilterCtry(this.value)"
+                         onclick="event.stopPropagation()" autocomplete="off"/>
+                </div>
+                <div id="ckCtryList">
+                  <div class="ck-copt sel" onclick="ckSelCtry('India','🇮🇳')">
+                    <span class="cflag">🇮🇳</span><span class="cn">India</span><span class="chk">✓</span>
+                  </div>
+                  <div class="ck-copt" onclick="ckSelCtry('United States','🇺🇸')">
+                    <span class="cflag">🇺🇸</span><span class="cn">United States</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ck-fld" id="fld-coState">
+            <label class="ck-lbl">State <span class="ck-req">*</span></label>
+            <div class="ck-selw">
+              <select class="ck-inp selv" id="coState" onchange="ckVal(this,'text')">
+                <option value="">Select State</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="ck-row ck-r2">
+          <div class="ck-fld" id="fld-coCity">
+            <label class="ck-lbl">City <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coCity" type="text" placeholder="Mumbai"
+                   autocomplete="address-level2" oninput="ckVal(this,'text')"/>
+          </div>
+          <div class="ck-fld" id="fld-coPincode">
+            <label class="ck-lbl">Postal / ZIP <span class="ck-req">*</span></label>
+            <input class="ck-inp" id="coPincode" type="text" placeholder="400001"
+                   autocomplete="postal-code" oninput="ckVal(this,'pin')"/>
+            <span class="ck-err">Enter a valid postal code (min 4 digits)</span>
+          </div>
+        </div>
+
+        <div class="ck-slbl">Payment Method</div>
+        <div class="ck-pmg">
+          <div class="ck-pm sel" data-val="razorpay" onclick="ckSelPay(this)">
+            <span class="pmi">📱</span>Razorpay
+          </div>
+          <div class="ck-pm" data-val="cod" onclick="ckSelPay(this)">
+            <span class="pmi">💵</span>COD
+          </div>
+          <div class="ck-pm" data-val="stripe" onclick="ckSelPay(this)">
+            <span class="pmi">💳</span>Stripe
+          </div>
+          <div class="ck-pm" data-val="paypal" onclick="ckSelPay(this)">
+            <span class="pmi">🌐</span>PayPal
+          </div>
+        </div>
+        <input type="hidden" id="coPayment" value="razorpay"/>
+      </form>
+
+      <button class="ck-submit" id="placeOrderBtn" onclick="placeOrder()">
+        <span class="ck-btxt">Complete Order &nbsp;→</span>
+        <span class="ck-spin"></span>
+      </button>
+      <button class="ck-back" onclick="closeModal('checkoutModal')">← Continue Shopping</button>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <!-- MY ORDERS FULL PAGE — LUXURY THEME -->
@@ -1790,48 +2078,203 @@ async function seedToFirebase() {
 }
 
 // ── PLACE ORDER — COD + RAZORPAY ──────────────────────────────────────────
-window.placeOrder = async function() {
-  const name    = document.getElementById('coName').value.trim();
-  const phone   = document.getElementById('coPhone').value.trim();
-  const address = document.getElementById('coAddress').value.trim();
-  const city    = document.getElementById('coCity').value.trim();
-  const pincode = document.getElementById('coPincode').value.trim();
-  const state   = document.getElementById('coState').value.trim();
-  const payment = document.getElementById('coPayment').value;
+// ══════════════════════════════════════════════════
+// CHECKOUT UI HELPERS
+// ══════════════════════════════════════════════════
 
-  if (!name || !phone || !address || !city || !pincode) { showToast('⚠️ Please fill all required fields'); return; }
+// ─── State lists ───
+const CK_IN_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
+  'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand',
+  'West Bengal','Andaman and Nicobar Islands','Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir',
+  'Ladakh','Lakshadweep','Puducherry'
+];
+const CK_US_STATES = [
+  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut',
+  'Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa',
+  'Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan',
+  'Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire',
+  'New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio',
+  'Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota',
+  'Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia',
+  'Wisconsin','Wyoming'
+];
+
+function ckPopStates(country) {
+  const sel = document.getElementById('coState');
+  if (!sel) return;
+  const list = country === 'United States' ? CK_US_STATES : CK_IN_STATES;
+  sel.innerHTML = '<option value="">Select State</option>' +
+    list.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+// ─── Country dropdown ───
+function ckToggleCtry() {
+  const w = document.getElementById('ckCtryWrap');
+  if (!w) return;
+  w.classList.toggle('open');
+  if (w.classList.contains('open'))
+    setTimeout(() => document.getElementById('ckCtrySearch')?.focus(), 80);
+}
+function ckCloseCtry() {
+  const w = document.getElementById('ckCtryWrap');
+  if (!w) return;
+  w.classList.remove('open');
+  const s = document.getElementById('ckCtrySearch');
+  if (s) { s.value = ''; ckFilterCtry(''); }
+}
+function ckFilterCtry(q) {
+  document.querySelectorAll('#ckCtryList .ck-copt').forEach(o => {
+    o.style.display = o.querySelector('.cn')?.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+function ckSelCtry(name, flag) {
+  document.getElementById('coCountry').value = name;
+  document.getElementById('ckCtryName').textContent = name;
+  document.getElementById('ckCtryFlag').textContent = flag;
+  document.querySelectorAll('#ckCtryList .ck-copt').forEach(o => {
+    const match = o.querySelector('.cn')?.textContent === name;
+    o.classList.toggle('sel', match);
+    const existing = o.querySelector('.chk');
+    if (match && !existing) { const c=document.createElement('span'); c.className='chk'; c.textContent='✓'; o.appendChild(c); }
+    else if (!match && existing) existing.remove();
+  });
+  document.getElementById('coPincode').placeholder = name === 'United States' ? '10001' : '400001';
+  ckPopStates(name);
+  ckCloseCtry();
+}
+
+// Close country dropdown when clicking outside
+document.addEventListener('click', e => {
+  const w = document.getElementById('ckCtryWrap');
+  if (w && !w.contains(e.target)) ckCloseCtry();
+});
+
+// ─── Payment pills ───
+function ckSelPay(el) {
+  document.querySelectorAll('.ck-pm').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('coPayment').value = el.dataset.val;
+}
+
+// ─── Real-time field validation ───
+function ckVal(el, type) {
+  const v = el.value.trim();
+  let ok = true;
+  if      (type === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  else if (type === 'phone') ok = v.replace(/\D/g,'').length >= 7;
+  else if (type === 'pin')   ok = v.replace(/\D/g,'').length >= 4;
+  else                       ok = v.length > 0;
+  const filled = v.length > 0;
+  el.classList.toggle('v-ok',  filled && ok);
+  el.classList.toggle('v-err', filled && !ok);
+  const fld = el.closest('.ck-fld');
+  if (fld) fld.classList.toggle('has-err', filled && !ok);
+}
+
+// ─── Override openCheckout to populate new summary ───
+const _origOpen = window.openCheckout;
+window.openCheckout = function() {
+  if (!Cart.count()) { showToast('Your cart is empty!'); return; }
+  updateCartUI(); toggleCart();
+
+  // Build order summary
+  const cart  = Cart.get();
+  const prods = window.$products || [];
+  const sumEl = document.getElementById('osSummary');
+  if (sumEl) {
+    sumEl.innerHTML = cart.map(item => {
+      const prod = prods.find(p => p.id === item.id) || {};
+      const img  = item.img || prod.img || '';
+      return `<div class="ck-item">
+        <div class="ck-item-img">
+          ${img ? `<img src="${img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
+          <span class="ck-qty-b">${item.qty}</span>
+        </div>
+        <div class="ck-item-info">
+          <div class="ck-item-name">${item.name}</div>
+          <div class="ck-item-cat">${item.category || ''}</div>
+        </div>
+        <div class="ck-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+      </div>`;
+    }).join('');
+  }
+  const totalEl = document.getElementById('osTotal');
+  if (totalEl) totalEl.textContent = '₹' + Cart.total().toLocaleString('en-IN');
+
+  // Reset states for default country (India)
+  ckPopStates(document.getElementById('coCountry')?.value || 'India');
+
+  // Reset payment pill to razorpay
+  document.querySelectorAll('.ck-pm').forEach(p => p.classList.toggle('sel', p.dataset.val === 'razorpay'));
+  const payEl = document.getElementById('coPayment');
+  if (payEl) payEl.value = 'razorpay';
+
+  document.getElementById('checkoutModal').classList.add('on');
+};
+
+// ─── Override closeModal to handle new overlay class ───
+const _origClose = window.closeModal;
+window.closeModal = function(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('on');
+};
+
+// ══════════════════════════════════════════════════
+// PLACE ORDER
+// ══════════════════════════════════════════════════
+
+window.placeOrder = async function() {
+  const name     = document.getElementById('coName').value.trim();
+  const email    = document.getElementById('coEmail').value.trim();
+  const phone    = document.getElementById('coPhone').value.trim();
+  const address  = document.getElementById('coAddress').value.trim();
+  const address2 = document.getElementById('coAddress2').value.trim();
+  const city     = document.getElementById('coCity').value.trim();
+  const pincode  = document.getElementById('coPincode').value.trim();
+  const state    = document.getElementById('coState').value;
+  const country  = document.getElementById('coCountry').value;
+  const payment  = document.getElementById('coPayment').value;
+
+  // Validate required fields
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!name || !email || !emailOk || !phone || !address || !city || !state || !pincode) {
+    showToast('⚠️ Please fill all required fields correctly');
+    // Highlight empty required fields
+    [{id:'coName',t:'text'},{id:'coEmail',t:'email'},{id:'coPhone',t:'phone'},
+     {id:'coAddress',t:'text'},{id:'coCity',t:'text'},{id:'coPincode',t:'pin'}]
+      .forEach(({id,t}) => { const el=document.getElementById(id); if(el) ckVal(el,t); });
+    return;
+  }
   const cart = Cart.get();
   if (!cart.length) { showToast('Your cart is empty!'); return; }
 
-  const subtotal = Cart.total();
-  const shipping = subtotal >= 999 ? 0 : 99;
-  const total    = subtotal + shipping;
-  const orderId  = 'AN' + Date.now().toString().slice(-8);
-  const customer = { name, phone, address, city, state, pincode, country: 'India' };
+  const total   = Cart.total();          // no shipping row
+  const orderId = 'AN' + Date.now().toString().slice(-8);
+  const customer = { name, email, phone, address, address2, city, state, country, pincode };
 
   const btn = document.getElementById('placeOrderBtn');
-  btn.textContent = 'Processing...'; btn.disabled = true;
+  btn.classList.add('loading'); btn.disabled = true;
 
-  // ── HELPER: Save order to Firestore & update sold count ──────────────────
+  // ── HELPER: save to Firestore ─────────────────────────────────────────────
   async function saveOrderToFirebase(extraFields = {}) {
     const orderData = {
-      orderId,
-      customer,
-      items: cart,
-      subtotal,
-      shippingCost: shipping,
-      totalAmount: total,
+      orderId, customer, items: cart,
+      subtotal: total, totalAmount: total,
       paymentMethod: payment,
       orderStatus: 'pending',
-      userId: window.$user?.uid || 'guest',
-      userEmail: window.$user?.email || 'guest',
+      userId:    window.$user?.uid   || 'guest',
+      userEmail: window.$user?.email || email,
       createdAt: serverTimestamp(),
       ...extraFields,
     };
     await addDoc(collection(db, 'orders'), orderData);
     for (const item of cart) {
       if (item.id) {
-        try { await updateDoc(doc(db, 'products', item.id), { sold: (item.sold||0) + item.qty }); } catch(e){}
+        try { await updateDoc(doc(db,'products',item.id), { sold:(item.sold||0)+item.qty }); } catch(e){}
       }
     }
     Cart.clear(); updateCartUI();
@@ -1839,108 +2282,72 @@ window.placeOrder = async function() {
     return orderData;
   }
 
-  // ── COD FLOW ─────────────────────────────────────────────────────────────
+  const resetBtn = () => { btn.classList.remove('loading'); btn.disabled = false; };
+
+  // ── COD ───────────────────────────────────────────────────────────────────
   if (payment === 'cod') {
     try {
       await saveOrderToFirebase({ paymentStatus: 'pending' });
       showToast(`🎉 Order placed! ID: ${orderId} — Pay on delivery`);
-    } catch (err) {
-      showToast('❌ Order failed: ' + err.message);
-    } finally {
-      btn.textContent = '🛍️ Place Order'; btn.disabled = false;
-    }
+    } catch (err) { showToast('❌ Order failed: ' + err.message);
+    } finally     { resetBtn(); }
     return;
   }
 
-  // ── RAZORPAY FLOW ─────────────────────────────────────────────────────────
+  // ── RAZORPAY ──────────────────────────────────────────────────────────────
   if (payment === 'razorpay') {
     try {
-      // 1. Create Razorpay order on backend
       const createRes = await fetch('/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: total, orderId }),
       });
       const createData = await createRes.json();
-      if (!createRes.ok || !createData.razorpayOrderId) throw new Error(createData.error || 'Could not create payment order');
+      if (!createRes.ok || !createData.razorpayOrderId)
+        throw new Error(createData.error || 'Could not create payment order');
 
-      // 2. Open Razorpay checkout popup
       const rzpOptions = {
-        key:         createData.keyId,
-        amount:      createData.amount,
-        currency:    createData.currency,
-        name:        'Auranest Decors',
-        description: `Order #${orderId}`,
-        image:       '/assets/logo.jpg',
-        order_id:    createData.razorpayOrderId,
-        prefill: {
-          name:    name,
-          contact: phone,
-        },
-        theme: { color: '#C0392B' },
-
-        // 3. Payment Success
+        key: createData.keyId, amount: createData.amount, currency: createData.currency,
+        name: 'Auranest Decors', description: `Order #${orderId}`,
+        image: '/assets/logo.jpg', order_id: createData.razorpayOrderId,
+        prefill: { name, contact: phone, email },
+        theme: { color: '#0a0a0a' },
         handler: async function(response) {
           try {
-            showToast('⏳ Verifying payment...');
-
-            // 4. Verify signature + create Shiprocket order
+            showToast('⏳ Verifying payment…');
             const verifyRes = await fetch('/api/verify-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 razorpay_order_id:   response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature:  response.razorpay_signature,
-                orderData: { orderId, customer, items: cart, subtotal, totalAmount: total },
+                orderData: { orderId, customer, items: cart, subtotal: total, totalAmount: total },
               }),
             });
             const verifyData = await verifyRes.json();
             if (!verifyData.success) throw new Error('Payment verification failed');
-
-            // 5. Save to Firebase
             await saveOrderToFirebase({
               paymentStatus:        'paid',
               razorpayPaymentId:    response.razorpay_payment_id,
               razorpayOrderId:      response.razorpay_order_id,
-              shiprocketOrderId:    verifyData.shiprocketOrderId || null,
+              shiprocketOrderId:    verifyData.shiprocketOrderId    || null,
               shiprocketShipmentId: verifyData.shiprocketShipmentId || null,
             });
-
             showToast(`✅ Payment successful! Order #${orderId} confirmed`);
-          } catch (err) {
-            showToast('❌ ' + err.message);
-          } finally {
-            btn.textContent = '🛍️ Place Order'; btn.disabled = false;
-          }
+          } catch (err) { showToast('❌ ' + err.message);
+          } finally     { resetBtn(); }
         },
-
-        // 4. Payment Dismissed / Failed
-        modal: {
-          ondismiss: function() {
-            showToast('⚠️ Payment cancelled');
-            btn.textContent = '🛍️ Place Order'; btn.disabled = false;
-          }
-        }
+        modal: { ondismiss() { showToast('⚠️ Payment cancelled'); resetBtn(); } }
       };
-
       const rzp = new window.Razorpay(rzpOptions);
-      rzp.on('payment.failed', function(response) {
-        showToast('❌ Payment failed: ' + response.error.description);
-        btn.textContent = '🛍️ Place Order'; btn.disabled = false;
-      });
+      rzp.on('payment.failed', r => { showToast('❌ Payment failed: ' + r.error.description); resetBtn(); });
       rzp.open();
-
-    } catch (err) {
-      showToast('❌ ' + err.message);
-      btn.textContent = '🛍️ Place Order'; btn.disabled = false;
-    }
+    } catch (err) { showToast('❌ ' + err.message); resetBtn(); }
     return;
   }
 
-  // ── OTHER METHODS (Stripe/PayPal) ─────────────────────────────────────────
+  // ── OTHER ─────────────────────────────────────────────────────────────────
   showToast('⚠️ This payment method is coming soon. Please use COD or Razorpay.');
-  btn.textContent = '🛍️ Place Order'; btn.disabled = false;
+  resetBtn();
 };
 
 // ── FIREBASE AUTH ──
