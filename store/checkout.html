@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Checkout – Auranest Decors</title>
 <meta name="robots" content="noindex,nofollow"/>
-<link rel="icon" type="image/jpeg" href="../assets/logo.jpg"/>
+<link rel="icon" type="image/jpeg" href="https://www.auranestdecors.com/assets/logo.jpg"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
@@ -396,10 +396,22 @@ function OTPModal({ onVerified, onGuest }) {
     return () => clearInterval(id);
   }, [phase]);
 
+  // Demo OTP: no SMS service wired — auto-verify any 4-digit code
+  const [demoCode, setDemoCode] = useState('');
+
   const sendOTP = () => {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
-    setTimeout(() => { setLoading(false); setPhase('otp'); }, 1000);
+    // Generate a visible demo code
+    const code = String(Math.floor(1000 + Math.random() * 9000));
+    setDemoCode(code);
+    // Auto-fill OTP boxes after a short delay for demo effect
+    setTimeout(() => {
+      setLoading(false);
+      setPhase('otp');
+      setOtp(code.split(''));
+      setTimeout(() => refs[3].current?.focus(), 100);
+    }, 900);
   };
 
   const handleKey = (i, val) => {
@@ -416,7 +428,7 @@ function OTPModal({ onVerified, onGuest }) {
   const verify = () => {
     if (otp.join('').length < 4) { setErr('Enter the 4-digit OTP'); return; }
     setErr(''); setLoading(true);
-    setTimeout(() => { setLoading(false); onVerified(phone); }, 900);
+    setTimeout(() => { setLoading(false); onVerified(phone); }, 700);
   };
 
   return (
@@ -427,13 +439,19 @@ function OTPModal({ onVerified, onGuest }) {
     }}>
       <div className="a-scale" style={{ background: '#fff', borderRadius: 24, padding: '36px 32px', width: '100%', maxWidth: 380, boxShadow: '0 24px 60px rgba(0,0,0,.18)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src="../assets/logo.jpg" alt="Auranest" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', marginBottom: 10 }} />
+          <img src="https://www.auranestdecors.com/assets/logo.jpg" alt="Auranest" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', marginBottom: 10 }} />
           <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.25rem', fontWeight: 700, color: 'var(--ink)' }}>
             {phase === 'phone' ? 'Sign in to continue' : 'Verify your number'}
           </p>
           <p style={{ fontSize: '.82rem', color: 'var(--muted)', marginTop: 4 }}>
-            {phase === 'phone' ? 'Get order updates on WhatsApp' : `OTP sent to +91 ${phone}`}
+            {phase === 'phone' ? 'Get order updates on WhatsApp' : `Sent to +91 ${phone}`}
           </p>
+          {phase === 'otp' && demoCode && (
+            <div style={{ background: '#fdf8ed', border: '1.5px solid var(--gold)', borderRadius: 10, padding: '8px 14px', marginTop: 10, display: 'inline-block' }}>
+              <p style={{ fontSize: '.72rem', color: 'var(--muted)', marginBottom: 2 }}>Demo OTP (auto-filled)</p>
+              <p style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '.25em', color: 'var(--gold)', fontFamily: 'monospace' }}>{demoCode}</p>
+            </div>
+          )}
         </div>
 
         {phase === 'phone' ? (
@@ -960,7 +978,7 @@ function App() {
       {/* Navbar */}
       <nav className="co-nav">
         <a href="/store/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)' }}>
-          <img src="../assets/logo.jpg" alt="Auranest" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover' }} />
+          <img src="https://www.auranestdecors.com/assets/logo.jpg" alt="Auranest" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover' }} />
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.05rem', fontWeight: 700 }}>Auranest Decors</span>
         </a>
         <div style={{ flex: 1 }} />
