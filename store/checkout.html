@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
-<!-- Firebase Phone Auth (ES module — exposes helpers to window) -->
-<script type="module">
-import { initializeApp }                                  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-const _app  = initializeApp({
+<!-- Firebase compat SDK (synchronous globals — no async module timing issues) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+firebase.initializeApp({
   apiKey:            'AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk',
   authDomain:        'auranest-decors.firebaseapp.com',
   projectId:         'auranest-decors',
@@ -21,10 +21,7 @@ const _app  = initializeApp({
   messagingSenderId: '55244789649',
   appId:             '1:55244789649:web:0aab804a8933ce0cf6ec30'
 });
-const _auth = getAuth(_app);
-window._fbAuth              = _auth;
-window._fbSignInWithPhone   = (phone, verifier) => signInWithPhoneNumber(_auth, phone, verifier);
-window._fbRecaptchaVerifier = (containerId, cfg) => new RecaptchaVerifier(_auth, containerId, cfg);
+window._fbAuth = firebase.auth();
 </script>
 
 <!-- React UMD + Babel for in-browser JSX transpilation -->
@@ -446,10 +443,10 @@ function OTPModal({ onVerified, onGuest }) {
     return () => clearInterval(id);
   }, [phase]);
 
-  /* Set up invisible reCAPTCHA (once) */
+  /* Set up invisible reCAPTCHA (once) using compat API */
   const setupRecaptcha = () => {
     if (recaptchaRef.current) return;
-    recaptchaRef.current = window._fbRecaptchaVerifier('recaptcha-container', {
+    recaptchaRef.current = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       size: 'invisible',
       callback: () => {}
     });
@@ -460,16 +457,16 @@ function OTPModal({ onVerified, onGuest }) {
     setErr(''); setLoading(true);
     try {
       setupRecaptcha();
-      confirmRef.current = await window._fbSignInWithPhone('+91' + phone, recaptchaRef.current);
+      confirmRef.current = await window._fbAuth.signInWithPhoneNumber('+91' + phone, recaptchaRef.current);
       setPhase('otp');
     } catch (e) {
-      // Reset reCAPTCHA so user can retry
       recaptchaRef.current?.clear();
       recaptchaRef.current = null;
-      const msg = e.code === 'auth/invalid-phone-number'   ? 'Invalid phone number.'
-                : e.code === 'auth/too-many-requests'       ? 'Too many attempts. Try later.'
-                : e.code === 'auth/captcha-check-failed'    ? 'reCAPTCHA failed. Reload and retry.'
-                : 'Could not send OTP. Please try again.';
+      const msg = e.code === 'auth/invalid-phone-number'  ? 'Invalid phone number. Check and retry.'
+                : e.code === 'auth/too-many-requests'      ? 'Too many attempts. Please try later.'
+                : e.code === 'auth/captcha-check-failed'   ? 'reCAPTCHA failed. Please reload the page.'
+                : e.code === 'auth/unauthorized-domain'    ? 'Domain not authorised in Firebase.'
+                : `Error: ${e.code || e.message}`;
       setErr(msg);
     } finally { setLoading(false); }
   };
@@ -490,10 +487,14 @@ function OTPModal({ onVerified, onGuest }) {
     if (code.length < 6) { setErr('Enter the 6-digit OTP'); return; }
     setErr(''); setLoading(true);
     try {
-      await confirmRef.current.confirm(code);
+      await confirmRef.current.confirm(code);  // compat ConfirmationResult
       onVerified(phone);
     } catch (e) {
-      setErr(e.code === 'auth/invalid-verification-code' ? 'Wrong OTP. Please check and retry.' : 'Verification failed. Try again.');
+      setErr(
+        e.code === 'auth/invalid-verification-code' ? 'Wrong OTP. Please check and retry.'
+        : e.code === 'auth/code-expired'            ? 'OTP expired. Please resend.'
+        : `Error: ${e.code || e.message}`
+      );
     } finally { setLoading(false); }
   };
 
