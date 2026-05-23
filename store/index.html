@@ -1632,12 +1632,14 @@ select.finp{cursor:pointer;}
   background:rgba(0,0,0,0);backdrop-filter:blur(0) saturate(100%);
   pointer-events:none;opacity:0;transition:opacity .35s ease,backdrop-filter .35s ease,background .35s ease;}
 .ck-overlay.on{pointer-events:all;opacity:1;background:rgba(8,8,8,.58);backdrop-filter:blur(14px) saturate(150%);}
-.ck-modal{display:grid;grid-template-columns:340px 1fr;width:min(960px,96vw);max-height:92vh;
+.ck-modal{display:grid;grid-template-columns:340px 1fr;width:min(960px,96vw);
+  height:min(92vh,780px);/* fixed height so children can scroll */
   background:#fff;border-radius:24px;overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,.24),0 8px 24px rgba(0,0,0,.12);
   transform:translateY(28px) scale(.97);transition:transform .42s cubic-bezier(.16,1,.3,1);}
 .ck-overlay.on .ck-modal{transform:translateY(0) scale(1);}
-.ck-left{background:#0a0a0a;display:flex;flex-direction:column;padding:36px 28px;overflow-y:auto;}
+.ck-left{background:#0a0a0a;display:flex;flex-direction:column;padding:36px 28px;
+  overflow-y:auto;min-height:0;/* grid child must be 0 to allow scroll */}
 .ck-brand-name{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:3.5px;
   text-transform:uppercase;color:#fff;margin-bottom:4px;}
 .ck-brand-tagline{font-size:10.5px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:34px;}
@@ -1664,7 +1666,7 @@ select.finp{cursor:pointer;}
 .ck-pay-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;}
 .ck-bdg{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:8px;
   padding:5px 10px;font-size:10px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.5px;}
-.ck-right{display:flex;flex-direction:column;background:#fff;overflow-y:auto;position:relative;}
+.ck-right{display:flex;flex-direction:column;background:#fff;overflow-y:auto;position:relative;min-height:0;/* grid child must be 0 to allow scroll */}
 .ck-right-inner{padding:36px 32px 32px;flex:1;}
 .ck-close-btn{position:absolute;top:18px;right:18px;z-index:10;width:36px;height:36px;border-radius:50%;
   background:#f2f2f2;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -1761,9 +1763,9 @@ select.finp{cursor:pointer;}
 .ck-back:hover{border-color:#999;color:#333;}
 @media(max-width:780px){
   .ck-overlay{align-items:flex-end;}
-  .ck-modal{grid-template-columns:1fr;max-height:100svh;border-radius:24px 24px 0 0;align-self:flex-end;width:100%;}
-  .ck-left{padding:22px 20px 18px;}
-  .ck-right-inner{padding:22px 20px 28px;}
+  .ck-modal{grid-template-columns:1fr;height:95svh;border-radius:24px 24px 0 0;align-self:flex-end;width:100%;}
+  .ck-left{padding:20px 18px 16px;max-height:36svh;}
+  .ck-right-inner{padding:20px 18px 28px;}
   .ck-r2{grid-template-columns:1fr;}
   .ck-express{flex-direction:column;}
   .ck-pmg{grid-template-columns:repeat(2,1fr);}
@@ -2187,16 +2189,18 @@ window.openCheckout = function() {
   const sumEl = document.getElementById('osSummary');
   if (sumEl) {
     sumEl.innerHTML = cart.map(item => {
-      const prod = prods.find(p => p.id === item.id) || {};
-      const img  = item.img || prod.img || '';
+      // cart stores: { image, icon, name, price, qty, id }
+      const imgSrc = item.image ? cdnImg(item.image, 140) : '';
       return `<div class="ck-item">
         <div class="ck-item-img">
-          ${img ? `<img src="${img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
+          ${imgSrc
+            ? `<img src="${imgSrc}" alt="${item.name}" loading="eager" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/>`
+            : `<span style="font-size:26px;line-height:62px;text-align:center;display:block">${item.icon||'🛍'}</span>`}
           <span class="ck-qty-b">${item.qty}</span>
         </div>
         <div class="ck-item-info">
           <div class="ck-item-name">${item.name}</div>
-          <div class="ck-item-cat">${item.category || ''}</div>
+          <div class="ck-item-cat">₹${item.price.toLocaleString('en-IN')} each</div>
         </div>
         <div class="ck-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
       </div>`;
@@ -2687,13 +2691,7 @@ function updateCartUI() {
   const cart = Cart.get();
   document.getElementById('cartBadge').textContent = Cart.count();
   document.getElementById('cpTotal').textContent   = '₹' + Cart.total().toLocaleString('en-IN');
-  const shipping = Cart.total() >= 999 ? 0 : 99;
-  const total    = Cart.total() + shipping;
-  // Order summary
-  const sumEl = document.getElementById('osSummary');
-  if (sumEl) sumEl.innerHTML = cart.map(i => `<div class="os-item"><span>${i.name.slice(0,30)} x${i.qty}</span><span>₹${(i.price*i.qty).toLocaleString('en-IN')}</span></div>`).join('') + `<div class="os-item"><span>Shipping</span><span>${shipping === 0 ? 'FREE' : '₹'+shipping}</span></div>`;
-  const totEl = document.getElementById('osTotal');
-  if (totEl) totEl.textContent = '₹' + total.toLocaleString('en-IN');
+  // osTotal is populated by openCheckout(), not here
   const el = document.getElementById('cpBody');
   if (!cart.length) { el.innerHTML = '<div class="cart-empty">Your cart is empty<br><small style="font-size:.78rem;color:var(--muted)">Add some beautiful pieces!</small></div>'; return; }
   el.innerHTML = cart.map(item => `
