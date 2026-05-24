@@ -941,7 +941,7 @@ function _buildPDF() {
   // Divider ornament
   doc.setFontSize(14);
   doc.setTextColor(...gold);
-  doc.text('✦  ✦  ✦', W/2, 108, { align: 'center' });
+  doc.text('~ ~ ~', W/2, 108, { align: 'center' });
 
   // Subtitle
   doc.setFont('helvetica', 'normal');
@@ -950,7 +950,7 @@ function _buildPDF() {
   doc.text('PRODUCT CATALOGUE', W/2, 122, { align: 'center' });
   doc.setFontSize(28);
   doc.setFont('times', 'bold');
-  doc.setTextColor(white);
+  doc.setTextColor(...white);
   doc.text('2026', W/2, 140, { align: 'center' });
 
   // Tagline box
@@ -958,7 +958,7 @@ function _buildPDF() {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(...[200,180,140]);
-  doc.text('Handcrafted  ·  Soulful  ·  Timeless', W/2, 163, { align: 'center' });
+  doc.text('Handcrafted  |  Soulful  |  Timeless', W/2, 163, { align: 'center' });
   doc.setFontSize(8.5);
   doc.setTextColor(...[160,150,130]);
   doc.text('Where Heritage Meets Modern Elegance', W/2, 170, { align: 'center' });
@@ -1067,12 +1067,12 @@ function _buildPDF() {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...[160,150,130]);
-    doc.text(`${prods.length} handcrafted products  ·  Auranest Decors 2026`, 14, 33);
+    doc.text(prods.length + ' handcrafted products  |  Auranest Decors 2026', 14, 33);
 
     // Decorative right element
     doc.setFontSize(28);
     doc.setTextColor(...[50,45,40]);
-    doc.text('✦', W-22, 28);
+    doc.text('*', W-22, 28);
 
     let py = 58;
     prods.forEach((p, pi) => {
@@ -1196,19 +1196,19 @@ function _buildPDF() {
     doc.text(lbl.toUpperCase(), 44, cy);
     doc.setFont('helvetica','normal');
     doc.setFontSize(10);
-    doc.setTextColor(white);
+    doc.setTextColor(...white);
     doc.text(val, W-44, cy, { align:'right' });
     cy += 24;
   });
 
   doc.setFontSize(8.5);
   doc.setTextColor(...[120,110,90]);
-  doc.text('Free shipping on orders above Rs.999  ·  No customs duties  ·  2-3 day delivery', W/2, 230, { align:'center' });
+  doc.text('Free shipping above Rs.999  |  No customs duties  |  2-3 day delivery', W/2, 230, { align:'center' });
 
   doc.setFont('times','italic');
   doc.setFontSize(11);
   doc.setTextColor(...gold);
-  doc.text('"Where Heritage Meets Modern Elegance"', W/2, 252, { align:'center' });
+  doc.text('-- Where Heritage Meets Modern Elegance --', W/2, 252, { align:'center' });
 
   // Save
   doc.save('Auranest-Decors-Catalog-2026.pdf');
