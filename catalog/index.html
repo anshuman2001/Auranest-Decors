@@ -439,6 +439,103 @@
     .filter-bar { padding: 0 16px 32px; gap: 8px; }
     .filter-pill { font-size: 11.5px; padding: 8px 16px; }
   }
+
+  /* ══════════════════════════════════════
+     PRINT / PDF STYLES
+  ══════════════════════════════════════ */
+  @media print {
+    /* Hide everything except products */
+    nav, .hero, .section, .filter-bar, footer,
+    .p-cta, .p-dot, .p-footer,
+    #dlCatalogBtn { display: none !important; }
+
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    body { background: #fff !important; margin: 0; }
+
+    /* Print header on every page */
+    body::before {
+      content: '';
+      display: block;
+      height: 14mm;
+      background: #1c1a18;
+    }
+
+    /* Products grid — 2 columns for print */
+    .products-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6mm !important;
+      padding: 6mm 8mm !important;
+    }
+
+    .p-card {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      border: 1px solid #ece8e1 !important;
+      border-radius: 6mm !important;
+      overflow: hidden;
+      box-shadow: none !important;
+      background: #fff !important;
+    }
+
+    .p-img-wrap {
+      height: 52mm !important;
+      background: #f5ecd8 !important;
+    }
+
+    .p-img-wrap img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+
+    .p-cat-tag {
+      background: #b8934a !important;
+      color: #fff !important;
+      font-size: 7pt !important;
+      padding: 2mm 3mm !important;
+      border-radius: 2mm !important;
+    }
+
+    .p-body { padding: 4mm !important; }
+
+    .p-name {
+      font-size: 10pt !important;
+      font-weight: 700 !important;
+      color: #1c1a18 !important;
+      margin-bottom: 2mm !important;
+      font-family: 'Cormorant Garamond', Georgia, serif !important;
+    }
+
+    .p-desc {
+      font-size: 8pt !important;
+      color: #5a5550 !important;
+      line-height: 1.4 !important;
+    }
+
+    /* Print-only page headers */
+    @page {
+      margin: 0;
+      size: A4 portrait;
+    }
+
+    /* Catalog title at top of first page */
+    .products-grid::before {
+      content: 'AURANEST DECORS  |  Product Catalogue 2026';
+      display: block;
+      grid-column: 1 / -1;
+      font-family: Georgia, serif;
+      font-size: 16pt;
+      font-weight: 700;
+      color: #b8934a;
+      text-align: center;
+      padding: 4mm 0 6mm;
+      border-bottom: 0.5mm solid #b8934a;
+      margin-bottom: 4mm;
+      letter-spacing: 0.05em;
+    }
+  }
 </style>
 </head>
 <body>
@@ -568,7 +665,7 @@
       <div class="hero-btns">
         <a href="#collections" class="btn-primary">Explore Collection &nbsp;→</a>
         <a href="../store/" class="btn-outline" target="_blank">Shop Now &nbsp;→</a>
-        <button class="btn-outline" id="dlCatalogBtn" onclick="downloadCatalog()" style="display:flex;align-items:center;gap:8px;cursor:pointer;border:none;">
+        <button class="btn-outline" id="dlCatalogBtn" onclick="printCatalog()" style="display:flex;align-items:center;gap:8px;cursor:pointer;border:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Catalog PDF
         </button>
@@ -817,410 +914,39 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
 });
 </script>
 
-<!-- jsPDF for client-side PDF generation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-/* ── PRODUCT DATA (mirrors store/index.html) ── */
-const CATALOG_PRODUCTS = [
-  {name:"Crafted Charm Wooden Serving Trio",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood (Paulownia)",price:1299,mrp:1599,tag:"Bestseller",size:"38/33.5/28cm",description:"Hand Painted Wooden Serving Tray Set of 3. Lightweight Paulownia wood with built-in handles. Perfect for breakfast, tea, coffee serving."},
-  {name:"Village Vows Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:849,mrp:999,tag:"Folk Art",size:"Ø9cm × H8.5cm",description:"Hand-painted ceramic planter inspired by East Indian folk art featuring a serene village couple beneath a fruit-bearing tree."},
-  {name:"Folk Art Terracotta Couple Mug Set",category:"Home & Kitchen",subCategory:"Serveware",material:"Terracotta",price:699,mrp:899,tag:"Handcrafted",size:"Standard",description:"Eco-friendly terracotta mug set inspired by Tamil Nadu culture. Each piece is one of a kind."},
-  {name:"Deer Painted Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:799,mrp:999,tag:"Nature Art",size:"Ø11.5cm × H11.5cm",description:"Vibrant ceramic planter featuring three elegantly illustrated deer beneath a stylized tree with red blossoms."},
-  {name:"Warli Art Wooden Tray",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood",price:949,mrp:1199,tag:"Tribal Art",size:"25.5×12.5cm",description:"Handcrafted Warli Art tray with white motifs of farming village life. Inspired by tribal art of Maharashtra."},
-  {name:"Daily Tribal Life Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:899,mrp:1099,tag:"Folk Art",size:"Ø16cm × H14.5cm",description:"Hand-painted ceramic planter with daily tribal life theme in vibrant red, blue, green, and yellow tones."},
-  {name:"Royal Jhumka Mughal Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:1049,mrp:1299,tag:"Mughal Art",size:"Ø5cm × H17cm",description:"Elegant ceramic planter with Mughal motifs — split-tone yellow/white with Jhumka stacks and floral vines."},
-  {name:"Tribal Grace Mango Wood Tray",category:"Aura Décor",subCategory:"Wall Décor",material:"Wood (Mango)",price:1199,mrp:1499,tag:"Wall Art",size:"40×14cm",description:"Live-edge mango wood tray with vibrant tribal woman painting. Celebrates indigenous art and natural beauty."},
-  {name:"African Woman Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:1399,mrp:1699,tag:"Statement",size:"Ø46cm × H27.5cm",description:"Bold ceramic planter with elegant African woman silhouette in vibrant traditional attire on white ceramic base."},
-  {name:"Radiant Heritage Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:1399,mrp:1699,tag:"Statement",size:"Ø46cm × H27.5cm",description:"Stunning ceramic planter with African woman in multicolored gown — vibrant stripes of red, yellow, green, blue."},
-  {name:"Desert Grace Mithila Art Tray",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood",price:1099,mrp:1349,tag:"Mithila Art",size:"26.5×13cm",description:"Oval wooden tray with Mithila art — a traditionally adorned woman carrying a pot with leaf and geometric borders."},
-  {name:"Sheesham Wood Spice Box 12-Comp",category:"Home & Kitchen",subCategory:"Kitchen Tools",material:"Wood (Sheesham)",price:1549,mrp:1899,tag:"Kitchen",size:"21×21cm",description:"Hand-painted Sheesham wood spice box with 12 compartments and glass lid. A Masala Daan and folk art piece."},
-  {name:"Mango Wood Spice Box 12-Comp",category:"Home & Kitchen",subCategory:"Kitchen Tools",material:"Wood (Mango)",price:1649,mrp:1999,tag:"Kitchen",size:"20.5×26.5cm",description:"Hand-etched mango wood spice box with 12 compartments, lotus line art, and tribal geometric borders."},
-  {name:"Mayura Live-Edge Peacock Platter",category:"Aura Décor",subCategory:"Wall Décor",material:"Wood",price:1299,mrp:1599,tag:"Statement",size:"Ø25.5cm",description:"One-of-a-kind live-edge wooden platter with majestic hand-painted peacock — every piece is unique."},
-  {name:"Heritage Harvest Tribal Spatula Set",category:"Home & Kitchen",subCategory:"Kitchen Tools",material:"Wood",price:749,mrp:949,tag:"Kitchen Art",size:"Assorted",description:"Artisanal wooden spatulas and spoons with Warli figures and Gond-inspired birds. Food-safe and beautiful."},
-  {name:"Twin Bird Motif Ceramic Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:749,mrp:949,tag:"Folk Art",size:"Ø11cm × H11.5cm",description:"Hand-painted ceramic planter with twin bird design in black, white, and vibrant red. Modern folk aesthetic."},
-  {name:"Traditional Folk Art Wooden Platter",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood",price:899,mrp:1099,tag:"Serveware",size:"32.5×17cm",description:"Handcrafted wooden platter with vibrant folk art scene — perfect for serving or as a decorative centerpiece."},
-  {name:"Colorful Bird Folk Art Planter",category:"Aura Décor",subCategory:"Decorative Pots",material:"Ceramic",price:749,mrp:949,tag:"Folk Art",size:"Ø11cm × H11.5cm",description:"Hand-painted ceramic planter with charming colorful birds in yellow, red, blue, and green folk motifs."},
-  {name:"African Art Wooden Coasters Set of 4",category:"Home & Kitchen",subCategory:"Tableware",material:"Wood",price:649,mrp:799,tag:"Gift Set",size:"Ø10cm each",description:"Set of 4 handcrafted wooden coasters with African-inspired artwork. Heat-resistant and stylish."},
-  {name:"African Art Wooden Storage Canister",category:"Home & Kitchen",subCategory:"Kitchen Tools",material:"Wood",price:899,mrp:1099,tag:"Kitchen",size:"Ø9.5cm × H10.5cm",description:"Handcrafted wooden canister with African folk art. Secure lid and handle. Perfect for kitchen storage."},
-  {name:"Crescent-Shaped Bird Art Platter",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood",price:799,mrp:999,tag:"Unique Shape",size:"18×15cm",description:"Crescent moon shaped wooden platter with hand-painted bird and foliage art. Unique serving or décor piece."},
-  {name:"Moonlit Melody Folk Art Platter",category:"Aura Décor",subCategory:"Wall Décor",material:"Wood",price:1199,mrp:1499,tag:"Wall Art",size:"Ø24.5cm",description:"Rustic round platter with folk art design. Perfect for serving pizzas, flatbreads, or as wall display."}
-];
-
-/* Sanitise: jsPDF built-in fonts only handle Latin-1.
-   Replace common non-Latin characters so the PDF never hangs. */
-function sanitize(str) {
-  return (str || '')
-    .replace(/×/g, 'x')
-    .replace(/Ø/g, 'D.')
-    .replace(/₹/g, 'Rs.')
-    .replace(/—/g, '-')
-    .replace(/–/g, '-')
-    .replace(/[""]/g, '"')
-    .replace(/['']/g, "'")
-    .replace(/[^\x00-\xFF]/g, '');  // strip anything outside Latin-1
-}
-
-function downloadCatalog() {
+/* printCatalog — wait for all images to load then open browser print dialog.
+   In Chrome/Edge the user can choose "Save as PDF" destination. */
+function printCatalog() {
   const btn = document.getElementById('dlCatalogBtn');
-  const resetBtn = () => {
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Loading images...';
+
+  // Wait for all product images to finish loading
+  const imgs = Array.from(document.querySelectorAll('.products-grid img'));
+  const pending = imgs.filter(img => !img.complete);
+
+  const doprint = () => {
     btn.disabled = false;
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Catalog PDF';
+    window.print();
   };
-  btn.disabled = true;
-  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Generating...';
 
-  // Yield to browser so the button repaint shows before heavy work
-  setTimeout(function() {
-    try {
-      _buildPDF();
-    } catch(e) {
-      console.error('PDF error:', e);
-      alert('PDF generation failed: ' + e.message);
-      resetBtn();
-    }
-  }, 80);
+  if (pending.length === 0) { doprint(); return; }
+
+  let done = 0;
+  pending.forEach(img => {
+    const finish = () => { if (++done === pending.length) doprint(); };
+    img.addEventListener('load',  finish, { once: true });
+    img.addEventListener('error', finish, { once: true });
+  });
+
+  // Fallback: print after 4s regardless
+  setTimeout(doprint, 4000);
 }
-
-function _buildPDF() {
-  const btn = document.getElementById('dlCatalogBtn');
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const W = 210, H = 297;
-
-  /* ── HELPERS ── */
-  const gold   = [184, 147, 74];
-  const ink    = [28, 26, 24];
-  const muted  = [120, 112, 100];
-  const pale   = [245, 236, 216];
-  const white  = [255, 255, 255];
-  const light  = [250, 248, 245];
-
-  function rect(x,y,w,h,r,color) {
-    doc.setFillColor(...color);
-    if (r) doc.roundedRect(x,y,w,h,r,r,'F');
-    else doc.rect(x,y,w,h,'F');
-  }
-  function hline(y, color=[220,215,205]) {
-    doc.setDrawColor(...color);
-    doc.setLineWidth(0.3);
-    doc.line(14, y, W-14, y);
-  }
-  function wrap(text, x, y, maxW, lineH, color, size, bold) {
-    doc.setFontSize(size);
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    doc.setTextColor(...color);
-    const lines = doc.splitTextToSize(text, maxW);
-    doc.text(lines, x, y);
-    return y + lines.length * lineH;
-  }
-
-  /* ════════════ PAGE 1 — COVER ════════════ */
-  // Gold gradient background (simulated with rectangles)
-  rect(0, 0, W, H, 0, [28, 26, 24]);
-  rect(0, 0, W, 12, 0, gold);
-  rect(0, H-12, W, 12, 0, gold);
-
-  // Decorative gold lines
-  doc.setDrawColor(...gold);
-  doc.setLineWidth(0.5);
-  doc.line(14, 20, W-14, 20);
-  doc.line(14, 22, W-14, 22);
-  doc.line(14, H-22, W-14, H-22);
-  doc.line(14, H-20, W-14, H-20);
-
-  // Brand name
-  doc.setFont('times', 'bold');
-  doc.setFontSize(38);
-  doc.setTextColor(...gold);
-  doc.text('AURANEST', W/2, 80, { align: 'center' });
-  doc.setFont('times', 'italic');
-  doc.setFontSize(20);
-  doc.setTextColor(...[200,180,140]);
-  doc.text('DECORS', W/2, 92, { align: 'center' });
-
-  // Divider ornament
-  doc.setFontSize(14);
-  doc.setTextColor(...gold);
-  doc.text('~ ~ ~', W/2, 108, { align: 'center' });
-
-  // Subtitle
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(...[200,190,170]);
-  doc.text('PRODUCT CATALOGUE', W/2, 122, { align: 'center' });
-  doc.setFontSize(28);
-  doc.setFont('times', 'bold');
-  doc.setTextColor(...white);
-  doc.text('2026', W/2, 140, { align: 'center' });
-
-  // Tagline box
-  rect(34, 154, W-68, 22, 3, [45,40,35]);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...[200,180,140]);
-  doc.text('Handcrafted  |  Soulful  |  Timeless', W/2, 163, { align: 'center' });
-  doc.setFontSize(8.5);
-  doc.setTextColor(...[160,150,130]);
-  doc.text('Where Heritage Meets Modern Elegance', W/2, 170, { align: 'center' });
-
-  // Stats row
-  const stats = [['22+','Products'],['100%','Handcrafted'],['Indian','Artisans']];
-  stats.forEach(([val,lbl], i) => {
-    const sx = 35 + i * 48;
-    rect(sx, 188, 38, 26, 3, [40,35,30]);
-    doc.setFont('times', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(...gold);
-    doc.text(val, sx+19, 200, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(...[160,150,130]);
-    doc.text(lbl, sx+19, 208, { align: 'center' });
-  });
-
-  // Contact
-  doc.setFontSize(8);
-  doc.setTextColor(...[140,130,110]);
-  doc.text('www.auranestdecors.com  |  info@auranestsdecor.com  |  +91 86792 12984', W/2, 240, { align: 'center' });
-
-  /* ════════════ PAGE 2 — TABLE OF CONTENTS ════════════ */
-  doc.addPage();
-  rect(0, 0, W, H, 0, light);
-  rect(0, 0, W, 38, 0, ink);
-
-  doc.setFont('times', 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(...gold);
-  doc.text('Table of Contents', 14, 22);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...[160,150,130]);
-  doc.text('Auranest Decors — 2026 Catalogue', 14, 31);
-
-  const cats = [...new Set(CATALOG_PRODUCTS.map(p => p.category))];
-  let ty = 58;
-  cats.forEach((cat, ci) => {
-    const prods = CATALOG_PRODUCTS.filter(p => p.category === cat);
-    rect(14, ty-7, W-28, 22, 3, white);
-    doc.setDrawColor(...pale);
-    doc.setLineWidth(0.3);
-    doc.roundedRect(14, ty-7, W-28, 22, 3, 3, 'S');
-
-    // Category number badge
-    rect(14, ty-7, 22, 22, 3, gold);
-    doc.setFont('times', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(...white);
-    doc.text(String(ci+1), 25, ty+4.5, { align:'center' });
-
-    doc.setFont('times', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(...ink);
-    doc.text(sanitize(cat), 42, ty+2);
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...muted);
-    doc.text(`${prods.length} products`, 42, ty+9);
-
-    // Dots + page ref
-    doc.setTextColor(...[200,190,175]);
-    const dots = '.'.repeat(50);
-    doc.text(dots, 100, ty+2);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...gold);
-    doc.text(`Page ${3 + ci * 2}`, W-28, ty+2, { align:'right' });
-
-    ty += 28;
-  });
-
-  // About section
-  ty += 8;
-  rect(14, ty, W-28, 50, 4, [240, 232, 215]);
-  doc.setFont('times', 'bold');
-  doc.setFontSize(13);
-  doc.setTextColor(...ink);
-  doc.text('About Auranest Decors', 22, ty+12);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...muted);
-  const aboutText = 'Auranest Decors is a premium handcrafted home decor brand celebrating the rich artistic heritage of India. Every piece is individually crafted by skilled artisans using traditional techniques passed down through generations. From Warli tribal art to Mithila folk paintings, our collection brings authentic Indian craftsmanship into modern homes.';
-  const aboutLines = doc.splitTextToSize(aboutText, W-48);
-  doc.text(aboutLines, 22, ty+22);
-
-  /* ════════════ PRODUCT PAGES ════════════ */
-  cats.forEach((cat) => {
-    const prods = CATALOG_PRODUCTS.filter(p => p.category === cat);
-
-    doc.addPage();
-    // Category header
-    rect(0, 0, W, H, 0, light);
-    rect(0, 0, W, 42, 0, ink);
-    doc.setDrawColor(...gold);
-    doc.setLineWidth(0.8);
-    doc.line(0, 42, W, 42);
-
-    doc.setFont('times', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(...gold);
-    doc.text(sanitize(cat), 14, 22);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...[160,150,130]);
-    doc.text(prods.length + ' handcrafted products  |  Auranest Decors 2026', 14, 33);
-
-    // Decorative right element
-    doc.setFontSize(28);
-    doc.setTextColor(...[50,45,40]);
-    doc.text('*', W-22, 28);
-
-    let py = 58;
-    prods.forEach((p, pi) => {
-      const cardH = 46;
-      if (py + cardH > H - 18) {
-        doc.addPage();
-        rect(0, 0, W, H, 0, light);
-        rect(0, 0, W, 14, 0, [45,40,35]);
-        doc.setFont('times', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(...gold);
-        doc.text(sanitize(cat) + ' (cont.)', 14, 9.5);
-        py = 24;
-      }
-
-      const isEven = pi % 2 === 0;
-      rect(14, py, W-28, cardH, 4, isEven ? white : [248,244,237]);
-
-      // Number badge
-      rect(14, py, 14, cardH, 4, isEven ? gold : [200,170,100]);
-      doc.setFont('times','bold');
-      doc.setFontSize(9);
-      doc.setTextColor(...white);
-      doc.text(String(pi+1), 21, py + cardH/2 + 3, { align:'center' });
-
-      // Sanitize all text to avoid Latin-1 overflow hangs
-      const pName = sanitize(p.name);
-      const pTag  = sanitize(p.tag);
-      const pDesc = sanitize(p.description);
-      const pMat  = sanitize(p.material);
-      const pSize = sanitize(p.size);
-
-      // Product name
-      doc.setFont('times','bold');
-      doc.setFontSize(11.5);
-      doc.setTextColor(...ink);
-      const nameLines = doc.splitTextToSize(pName, 118);
-      doc.text(nameLines, 34, py+11);
-
-      // Tag pill
-      rect(34, py+18, doc.getTextWidth(pTag)+8, 8, 2, pale);
-      doc.setFont('helvetica','bold');
-      doc.setFontSize(7);
-      doc.setTextColor(...gold);
-      doc.text(pTag, 38, py+24);
-
-      // Description
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      doc.setTextColor(...muted);
-      const descLines = doc.splitTextToSize(pDesc, 118);
-      doc.text(descLines.slice(0,2), 34, py+30);
-
-      // Right side — price & details
-      const rx = W - 62;
-
-      // Price
-      doc.setFont('times','bold');
-      doc.setFontSize(15);
-      doc.setTextColor(...gold);
-      doc.text('Rs.' + p.price.toLocaleString('en-IN'), rx+30, py+13, { align:'right' });
-
-      // MRP strikethrough
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      doc.setTextColor(...[180,170,155]);
-      const mrpText = 'MRP Rs.' + p.mrp.toLocaleString('en-IN');
-      const mrpX = rx+30 - doc.getTextWidth(mrpText);
-      doc.text(mrpText, mrpX, py+21);
-      doc.setDrawColor(180,170,155);
-      doc.setLineWidth(0.4);
-      doc.line(mrpX, py+20, mrpX + doc.getTextWidth(mrpText), py+20);
-
-      // Size & material
-      doc.setFontSize(7.5);
-      doc.setTextColor(...muted);
-      doc.text(pMat, rx+30, py+30, { align:'right' });
-      doc.text(pSize, rx+30, py+37, { align:'right' });
-
-      // Divider
-      doc.setDrawColor(...pale);
-      doc.setLineWidth(0.2);
-      doc.line(34, py+42, W-18, py+42);
-
-      py += cardH + 6;
-    });
-  });
-
-  /* ════════════ LAST PAGE — CONTACT ════════════ */
-  doc.addPage();
-  rect(0, 0, W, H, 0, ink);
-  rect(0, 0, W, 10, 0, gold);
-  rect(0, H-10, W, 10, 0, gold);
-
-  doc.setFont('times','bold');
-  doc.setFontSize(26);
-  doc.setTextColor(...gold);
-  doc.text('Get In Touch', W/2, 60, { align:'center' });
-
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...[190,175,150]);
-  doc.text('We\'d love to hear from you — orders, wholesale, or just to say hello!', W/2, 72, { align:'center' });
-
-  doc.setDrawColor(...gold);
-  doc.setLineWidth(0.4);
-  doc.line(60, 78, W-60, 78);
-
-  const contacts = [
-    ['Website', 'www.auranestdecors.com'],
-    ['Email',   'info@auranestsdecor.com'],
-    ['Phone',   '+91 86792 12984'],
-    ['Instagram','@auranestdecors'],
-  ];
-  let cy = 102;
-  contacts.forEach(([lbl, val]) => {
-    rect(34, cy-8, W-68, 18, 3, [40,35,30]);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...gold);
-    doc.text(lbl.toUpperCase(), 44, cy);
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(10);
-    doc.setTextColor(...white);
-    doc.text(val, W-44, cy, { align:'right' });
-    cy += 24;
-  });
-
-  doc.setFontSize(8.5);
-  doc.setTextColor(...[120,110,90]);
-  doc.text('Free shipping above Rs.999  |  No customs duties  |  2-3 day delivery', W/2, 230, { align:'center' });
-
-  doc.setFont('times','italic');
-  doc.setFontSize(11);
-  doc.setTextColor(...gold);
-  doc.text('-- Where Heritage Meets Modern Elegance --', W/2, 252, { align:'center' });
-
-  // Save
-  doc.save('Auranest-Decors-Catalog-2026.pdf');
-
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Catalog PDF';
-} // end _buildPDF
-
-/* spinner keyframe for button */
-const _s = document.createElement('style');
-_s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-document.head.appendChild(_s);
+const _s2 = document.createElement('style');
+_s2.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(_s2);
 </script>
 </body>
 </html>
