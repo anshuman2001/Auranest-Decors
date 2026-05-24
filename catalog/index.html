@@ -846,11 +846,43 @@ const CATALOG_PRODUCTS = [
   {name:"Moonlit Melody Folk Art Platter",category:"Aura Décor",subCategory:"Wall Décor",material:"Wood",price:1199,mrp:1499,tag:"Wall Art",size:"Ø24.5cm",description:"Rustic round platter with folk art design. Perfect for serving pizzas, flatbreads, or as wall display."}
 ];
 
-async function downloadCatalog() {
+/* Sanitise: jsPDF built-in fonts only handle Latin-1.
+   Replace common non-Latin characters so the PDF never hangs. */
+function sanitize(str) {
+  return (str || '')
+    .replace(/×/g, 'x')
+    .replace(/Ø/g, 'D.')
+    .replace(/₹/g, 'Rs.')
+    .replace(/—/g, '-')
+    .replace(/–/g, '-')
+    .replace(/[""]/g, '"')
+    .replace(/['']/g, "'")
+    .replace(/[^\x00-\xFF]/g, '');  // strip anything outside Latin-1
+}
+
+function downloadCatalog() {
   const btn = document.getElementById('dlCatalogBtn');
+  const resetBtn = () => {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Catalog PDF';
+  };
   btn.disabled = true;
   btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Generating...';
 
+  // Yield to browser so the button repaint shows before heavy work
+  setTimeout(function() {
+    try {
+      _buildPDF();
+    } catch(e) {
+      console.error('PDF error:', e);
+      alert('PDF generation failed: ' + e.message);
+      resetBtn();
+    }
+  }, 80);
+}
+
+function _buildPDF() {
+  const btn = document.getElementById('dlCatalogBtn');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = 210, H = 297;
@@ -984,7 +1016,7 @@ async function downloadCatalog() {
     doc.setFont('times', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(...ink);
-    doc.text(cat, 42, ty+2);
+    doc.text(sanitize(cat), 42, ty+2);
     doc.setFont('helvetica','normal');
     doc.setFontSize(9);
     doc.setTextColor(...muted);
@@ -992,7 +1024,7 @@ async function downloadCatalog() {
 
     // Dots + page ref
     doc.setTextColor(...[200,190,175]);
-    const dots = '·'.repeat(38);
+    const dots = '.'.repeat(50);
     doc.text(dots, 100, ty+2);
     doc.setFont('helvetica','bold');
     doc.setFontSize(9);
@@ -1031,7 +1063,7 @@ async function downloadCatalog() {
     doc.setFont('times', 'bold');
     doc.setFontSize(24);
     doc.setTextColor(...gold);
-    doc.text(cat, 14, 22);
+    doc.text(sanitize(cat), 14, 22);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...[160,150,130]);
@@ -1052,7 +1084,7 @@ async function downloadCatalog() {
         doc.setFont('times', 'bold');
         doc.setFontSize(11);
         doc.setTextColor(...gold);
-        doc.text(cat + ' (cont.)', 14, 9.5);
+        doc.text(sanitize(cat) + ' (cont.)', 14, 9.5);
         py = 24;
       }
 
@@ -1066,25 +1098,32 @@ async function downloadCatalog() {
       doc.setTextColor(...white);
       doc.text(String(pi+1), 21, py + cardH/2 + 3, { align:'center' });
 
+      // Sanitize all text to avoid Latin-1 overflow hangs
+      const pName = sanitize(p.name);
+      const pTag  = sanitize(p.tag);
+      const pDesc = sanitize(p.description);
+      const pMat  = sanitize(p.material);
+      const pSize = sanitize(p.size);
+
       // Product name
       doc.setFont('times','bold');
       doc.setFontSize(11.5);
       doc.setTextColor(...ink);
-      const nameLines = doc.splitTextToSize(p.name, 118);
+      const nameLines = doc.splitTextToSize(pName, 118);
       doc.text(nameLines, 34, py+11);
 
       // Tag pill
-      rect(34, py+18, doc.getTextWidth(p.tag)+8, 8, 2, pale);
+      rect(34, py+18, doc.getTextWidth(pTag)+8, 8, 2, pale);
       doc.setFont('helvetica','bold');
       doc.setFontSize(7);
       doc.setTextColor(...gold);
-      doc.text(p.tag, 38, py+24);
+      doc.text(pTag, 38, py+24);
 
       // Description
       doc.setFont('helvetica','normal');
       doc.setFontSize(8);
       doc.setTextColor(...muted);
-      const descLines = doc.splitTextToSize(p.description, 118);
+      const descLines = doc.splitTextToSize(pDesc, 118);
       doc.text(descLines.slice(0,2), 34, py+30);
 
       // Right side — price & details
@@ -1110,8 +1149,8 @@ async function downloadCatalog() {
       // Size & material
       doc.setFontSize(7.5);
       doc.setTextColor(...muted);
-      doc.text(p.material, rx+30, py+30, { align:'right' });
-      doc.text(p.size, rx+30, py+37, { align:'right' });
+      doc.text(pMat, rx+30, py+30, { align:'right' });
+      doc.text(pSize, rx+30, py+37, { align:'right' });
 
       // Divider
       doc.setDrawColor(...pale);
@@ -1176,7 +1215,7 @@ async function downloadCatalog() {
 
   btn.disabled = false;
   btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Catalog PDF';
-}
+} // end _buildPDF
 
 /* spinner keyframe for button */
 const _s = document.createElement('style');
