@@ -556,25 +556,23 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
           <div class="sg"><label class="sl">Connection Status</label><input class="si" id="fbConnStatus" value="Checking..." readonly/></div>
         </div>
         <div class="ss" style="grid-column:1/-1">
-          <div class="ss-title">🖼️ Image Hosting (ImgBB)</div>
+          <div class="ss-title">🖼️ Image Hosting (Cloudinary)</div>
           <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7">
-            Image uploads use <strong style="color:var(--gold)">ImgBB</strong> — free, no CORS issues, unlimited storage.
-            Get your free API key at <strong style="color:var(--gold)">imgbb.com → API</strong> (takes 30 seconds).
+            Images upload to <strong style="color:var(--gold)">Cloudinary</strong> — free 25 GB, permanent links, auto-optimised for web.<br/>
+            Setup: <strong style="color:var(--gold)">cloudinary.com</strong> → Sign up free → Settings → Upload → Add upload preset → set to <strong style="color:var(--gold)">Unsigned</strong>.
           </p>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:.7rem;align-items:end">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem">
             <div class="sg" style="margin:0">
-              <label class="sl">ImgBB API Key</label>
-              <input class="si" id="imgbbKey" type="password" placeholder="Paste your ImgBB API key here…" oninput="localStorage.setItem('auranest_imgbb_key',this.value)"/>
+              <label class="sl">Cloud Name</label>
+              <input class="si" id="cldCloud" placeholder="e.g. dxyz1234ab" oninput="localStorage.setItem('auranest_cld_cloud',this.value)"/>
             </div>
-            <button class="btn-save" onclick="testImgBBKey()">Test Key</button>
+            <div class="sg" style="margin:0">
+              <label class="sl">Upload Preset (Unsigned)</label>
+              <input class="si" id="cldPreset" placeholder="e.g. auranest_unsigned" oninput="localStorage.setItem('auranest_cld_preset',this.value)"/>
+            </div>
           </div>
-          <div id="imgbbStatus" style="font-size:.72rem;margin-top:.6rem;display:none"></div>
-          <p style="font-size:.7rem;color:var(--muted);margin-top:.8rem">
-            💡 Steps: 1) Go to <strong style="color:var(--gold)">imgbb.com</strong> → Sign up free →
-            2) Click your profile → <strong style="color:var(--gold)">API</strong> →
-            3) Copy API key → paste above → Save
-          </p>
-          <button class="btn-save" style="margin-top:.8rem" onclick="saveImgBBKey()">💾 Save API Key</button>
+          <div id="cldStatus" style="font-size:.72rem;margin-bottom:.6rem;display:none"></div>
+          <button class="btn-save" onclick="saveCloudinaryConfig()">🔗 Test &amp; Save</button>
         </div>
       </div>
     </div>
@@ -1241,24 +1239,22 @@ const BrandingPage = {
 };
 
 // ══════════════════════════════════════════════════
-// IMAGE UPLOAD via ImgBB API (no CORS issues)
-// Falls back to Firebase Storage if ImgBB key not set
+// IMAGE UPLOAD via Cloudinary (unsigned preset, no backend needed)
 // ══════════════════════════════════════════════════
-function getImgBBKey() {
-  return document.getElementById('imgbbKey')?.value.trim() ||
-         localStorage.getItem('auranest_imgbb_key') || '';
+function getCloudinaryConfig() {
+  return {
+    cloudName: document.getElementById('cldCloud')?.value.trim() || localStorage.getItem('auranest_cld_cloud') || '',
+    preset:    document.getElementById('cldPreset')?.value.trim() || localStorage.getItem('auranest_cld_preset') || '',
+  };
 }
 
 function setProgressUI(show, pct, msg) {
-  // Modal progress bar (only present when product modal is open)
   const bar    = document.getElementById('uploadProgress');
   const fill   = document.getElementById('uploadBar');
   const status = document.getElementById('uploadStatus');
   if (bar)    bar.style.display  = show ? 'block' : 'none';
   if (fill)   fill.style.width   = (pct || 0) + '%';
   if (status) status.textContent = msg || '';
-
-  // Global upload overlay — always visible from any page
   const gBox   = document.getElementById('globalUpload');
   const gBar   = document.getElementById('globalUploadBar');
   const gLabel = document.getElementById('globalUploadLabel');
@@ -1267,30 +1263,25 @@ function setProgressUI(show, pct, msg) {
   if (gLabel) gLabel.textContent   = msg || 'Uploading…';
 }
 
-async function uploadViaImgBB(file) {
-  const key = getImgBBKey();
-  if (!key) {
-    showToast('⚠️ No ImgBB key set — go to Settings → Image Hosting to add your free key');
+async function uploadToCloudinary(file) {
+  const { cloudName, preset } = getCloudinaryConfig();
+  if (!cloudName || !preset) {
+    showToast('⚠️ Cloudinary not configured — go to Settings → Image Hosting');
     return null;
   }
-  setProgressUI(true, 20, 'Reading file…');
+  setProgressUI(true, 20, 'Uploading to Cloudinary…');
   try {
-    const b64 = await new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload  = () => res(reader.result.split(',')[1]);
-      reader.onerror = rej;
-      reader.readAsDataURL(file);
-    });
-    setProgressUI(true, 55, 'Uploading to ImgBB…');
     const form = new FormData();
-    form.append('image', b64);
-    form.append('key', key);
-    const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+    form.append('file', file);
+    form.append('upload_preset', preset);
+    const resp = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: 'POST', body: form,
+    });
     const json = await resp.json();
-    if (!json.success) throw new Error(json.error?.message || 'Upload failed — check your API key');
+    if (json.error) throw new Error(json.error.message);
     setProgressUI(true, 100, '✅ Uploaded!');
     setTimeout(() => setProgressUI(false), 1200);
-    return json.data.url;
+    return json.secure_url;
   } catch (err) {
     setProgressUI(false);
     showToast('❌ ' + err.message);
@@ -1298,9 +1289,9 @@ async function uploadViaImgBB(file) {
   }
 }
 
-// Single upload entry point — ImgBB only (no Firebase Storage to avoid CORS)
+// Single upload entry point
 async function uploadToStorage(file, _path) {
-  return await uploadViaImgBB(file);
+  return await uploadToCloudinary(file);
 }
 
 window.uploadProductImage = async function(input, index) {
@@ -1360,52 +1351,39 @@ function previewImg(index, url) {
   el.appendChild(img);
 }
 
-// ── IMGBB KEY MANAGEMENT ──
-async function saveImgBBKey() {
-  const key = document.getElementById('imgbbKey')?.value.trim();
-  if (!key) { showToast('⚠️ Please paste your ImgBB API key first'); return; }
-  localStorage.setItem('auranest_imgbb_key', key);
-  // Also save to Firebase so it persists across devices & browser clears
-  try {
-    const { doc, setDoc } = window.$fb;
-    await setDoc(doc(window.$db, 'config', 'imgbb'), { apiKey: key }, { merge: true });
-    showToast('✅ ImgBB API key saved permanently to Firebase!');
-  } catch(e) {
-    showToast('✅ ImgBB key saved locally. (Firebase save failed: ' + e.message + ')');
-  }
-}
-
-async function testImgBBKey() {
-  const key = document.getElementById('imgbbKey')?.value.trim();
-  const statusEl = document.getElementById('imgbbStatus');
-  if (!key) { showToast('⚠️ Enter your ImgBB API key first'); return; }
+// ── CLOUDINARY CONFIG SAVE & TEST ──
+async function saveCloudinaryConfig() {
+  const cloudName = document.getElementById('cldCloud')?.value.trim();
+  const preset    = document.getElementById('cldPreset')?.value.trim();
+  const statusEl  = document.getElementById('cldStatus');
+  if (!cloudName || !preset) { showToast('⚠️ Enter both Cloud Name and Upload Preset'); return; }
   statusEl.style.display = 'block';
   statusEl.style.color   = 'var(--muted)';
-  statusEl.textContent   = '⏳ Testing key…';
+  statusEl.textContent   = '⏳ Testing connection…';
   try {
-    // Test with a 1×1 transparent PNG (smallest valid image)
-    const testB64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-    const form = new FormData();
-    form.append('image', testB64);
-    form.append('key', key);
-    const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+    // Test with a 1×1 PNG blob
+    const b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const blob  = new Blob([bytes], { type: 'image/png' });
+    const form  = new FormData();
+    form.append('file', blob, 'test.png');
+    form.append('upload_preset', preset);
+    const resp = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method:'POST', body: form });
     const json = await resp.json();
-    if (json.success) {
-      statusEl.style.color   = 'var(--green)';
-      statusEl.textContent   = '✅ Key is valid! Image uploads will work.';
-      localStorage.setItem('auranest_imgbb_key', key);
-      try {
-        const { doc, setDoc } = window.$fb;
-        await setDoc(doc(window.$db, 'config', 'imgbb'), { apiKey: key }, { merge: true });
-        statusEl.textContent += ' Saved permanently to Firebase.';
-      } catch(e) {}
-    } else {
-      statusEl.style.color   = 'var(--red)';
-      statusEl.textContent   = '❌ Invalid key: ' + (json.error?.message || 'Authentication failed');
-    }
-  } catch (e) {
-    statusEl.style.color   = 'var(--red)';
-    statusEl.textContent   = '❌ Network error — check your connection';
+    if (json.error) throw new Error(json.error.message);
+    // Save locally
+    localStorage.setItem('auranest_cld_cloud',  cloudName);
+    localStorage.setItem('auranest_cld_preset', preset);
+    // Save to Firebase for cross-device persistence
+    try {
+      const { doc, setDoc } = window.$fb;
+      await setDoc(doc(window.$db, 'config', 'cloudinary'), { cloudName, preset }, { merge: true });
+    } catch(e) {}
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✅ Cloudinary connected! All image uploads now go to Cloudinary.';
+  } catch(e) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '❌ ' + e.message + ' — check Cloud Name and Preset name';
   }
 }
 
@@ -1577,33 +1555,29 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// ── RESTORE SAVED IMGBB KEY ON LOAD ──
+// ── RESTORE CLOUDINARY CONFIG ON LOAD ──
 document.addEventListener('DOMContentLoaded', function() {
   const img0 = document.getElementById('mImage0');
   if (img0) img0.addEventListener('input', function() { previewImg(0, this.value); });
 
-  // 1. Restore from localStorage immediately (instant)
-  const cached = localStorage.getItem('auranest_imgbb_key');
-  if (cached) {
-    const el = document.getElementById('imgbbKey');
-    if (el) el.value = cached;
-  }
+  // 1. Restore from localStorage immediately
+  const cld = localStorage.getItem('auranest_cld_cloud');
+  const pre = localStorage.getItem('auranest_cld_preset');
+  if (cld) { const el = document.getElementById('cldCloud');  if (el) el.value = cld; }
+  if (pre) { const el = document.getElementById('cldPreset'); if (el) el.value = pre; }
 
-  // 2. Also load from Firebase (persists across devices/browser clears)
+  // 2. Load from Firebase (cross-device persistence)
   setTimeout(async () => {
     try {
       const { doc, getDoc } = window.$fb;
-      const snap = await getDoc(doc(window.$db, 'config', 'imgbb'));
+      const snap = await getDoc(doc(window.$db, 'config', 'cloudinary'));
       if (snap.exists()) {
-        const key = snap.data().apiKey;
-        if (key) {
-          localStorage.setItem('auranest_imgbb_key', key);
-          const el = document.getElementById('imgbbKey');
-          if (el) el.value = key;
-        }
+        const { cloudName, preset } = snap.data();
+        if (cloudName) { localStorage.setItem('auranest_cld_cloud', cloudName);  const el = document.getElementById('cldCloud');  if (el) el.value = cloudName; }
+        if (preset)    { localStorage.setItem('auranest_cld_preset', preset);    const el = document.getElementById('cldPreset'); if (el) el.value = preset; }
       }
     } catch(e) {}
-  }, 2000); // wait for Firebase to init
+  }, 2000);
 });
 </script>
 </body>
