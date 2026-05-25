@@ -263,38 +263,70 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 <div class="modal-bg" id="bulkModal">
   <div class="mbox" style="width:720px;max-width:95vw;">
     <button class="mc" onclick="closeBulkModal()">✕</button>
-    <div class="mt">📥 Bulk Upload Products via CSV</div>
-    <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7;">
-      Step 1 — Download the template → Step 2 — Fill in Excel/Google Sheets → Step 3 — Upload the file → Step 4 — Click Import
-    </p>
+    <div class="mt">📥 Bulk Upload Products</div>
 
-    <!-- Step 1: Download template -->
-    <div style="display:flex;gap:.8rem;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;">
-      <button class="btn-dl" onclick="BulkUpload.downloadTemplate()">⬇ Download CSV Template</button>
-      <span style="font-size:.72rem;color:var(--muted)">Columns: Name, Category, SubCategory, Price, MRP, Material, Color, Size, Tag, Stock, Description, Image1, Image2, Image3</span>
+    <!-- Step indicators -->
+    <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid var(--border2)">
+      <div id="stepInd1" style="padding:.55rem 1.2rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:2px solid var(--gold);cursor:pointer" onclick="BulkUpload.goStep1()">1 · Upload Images</div>
+      <div id="stepInd2" style="padding:.55rem 1.2rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent">2 · Upload CSV</div>
+      <div id="stepInd3" style="padding:.55rem 1.2rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent">3 · Import</div>
     </div>
 
-    <!-- Step 2: Drop zone -->
-    <div class="bulk-drop" id="bulkDrop">
-      <input type="file" accept=".csv,.xlsx,.xls" onchange="BulkUpload.handleFile(this.files[0])"/>
-      <div class="bulk-drop-icon">📂</div>
-      <div class="bulk-drop-title">Drop your CSV file here or click to browse</div>
-      <div class="bulk-drop-sub">Supports .csv files · Max 500 rows</div>
-    </div>
-
-    <!-- Step 3: Preview -->
-    <div id="bulkPreviewWrap" style="display:none;">
-      <div class="bulk-stats" id="bulkStats"></div>
-      <div class="bulk-preview" id="bulkPreview"></div>
-      <div class="bulk-prog" id="bulkProgWrap" style="display:none;">
-        <div class="bulk-prog-bar"><div class="bulk-prog-fill" id="bulkProgFill"></div></div>
-        <div class="bulk-prog-lbl" id="bulkProgLbl">Importing...</div>
+    <!-- STEP 1: Image upload -->
+    <div id="bulkStep1">
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.7">
+        Select all product images from your PC — they upload to Cloudinary automatically.<br/>
+        <strong style="color:var(--gold)">Naming tip:</strong> Name files to match your CSV ImageFile column, e.g. <code style="color:var(--gold)">wooden-tray.jpg</code>
+      </p>
+      <div class="bulk-drop" id="imgDrop">
+        <input type="file" accept="image/*" multiple onchange="BulkUpload.handleImageFiles(this.files)"/>
+        <div class="bulk-drop-icon">🖼️</div>
+        <div class="bulk-drop-title">Drop product images here or click to select</div>
+        <div class="bulk-drop-sub">Select multiple images at once · JPG, PNG, WEBP supported</div>
       </div>
-      <div class="bulk-actions">
-        <button class="btn-dl" onclick="BulkUpload.reset()">↺ Upload Different File</button>
-        <button class="btn-save" id="bulkImportBtn" onclick="BulkUpload.importAll()">⬆ Import All Products</button>
+      <div id="imgUploadProgress" style="display:none;margin-top:1rem">
+        <div class="bulk-prog-bar"><div class="bulk-prog-fill" id="imgUploadFill"></div></div>
+        <div class="bulk-prog-lbl" id="imgUploadLbl">Uploading...</div>
+      </div>
+      <div id="imgUploadDone" style="display:none;margin-top:.8rem">
+        <div id="imgUploadStatus" style="color:var(--green);font-size:.78rem;margin-bottom:.6rem"></div>
+        <div id="imgThumbGrid" style="display:flex;flex-wrap:wrap;gap:.4rem;max-height:100px;overflow-y:auto;margin-bottom:.8rem"></div>
+        <button class="btn-save" onclick="BulkUpload.goStep2()">Next: Upload CSV →</button>
+      </div>
+      <p style="font-size:.7rem;color:var(--muted);margin-top:.8rem">
+        💡 <strong style="color:var(--gold)">Skip images?</strong>
+        <button style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:.7rem;text-decoration:underline" onclick="BulkUpload.goStep2()">Go straight to CSV →</button>
+        (paste Cloudinary URLs in CSV ImageFile columns instead)
+      </p>
+    </div>
+
+    <!-- STEP 2: CSV upload -->
+    <div id="bulkStep2" style="display:none">
+      <div style="display:flex;gap:.8rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+        <button class="btn-dl" onclick="BulkUpload.downloadTemplate()">⬇ Download CSV Template</button>
+        <span style="font-size:.72rem;color:var(--muted)">Columns: Name, Category, SubCategory, Price, MRP, Material, Color, Size, Tag, Stock, Description, ImageFile1, ImageFile2, ImageFile3</span>
+      </div>
+      <div id="imgReadySummary" style="display:none;background:var(--green-dim);border:1px solid rgba(76,175,125,.3);padding:.55rem 1rem;font-size:.75rem;color:var(--green);margin-bottom:1rem"></div>
+      <div class="bulk-drop" id="bulkDrop">
+        <input type="file" accept=".csv" onchange="BulkUpload.handleFile(this.files[0])"/>
+        <div class="bulk-drop-icon">📂</div>
+        <div class="bulk-drop-title">Drop your CSV file here or click to browse</div>
+        <div class="bulk-drop-sub">Supports .csv files · Max 500 rows</div>
+      </div>
+      <div id="bulkPreviewWrap" style="display:none;">
+        <div class="bulk-stats" id="bulkStats"></div>
+        <div class="bulk-preview" id="bulkPreview"></div>
+        <div class="bulk-prog" id="bulkProgWrap" style="display:none;">
+          <div class="bulk-prog-bar"><div class="bulk-prog-fill" id="bulkProgFill"></div></div>
+          <div class="bulk-prog-lbl" id="bulkProgLbl">Importing...</div>
+        </div>
+        <div class="bulk-actions">
+          <button class="btn-dl" onclick="BulkUpload.reset()">↺ Start Over</button>
+          <button class="btn-save" id="bulkImportBtn" onclick="BulkUpload.importAll()">⬆ Import All Products</button>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -739,6 +771,7 @@ async function loadAllData() {
   OffersPage.load();
   BrandingPage.load();
 }
+window.$loadProducts = () => loadProducts();
 
 // ── PRODUCTS ──
 async function loadProducts() {
@@ -1392,19 +1425,125 @@ function openBulkModal()  { document.getElementById('bulkModal').classList.add('
 function closeBulkModal() { document.getElementById('bulkModal').classList.remove('on'); BulkUpload.reset(); }
 
 const BulkUpload = {
-  _rows: [],
+  _rows: [], _imageMap: {},
+
+  goStep1() {
+    document.getElementById('bulkStep1').style.display = '';
+    document.getElementById('bulkStep2').style.display = 'none';
+    this._setStep(1);
+  },
+
+  goStep2() {
+    document.getElementById('bulkStep1').style.display = 'none';
+    document.getElementById('bulkStep2').style.display = '';
+    this._setStep(2);
+    // Show summary of uploaded images if any
+    const count = Object.keys(this._imageMap).length / 3 | 0; // each image stored 3 keys
+    const realCount = [...new Set(Object.values(this._imageMap))].length;
+    const sum = document.getElementById('imgReadySummary');
+    if (realCount > 0) {
+      sum.style.display = '';
+      sum.textContent = `✅ ${realCount} image${realCount>1?'s':''} ready — will be matched to CSV ImageFile columns automatically.`;
+    } else {
+      sum.style.display = 'none';
+    }
+  },
+
+  _setStep(n) {
+    [1,2,3].forEach(i => {
+      const el = document.getElementById('stepInd' + i);
+      if (!el) return;
+      if (i === n) {
+        el.style.color = 'var(--gold)';
+        el.style.borderBottomColor = 'var(--gold)';
+      } else {
+        el.style.color = 'var(--muted)';
+        el.style.borderBottomColor = 'transparent';
+      }
+    });
+  },
+
+  async handleImageFiles(files) {
+    if (!files || !files.length) return;
+    const cfg = getCloudinaryConfig();
+    if (!cfg.cloudName || !cfg.preset) {
+      showToast('⚠️ Cloudinary not configured — go to Settings → Image Hosting');
+      return;
+    }
+    const prog = document.getElementById('imgUploadProgress');
+    const fill = document.getElementById('imgUploadFill');
+    const lbl  = document.getElementById('imgUploadLbl');
+    const done = document.getElementById('imgUploadDone');
+    const status = document.getElementById('imgUploadStatus');
+    const grid = document.getElementById('imgThumbGrid');
+    prog.style.display = ''; done.style.display = 'none';
+    grid.innerHTML = '';
+    let uploaded = 0; let errors = 0;
+    const total = files.length;
+    for (const file of Array.from(files)) {
+      try {
+        const form = new FormData();
+        form.append('file', file);
+        form.append('upload_preset', cfg.preset);
+        const resp = await fetch(`https://api.cloudinary.com/v1_1/${cfg.cloudName}/image/upload`, { method: 'POST', body: form });
+        const json = await resp.json();
+        if (json.error) throw new Error(json.error.message);
+        const url = json.secure_url;
+        const fname = file.name;                                          // "Wooden Tray.jpg"
+        const fnameNoExt = fname.replace(/\.[^.]+$/, '');                 // "Wooden Tray"
+        const cleaned = fname.toLowerCase().replace(/[^a-z0-9]/g, '');   // "woodentray"
+        this._imageMap[fname]             = url;
+        this._imageMap[fnameNoExt]        = url;
+        this._imageMap['__c__' + cleaned] = url;
+        // Thumb
+        const img = document.createElement('img');
+        img.src = url; img.title = fname;
+        img.style.cssText = 'width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid var(--border2)';
+        grid.appendChild(img);
+        uploaded++;
+      } catch(e) { errors++; console.warn('Upload failed:', file.name, e); }
+      const pct = Math.round((uploaded + errors) / total * 100);
+      fill.style.width = pct + '%';
+      lbl.textContent = `Uploading ${uploaded + errors} / ${total}…`;
+    }
+    prog.style.display = 'none';
+    done.style.display = '';
+    status.textContent = `✅ ${uploaded} image${uploaded>1?'s':''} uploaded${errors ? ` · ${errors} failed` : ''} — ready to match with CSV`;
+  },
+
+  _matchImages(row) {
+    const map = this._imageMap;
+    const urls = [];
+    // Priority 1: explicit ImageFile columns
+    ['imageFile1','imageFile2','imageFile3'].forEach(col => {
+      const val = (row[col] || '').trim();
+      if (!val) return;
+      if (val.startsWith('http')) { urls.push(val); return; }
+      // Try filename lookup
+      const cleaned = val.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const url = map[val] || map[val.replace(/\.[^.]+$/, '')] || map['__c__' + cleaned];
+      if (url) urls.push(url);
+    });
+    // Priority 2: auto-match by product name if no images found
+    if (!urls.length) {
+      const nameCleaned = (row.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const match = map['__c__' + nameCleaned];
+      if (match) urls.push(match);
+    }
+    return [...new Set(urls)]; // deduplicate
+  },
 
   downloadTemplate() {
-    const headers = ['Name','PartNumber','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','Image1','Image2','Image3'];
+    const headers = ['Name','PartNumber','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','ImageFile1','ImageFile2','ImageFile3'];
     const example = [
-      'Folk Art Ceramic Planter','AN-001','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','https://i.ibb.co/example1.jpg','','',
+      'Folk Art Ceramic Planter','AN-001','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','folk-art-planter.jpg','','',
     ];
     const csv = [headers.join(','), example.map(v => `"${v}"`).join(',')].join('\n');
     const a = document.createElement('a');
     a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
     a.download = 'auranest_products_template.csv';
     a.click();
-    showToast('✅ Template downloaded! Fill it in Excel or Google Sheets.');
+    showToast('✅ Template downloaded! Fill in Excel or Google Sheets.');
   },
 
   handleFile(file) {
@@ -1425,23 +1564,23 @@ const BulkUpload = {
   _parseCSV(text) {
     const lines = text.trim().split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
-    // Parse header row to find column indexes
-    const headers = this._splitCSVLine(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
+    const headers = this._splitCSV(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
     const idx = (name) => headers.findIndex(h => h.includes(name));
     const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
     const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
     const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
     const iStock = idx('stock'); const iDesc = idx('desc');  const iPart = idx('part');
-    const iImg1  = idx('image1'); const iImg2 = idx('image2'); const iImg3 = idx('image3');
+    // Support both ImageFile1/2/3 (new) and Image1/2/3 (legacy)
+    const iImgF1 = idx('imagefile1') >= 0 ? idx('imagefile1') : idx('image1');
+    const iImgF2 = idx('imagefile2') >= 0 ? idx('imagefile2') : idx('image2');
+    const iImgF3 = idx('imagefile3') >= 0 ? idx('imagefile3') : idx('image3');
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
-      const cols = this._splitCSVLine(lines[i]);
+      const cols = this._splitCSV(lines[i]);
       const name = (cols[iName] || '').trim();
       if (!name) continue;
       const price = parseInt(cols[iPrice]) || 0;
       if (!price) continue;
-      const images = [cols[iImg1], cols[iImg2], cols[iImg3]]
-        .map(u => (u||'').trim()).filter(u => u);
       rows.push({
         name,
         category:    (cols[iCat]  || 'Aura décor').trim(),
@@ -1455,15 +1594,16 @@ const BulkUpload = {
         stock:       parseInt(cols[iStock]) || 10,
         description: (cols[iDesc] || '').trim(),
         partNumber:  (iPart >= 0 ? cols[iPart] || '' : '').trim(),
-        image:       images[0] || '',
-        images,
+        imageFile1:  (iImgF1 >= 0 ? cols[iImgF1] || '' : '').trim(),
+        imageFile2:  (iImgF2 >= 0 ? cols[iImgF2] || '' : '').trim(),
+        imageFile3:  (iImgF3 >= 0 ? cols[iImgF3] || '' : '').trim(),
         icon: '🎁', sold: 0,
       });
     }
     return rows;
   },
 
-  _splitCSVLine(line) {
+  _splitCSV(line) {
     const result = []; let cur = ''; let inQ = false;
     for (let i = 0; i < line.length; i++) {
       const c = line[i];
@@ -1476,83 +1616,115 @@ const BulkUpload = {
   },
 
   _showPreview() {
-    const wrap = document.getElementById('bulkPreviewWrap');
-    const stats = document.getElementById('bulkStats');
+    const wrap    = document.getElementById('bulkPreviewWrap');
+    const stats   = document.getElementById('bulkStats');
     const preview = document.getElementById('bulkPreview');
-    const rows = this._rows;
-    // Stats
-    const cats = [...new Set(rows.map(r => r.category))];
-    const withImg = rows.filter(r => r.image).length;
+    const rows    = this._rows;
+    const cats    = [...new Set(rows.map(r => r.category))];
+    const imagesReady  = [...new Set(Object.values(this._imageMap))].length;
+    const matched = rows.filter(r => this._matchImages(r).length > 0).length;
     stats.innerHTML = `
       <div class="bulk-stat"><div class="bulk-stat-n">${rows.length}</div><div class="bulk-stat-l">Products</div></div>
       <div class="bulk-stat"><div class="bulk-stat-n">${cats.length}</div><div class="bulk-stat-l">Categories</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n">${withImg}</div><div class="bulk-stat-l">With Images</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n">${rows.length - withImg}</div><div class="bulk-stat-l">No Image</div></div>`;
-    // Preview table (first 10)
+      <div class="bulk-stat"><div class="bulk-stat-n">${imagesReady}</div><div class="bulk-stat-l">Images Ready</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${matched}</div><div class="bulk-stat-l">Matched</div></div>`;
     const shown = rows.slice(0, 10);
     preview.innerHTML = `<table>
       <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Part No.</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
-      <tbody>${shown.map((r,i) => `<tr>
-        <td style="color:var(--muted)">${i+1}</td>
-        <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
-        <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
-        <td style="font-size:.72rem;color:var(--muted)">${r.partNumber || '—'}</td>
-        <td style="color:var(--gold)">₹${r.price}</td>
-        <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
-        <td>${r.image ? `<img src="${r.image}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>No img</span>'"/>` : '<span style="font-size:.65rem;color:var(--muted)">—</span>'}</td>
-        <td>${r.stock}</td>
-      </tr>`).join('')}
-      ${rows.length > 10 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">...and ${rows.length - 10} more products</td></tr>` : ''}
+      <tbody>${shown.map((r,i) => {
+        const imgs = this._matchImages(r);
+        const imgCell = imgs.length
+          ? `<img src="${imgs[0]}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>✗</span>'"/>`
+          : '<span style="font-size:.65rem;color:var(--muted)">—</span>';
+        return `<tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
+          <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
+          <td style="font-size:.72rem;color:var(--muted)">${r.partNumber || '—'}</td>
+          <td style="color:var(--gold)">₹${r.price}</td>
+          <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
+          <td>${imgCell}</td>
+          <td>${r.stock}</td>
+        </tr>`;
+      }).join('')}
+      ${rows.length > 10 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">…and ${rows.length - 10} more products</td></tr>` : ''}
       </tbody></table>`;
     document.getElementById('bulkImportBtn').textContent = `⬆ Import All ${rows.length} Products`;
     wrap.style.display = 'block';
+    this._setStep(3);
+    document.getElementById('stepInd3').style.color = 'var(--gold)';
+    document.getElementById('stepInd3').style.borderBottomColor = 'var(--gold)';
   },
 
   async importAll() {
     if (!this._rows.length) return;
-    if (!window.$db) { showToast('❌ Firebase not connected'); return; }
-    const btn = document.getElementById('bulkImportBtn');
+    if (!window.$db || !window.$fb) { showToast('❌ Firebase not connected'); return; }
+    const btn      = document.getElementById('bulkImportBtn');
     const progWrap = document.getElementById('bulkProgWrap');
-    const fill = document.getElementById('bulkProgFill');
-    const lbl  = document.getElementById('bulkProgLbl');
-    btn.disabled = true; btn.textContent = 'Importing...';
+    const fill     = document.getElementById('bulkProgFill');
+    const lbl      = document.getElementById('bulkProgLbl');
+    btn.disabled = true; btn.textContent = 'Importing…';
     progWrap.style.display = 'block';
     let done = 0; let errors = 0;
     const total = this._rows.length;
     for (const row of this._rows) {
       try {
-        await addDoc(collection(db, 'products'), { ...row, createdAt: serverTimestamp() });
+        const imgs = this._matchImages(row);
+        const { imageFile1, imageFile2, imageFile3, ...rest } = row; // strip helper cols
+        const product = {
+          ...rest,
+          image:  imgs[0] || '',
+          images: imgs,
+          createdAt: window.$fb.serverTimestamp(),
+        };
+        await window.$fb.addDoc(window.$fb.collection(window.$db, 'products'), product);
         done++;
-      } catch(e) { errors++; }
+      } catch(e) { errors++; console.warn('Import error:', e); }
       const pct = Math.round((done + errors) / total * 100);
       fill.style.width = pct + '%';
-      lbl.textContent = `Importing... ${done + errors} / ${total}`;
+      lbl.textContent = `Importing… ${done + errors} / ${total}`;
     }
-    lbl.textContent = `✅ Done! ${done} products imported${errors ? `, ${errors} failed` : ''}.`;
+    lbl.textContent = `✅ Done! ${done} imported${errors ? `, ${errors} failed` : ''}.`;
     fill.style.background = errors ? 'var(--terra)' : 'var(--green)';
     showToast(`✅ ${done} products added to Firebase!`);
     btn.textContent = '✅ Import Complete';
-    await loadProducts();
+    if (typeof window.$loadProducts === 'function') window.$loadProducts();
   },
 
   reset() {
-    this._rows = [];
+    this._rows = []; this._imageMap = {};
+    // Step 1
+    document.getElementById('bulkStep1').style.display = '';
+    document.getElementById('bulkStep2').style.display = 'none';
+    document.getElementById('imgUploadProgress').style.display = 'none';
+    document.getElementById('imgUploadDone').style.display = 'none';
+    document.getElementById('imgThumbGrid').innerHTML = '';
+    // Step 2
     document.getElementById('bulkPreviewWrap').style.display = 'none';
     document.getElementById('bulkProgWrap').style.display = 'none';
     document.getElementById('bulkProgFill').style.width = '0%';
     document.getElementById('bulkImportBtn').disabled = false;
     document.getElementById('bulkImportBtn').textContent = '⬆ Import All Products';
+    document.getElementById('imgReadySummary').style.display = 'none';
+    this._setStep(1);
   }
 };
 
 // Drag-over highlight
 document.addEventListener('DOMContentLoaded', function() {
-  const drop = document.getElementById('bulkDrop');
-  if (drop) {
-    drop.addEventListener('dragover',  () => drop.classList.add('drag'));
+  ['bulkDrop','imgDrop'].forEach(id => {
+    const drop = document.getElementById(id);
+    if (!drop) return;
+    drop.addEventListener('dragover',  e => { e.preventDefault(); drop.classList.add('drag'); });
     drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-    drop.addEventListener('drop',      () => drop.classList.remove('drag'));
-  }
+    drop.addEventListener('drop', e => {
+      e.preventDefault(); drop.classList.remove('drag');
+      const files = e.dataTransfer?.files;
+      if (!files) return;
+      if (id === 'imgDrop') BulkUpload.handleImageFiles(files);
+      else if (id === 'bulkDrop') BulkUpload.handleFile(files[0]);
+    });
+  });
 });
 
 // ── RESTORE CLOUDINARY CONFIG ON LOAD ──
