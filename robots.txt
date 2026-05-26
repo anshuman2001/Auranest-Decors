@@ -12,17 +12,52 @@ Disallow: /admin/
 Disallow: /assets/config.js
 Disallow: /cors.json
 
-# Block AI training crawlers
-User-agent: GPTBot
-Disallow: /
-
-User-agent: Google-Extended
-Disallow: /
-
+# Block AI training-only crawlers (not search/assistant crawlers)
 User-agent: CCBot
 Disallow: /
 
+# Allow AI search/assistant crawlers — enables store to appear in ChatGPT, Gemini, Claude results
+User-agent: GPTBot
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Allow: /assets/
+Disallow: /admin/
+Disallow: /assets/config.js
+
+User-agent: OAI-SearchBot
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Disallow: /admin/
+
+User-agent: Google-Extended
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Allow: /assets/
+Disallow: /admin/
+Disallow: /assets/config.js
+
 User-agent: anthropic-ai
-Disallow: /
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Allow: /assets/
+Disallow: /admin/
+Disallow: /assets/config.js
+
+User-agent: ClaudeBot
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Disallow: /admin/
+
+User-agent: PerplexityBot
+Allow: /store/
+Allow: /catalog/
+Allow: /blog/
+Disallow: /admin/
 
 Sitemap: https://www.auranestdecors.com/sitemap.xml
+LLMs: https://www.auranestdecors.com/llms.txt
