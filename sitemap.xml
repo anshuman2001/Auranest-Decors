@@ -5,7 +5,7 @@
   <!-- ── HOMEPAGE / STORE ── -->
   <url>
     <loc>https://www.auranestdecors.com/store/</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -18,7 +18,7 @@
   <!-- ── CONTACT PAGE ── -->
   <url>
     <loc>https://www.auranestdecors.com/store/contact.html</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -26,7 +26,7 @@
   <!-- ── CATALOGUE PAGE ── -->
   <url>
     <loc>https://www.auranestdecors.com/catalog/</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -34,7 +34,7 @@
   <!-- ── BLOG INDEX ── -->
   <url>
     <loc>https://www.auranestdecors.com/blog/</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -42,25 +42,25 @@
   <!-- ── CATEGORY LANDING PAGES ── -->
   <url>
     <loc>https://www.auranestdecors.com/store/home-kitchen.html</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/store/aura-decor.html</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/store/aesthetic-furniture.html</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/store/giftings.html</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -68,33 +68,41 @@
   <!-- ── BLOG POSTS ── -->
   <url>
     <loc>https://www.auranestdecors.com/blog/post.html?slug=10-ways-to-style-indian-folk-art-modern-home</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/blog/post.html?slug=what-is-madhubani-art-beginners-guide-home-decorators</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/blog/post.html?slug=wooden-trays-serveware-style-dining-table-indian-way</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/blog/post.html?slug=what-is-a-jharokha-story-behind-indias-iconic-wall-decor</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.auranestdecors.com/blog/post.html?slug=10-thoughtful-handcrafted-gifts-for-diwali-2026-indian-artisans</loc>
-    <lastmod>2026-04-21</lastmod>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <!-- ── llms.txt (AI readability) ── -->
+  <url>
+    <loc>https://www.auranestdecors.com/llms.txt</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
 </urlset>
