@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Auranest Decors — Brand Story Post</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1510;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 40px 20px 60px;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  h1 {
+    color: #c49330;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    font-size: 18px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .instructions {
+    color: #9a8a72;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .instructions span {
+    color: #c49330;
+  }
+
+  /* ── SLIDE WRAPPER ── */
+  .slide {
+    width: 600px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .slide-label {
+    color: #c49330;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    align-self: flex-start;
+  }
+
+  .slide-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+  }
+
+  /* ── BACKGROUND IMAGE ── */
+  .bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    width: 100%; height: 100%;
+  }
+
+  /* ── OVERLAYS ── */
+  .overlay-dark {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(15,10,5,0.72) 0%, rgba(20,14,8,0.58) 50%, rgba(10,7,3,0.78) 100%);
+  }
+  .overlay-gold-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 180px;
+    background: linear-gradient(to top, rgba(196,147,48,0.18) 0%, transparent 100%);
+  }
+
+  /* ── CORNER ORNAMENTS ── */
+  .corner {
+    position: absolute;
+    width: 70px; height: 70px;
+    opacity: 0.55;
+  }
+  .corner-tl { top: 18px; left: 18px; }
+  .corner-tr { top: 18px; right: 18px; transform: scaleX(-1); }
+  .corner-bl { bottom: 18px; left: 18px; transform: scaleY(-1); }
+  .corner-br { bottom: 18px; right: 18px; transform: scale(-1,-1); }
+
+  /* ── GOLD BORDER ── */
+  .gold-border {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(196,147,48,0.35);
+    pointer-events: none;
+  }
+
+  /* ── SLIDE CONTENT ── */
+  .content {
+    position: absolute; inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 50px;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .brand-mark {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #c49330;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    opacity: 0.85;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c49330, transparent);
+    margin: 14px auto;
+  }
+
+  .divider-dot {
+    color: #c49330;
+    font-size: 16px;
+    margin: 6px 0;
+    letter-spacing: 8px;
+    opacity: 0.7;
+  }
+
+  .slide-num {
+    position: absolute;
+    bottom: 28px;
+    right: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    color: rgba(196,147,48,0.6);
+    letter-spacing: 0.12em;
+    z-index: 3;
+  }
+
+  .logo-bottom {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: rgba(196,147,48,0.65);
+    text-transform: uppercase;
+    z-index: 3;
+    white-space: nowrap;
+  }
+
+  /* ── SLIDE 1 — COVER ── */
+  .s1 .headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+  }
+  .s1 .headline em {
+    font-style: italic;
+    color: #e8c36a;
+  }
+  .s1 .subline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.12em;
+    margin-top: 10px;
+  }
+  .s1 .swipe-cue {
+    position: absolute;
+    bottom: 46px;
+    right: 34px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(196,147,48,0.75);
+    text-transform: uppercase;
+    z-index: 3;
+  }
+  .arrow-anim {
+    display: inline-block;
+    animation: slide-right 1.4s ease-in-out infinite;
+  }
+  @keyframes slide-right {
+    0%,100% { transform: translateX(0); opacity: 0.6; }
+    50% { transform: translateX(6px); opacity: 1; }
+  }
+
+  /* ── SLIDES 2–4 — STORY SLIDES ── */
+  .story-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: #c49330;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .story-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .story-title em {
+    font-style: italic;
+    color: #e8c36a;
+  }
+  .story-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.7;
+    margin-top: 10px;
+    max-width: 420px;
+  }
+
+  /* ── SLIDE 4 — QUALITY BULLETS ── */
+  .quality-list {
+    list-style: none;
+    margin-top: 16px;
+    text-align: left;
+  }
+  .quality-list li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .quality-list li::before {
+    content: '✦';
+    color: #c49330;
+    font-size: 10px;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ── SLIDE 5 — CTA ── */
+  .cta-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    font-style: italic;
+    color: #e8c36a;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .cta-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+  }
+  .cta-pills {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .cta-pill {
+    background: rgba(196,147,48,0.12);
+    border: 1px solid rgba(196,147,48,0.4);
+    border-radius: 2px;
+    padding: 7px 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #e8c36a;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<h1>Auranest Decors — Instagram Brand Story Post</h1>
+<p class="instructions">
+  Right-click each slide → <span>Save image as</span> (or use Snipping Tool / Screenshot)<br/>
+  Post all 5 as a <span>carousel</span> on Instagram • Recommended size: 1080×1080px<br/>
+  Print Ctrl+P or use browser zoom to get exact dimensions
+</p>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 1 — COVER
+══════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-label">Slide 1 of 5 — Cover</div>
+  <div class="slide s1">
+    <div class="bg" style="background-image:url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg')"></div>
+    <div class="overlay-dark"></div>
+    <div class="overlay-gold-bottom"></div>
+    <div class="gold-border"></div>
+
+    <!-- Corner SVG ornaments -->
+    <svg class="corner corner-tl" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/>
+      <path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/>
+      <circle cx="4" cy="4" r="2.5" fill="#c49330"/>
+      <path d="M12 4 Q20 12 4 20" stroke="#c49330" stroke-width="0.7" fill="none" opacity="0.6"/>
+    </svg>
+    <svg class="corner corner-tr" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/>
+      <path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/>
+      <circle cx="4" cy="4" r="2.5" fill="#c49330"/>
+      <path d="M12 4 Q20 12 4 20" stroke="#c49330" stroke-width="0.7" fill="none" opacity="0.6"/>
+    </svg>
+    <svg class="corner corner-bl" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/>
+      <path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/>
+      <circle cx="4" cy="4" r="2.5" fill="#c49330"/>
+      <path d="M12 4 Q20 12 4 20" stroke="#c49330" stroke-width="0.7" fill="none" opacity="0.6"/>
+    </svg>
+    <svg class="corner corner-br" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/>
+      <path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/>
+      <circle cx="4" cy="4" r="2.5" fill="#c49330"/>
+      <path d="M12 4 Q20 12 4 20" stroke="#c49330" stroke-width="0.7" fill="none" opacity="0.6"/>
+    </svg>
+
+    <div class="content">
+      <div class="brand-mark">✦ &nbsp; Auranest Decors &nbsp; ✦</div>
+      <div class="divider"></div>
+      <div class="s1 headline">
+        Every piece<br/>has <em>a story.</em><br/>Here's ours.
+      </div>
+      <div class="divider-dot">· · ·</div>
+      <div class="s1 subline">Est. 2024 &nbsp;·&nbsp; Handcrafted India</div>
+    </div>
+
+    <div class="s1 swipe-cue">
+      Swipe to read &nbsp;<span class="arrow-anim">→</span>
+    </div>
+    <div class="logo-bottom">auranestdecors.com</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 2 — OUR STORY
+══════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-label">Slide 2 of 5 — Our Story</div>
+  <div class="slide">
+    <div class="bg" style="background-image:url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lffarming-on-wooden-tray/img5.jpg')"></div>
+    <div class="overlay-dark"></div>
+    <div class="overlay-gold-bottom"></div>
+    <div class="gold-border"></div>
+    <svg class="corner corner-tl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-tr" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-bl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-br" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+
+    <div class="content">
+      <div class="story-tag">Our Story</div>
+      <div class="divider"></div>
+      <div class="story-title">Born from a <em>belief</em></div>
+      <div class="divider-dot">· · ·</div>
+      <div class="story-body">
+        India's artisans make the most beautiful things in the world — but the world doesn't always see them.
+        <br/><br/>
+        We started Auranest Decors in 2024 to change that. To bring India's handcrafted heritage into modern homes — where it truly belongs.
+      </div>
+    </div>
+
+    <div class="slide-num">02 / 05</div>
+    <div class="logo-bottom">Auranest Decors</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 3 — OUR VISION
+══════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-label">Slide 3 of 5 — Our Vision</div>
+  <div class="slide">
+    <div class="bg" style="background-image:url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-tribal-echo-prism-plumage-vessel-ceramic-warriart-planter/img1.jpg')"></div>
+    <div class="overlay-dark"></div>
+    <div class="overlay-gold-bottom"></div>
+    <div class="gold-border"></div>
+    <svg class="corner corner-tl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-tr" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-bl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-br" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+
+    <div class="content">
+      <div class="story-tag">Our Vision</div>
+      <div class="divider"></div>
+      <div class="story-title">Art that <em>lives</em><br/>in your home</div>
+      <div class="divider-dot">· · ·</div>
+      <div class="story-body">
+        To bring India's handcrafted heritage into modern homes — without compromising on luxury, quality, or the artisan's dignity.
+        <br/><br/>
+        Every purchase supports a real craftsman and their family. 🤍
+      </div>
+    </div>
+
+    <div class="slide-num">03 / 05</div>
+    <div class="logo-bottom">Auranest Decors</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 4 — OUR QUALITY
+══════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-label">Slide 4 of 5 — Our Quality</div>
+  <div class="slide">
+    <div class="bg" style="background-image:url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg')"></div>
+    <div class="overlay-dark" style="background:linear-gradient(160deg,rgba(10,7,3,0.82) 0%,rgba(15,10,5,0.65) 50%,rgba(10,7,3,0.85) 100%)"></div>
+    <div class="overlay-gold-bottom"></div>
+    <div class="gold-border"></div>
+    <svg class="corner corner-tl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-tr" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-bl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-br" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+
+    <div class="content">
+      <div class="story-tag">Our Quality</div>
+      <div class="divider"></div>
+      <div class="story-title">What makes us <em>different</em></div>
+      <ul class="quality-list">
+        <li>100% handcrafted — no machines, no shortcuts</li>
+        <li>Real folk art — Madhubani, Warli, Dhokra</li>
+        <li>Solid mango wood &amp; sheesham, hand-carved</li>
+        <li>Hand-painted ceramic &amp; terracotta</li>
+        <li>Artisans from Rajasthan, Bihar, Maharashtra &amp; Gujarat</li>
+      </ul>
+      <div class="divider-dot" style="margin-top:16px">· · ·</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(232,195,106,0.85);letter-spacing:0.08em;margin-top:6px">Not mass-produced. Made with soul.</div>
+    </div>
+
+    <div class="slide-num">04 / 05</div>
+    <div class="logo-bottom">Auranest Decors</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SLIDE 5 — CTA
+══════════════════════════════════════════════ -->
+<div class="slide-wrap">
+  <div class="slide-label">Slide 5 of 5 — Call to Action</div>
+  <div class="slide">
+    <div class="bg" style="background-image:url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-blue-leaf/img1.jpg')"></div>
+    <div class="overlay-dark" style="background:linear-gradient(160deg,rgba(10,7,3,0.78) 0%,rgba(20,14,8,0.60) 50%,rgba(10,7,3,0.82) 100%)"></div>
+    <div class="overlay-gold-bottom"></div>
+    <div class="gold-border"></div>
+    <svg class="corner corner-tl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-tr" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-bl" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+    <svg class="corner corner-br" viewBox="0 0 70 70" fill="none"><path d="M4 4 L4 30" stroke="#c49330" stroke-width="1.2"/><path d="M4 4 L30 4" stroke="#c49330" stroke-width="1.2"/><circle cx="4" cy="4" r="2.5" fill="#c49330"/></svg>
+
+    <div class="content">
+      <div class="brand-mark">✦ &nbsp; Auranest Decors &nbsp; ✦</div>
+      <div class="divider"></div>
+      <div class="cta-headline">Feel the Beauty<br/>of Home.</div>
+      <div class="cta-sub">Handcrafted · Soulful · Timeless</div>
+      <div class="divider-dot">· · ·</div>
+      <div class="cta-pills">
+        <div class="cta-pill">🛍️ &nbsp; Shop now → Link in bio</div>
+        <div class="cta-pill">🚚 &nbsp; Free shipping above ₹999</div>
+        <div class="cta-pill">🌍 &nbsp; Worldwide delivery · 2–3 days</div>
+      </div>
+    </div>
+
+    <div class="slide-num">05 / 05</div>
+    <div class="logo-bottom">auranestdecors.com</div>
+  </div>
+</div>
+
+<!-- ══════ CAPTION COPY BLOCK ══════ -->
+<div style="max-width:600px;background:#100d08;border:1px solid rgba(196,147,48,0.3);border-radius:4px;padding:32px;margin-top:20px">
+  <div style="color:#c49330;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px">📋 Caption — Copy &amp; Paste</div>
+  <pre style="color:rgba(255,255,255,0.82);font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.8;white-space:pre-wrap;font-weight:300">We didn't start Auranest Decors to sell products.
+
+We started it to preserve something rare — the art of making things by hand, with skill, with patience, and with pride. 🤍
+
+India has thousands of artisans in Rajasthan, Bihar, Maharashtra and Gujarat who paint Madhubani, carve Jharokhas, throw pottery, and shape terracotta with techniques passed down for generations.
+
+We work directly with them. Every piece in our collection is made by skilled craftspeople — no shortcuts, no machines, no mass production.
+
+When you bring an Auranest Decors piece home, you're not just decorating a space. You're keeping an art form alive. ✨
+
+Swipe to read our full story →
+
+🛍️ Shop now: Link in bio
+📦 Free shipping on orders above ₹999
+🌍 Delivered worldwide in 2–3 days
+
+—
+
+#AuranestDecors #OurStory #HandcraftedIndia
+#IndianArtisans #LuxuryHomeDecor #FolkArtIndia
+#MadhubaniArt #WarliArt #Jharokha #ArtisanMade
+#SupportIndianCraft #PremiumHomeDecor
+#FeelTheBeautyOfHome #IndianHomeDecor
+#SlowDecor #EthicalHomeDecor #MadeInIndia</pre>
+</div>
+
+</body>
+</html>
