@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Auranest Decors — Instagram Posts</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2a2218;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px 24px 80px;
+  }
+
+  .page-title {
+    color: #c49330;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .tip {
+    color: #7a6a52;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.8;
+    margin-top: 6px;
+  }
+  .tip b { color: #c49330; }
+
+  .post-label {
+    color: #c49330;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    align-self: flex-start;
+  }
+
+  .post-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+  }
+
+  /* ═══════════════════════════════════════
+     POST 1 — BRAND STORY
+     Warm parchment background, no photos
+  ═══════════════════════════════════════ */
+  .post-story {
+    width: 600px;
+    height: 600px;
+    background: #f7f1e6;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 56px;
+    text-align: center;
+  }
+
+  /* Subtle texture layer */
+  .post-story::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(196,147,48,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, rgba(196,147,48,0.06) 0%, transparent 55%);
+  }
+
+  /* Gold border */
+  .post-story .border-outer {
+    position: absolute;
+    inset: 16px;
+    border: 1.5px solid rgba(196,147,48,0.5);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .post-story .border-inner {
+    position: absolute;
+    inset: 22px;
+    border: 0.5px solid rgba(196,147,48,0.25);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Corner diamonds */
+  .cdot {
+    position: absolute;
+    width: 7px; height: 7px;
+    background: #c49330;
+    transform: rotate(45deg);
+    z-index: 2;
+    opacity: 0.8;
+  }
+  .cdot-tl { top: 12.5px; left: 12.5px; }
+  .cdot-tr { top: 12.5px; right: 12.5px; }
+  .cdot-bl { bottom: 12.5px; left: 12.5px; }
+  .cdot-br { bottom: 12.5px; right: 12.5px; }
+
+  .story-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .s-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    color: #c49330;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .s-rule {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c49330, transparent);
+    margin: 12px auto;
+  }
+
+  .s-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: #2a1f0e;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .s-year {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: #a08050;
+    margin-bottom: 20px;
+  }
+
+  .s-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    line-height: 1.25;
+    color: #1e1508;
+    margin-bottom: 4px;
+  }
+  .s-headline em {
+    font-style: italic;
+    color: #b87d20;
+  }
+
+  .s-para {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17.5px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: #4a3820;
+    margin-top: 14px;
+    max-width: 400px;
+  }
+
+  .s-origin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    color: #a08050;
+    text-transform: uppercase;
+    margin-top: 18px;
+    line-height: 1.9;
+  }
+  .s-origin span {
+    color: #c49330;
+  }
+
+  .s-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #8a6030;
+    letter-spacing: 0.06em;
+    margin-top: 18px;
+  }
+
+  .s-footer {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: #a08050;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  /* ═══════════════════════════════════════
+     POST 2 — QUALITY & SERVICE
+     Dark luxury with clean icon grid
+  ═══════════════════════════════════════ */
+  .post-quality {
+    width: 600px;
+    height: 600px;
+    background: #120e08;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 48px 56px;
+  }
+
+  /* Subtle gold glow corners */
+  .post-quality::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(196,147,48,0.1) 0%, transparent 45%),
+      radial-gradient(ellipse at 100% 100%, rgba(196,147,48,0.08) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  .post-quality .border-outer {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(196,147,48,0.4);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .cdot-dark {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: #c49330;
+    transform: rotate(45deg);
+    z-index: 2;
+    opacity: 0.7;
+  }
+  .cdot-dark.tl { top: 11px; left: 11px; }
+  .cdot-dark.tr { top: 11px; right: 11px; }
+  .cdot-dark.bl { bottom: 11px; left: 11px; }
+  .cdot-dark.br { bottom: 11px; right: 11px; }
+
+  .q-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .q-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.30em;
+    color: #c49330;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .q-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 33px;
+    font-weight: 300;
+    color: #fff;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .q-title em {
+    font-style: italic;
+    color: #e8c36a;
+  }
+
+  .q-rule {
+    width: 56px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c49330, transparent);
+    margin: 14px auto;
+  }
+
+  /* 2×3 grid of service cards */
+  .q-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .q-card {
+    background: rgba(196,147,48,0.06);
+    border: 1px solid rgba(196,147,48,0.2);
+    border-radius: 3px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .q-card-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .q-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #e8c36a;
+    text-transform: uppercase;
+  }
+
+  .q-card-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15.5px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+  }
+
+  /* Wide card for Amazon/Flipkart */
+  .q-card-wide {
+    grid-column: 1 / -1;
+    background: rgba(196,147,48,0.1);
+    border: 1px solid rgba(196,147,48,0.35);
+    border-radius: 3px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .q-card-wide-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .q-card-wide-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: #e8c36a;
+    text-transform: uppercase;
+  }
+
+  .q-card-wide-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .marketplace-pills {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mp-pill {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .mp-amazon {
+    background: #ff9900;
+    color: #000;
+  }
+  .mp-flipkart {
+    background: #2874f0;
+    color: #fff;
+  }
+
+  .q-footer {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: rgba(196,147,48,0.55);
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 3;
+  }
+
+  /* ═══════ CAPTION BLOCKS ═══════ */
+  .caption-box {
+    width: 600px;
+    background: #0e0a06;
+    border: 1px solid rgba(196,147,48,0.25);
+    border-radius: 4px;
+    padding: 28px 32px;
+  }
+  .caption-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: #c49330;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .caption-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.85;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Auranest Decors — Instagram Posts</div>
+<p class="tip">Take a screenshot of each post (600×600px square)<br/>
+<b>Windows:</b> Win+Shift+S &nbsp;·&nbsp; <b>Mac:</b> Cmd+Shift+4</p>
+
+
+<!-- ═══════════════════════════════════════════
+     POST 1 — BRAND STORY
+═══════════════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 1 — Our Story</div>
+
+  <div class="post-story">
+    <div class="border-outer"></div>
+    <div class="border-inner"></div>
+    <div class="cdot cdot-tl"></div>
+    <div class="cdot cdot-tr"></div>
+    <div class="cdot cdot-bl"></div>
+    <div class="cdot cdot-br"></div>
+
+    <div class="story-content">
+      <div class="s-eyebrow">✦ &nbsp; Our Story &nbsp; ✦</div>
+      <div class="s-brand">Auranest Decors</div>
+      <div class="s-year">Est. 2024 &nbsp;·&nbsp; India</div>
+
+      <div class="s-rule"></div>
+
+      <div class="s-headline">
+        We didn't start a brand.<br/>
+        We started a <em>movement.</em>
+      </div>
+
+      <div class="s-rule"></div>
+
+      <div class="s-para">
+        India's artisans have been creating the world's most beautiful things for centuries — in small villages, with bare hands, no machines, no shortcuts.
+        <br/><br/>
+        We built Auranest Decors so their work could find its rightful place — in premium homes, across India and the world.
+      </div>
+
+      <div class="s-origin">
+        Artisans from &nbsp;
+        <span>Rajasthan &nbsp;·&nbsp; Bihar &nbsp;·&nbsp; Maharashtra &nbsp;·&nbsp; Gujarat</span>
+      </div>
+
+      <div class="s-rule"></div>
+
+      <div class="s-tagline">"Feel the Beauty of Home"</div>
+    </div>
+
+    <div class="s-footer">auranestdecors.com &nbsp;·&nbsp; @auranestdecors</div>
+  </div>
+</div>
+
+<!-- Caption 1 -->
+<div class="caption-box">
+  <div class="caption-label">📋 Caption for Post 1 — Copy &amp; Paste</div>
+  <div class="caption-text">We didn't start a brand. We started a movement. 🤍
+
+For centuries, India's artisans — in the villages of Rajasthan, Bihar, Maharashtra and Gujarat — have been creating the world's most beautiful things.
+
+By hand. With patience. With soul.
+
+But the world didn't always see them.
+
+We started Auranest Decors in 2024 with one purpose: to bring India's handcrafted heritage into premium homes — across India and around the world.
+
+Every piece in our collection is made by a real craftsman. Real folk art. Real materials. Real stories.
+
+This is not just décor. This is living culture.
+
+Welcome to Auranest Decors. 🙏
+
+🛍️ Shop → Link in bio
+📦 Amazon · Flipkart · auranestdecors.com
+
+#AuranestDecors #OurStory #HandcraftedIndia #IndianArtisans
+#LuxuryHomeDecor #FolkArtIndia #MadhubaniArt #WarliArt
+#Jharokha #ArtisanMade #SupportIndianCraft #MadeInIndia
+#FeelTheBeautyOfHome #PremiumHomeDecor #IndianHomeDecor</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     POST 2 — QUALITY & SERVICE
+═══════════════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 2 — Quality &amp; Service</div>
+
+  <div class="post-quality">
+    <div class="border-outer"></div>
+    <div class="cdot-dark tl"></div>
+    <div class="cdot-dark tr"></div>
+    <div class="cdot-dark bl"></div>
+    <div class="cdot-dark br"></div>
+
+    <div class="q-content">
+      <div class="q-eyebrow">✦ &nbsp; Why Choose Us &nbsp; ✦</div>
+      <div class="q-title">The Auranest<br/><em>Promise</em></div>
+      <div class="q-rule"></div>
+
+      <div class="q-grid">
+
+        <div class="q-card">
+          <div class="q-card-icon">🎨</div>
+          <div class="q-card-title">100% Handcrafted</div>
+          <div class="q-card-body">Every piece made by skilled Indian artisans. No machines. No mass production.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-icon">⭐</div>
+          <div class="q-card-title">Premium Quality</div>
+          <div class="q-card-body">Real folk art — Madhubani, Warli &amp; Dhokra. Solid mango wood &amp; sheesham.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-icon">🚚</div>
+          <div class="q-card-title">Fast Delivery</div>
+          <div class="q-card-body">Delivered in just <strong style="color:#e8c36a">2–3 business days</strong> across India &amp; worldwide.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-card-icon">↩️</div>
+          <div class="q-card-title">Easy Returns</div>
+          <div class="q-card-body">7-day hassle-free returns. Free shipping above ₹999 on prepaid orders.</div>
+        </div>
+
+        <!-- Wide card -->
+        <div class="q-card-wide">
+          <div class="q-card-wide-left">
+            <div class="q-card-wide-title">🛍️ &nbsp; Available On</div>
+            <div class="q-card-wide-body">Shop us on your favourite platform</div>
+          </div>
+          <div class="marketplace-pills">
+            <div class="mp-pill mp-amazon">amazon</div>
+            <div class="mp-pill mp-flipkart">Flipkart</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="q-footer">auranestdecors.com &nbsp;·&nbsp; @auranestdecors</div>
+  </div>
+</div>
+
+<!-- Caption 2 -->
+<div class="caption-box">
+  <div class="caption-label">📋 Caption for Post 2 — Copy &amp; Paste</div>
+  <div class="caption-text">Here's why thousands of homes trust Auranest Decors. ✨
+
+🎨 100% Handcrafted
+Every piece is made by skilled Indian artisans — no machines, no shortcuts, no compromises.
+
+⭐ Premium Quality
+Real folk art traditions — Madhubani, Warli, Dhokra. Solid mango wood, sheesham and hand-painted ceramics.
+
+🚚 Delivered in 2–3 Days
+Fast, tracked delivery across India and worldwide. Your order reaches you fresh from the artisan's hands.
+
+↩️ 7-Day Easy Returns
+Not happy? Return it — no questions asked. We stand behind every piece we sell.
+
+🛍️ Shop Everywhere You Love
+Now available on:
+✅ Our website → auranestdecors.com
+✅ Amazon India
+✅ Flipkart
+
+Free shipping on orders above ₹999 (prepaid) 📦
+
+DM us or WhatsApp: +91 86792 12984
+
+#AuranestDecors #HandcraftedIndia #LuxuryHomeDecor
+#FastDelivery #AmazonIndia #Flipkart #OnlineShopping
+#IndianHomeDecor #ArtisanMade #PremiumQuality
+#HomeDecorIndia #FolkArt #FreeShipping #MadeInIndia</div>
+</div>
+
+</body>
+</html>
