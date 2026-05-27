@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Auranest Decors — Instagram Catalogue</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1c1710;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 24px 80px;
+  }
+
+  .page-heading {
+    text-align: center;
+  }
+  .page-heading h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300;
+    color: #c49330; letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .page-heading p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; color: #6a5a40;
+    letter-spacing: 0.14em; margin-top: 6px; line-height: 1.8;
+  }
+  .page-heading p b { color: #c49330; }
+
+  .post-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px; letter-spacing: 0.22em;
+    color: #c49330; text-transform: uppercase;
+    margin-bottom: 8px; align-self: flex-start;
+  }
+
+  .post-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; width: 600px;
+  }
+
+  /* ───────────── SHARED SLIDE BASE ───────────── */
+  .slide {
+    width: 600px; height: 600px;
+    position: relative; overflow: hidden;
+    background: #0e0a05;
+    display: flex; flex-direction: column;
+  }
+
+  /* Gold corner dots */
+  .cd {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: #c49330;
+    transform: rotate(45deg);
+    z-index: 10; opacity: 0.75;
+  }
+  .cd.tl { top: 10px; left: 10px; }
+  .cd.tr { top: 10px; right: 10px; }
+  .cd.bl { bottom: 10px; left: 10px; }
+  .cd.br { bottom: 10px; right: 10px; }
+
+  /* Thin gold border */
+  .gb {
+    position: absolute; inset: 13px;
+    border: 1px solid rgba(196,147,48,0.35);
+    z-index: 9; pointer-events: none;
+  }
+
+  /* ───────────── SLIDE HEADER ───────────── */
+  .slide-header {
+    flex-shrink: 0;
+    height: 78px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px;
+    position: relative; z-index: 5;
+    background: #0e0a05;
+  }
+
+  .slide-header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,147,48,0.5), transparent);
+  }
+
+  .sh-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8px; letter-spacing: 0.3em;
+    color: #c49330; text-transform: uppercase;
+  }
+
+  .sh-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 300;
+    color: #fff; letter-spacing: 0.06em;
+  }
+  .sh-title em { font-style: italic; color: #e8c36a; }
+
+  .sh-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7.5px; letter-spacing: 0.2em;
+    color: rgba(196,147,48,0.6); text-transform: uppercase;
+  }
+
+  /* ───────────── 2×2 PRODUCT GRID ───────────── */
+  .prod-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .prod-cell {
+    position: relative; overflow: hidden;
+    background: #1a140c;
+  }
+
+  .prod-cell img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  /* Dark gradient overlay on each cell */
+  .prod-cell::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top,
+      rgba(8,5,2,0.85) 0%,
+      rgba(8,5,2,0.2) 45%,
+      transparent 70%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Product name + price at bottom of each cell */
+  .prod-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 8px 10px;
+    z-index: 3;
+  }
+
+  .prod-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13.5px; font-weight: 400;
+    color: #fff; line-height: 1.3;
+    letter-spacing: 0.02em;
+  }
+
+  .prod-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px; font-weight: 600;
+    color: #e8c36a; letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  /* Category badge top-right of each cell */
+  .prod-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(196,147,48,0.85);
+    color: #000;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 1px;
+    z-index: 3;
+  }
+
+  /* ───────────── SLIDE FOOTER ───────────── */
+  .slide-footer {
+    flex-shrink: 0;
+    height: 46px;
+    background: #0e0a05;
+    display: flex; align-items: center;
+    justify-content: center; gap: 14px;
+    position: relative; z-index: 5;
+  }
+
+  .slide-footer::before {
+    content: '';
+    position: absolute; top: 0; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,147,48,0.45), transparent);
+  }
+
+  .sf-ig {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px; font-weight: 500;
+    color: rgba(196,147,48,0.85); letter-spacing: 0.06em;
+  }
+
+  .sf-dot {
+    width: 3px; height: 3px;
+    background: rgba(196,147,48,0.4);
+    border-radius: 50%;
+  }
+
+  .sf-phone {
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px; font-weight: 500;
+    color: rgba(196,147,48,0.85); letter-spacing: 0.04em;
+  }
+
+  .sf-web {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8px; letter-spacing: 0.14em;
+    color: rgba(196,147,48,0.45); text-transform: uppercase;
+  }
+
+  /* ══════════════════════════════════════════════
+     COVER SLIDE — special layout
+  ══════════════════════════════════════════════ */
+  .cover-slide {
+    width: 600px; height: 600px;
+    position: relative; overflow: hidden;
+    background: #080502;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    padding: 32px 44px 26px;
+  }
+
+  .cover-slide::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(196,147,48,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(196,147,48,0.09) 0%, transparent 50%);
+  }
+
+  .cover-border {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(196,147,48,0.4);
+    z-index: 2; pointer-events: none;
+  }
+  .cover-border-inner {
+    position: absolute; inset: 20px;
+    border: 0.5px solid rgba(196,147,48,0.18);
+    z-index: 2; pointer-events: none;
+  }
+
+  .cover-top {
+    position: relative; z-index: 5;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0; text-align: center;
+  }
+
+  .cover-eye {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8px; letter-spacing: 0.35em;
+    color: #c49330; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .cover-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 400;
+    letter-spacing: 0.22em; color: #fff;
+    text-transform: uppercase; line-height: 1;
+  }
+
+  .cover-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 16px;
+    color: rgba(196,147,48,0.8); margin-top: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .cover-rule {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, #c49330, transparent);
+    margin: 16px auto;
+  }
+
+  .cover-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; font-weight: 300;
+    color: #fff; line-height: 1.18; text-align: center;
+  }
+  .cover-headline em { font-style: italic; color: #e8c36a; }
+
+  /* 3-image preview strip */
+  .cover-strip {
+    position: relative; z-index: 5;
+    display: flex; gap: 6px;
+    width: 100%; height: 168px;
+  }
+
+  .cover-strip-img {
+    flex: 1; border-radius: 2px;
+    overflow: hidden; position: relative;
+  }
+
+  .cover-strip-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    filter: brightness(0.88) saturate(1.1);
+  }
+
+  .cover-strip-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,5,2,0.5) 0%, transparent 60%);
+  }
+
+  /* Category count badges on strip */
+  .strip-label {
+    position: absolute; bottom: 8px; left: 0; right: 0;
+    text-align: center; z-index: 2;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; font-weight: 300; color: #fff;
+    letter-spacing: 0.08em;
+  }
+
+  .cover-footer {
+    position: relative; z-index: 5;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px; width: 100%;
+  }
+
+  .cover-cats {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cover-cat-tag {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7.5px; font-weight: 500;
+    letter-spacing: 0.12em; color: rgba(196,147,48,0.75);
+    text-transform: uppercase;
+    border: 1px solid rgba(196,147,48,0.25);
+    padding: 3px 10px; border-radius: 1px;
+  }
+
+  .cover-footer-rule {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196,147,48,0.35), transparent);
+    margin: 4px 0;
+  }
+
+  .cover-ig-row {
+    display: flex; align-items: center;
+    justify-content: center; gap: 12px;
+  }
+
+  .cover-ig {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 500;
+    color: rgba(196,147,48,0.85); letter-spacing: 0.06em;
+  }
+
+  .cover-dot {
+    width: 3px; height: 3px;
+    background: rgba(196,147,48,0.4); border-radius: 50%;
+  }
+
+  .cover-phone {
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 500;
+    color: rgba(196,147,48,0.85);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-heading">
+  <h1>Auranest Decors — Instagram Catalogue</h1>
+  <p>7 posts ready to screenshot and publish &nbsp;·&nbsp;
+  <b>Windows:</b> Win+Shift+S &nbsp;·&nbsp; <b>Mac:</b> Cmd+Shift+4<br/>
+  Post in order: Cover → Pots → Serveware → Kitchen → Jharokhas → Aura Décor → Wall Décor</p>
+</div>
+
+<!-- SVG icons (reused) -->
+<svg style="display:none">
+  <symbol id="ig-icon" viewBox="0 0 24 24" fill="none">
+    <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"/>
+  </symbol>
+  <symbol id="ph-icon" viewBox="0 0 24 24" fill="none">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.51 5.51l1.06-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<!-- ══════════════════════════════════
+     POST 0 — COVER
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 1 of 7 — Cover</div>
+  <div class="cover-slide">
+    <div class="cover-border"></div>
+    <div class="cover-border-inner"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="cover-top">
+      <div class="cover-eye">✦ &nbsp; Collection 2025 &nbsp; ✦</div>
+      <div class="cover-brand">Auranest Decors</div>
+      <div class="cover-tagline">"Feel the Beauty of Home"</div>
+      <div class="cover-rule"></div>
+      <div class="cover-headline">
+        Handcrafted India.<br/>
+        <em>Delivered to your door.</em>
+      </div>
+    </div>
+
+    <!-- 3-image preview strip -->
+    <div class="cover-strip">
+      <div class="cover-strip-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Planters"/>
+        <div class="strip-label">Decorative Pots</div>
+      </div>
+      <div class="cover-strip-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg" alt="Jharokhas"/>
+        <div class="strip-label">Jharokhas</div>
+      </div>
+      <div class="cover-strip-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg" alt="Serveware"/>
+        <div class="strip-label">Serveware</div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div class="cover-cats">
+        <div class="cover-cat-tag">Decorative Pots</div>
+        <div class="cover-cat-tag">Serveware</div>
+        <div class="cover-cat-tag">Jharokhas</div>
+        <div class="cover-cat-tag">Kitchen Tools</div>
+        <div class="cover-cat-tag">Wall Décor</div>
+        <div class="cover-cat-tag">Aura Décor</div>
+      </div>
+      <div class="cover-footer-rule"></div>
+      <div class="cover-ig-row">
+        <div class="cover-ig">
+          <svg width="15" height="15" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+          @Auranestdecors12
+        </div>
+        <div class="cover-dot"></div>
+        <div class="cover-phone">
+          <svg width="12" height="12" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+          +91 86792 12984
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 1 — DECORATIVE POTS
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 2 of 7 — Decorative Pots</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title">Decorative <em>Pots & Planters</em></div>
+      <div class="sh-sub">Folk-painted · Ceramic · Terracotta &nbsp;·&nbsp; Starting ₹649</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-blue-leaf/img1.jpg" alt="Ceramic Planter Blue Leaf"/>
+        <div class="prod-info">
+          <div class="prod-name">Ceramic Planter<br/>Blue Leaf</div>
+          <div class="prod-price">₹799</div>
+        </div>
+        <div class="prod-badge">NEW</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Madhubani Peacock Planter"/>
+        <div class="prod-info">
+          <div class="prod-name">Madhubani Folk<br/>Peacock Planter</div>
+          <div class="prod-price">₹999</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcors-the-cultural-keepsake-twirling-flora-vessel-leaping-garland-ceramic-planter/img1.jpg" alt="Cultural Keepsake Planter"/>
+        <div class="prod-info">
+          <div class="prod-name">Cultural Keepsake<br/>Planter</div>
+          <div class="prod-price">₹899</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-yellow-or-white-lotus-flower/img1.jpg" alt="Lotus Flower Planter"/>
+        <div class="prod-info">
+          <div class="prod-name">Ceramic Planter<br/>Lotus Flower</div>
+          <div class="prod-price">₹749</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 2 — SERVEWARE
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 3 of 7 — Serveware & Wooden Trays</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title">Serveware & <em>Wooden Trays</em></div>
+      <div class="sh-sub">Hand-painted · Folk Art · Mango Wood &nbsp;·&nbsp; Starting ₹799</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg" alt="Round Wooden Tray Cow Art"/>
+        <div class="prod-info">
+          <div class="prod-name">Round Wooden Tray<br/>Cow Folk Art</div>
+          <div class="prod-price">₹999</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-plate-orange-base-cow/img2.jpg" alt="Ceramic Plate Orange Base"/>
+        <div class="prod-info">
+          <div class="prod-name">Ceramic Plate<br/>Orange Folk Art</div>
+          <div class="prod-price">₹849</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-bowl/img1.jpg" alt="Terracotta Bowl"/>
+        <div class="prod-info">
+          <div class="prod-name">Terracotta Bowl<br/>Handcrafted</div>
+          <div class="prod-price">₹649</div>
+        </div>
+        <div class="prod-badge">BESTSELLER</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-moon-tray/img2.jpg" alt="Wooden Moon Tray"/>
+        <div class="prod-info">
+          <div class="prod-name">Wooden Moon Tray<br/>Dark Finish</div>
+          <div class="prod-price">₹1,199</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 3 — KITCHEN TOOLS
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 4 of 7 — Kitchen Tools</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title">Kitchen <em>Essentials</em></div>
+      <div class="sh-sub">Handcrafted Wood · Terracotta · Spice Boxes &nbsp;·&nbsp; Starting ₹649</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-kulladh/img1.jpg" alt="Terracotta Kulhad"/>
+        <div class="prod-info">
+          <div class="prod-name">Terracotta Kulhad<br/>Traditional Cup</div>
+          <div class="prod-price">₹649</div>
+        </div>
+        <div class="prod-badge">BESTSELLER</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-spatula/img1.jpg" alt="Wooden Spatula"/>
+        <div class="prod-info">
+          <div class="prod-name">Wooden Spatula<br/>Hand-finished</div>
+          <div class="prod-price">₹699</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfmasala-box-with-9-boxex/img1.jpg" alt="Masala Box 9 Sections"/>
+        <div class="prod-info">
+          <div class="prod-name">Masala Box<br/>9 Sections</div>
+          <div class="prod-price">₹899</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/wooden-spice-box-diamond-shape/img1.jpg" alt="Diamond Spice Box"/>
+        <div class="prod-info">
+          <div class="prod-name">Diamond Spice Box<br/>Geometric Design</div>
+          <div class="prod-price">₹799</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 4 — JHAROKHAS
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 5 of 7 — Jharokhas & Home Décor</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title">Jharokhas & <em>Wall Mirrors</em></div>
+      <div class="sh-sub">Hand-carved · Rajasthani Craft · Mango Wood &nbsp;·&nbsp; Starting ₹1,299</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg" alt="Rectangular Brown Jharokha"/>
+        <div class="prod-info">
+          <div class="prod-name">Rectangular Jharokha<br/>Warm Brown</div>
+          <div class="prod-price">₹1,499</div>
+        </div>
+        <div class="prod-badge">BESTSELLER</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfgreen-jharokhe/img3.jpg" alt="Green Jharokha"/>
+        <div class="prod-info">
+          <div class="prod-name">Jharokha Mirror<br/>Forest Green</div>
+          <div class="prod-price">₹1,699</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfblue-jharokhe/img1.jpg" alt="Blue Jharokha"/>
+        <div class="prod-info">
+          <div class="prod-name">Jharokha Mirror<br/>Royal Blue</div>
+          <div class="prod-price">₹1,599</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/brown-jharokhe/img1.jpg" alt="Brown Jharokha"/>
+        <div class="prod-info">
+          <div class="prod-name">Jharokha Mirror<br/>Classic Brown</div>
+          <div class="prod-price">₹1,399</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 5 — AURA DÉCOR
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 6 of 7 — Aura Décor</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title"><em>Aura Décor</em> — Showpieces</div>
+      <div class="sh-sub">Unique Figurines · Tribal Art · Terracotta &nbsp;·&nbsp; Starting ₹899</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell" style="grid-column: 1 / -1; grid-row: 1;">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg" alt="Bloom-O-Saurus" style="max-height:240px"/>
+        <div class="prod-info">
+          <div class="prod-name">Bloom-O-Saurus Ceramic Showpiece — Botanical Dinosaur Figurine</div>
+          <div class="prod-price">₹1,299</div>
+        </div>
+        <div class="prod-badge">FAN FAVOURITE</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-natural-clr-handiya/img1.jpg" alt="Terracotta Handiya"/>
+        <div class="prod-info">
+          <div class="prod-name">Terracotta Natural<br/>Handiya Jar</div>
+          <div class="prod-price">₹899</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-tribal-echo-prism-plumage-vessel-ceramic-warriart-planter/img1.jpg" alt="Tribal Echo Planter"/>
+        <div class="prod-info">
+          <div class="prod-name">Tribal Echo<br/>Warli Art Planter</div>
+          <div class="prod-price">₹999</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     POST 6 — WALL DÉCOR
+══════════════════════════════════ -->
+<div class="post-wrap">
+  <div class="post-label">Post 7 of 7 — Wall Décor</div>
+  <div class="slide">
+    <div class="gb"></div>
+    <div class="cd tl"></div><div class="cd tr"></div>
+    <div class="cd bl"></div><div class="cd br"></div>
+
+    <div class="slide-header">
+      <div class="sh-eyebrow">✦ &nbsp; Category &nbsp; ✦</div>
+      <div class="sh-title">Wall <em>Décor & Platters</em></div>
+      <div class="sh-sub">Folk Art · Hand-carved Wood · Statement Pieces &nbsp;·&nbsp; Starting ₹799</div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-round-tray-lady-with-deer/img1.jpg" alt="Lady with Deer Wall Platter"/>
+        <div class="prod-info">
+          <div class="prod-name">Folk Art Platter<br/>Lady with Deer</div>
+          <div class="prod-price">₹1,099</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfbrown-jharokhe/img2.jpg" alt="Large Brown Jharokha"/>
+        <div class="prod-info">
+          <div class="prod-name">Large Brown Jharokha<br/>Statement Piece</div>
+          <div class="prod-price">₹1,899</div>
+        </div>
+        <div class="prod-badge">PREMIUM</div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/wooden-round-tray-large-with-handle/img4.jpg" alt="Large Round Tray Wall Décor"/>
+        <div class="prod-info">
+          <div class="prod-name">Round Wooden Tray<br/>Wall Art Large</div>
+          <div class="prod-price">₹1,299</div>
+        </div>
+      </div>
+      <div class="prod-cell">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/key-holder-with-stripes-wooden/img1.jpg" alt="Key Holder Stripes"/>
+        <div class="prod-info">
+          <div class="prod-name">Stripe Key Holder<br/>Entryway Art</div>
+          <div class="prod-price">₹799</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="sf-ig">
+        <svg width="14" height="14" style="color:rgba(196,147,48,0.85)"><use href="#ig-icon"/></svg>
+        @Auranestdecors12
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-phone">
+        <svg width="11" height="11" style="color:rgba(196,147,48,0.85)"><use href="#ph-icon"/></svg>
+        +91 86792 12984
+      </div>
+      <div class="sf-dot"></div>
+      <div class="sf-web">auranestdecors.com</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
