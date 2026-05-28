@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Auranest Decors — Google Business Profile Images</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 40px 20px 80px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.section-label {
+  color: #c49330;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  align-self: flex-start;
+  width: 1080px;
+  max-width: 100%;
+}
+
+.tip {
+  color: #555;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+  align-self: flex-start;
+  width: 1080px;
+  max-width: 100%;
+}
+
+/* ═══════════════════════════════════════
+   IMAGE 1 — COVER PHOTO  1080 × 608
+   Google: "Cover photo" (16:9)
+═══════════════════════════════════════ */
+.cover {
+  width: 1080px;
+  height: 608px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  background: #0c0806;
+}
+
+/* Left: big product image */
+.cover-left {
+  width: 420px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.cover-left img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #1a1208;
+  padding: 20px;
+}
+
+/* Right: brand info + 3 small product images */
+.cover-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 48px 48px 36px 44px;
+  justify-content: space-between;
+}
+
+/* Subtle gold glow */
+.cover-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(196,147,48,0.1) 0%, transparent 60%);
+}
+
+/* Vertical gold line separating left/right */
+.cover-divider {
+  position: absolute;
+  left: 420px; top: 40px; bottom: 40px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(196,147,48,0.5), transparent);
+}
+
+.cover-text { position: relative; z-index: 2; }
+
+.cover-eyebrow {
+  font-size: 9px; letter-spacing: 0.35em;
+  color: #c49330; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.cover-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px; font-weight: 400;
+  letter-spacing: 0.1em; color: #fff;
+  text-transform: uppercase; line-height: 1;
+}
+
+.cover-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 20px;
+  color: rgba(196,147,48,0.8);
+  margin-top: 10px; letter-spacing: 0.06em;
+}
+
+.cover-rule {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, #c49330, transparent);
+  margin: 18px 0;
+}
+
+.cover-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 300;
+  color: rgba(255,255,255,0.7); line-height: 1.7;
+  max-width: 380px;
+}
+
+/* 3 mini product thumbnails */
+.cover-thumbs {
+  display: flex; gap: 8px; position: relative; z-index: 2;
+}
+.cover-thumb {
+  width: 140px; height: 100px;
+  overflow: hidden; border-radius: 2px;
+  border: 1px solid rgba(196,147,48,0.25);
+  background: #1a1208;
+  position: relative;
+}
+.cover-thumb img {
+  width: 100%; height: 100%;
+  object-fit: contain; padding: 6px;
+}
+.cover-thumb-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(8,5,2,0.75);
+  font-size: 7.5px; font-weight: 600;
+  letter-spacing: 0.08em; color: #e8c36a;
+  text-transform: uppercase;
+  padding: 4px 6px; text-align: center;
+}
+
+/* Bottom info strip */
+.cover-footer {
+  position: absolute; bottom: 0; left: 420px; right: 0;
+  height: 44px;
+  background: rgba(196,147,48,0.08);
+  border-top: 1px solid rgba(196,147,48,0.25);
+  display: flex; align-items: center;
+  justify-content: center; gap: 24px;
+  z-index: 3;
+}
+.cover-footer span {
+  font-size: 10px; font-weight: 500;
+  color: rgba(196,147,48,0.75); letter-spacing: 0.1em;
+}
+.cover-footer-dot {
+  width: 3px; height: 3px;
+  background: rgba(196,147,48,0.4); border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════
+   IMAGE 2 — LOGO / PROFILE SQUARE  500×500
+═══════════════════════════════════════ */
+.logo-wrap {
+  width: 500px; height: 500px;
+  background: #0c0806;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  gap: 0;
+}
+.logo-wrap::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(196,147,48,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(196,147,48,0.08) 0%, transparent 55%);
+}
+.logo-border { position: absolute; inset: 20px; border: 1px solid rgba(196,147,48,0.4); }
+.logo-cd {
+  position: absolute; width: 8px; height: 8px;
+  background: #c49330; transform: rotate(45deg); opacity: 0.8;
+}
+.logo-cd.tl { top: 16px; left: 16px; }
+.logo-cd.tr { top: 16px; right: 16px; }
+.logo-cd.bl { bottom: 16px; left: 16px; }
+.logo-cd.br { bottom: 16px; right: 16px; }
+
+.logo-inner {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0;
+  text-align: center;
+}
+.logo-eye {
+  font-size: 9px; letter-spacing: 0.35em;
+  color: #c49330; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.logo-a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 110px; font-weight: 300;
+  color: #c49330; line-height: 0.85;
+  letter-spacing: -0.02em;
+}
+.logo-rule {
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, #c49330, transparent);
+  margin: 16px auto;
+}
+.logo-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 400;
+  letter-spacing: 0.2em; color: #fff;
+  text-transform: uppercase;
+}
+.logo-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  color: rgba(196,147,48,0.7);
+  margin-top: 8px; letter-spacing: 0.08em;
+}
+
+/* ═══════════════════════════════════════
+   IMAGES 3–6 — PRODUCT PHOTOS  800×800
+═══════════════════════════════════════ */
+.product-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 1080px;
+}
+
+.prod-photo {
+  width: 532px; height: 532px;
+  position: relative; overflow: hidden;
+  background: #0f0a06;
+  display: flex; flex-direction: column;
+}
+
+.prod-photo-img {
+  flex: 1; min-height: 0;
+  background: #1a1208;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; overflow: hidden;
+}
+.prod-photo-img img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+
+.prod-photo-bar {
+  flex-shrink: 0; height: 72px;
+  background: #0c0806;
+  border-top: 1px solid rgba(196,147,48,0.2);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.prod-photo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 400;
+  color: #fff; letter-spacing: 0.02em;
+}
+.prod-photo-detail {
+  text-align: right;
+}
+.prod-photo-price {
+  font-size: 11px; font-weight: 700;
+  color: #e8c36a; letter-spacing: 0.08em;
+  display: block;
+}
+.prod-photo-brand {
+  font-size: 8px; letter-spacing: 0.18em;
+  color: rgba(196,147,48,0.45);
+  text-transform: uppercase; display: block;
+  margin-top: 3px;
+}
+
+/* gold border on product photos */
+.prod-photo-border {
+  position: absolute; inset: 10px;
+  border: 1px solid rgba(196,147,48,0.2);
+  pointer-events: none; z-index: 2;
+}
+.prod-photo-cd {
+  position: absolute; width: 5px; height: 5px;
+  background: #c49330; transform: rotate(45deg);
+  opacity: 0.7; z-index: 3;
+}
+.prod-photo-cd.tl { top: 7px; left: 7px; }
+.prod-photo-cd.tr { top: 7px; right: 7px; }
+.prod-photo-cd.bl { bottom: 7px; left: 7px; }
+.prod-photo-cd.br { bottom: 7px; right: 7px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     IMAGE 1 — COVER PHOTO
+     Screenshot at 1080×608
+══════════════════════════════ -->
+<div class="section-label">Image 1 — Cover Photo (1080×608) · Upload as "Cover photo"</div>
+<div class="tip">Screenshot the full width of this banner</div>
+
+<div class="cover">
+  <!-- Hero product left -->
+  <div class="cover-left">
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg"
+         alt="Jharokha Wall Mirror"/>
+  </div>
+
+  <div class="cover-divider"></div>
+
+  <!-- Brand info right -->
+  <div class="cover-right">
+    <div class="cover-text">
+      <div class="cover-eyebrow">✦ &nbsp; Est. 2024 · India &nbsp; ✦</div>
+      <div class="cover-brand">Auranest<br/>Decors</div>
+      <div class="cover-tagline">"Feel the Beauty of Home"</div>
+      <div class="cover-rule"></div>
+      <div class="cover-desc">
+        Premium handcrafted wooden home décor — Jharokhas, folk art trays, serveware and artisan gifts. Made by skilled craftsmen across India.
+      </div>
+    </div>
+
+    <!-- 3 product thumbnails -->
+    <div class="cover-thumbs">
+      <div class="cover-thumb">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg" alt="Wooden Tray"/>
+        <div class="cover-thumb-label">Wooden Trays</div>
+      </div>
+      <div class="cover-thumb">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-blue-leaf/img1.jpg" alt="Ceramic Planter"/>
+        <div class="cover-thumb-label">Planters</div>
+      </div>
+      <div class="cover-thumb">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lf3set-of-tray/img1.jpg" alt="Gift Sets"/>
+        <div class="cover-thumb-label">Gift Sets</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer strip -->
+  <div class="cover-footer">
+    <span>🌍 Ships Worldwide</span>
+    <div class="cover-footer-dot"></div>
+    <span>🚚 2–3 Day Delivery</span>
+    <div class="cover-footer-dot"></div>
+    <span>✦ Free Shipping ₹999+</span>
+    <div class="cover-footer-dot"></div>
+    <span>auranestdecors.com</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     IMAGE 2 — LOGO / PROFILE
+     Screenshot at 500×500
+══════════════════════════════ -->
+<div class="section-label">Image 2 — Logo / Profile Photo (500×500) · Upload as "Logo"</div>
+<div class="tip">Screenshot this square exactly</div>
+
+<div class="logo-wrap">
+  <div class="logo-border"></div>
+  <div class="logo-cd tl"></div><div class="logo-cd tr"></div>
+  <div class="logo-cd bl"></div><div class="logo-cd br"></div>
+
+  <div class="logo-inner">
+    <div class="logo-eye">✦ &nbsp; Premium Handcrafted &nbsp; ✦</div>
+    <div class="logo-a">A</div>
+    <div class="logo-rule"></div>
+    <div class="logo-brand">Auranest Decors</div>
+    <div class="logo-tagline">"Feel the Beauty of Home"</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     IMAGES 3–6 — PRODUCT PHOTOS
+     Screenshot each at 532×532
+══════════════════════════════ -->
+<div class="section-label">Images 3–6 — Product Photos · Upload as "Product photos"</div>
+<div class="tip">Screenshot each card individually (4 product photos)</div>
+
+<div class="product-photos">
+
+  <!-- Product 1: Jharokha -->
+  <div class="prod-photo">
+    <div class="prod-photo-border"></div>
+    <div class="prod-photo-cd tl"></div><div class="prod-photo-cd tr"></div>
+    <div class="prod-photo-cd bl"></div><div class="prod-photo-cd br"></div>
+    <div class="prod-photo-img">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfgreen-jharokhe/img3.jpg"
+           alt="Green Jharokha Mirror"/>
+    </div>
+    <div class="prod-photo-bar">
+      <div class="prod-photo-name">Hand-Carved Jharokha Mirror</div>
+      <div class="prod-photo-detail">
+        <span class="prod-photo-price">From ₹1,299</span>
+        <span class="prod-photo-brand">Auranest Decors</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 2: Wooden Tray -->
+  <div class="prod-photo">
+    <div class="prod-photo-border"></div>
+    <div class="prod-photo-cd tl"></div><div class="prod-photo-cd tr"></div>
+    <div class="prod-photo-cd bl"></div><div class="prod-photo-cd br"></div>
+    <div class="prod-photo-img">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg"
+           alt="Folk Art Wooden Tray"/>
+    </div>
+    <div class="prod-photo-bar">
+      <div class="prod-photo-name">Folk Art Wooden Tray</div>
+      <div class="prod-photo-detail">
+        <span class="prod-photo-price">From ₹799</span>
+        <span class="prod-photo-brand">Auranest Decors</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 3: Madhubani Planter -->
+  <div class="prod-photo">
+    <div class="prod-photo-border"></div>
+    <div class="prod-photo-cd tl"></div><div class="prod-photo-cd tr"></div>
+    <div class="prod-photo-cd bl"></div><div class="prod-photo-cd br"></div>
+    <div class="prod-photo-img">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg"
+           alt="Madhubani Peacock Planter"/>
+    </div>
+    <div class="prod-photo-bar">
+      <div class="prod-photo-name">Madhubani Peacock Planter</div>
+      <div class="prod-photo-detail">
+        <span class="prod-photo-price">From ₹999</span>
+        <span class="prod-photo-brand">Auranest Decors</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product 4: Gift Set / 3-Set Tray -->
+  <div class="prod-photo">
+    <div class="prod-photo-border"></div>
+    <div class="prod-photo-cd tl"></div><div class="prod-photo-cd tr"></div>
+    <div class="prod-photo-cd bl"></div><div class="prod-photo-cd br"></div>
+    <div class="prod-photo-img">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lf3set-of-tray/img1.jpg"
+           alt="Artisan Gift Set — 3 Wooden Trays"/>
+    </div>
+    <div class="prod-photo-bar">
+      <div class="prod-photo-name">Artisan Gift Set — 3 Trays</div>
+      <div class="prod-photo-detail">
+        <span class="prod-photo-price">From ₹1,499</span>
+        <span class="prod-photo-brand">Auranest Decors</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
