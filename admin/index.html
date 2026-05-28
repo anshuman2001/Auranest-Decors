@@ -252,39 +252,55 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
 .sb-overlay.on{display:block;}
 
-/* ══ RESPONSIVE: 900px ══ */
+/* ══ RESPONSIVE: 900px (tablet) ══ */
 @media(max-width:900px){
-  /* SIDEBAR */
   .sidebar{transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
   .sidebar.mob-open{transform:translateX(0);}
   .main{margin-left:0;}
-  /* TOPBAR */
   .topbar{padding:0 1rem;}
   .adm-ham{display:flex;align-items:center;}
   .page-title{font-size:1.1rem;}
-  .tb-search{width:140px;}
-  /* GRIDS */
+  .breadcrumb{display:none;}
+  .tb-search{width:160px;}
   .stats-row{grid-template-columns:repeat(2,1fr);gap:.8rem;}
   .dash-grid{grid-template-columns:1fr;}
   .cust-grid{grid-template-columns:repeat(2,1fr);}
   .settings-grid{grid-template-columns:1fr;}
   .mgrid{grid-template-columns:1fr;}
-  /* CONTENT */
   .content{padding:1.2rem;}
-  /* MODAL */
   .mbox{width:calc(100vw - 2rem);max-width:100%;}
+  /* Day tabs — horizontal scroll on tablet */
+  .day-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.3rem;scrollbar-width:none;}
+  .day-tabs::-webkit-scrollbar{display:none;}
+  .dtab{flex-shrink:0;}
+  /* Inventory & recent-orders tables */
+  .rtable{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .rtable th,.rtable td{white-space:nowrap;}
 }
 
-/* ══ RESPONSIVE: 600px ══ */
+/* ══ RESPONSIVE: 600px (mobile) ══ */
 @media(max-width:600px){
-  .topbar{height:52px;}
-  .tb-r{gap:.6rem;}
+  /* TOPBAR */
+  .topbar{height:54px;padding:0 .8rem;}
+  .tb-r{gap:.5rem;}
   .tb-search{display:none;}
-  .tb-btn{padding:.45rem .9rem;font-size:.68rem;}
+  .tb-btn{padding:.5rem .75rem;font-size:.7rem;}
+  .tb-btn-text{display:none;}
+  .theme-toggle{width:32px;height:32px;font-size:.9rem;}
+  /* LOGIN */
+  .lb{width:92vw;max-width:400px;padding:2rem 1.4rem;}
+  /* STATS */
   .stats-row{grid-template-columns:1fr 1fr;gap:.6rem;}
-  .sc{padding:1.1rem;}
-  .sc-val{font-size:1.8rem;}
-  .content{padding:1rem;}
+  .sc{padding:1rem;}
+  .sc-val{font-size:1.75rem;}
+  .sc-icon{font-size:1.2rem;margin-bottom:.5rem;}
+  /* CONTENT */
+  .content{padding:.9rem;}
+  /* PAGE TITLE */
+  .page-title{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw;}
+  /* PANELS */
+  .panel{padding:1.1rem;}
+  /* CUSTOMERS */
   .cust-grid{grid-template-columns:1fr;}
   /* TABLES — horizontal scroll */
   .ptable,.rtable{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -293,14 +309,53 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
   .stabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.3rem;scrollbar-width:none;}
   .stabs::-webkit-scrollbar{display:none;}
   .stab{flex-shrink:0;}
-  /* TOOLBAR */
-  .prod-toolbar{flex-wrap:wrap;}
+  /* DAY BANNER — stack vertically */
+  .day-banner{flex-direction:column;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;}
+  .db-group{gap:1.2rem;flex-wrap:wrap;}
+  .db-date{text-align:left;}
+  /* DAY TABS — horizontal scroll */
+  .day-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.4rem;scrollbar-width:none;}
+  .day-tabs::-webkit-scrollbar{display:none;}
+  .dtab{flex-shrink:0;white-space:nowrap;}
+  /* PRODUCT TOOLBAR */
+  .prod-toolbar{flex-wrap:wrap;gap:.6rem;}
   .psearch{min-width:100%;order:-1;}
+  .pfilter{flex:1;min-width:120px;}
+  .btn-add{flex:0 0 auto;}
   /* CHART */
-  .chart-wrap{height:120px;}
-  /* MODAL */
+  .chart-wrap{height:110px;}
+  /* DONUT */
+  .donut-wrap{flex-direction:column;gap:1rem;}
+  /* MODAL — bottom sheet */
   .modal-bg{align-items:flex-end;padding:0;}
-  .mbox{width:100%;max-height:90vh;border-radius:0;}
+  .mbox{width:100%;max-height:92vh;border-radius:0;padding:1.4rem 1.2rem;}
+  /* MODAL image upload rows */
+  .mbox [style*="display:flex"][style*="gap:.5rem"]{flex-wrap:wrap;}
+  /* BULK UPLOAD */
+  .bulk-drop{padding:1.5rem 1rem;}
+  .bulk-actions{flex-direction:column;}
+  .bulk-actions .btn-dl,.bulk-actions .btn-save{width:100%;text-align:center;}
+  /* TOUCH TARGETS */
+  .ni{min-height:46px;}
+  .ebtn,.dbtn{min-height:34px;}
+  .dtab,.stab{min-height:34px;display:flex;align-items:center;}
+  /* TOAST */
+  #toast{left:.7rem;right:.7rem;bottom:.7rem;max-width:none;}
+  /* SAFE AREA (notched phones) */
+  .sidebar,.topbar{padding-left:max(.8rem, env(safe-area-inset-left));}
+  .content{padding-bottom:max(.9rem, env(safe-area-inset-bottom));}
+}
+
+/* ══ RESPONSIVE: 400px (small phones) ══ */
+@media(max-width:400px){
+  .stats-row{grid-template-columns:1fr;}
+  .db-group{flex-direction:column;gap:.7rem;}
+  .db-divider{display:none;}
+  .content{padding:.7rem;}
+  .topbar{padding:0 .6rem;}
+  .sc-val{font-size:1.6rem;}
+  .mgrid{gap:.6rem;}
+  .tb-btn{padding:.45rem .6rem;font-size:.68rem;}
 }
 </style>
 </head>
@@ -508,7 +563,7 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
     <div class="tb-r">
       <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark theme">🌙</button>
       <input class="tb-search" placeholder="Search products, orders…" oninput="globalSearch(this.value)"/>
-      <button class="tb-btn" onclick="goPage('products'); openAddModal()">+ Add Product</button>
+      <button class="tb-btn" onclick="goPage('products'); openAddModal()">+ <span class="tb-btn-text">Add Product</span></button>
     </div>
   </div>
 
@@ -1545,8 +1600,11 @@ function goPage(id, navEl) {
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   if (navEl) navEl.classList.add('active');
+  else document.querySelectorAll('.ni').forEach(n=>{ if(n.textContent.trim().toLowerCase().startsWith(PAGE_TITLES[id]?.toLowerCase()||'')) n.classList.add('active'); });
   document.getElementById('pageTitle').textContent  = PAGE_TITLES[id]||id;
   document.getElementById('breadcrumb').textContent = `Home / ${PAGE_TITLES[id]||id}`;
+  // Scroll to top on mobile
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function openAddModal() {
