@@ -6,10 +6,47 @@
 <title>Auranest Admin – Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0f0d0b;--surface:#1a1612;--card:#221e19;--border:rgba(184,147,63,0.15);--border2:rgba(255,255,255,0.06);--gold:#b8933f;--gold-lt:#d4aa5f;--gold-dim:rgba(184,147,63,0.12);--terra:#c07b4f;--terra-dim:rgba(192,123,79,0.12);--green:#4caf7d;--green-dim:rgba(76,175,125,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.12);--blue:#5c8fe0;--blue-dim:rgba(92,143,224,0.12);--text:#f0ebe3;--muted:#8a7d6e;--subtle:#3a342d;--sw:240px;}
+:root{--bg:#0f0d0b;--surface:#1a1612;--card:#221e19;--border:rgba(184,147,63,0.15);--border2:rgba(255,255,255,0.06);--gold:#b8933f;--gold-lt:#d4aa5f;--gold-dim:rgba(184,147,63,0.12);--terra:#c07b4f;--terra-dim:rgba(192,123,79,0.12);--green:#4caf7d;--green-dim:rgba(76,175,125,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.12);--blue:#5c8fe0;--blue-dim:rgba(92,143,224,0.12);--text:#f0ebe3;--muted:#8a7d6e;--subtle:#3a342d;--sw:240px;--shadow:none;--shadow-card:none;}
+/* ══ LIGHT THEME ══ */
+html.light{--bg:#f2ece2;--surface:#ffffff;--card:#ffffff;--border:rgba(160,115,40,0.22);--border2:rgba(0,0,0,0.08);--gold:#9a6f28;--gold-lt:#b88535;--gold-dim:rgba(154,111,40,0.10);--terra:#b05530;--terra-dim:rgba(176,85,48,0.11);--green:#1e7a4a;--green-dim:rgba(30,122,74,0.10);--red:#c03535;--red-dim:rgba(192,53,53,0.10);--blue:#2a5faa;--blue-dim:rgba(42,95,170,0.10);--text:#1c1510;--muted:#7a6550;--subtle:#e8dece;--shadow:0 1px 4px rgba(0,0,0,.06);--shadow-card:0 2px 12px rgba(0,0,0,.07);}
+/* Smooth transitions for all theme-dependent elements */
+body,aside,.topbar,.sidebar,.main,.sc,.panel,.cc,.mbox,.rtable td,.ptable td,.day-banner,.dtab,.badge,.modal-bg,.mbox,.bulk-drop,
+.psearch,.pfilter,.tb-search,.si,.li,.btn-add,.ebtn,.dbtn,#toast{transition:background .25s,color .25s,border-color .25s,box-shadow .25s;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--surface);}::-webkit-scrollbar-thumb{background:var(--gold);}
+/* Light theme card shadows & depth */
+html.light .sc,html.light .panel,html.light .cc,html.light .mbox{box-shadow:var(--shadow-card);}
+html.light .sidebar{box-shadow:2px 0 16px rgba(0,0,0,.08);}
+html.light .topbar{box-shadow:0 1px 8px rgba(0,0,0,.07);}
+html.light .ptable th{background:#fdf9f4;}
+html.light .si,html.light .li,html.light .psearch,html.light .tb-search,html.light .pfilter{background:#fdf9f4;color:var(--text);}
+html.light .bulk-drop{background:#fdf9f4;}
+html.light .cc-stat{background:#faf5ee;}
+html.light .bulk-preview th{background:#fdf9f4;}
+html.light .bulk-stats{background:#faf5ee;}
+html.light .stab{background:#fdf9f4;}
+html.light .dtab{background:#fdf9f4;}
+html.light .modal-bg{background:rgba(60,45,30,.55);}
+html.light #globalUpload{box-shadow:0 4px 20px rgba(0,0,0,.12);}
+html.light .sb-badge{border-color:var(--border);}
+/* Colored stat card tints in light mode */
+html.light .sc-gold{background:linear-gradient(135deg,#fff 60%,rgba(184,133,53,.08));}
+html.light .sc-terra{background:linear-gradient(135deg,#fff 60%,rgba(176,85,48,.08));}
+html.light .sc-green{background:linear-gradient(135deg,#fff 60%,rgba(30,122,74,.08));}
+html.light .sc-blue{background:linear-gradient(135deg,#fff 60%,rgba(42,95,170,.08));}
+/* Colored sidebar in light mode */
+html.light .sidebar{background:linear-gradient(180deg,#fffdf9 0%,#fdf6ea 100%);}
+html.light .sb-logo{background:transparent;}
+html.light .ni{color:var(--muted);}
+html.light .ni:hover{background:rgba(154,111,40,.08);color:var(--gold);}
+html.light .ni.active{background:rgba(154,111,40,.12);color:var(--gold);border-left-color:var(--gold);}
+/* Theme toggle button */
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .25s;flex-shrink:0;}
+.theme-toggle:hover{border-color:var(--gold);background:var(--gold-dim);transform:rotate(20deg) scale(1.05);}
+/* Light mode specific overrides for today-row */
+html.light .today-row td{background:rgba(30,122,74,.05)!important;}
+html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!important;}
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;}
 #loginScreen.hide{display:none;}
@@ -116,6 +153,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .ebtn:hover{border-color:var(--gold);color:var(--gold);}
 .dbtn{background:none;border:1px solid var(--border2);color:var(--muted);padding:.3rem .8rem;font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-left:.4rem;}
 .dbtn:hover{border-color:var(--red);color:var(--red);}
+/* ── TODAY / EARLIER FILTER ── */
+.day-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:var(--card);border:1px solid var(--border);padding:.9rem 1.4rem;margin-bottom:1.2rem;}
+.db-group{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
+.db-item{display:flex;align-items:center;gap:.8rem;}
+.db-num{font-family:'Cormorant Garamond',serif;font-size:1.75rem;line-height:1;font-weight:600;}
+.db-lbl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.15rem;}
+.db-divider{width:1px;height:36px;background:var(--border);}
+.db-date{font-size:.72rem;color:var(--muted);text-align:right;line-height:1.6;}
+.db-date strong{color:var(--gold);display:block;font-size:.8rem;}
+.day-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+.dtab{padding:.38rem 1rem;background:var(--card);border:1px solid var(--border2);color:var(--muted);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.dtab:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.dtab.on{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
+.dtab.on.green-tab{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+.today-row{position:relative;}
+.today-row td:first-child{border-left:2px solid var(--green)!important;}
+.today-row td{background:rgba(76,175,125,.04)!important;}
+.ptable tr.today-row:hover td{background:rgba(76,175,125,.09)!important;}
+.badge-new{display:inline-block;background:var(--green-dim);color:var(--green);font-size:.55rem;padding:.18rem .55rem;letter-spacing:.07em;text-transform:uppercase;vertical-align:middle;margin-left:.45rem;border:1px solid rgba(76,175,125,.3);}
+.badge-old{display:inline-block;background:var(--gold-dim);color:var(--gold);font-size:.55rem;padding:.18rem .55rem;letter-spacing:.07em;text-transform:uppercase;vertical-align:middle;margin-left:.45rem;border:1px solid var(--border);}
 /* CUSTOMERS */
 .cust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
 .cc{background:var(--card);border:1px solid var(--border);padding:1.3rem;transition:border-color .2s;}
@@ -449,6 +506,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
       <div><div class="page-title" id="pageTitle">Dashboard</div><div class="breadcrumb" id="breadcrumb">Home / Dashboard</div></div>
     </div>
     <div class="tb-r">
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark theme">🌙</button>
       <input class="tb-search" placeholder="Search products, orders…" oninput="globalSearch(this.value)"/>
       <button class="tb-btn" onclick="goPage('products'); openAddModal()">+ Add Product</button>
     </div>
@@ -482,6 +540,44 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 
     <!-- PRODUCTS -->
     <div class="page" id="page-products">
+
+      <!-- Day Summary Banner -->
+      <div class="day-banner" id="prodDayBanner">
+        <div class="db-group">
+          <div class="db-item">
+            <div>
+              <div class="db-num" id="dbTodayNum" style="color:var(--green)">0</div>
+              <div class="db-lbl">✦ Added Today</div>
+            </div>
+          </div>
+          <div class="db-divider"></div>
+          <div class="db-item">
+            <div>
+              <div class="db-num" id="dbEarlierNum" style="color:var(--gold)">0</div>
+              <div class="db-lbl">Already in Catalog</div>
+            </div>
+          </div>
+          <div class="db-divider"></div>
+          <div class="db-item">
+            <div>
+              <div class="db-num" id="dbTotalNum" style="color:var(--text)">0</div>
+              <div class="db-lbl">Total Products</div>
+            </div>
+          </div>
+        </div>
+        <div class="db-date">
+          <strong id="dbDateStr">—</strong>
+          <span>Products added on this day are highlighted in green</span>
+        </div>
+      </div>
+
+      <!-- Day Filter Tabs -->
+      <div class="day-tabs">
+        <div class="dtab on" id="dtAll"     onclick="filterByDay('all',this)">📦 All Products</div>
+        <div class="dtab green-tab" id="dtToday"   onclick="filterByDay('today',this)">🟢 Added Today</div>
+        <div class="dtab" id="dtEarlier" onclick="filterByDay('earlier',this)">📂 Added Earlier</div>
+      </div>
+
       <div class="prod-toolbar">
         <input class="psearch" placeholder="Search products…" oninput="searchProducts(this.value)" id="prodSearch"/>
         <select class="pfilter" onchange="filterProdCat(this.value)">
@@ -495,8 +591,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
           <table class="ptable">
-            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Part No.</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="prodTableBody"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
+            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Part No.</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Date Added</th><th>Actions</th></tr></thead>
+            <tbody id="prodTableBody"><tr><td colspan="11" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
           </table>
         </div>
         <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
@@ -726,6 +822,30 @@ window.$auth    = auth;
 window.$storage = storage;
 window.$fb      = { collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp, storageRef, uploadBytesResumable, getDownloadURL };
 
+// ── THEME TOGGLE ──────────────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('auranest-admin-theme') || 'dark';
+  applyTheme(saved);
+})();
+
+function applyTheme(mode) {
+  const btn = document.getElementById('themeToggleBtn');
+  if (mode === 'light') {
+    document.documentElement.classList.add('light');
+    if (btn) btn.textContent = '☀️';
+    localStorage.setItem('auranest-admin-theme', 'light');
+  } else {
+    document.documentElement.classList.remove('light');
+    if (btn) btn.textContent = '🌙';
+    localStorage.setItem('auranest-admin-theme', 'dark');
+  }
+}
+
+window.toggleTheme = function() {
+  const isLight = document.documentElement.classList.contains('light');
+  applyTheme(isLight ? 'dark' : 'light');
+};
+
 // UPDATE settings page
 try {
   document.getElementById('fbProjectId').value = firebaseConfig.projectId;
@@ -781,7 +901,9 @@ async function loadProducts() {
     const count = window.$products.length;
     document.getElementById('statProds').textContent    = count;
     document.getElementById('sbProdCount').textContent  = count;
-    renderProductsTable(window.$products);
+    if (!window._dayFilter)  window._dayFilter  = 'all';
+    if (!window._catFilter)  window._catFilter  = 'all';
+    applyProdFilters();
     renderInventory(window.$products);
   } catch (err) {
     console.error('Products error:', err);
@@ -926,24 +1048,102 @@ function renderOrdersTable(orders) {
       </tr>`).join('');
 }
 
+// ── DATE HELPERS ─────────────────────────────────────────────
+function isToday(tsSeconds) {
+  if (!tsSeconds) return false;
+  const d = new Date(tsSeconds * 1000), n = new Date();
+  return d.getDate() === n.getDate() &&
+         d.getMonth() === n.getMonth() &&
+         d.getFullYear() === n.getFullYear();
+}
+function fmtDate(tsSeconds) {
+  if (!tsSeconds) return '—';
+  return new Date(tsSeconds * 1000).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+function updateDayBanner() {
+  const all = window.$products || [];
+  const tod = all.filter(p => isToday(p.createdAt?.seconds)).length;
+  const ear = all.filter(p => !isToday(p.createdAt?.seconds)).length;
+  document.getElementById('dbTodayNum').textContent   = tod;
+  document.getElementById('dbEarlierNum').textContent = ear;
+  document.getElementById('dbTotalNum').textContent   = all.length;
+  document.getElementById('dbDateStr').textContent    =
+    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  // Pulse the today count if > 0
+  const el = document.getElementById('dbTodayNum');
+  el.style.animation = tod > 0 ? 'pulse 2s infinite' : 'none';
+}
+
+// ── RENDER PRODUCTS TABLE ─────────────────────────────────────
 function renderProductsTable(list) {
-  document.getElementById('prodCount2').textContent = `Showing ${list.length} products`;
-  document.getElementById('prodTableBody').innerHTML = list.map((p,i)=>`
-    <tr>
-      <td style="color:var(--muted)">${i+1}</td>
-      <td><span class="p-name-cell">${p.name}</span><div class="p-sub">${p.tag||''}</div></td>
-      <td>${p.category}</td>
-      <td>${p.subCategory}</td>
-      <td style="font-size:.72rem;color:var(--muted)">${p.partNumber||'—'}</td>
-      <td>${p.material}</td>
-      <td class="price-cell">₹${p.price?.toLocaleString('en-IN')}</td>
-      <td>${p.stock||0}</td>
-      <td><span class="badge b-active">Active</span></td>
-      <td>
-        <button class="ebtn" onclick="editProduct('${p.id}')">Edit</button>
-        <button class="dbtn" onclick="deleteProduct('${p.id}')">Delete</button>
-      </td>
-    </tr>`).join('');
+  document.getElementById('prodCount2').textContent = `Showing ${list.length} of ${(window.$products||[]).length} products`;
+  updateDayBanner();
+  if (list.length === 0) {
+    document.getElementById('prodTableBody').innerHTML =
+      '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:2rem">No products found for this filter.</td></tr>';
+    return;
+  }
+  document.getElementById('prodTableBody').innerHTML = list.map((p, i) => {
+    const today   = isToday(p.createdAt?.seconds);
+    const dateStr = fmtDate(p.createdAt?.seconds);
+    return `
+      <tr class="${today ? 'today-row' : ''}">
+        <td style="color:var(--muted)">${i + 1}</td>
+        <td>
+          <span class="p-name-cell">${p.name}</span>
+          ${today ? '<span class="badge-new">New Today</span>' : ''}
+          <div class="p-sub">${p.tag || ''}</div>
+        </td>
+        <td>${p.category}</td>
+        <td>${p.subCategory}</td>
+        <td style="font-size:.72rem;color:var(--muted)">${p.partNumber || '—'}</td>
+        <td>${p.material}</td>
+        <td class="price-cell">₹${p.price?.toLocaleString('en-IN')}</td>
+        <td>${p.stock || 0}</td>
+        <td><span class="badge b-active">Active</span></td>
+        <td style="font-size:.72rem;white-space:nowrap;color:${today ? 'var(--green)' : 'var(--muted)'}">
+          ${today
+            ? `<span style="display:flex;align-items:center;gap:.35rem">
+                 <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span>
+                 Today
+               </span>`
+            : dateStr}
+        </td>
+        <td>
+          <button class="ebtn" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="dbtn" onclick="deleteProduct('${p.id}')">Delete</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+// ── DAY FILTER ────────────────────────────────────────────────
+window.filterByDay = function(type, el) {
+  // Update active tab styling
+  document.querySelectorAll('.dtab').forEach(t => t.classList.remove('on'));
+  if (el) {
+    el.classList.add('on');
+    // green tab style for "today"
+    document.getElementById('dtToday').classList.toggle('green-tab', type === 'today');
+  }
+  window._dayFilter = type;
+  applyProdFilters();
+};
+
+// Central filter coordinator (day + search + category all go through here)
+function applyProdFilters() {
+  let list = window.$products || [];
+  // Day filter
+  const day = window._dayFilter || 'all';
+  if (day === 'today')   list = list.filter(p => isToday(p.createdAt?.seconds));
+  if (day === 'earlier') list = list.filter(p => !isToday(p.createdAt?.seconds));
+  // Search filter
+  const q = (document.getElementById('prodSearch')?.value || '').toLowerCase();
+  if (q) list = list.filter(p => p.name?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q));
+  // Category filter
+  const cat = window._catFilter || 'all';
+  if (cat !== 'all') list = list.filter(p => p.category === cat);
+  renderProductsTable(list);
 }
 
 function renderCustomers(custs) {
@@ -1061,13 +1261,12 @@ window.filterOrders = function(status, btn) {
 };
 
 window.filterProdCat = function(cat) {
-  const list = cat==='all' ? (window.$products||[]) : (window.$products||[]).filter(p=>p.category===cat);
-  renderProductsTable(list);
+  window._catFilter = cat || 'all';
+  applyProdFilters();
 };
 
 window.searchProducts = function(q) {
-  const list = q ? (window.$products||[]).filter(p=>p.name.toLowerCase().includes(q.toLowerCase())) : (window.$products||[]);
-  renderProductsTable(list);
+  applyProdFilters();
 };
 
 window.globalSearch = function(q) {

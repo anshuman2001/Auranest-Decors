@@ -488,6 +488,7 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
+      padding: 0 !important;
     }
 
     .p-cat-tag {
@@ -665,10 +666,10 @@
       <div class="hero-btns">
         <a href="#collections" class="btn-primary">Explore Collection &nbsp;→</a>
         <a href="../store/" class="btn-outline" target="_blank">Shop Now &nbsp;→</a>
-        <button class="btn-outline" id="dlCatalogBtn" onclick="printCatalog()" style="display:flex;align-items:center;gap:8px;cursor:pointer;border:none;">
+        <a href="/catalog/print.html" target="_blank" class="btn-outline" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Catalog PDF
-        </button>
+        </a>
       </div>
     </div>
 
@@ -915,35 +916,69 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
 </script>
 
 <script>
-/* printCatalog — wait for all images to load then open browser print dialog.
-   In Chrome/Edge the user can choose "Save as PDF" destination. */
+/* printCatalog
+   Problem: images use loading="lazy" so off-screen cards are never fetched.
+   Fix:
+     1. Render ALL products (clear any active filter)
+     2. Remove lazy-loading from every img and force-trigger the fetch
+     3. Wait for every image to complete (load or error)
+     4. Open print dialog — all images are now in the browser cache
+*/
 function printCatalog() {
   const btn = document.getElementById('dlCatalogBtn');
   btn.disabled = true;
-  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Loading images...';
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Loading images…';
 
-  // Wait for all product images to finish loading
+  // Step 1 — make sure ALL products are visible (not just the filtered subset)
+  renderCards(products);
+
+  // Reset filter pill UI so "All" looks active
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  const allPill = document.querySelector('.filter-pill[data-cat="all"]');
+  if (allPill) allPill.classList.add('active');
+
+  // Step 2 — strip lazy and force-fetch every image
   const imgs = Array.from(document.querySelectorAll('.products-grid img'));
-  const pending = imgs.filter(img => !img.complete);
+  imgs.forEach(img => {
+    img.loading = 'eager';
+    // If the browser hasn't started fetching (naturalWidth === 0 and not complete)
+    // reset src to kick off the network request
+    if (!img.complete || img.naturalWidth === 0) {
+      const s = img.src;
+      img.src = '';
+      img.src = s;
+    }
+  });
+
+  const ICON_DL = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
 
   const doprint = () => {
     btn.disabled = false;
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download Catalog PDF';
+    btn.innerHTML = ICON_DL + ' Download Catalog PDF';
     window.print();
   };
 
-  if (pending.length === 0) { doprint(); return; }
+  // Step 3 — wait for every image (load or error counts as "done")
+  const pending = imgs.filter(img => !img.complete);
+  if (pending.length === 0) { setTimeout(doprint, 200); return; }
 
   let done = 0;
+  const finish = () => { if (++done >= pending.length) doprint(); };
   pending.forEach(img => {
-    const finish = () => { if (++done === pending.length) doprint(); };
     img.addEventListener('load',  finish, { once: true });
     img.addEventListener('error', finish, { once: true });
   });
 
-  // Fallback: print after 4s regardless
-  setTimeout(doprint, 4000);
+  // Safety fallback — print after 18 s even if some CDN images are slow
+  setTimeout(doprint, 18000);
+
+  // Update button text with live count so the user sees progress
+  const tick = setInterval(() => {
+    if (done >= pending.length) { clearInterval(tick); return; }
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg> Loading… ' + done + ' / ' + pending.length;
+  }, 400);
 }
+
 const _s2 = document.createElement('style');
 _s2.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
 document.head.appendChild(_s2);

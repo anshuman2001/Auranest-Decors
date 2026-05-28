@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Auranest Decors — Product Catalogue 2026</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#b8934a;--gold-lt:#d4a85c;--gold-pale:#f5ecd8;
+  --ink:#1c1a18;--mid:#5a5550;--light:#aca89f;
+  --border:#ece8e1;--dark:#1c1a18;--cream:#faf8f5;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#ddd8d0;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+/* ══ LOADING SCREEN ══ */
+#ls{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+}
+.ls-ring{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,#c49330,#f6d070);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:#fff;
+  box-shadow:0 0 0 8px rgba(184,147,74,.18);
+}
+.ls-brand{font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.14em;color:var(--gold);}
+.ls-sub{font-size:12px;letter-spacing:.08em;color:#7a7268;text-transform:uppercase;}
+.ls-bar{width:260px;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;}
+.ls-fill{height:100%;width:0%;background:var(--gold);border-radius:3px;transition:width .25s ease;}
+.ls-txt{font-size:12px;color:#5a5550;}
+
+/* ══ PAGE WRAPPER ══ */
+.wrap{display:flex;flex-direction:column;align-items:center;padding:24px 16px;gap:16px;}
+
+/* ══ EVERY A4 PAGE ══ */
+.pg{
+  width:210mm;height:297mm;
+  background:#fff;position:relative;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.22);
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+/* ══ COVER ══ */
+.cover{
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+}
+.cv-corner{position:absolute;width:44mm;height:44mm;opacity:.22;}
+.cv-corner.tl{top:0;left:0;}
+.cv-corner.tr{top:0;right:0;transform:scaleX(-1);}
+.cv-corner.bl{bottom:0;left:0;transform:scaleY(-1);}
+.cv-corner.br{bottom:0;right:0;transform:scale(-1,-1);}
+
+.cv-logo{
+  width:26mm;height:26mm;border-radius:50%;
+  background:linear-gradient(135deg,#c49330,#f6d070);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:34pt;font-weight:700;color:#fff;
+  margin-bottom:8mm;
+  box-shadow:0 0 0 4mm rgba(184,147,74,.18);
+}
+.cv-brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30pt;font-weight:700;letter-spacing:.14em;color:var(--gold);
+  margin-bottom:5mm;
+}
+.cv-line{width:50mm;height:.5mm;background:var(--gold);margin:0 auto 6mm;}
+.cv-yr{
+  font-size:11pt;letter-spacing:.22em;text-transform:uppercase;
+  color:#f5ecd8;font-weight:300;margin-bottom:6mm;
+}
+.cv-tag{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:14pt;color:#aca89f;margin-bottom:12mm;
+}
+.cv-chips{display:flex;gap:4mm;justify-content:center;flex-wrap:wrap;margin-bottom:14mm;}
+.cv-chip{
+  padding:2mm 5mm;border:1px solid rgba(184,147,74,.4);border-radius:20mm;
+  font-size:8pt;letter-spacing:.06em;color:#7a7268;
+}
+.cv-count{font-size:10pt;color:#5a5550;}
+.cv-foot{
+  position:absolute;bottom:10mm;left:0;right:0;text-align:center;
+  font-size:8.5pt;color:#3d3830;letter-spacing:.04em;
+}
+.cv-foot span{color:rgba(184,147,74,.6);}
+
+/* ══ PRODUCT PAGE HEADER ══ */
+.ph{
+  height:13mm;background:var(--dark);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 8mm;flex-shrink:0;
+}
+.ph-brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:10.5pt;font-weight:700;letter-spacing:.12em;color:var(--gold);
+}
+.ph-right{font-size:7.5pt;color:#4a4540;letter-spacing:.04em;}
+
+/* ══ PRODUCT GRID ══ */
+.pg-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4.5mm;
+  padding:4.5mm 4.5mm 0;
+  /* height = 297mm - 13mm header - 9mm footer - 4.5mm bottom pad */
+  height:270.5mm;
+  overflow:hidden;
+}
+.card{
+  border:1px solid var(--border);
+  border-radius:3.5mm;
+  overflow:hidden;background:#fff;
+  display:flex;flex-direction:column;
+}
+.card-img{
+  flex:0 0 52mm;
+  background:var(--gold-pale);
+  overflow:hidden;position:relative;
+}
+.card-img img{
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+}
+.card-badge{
+  position:absolute;top:2.5mm;left:2.5mm;
+  background:var(--gold);color:#fff;
+  font-size:6pt;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:1.2mm 2.8mm;border-radius:20mm;
+}
+.card-body{
+  flex:1;padding:3mm 3.5mm 2.5mm;
+  display:flex;flex-direction:column;gap:1.5mm;
+}
+.card-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:10pt;font-weight:700;color:var(--ink);line-height:1.25;
+}
+.card-desc{
+  font-size:7pt;color:var(--mid);line-height:1.45;
+}
+.card-line{
+  margin-top:auto;padding-top:2mm;
+  border-top:.3mm solid var(--border);
+  font-size:6.5pt;color:var(--light);letter-spacing:.03em;
+}
+
+/* ══ PRODUCT PAGE FOOTER ══ */
+.pf{
+  position:absolute;bottom:0;left:0;right:0;height:9mm;
+  border-top:.3mm solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 8mm;
+}
+.pf-l{font-size:7pt;color:var(--light);}
+.pf-r{font-size:7pt;color:var(--gold);font-weight:600;letter-spacing:.04em;}
+
+/* ══ PRINT ══ */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  @page{size:A4 portrait;margin:0;}
+  body{background:#fff!important;}
+  #ls{display:none!important;}
+  .wrap{padding:0;gap:0;}
+  .pg{
+    box-shadow:none!important;margin:0!important;
+    page-break-after:always;break-after:page;
+  }
+  .pg:last-child{page-break-after:avoid;break-after:avoid;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="ls">
+  <div class="ls-ring">A</div>
+  <div class="ls-brand">AURANEST DECORS</div>
+  <div class="ls-sub">Preparing your catalogue…</div>
+  <div class="ls-bar"><div class="ls-fill" id="lf"></div></div>
+  <div class="ls-txt" id="lt">Loading images…</div>
+</div>
+
+<div class="wrap" id="wrap"></div>
+
+<script>
+const C='https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/';
+const A=C+'auranest/';
+const B=C+'auranest-plain/';
+
+const products=[
+  // ── DECORATIVE POTS ──
+  {name:'Ceramic Planter – Blue Leaf',       cat:'Decorative Pots',  desc:'Folk-art hand-painted ceramic planter with vibrant blue leaf motif.',             img:A+'ceramic-planter-with-blue-leaf/img1.jpg'},
+  {name:'Regal Plume Ceramic Planter',        cat:'Decorative Pots',  desc:'Tapered silhouette adorned with meadow-inspired brushwork.',                       img:A+'auranest-dcor-regal-plume-tapered-meadow-melodies-ceramic-planter/img2.jpg'},
+  {name:'Diffuser with Black Art',            cat:'Decorative Pots',  desc:'Elegant ceramic diffuser featuring intricate black art detailing.',                img:A+'defuser-with-black-art/img1.jpg'},
+  {name:'Black Buddha Face Planter',          cat:'Decorative Pots',  desc:'Serene sculptural planter inspired by classical Buddhist iconography.',            img:B+'black-buddha-face/img1.jpg'},
+  {name:'Cultural Keepsake Planter',          cat:'Decorative Pots',  desc:"Garland & flora vessel celebrating India's rich craft heritage.",                  img:A+'auranest-dcors-the-cultural-keepsake-twirling-flora-vessel-leaping-garland-ceramic-planter/img1.jpg'},
+  {name:'Ceramic Planter – Lotus Flower',     cat:'Decorative Pots',  desc:'Delicate lotus motif on a hand-thrown ceramic form.',                             img:A+'ceramic-planter-with-yellow-or-white-lotus-flower/img1.jpg'},
+  {name:'Ceramic Planter – Lady Face',        cat:'Decorative Pots',  desc:'Graceful feminine face sculpted into a distinctive planter.',                     img:A+'ceramic-planter-with-single-lady-face/img1.jpg'},
+  {name:'Ceramic Couple Figurine',            cat:'Decorative Pots',  desc:'Charming couple planter — a heartfelt gift for every home.',                      img:B+'ceramic-couple/img1.jpg'},
+  {name:'White Ceramic Elephant',             cat:'Decorative Pots',  desc:'Majestic ivory-toned ceramic elephant, a symbol of good fortune.',               img:A+'white-ceramic-elephnat/img2.jpg'},
+  {name:'Ceramic Yoga Statue',                cat:'Decorative Pots',  desc:'Mindful figurine capturing the serenity of the yoga asana.',                      img:B+'ceramic-yoga-statue/img1.jpg'},
+  {name:'Madhubani Folk Peacock Planter',     cat:'Decorative Pots',  desc:'Dancing duo planter painted in authentic Madhubani folk tradition.',              img:A+'auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg'},
+  {name:'Ceramic Couple with Heart',          cat:'Decorative Pots',  desc:'Romantic ceramic sculpture — a timeless keepsake and gift.',                      img:B+'ceramic-couple-with-heart/img1.jpg'},
+  {name:'Daily Tribal Life Planter',          cat:'Decorative Pots',  desc:'Rich tribal narrative hand-painted on a wide-mouthed planter.',                   img:'https://i.ibb.co/kg9dGqZD/5f36c3d094ca.jpg'},
+
+  // ── SERVEWARE ──
+  {name:'Wooden Round Tray – Small',          cat:'Serveware',        desc:'Compact round tray with natural grain finish and elegant side handles.',           img:B+'wooden-round-tray-small-with-handle/img3.jpg'},
+  {name:'Round Wooden Tray – Cow Art',        cat:'Serveware',        desc:'Earthy hand-painted folk art tray with sacred cow motif.',                        img:A+'round-wooden-tray-cow/img1.jpg'},
+  {name:'LF Lady with Matka',                 cat:'Serveware',        desc:'A rustic storytelling tray capturing the grace of village life.',                 img:B+'lflady-with-matka/img5.jpg'},
+  {name:'Terracotta Bowl',                    cat:'Serveware',        desc:'Handcrafted terracotta bowl — ancient craft, modern table.',                      img:A+'taracota-bowl/img1.jpg'},
+  {name:'Ceramic Plate – Orange Base',        cat:'Serveware',        desc:'Vibrant hand-painted ceramic plate with folk cow illustration.',                  img:A+'ceramic-plate-orange-base-cow/img2.jpg'},
+  {name:'LF Round Wooden Tray',               cat:'Serveware',        desc:'Natural wood serving tray with artisan-carved decorative border.',               img:B+'lfround-wooden-tray/img2.jpg'},
+  {name:'LF Wooden Moon Tray',                cat:'Serveware',        desc:'Crescent-shaped wooden tray — perfect for candles and accents.',                  img:B+'lfwooden-moon-tray/img6.jpg'},
+  {name:'LF Wooden Bowl',                     cat:'Serveware',        desc:'Smooth-finish hand-turned wooden bowl for serving or display.',                   img:B+'lfwooden-bowl/img1.jpg'},
+  {name:'Ceramic Plate – Red Base',           cat:'Serveware',        desc:'Bold red canvas with intricate hand-painted folk art.',                           img:A+'ceramic-plate-red-base-cow/img1.jpg'},
+  {name:'LF Two Lady Wooden Tray',            cat:'Serveware',        desc:'Narrative folk-art tray depicting two graceful women.',                           img:B+'lftwo-lady-on-wooden-tray/img2.jpg'},
+  {name:'LF Farming Wooden Tray',             cat:'Serveware',        desc:'Harvest-season scene beautifully illustrated on a flat wooden platter.',          img:B+'lffarming-on-wooden-tray/img5.jpg'},
+  {name:'Wooden Tray – Stripes',              cat:'Serveware',        desc:'Minimalist stripe-pattern wooden tray — versatile and modern.',                   img:A+'wooden-tray-with-stripes/img1.jpg'},
+  {name:'LF 3-Set of Trays',                  cat:'Serveware',        desc:'Nested trio of wooden trays in graduated sizes.',                                 img:B+'lf3set-of-tray/img1.jpg'},
+  {name:'Wooden Stool – 2 Step',              cat:'Serveware',        desc:'Compact two-step wooden stool — functional art for any room.',                   img:B+'wooden-stool-2-step/img10.jpg'},
+  {name:'Wooden Stool – 3 Step',              cat:'Serveware',        desc:'Three-tiered wooden step stool crafted from solid natural wood.',                 img:B+'wooden-stool-3-step/img1.jpg'},
+  {name:'Wooden Moon Tray',                   cat:'Serveware',        desc:'Dark-finish moon silhouette tray — a dramatic statement piece.',                  img:A+'wooden-moon-tray/img2.jpg'},
+  {name:'Ceramic Plate – Yellow Base',        cat:'Serveware',        desc:'Sunshine-toned ceramic plate with handcrafted cow folk motif.',                  img:A+'ceramic-plate-yellow-base-cow/img1.jpg'},
+  {name:'LF Wooden Tray – Stripes',           cat:'Serveware',        desc:'Large stripe-pattern serving tray with clean natural wood grain.',               img:B+'lfwooden-tray-with-stripes/img6.jpg'},
+  {name:'Wooden Tray – Stripes with Fish',    cat:'Serveware',        desc:'Playful fish motif adds character to this stripe wooden tray.',                  img:A+'wooden-tray-stripes-with-fish/img1.jpg'},
+  {name:'LF Wooden Heart Large Tray',         cat:'Serveware',        desc:'Heart-shaped wooden tray — gifting perfection in natural wood.',                 img:B+'lfwooden-heart-large-tray/img2.jpg'},
+
+  // ── KITCHEN TOOLS ──
+  {name:'Wooden Spatula',                     cat:'Kitchen Tools',    desc:'Hand-finished natural wood spatula — kitchen craft meets art.',                   img:A+'wooden-spatula/img1.jpg'},
+  {name:'Terracotta Kulhad',                  cat:'Kitchen Tools',    desc:'Traditional kulhad cup — the taste of clay, the warmth of home.',               img:A+'taracota-kulladh/img1.jpg'},
+  {name:'LF Masala Box – 9 Sections',         cat:'Kitchen Tools',    desc:'Compact spice organiser with 9 individual compartments.',                         img:B+'lfmasala-box-with-9-boxex/img1.jpg'},
+  {name:'LF Wooden Masala Box – 12 Sections', cat:'Kitchen Tools',    desc:'12-section spice box with wooden lid and serving spoon.',                         img:B+'lfwooden-masala-box-12-section-spoon/img1.jpg'},
+  {name:'Wooden Spice Box – Diamond',         cat:'Kitchen Tools',    desc:'Geometric diamond-cut spice box — functional and decorative.',                   img:B+'wooden-spice-box-diamond-shape/img1.jpg'},
+
+  // ── HOME & KITCHEN ──
+  {name:'LF Green Jharokhe Mirror',           cat:'Home & Kitchen',   desc:'Intricately carved Jharokha frame with forest-green accents.',                   img:B+'lfgreen-jharokhe/img3.jpg'},
+  {name:'Rectangular Brown Jharokha',         cat:'Home & Kitchen',   desc:'Warm brown rectangular Jharokha mirror — statement wall art.',                   img:A+'jharokha-rectangl-brown/img1.jpg'},
+  {name:'LF Blue Jharokhe Mirror',            cat:'Home & Kitchen',   desc:'Royal blue Jharokha frame with delicate latticework detailing.',                 img:B+'lfblue-jharokhe/img1.jpg'},
+  {name:'LF Pizza Platter',                   cat:'Home & Kitchen',   desc:'Rustic large wooden platter perfect for pizza or charcuterie.',                  img:B+'lfpizza-platter/img2.jpg'},
+  {name:'Wooden Coaster',                     cat:'Home & Kitchen',   desc:'Hand-finished wooden coasters — protect surfaces beautifully.',                  img:B+'wooden-coster/img2.jpg'},
+  {name:'LF Oval Shape Tray',                 cat:'Home & Kitchen',   desc:'Elegant oval wooden tray for styling and daily serving.',                        img:B+'lfoval-shape-tray/img6.jpg'},
+  {name:'LF Small Turtle Stool',              cat:'Home & Kitchen',   desc:'Whimsical carved turtle stool — playful accent for any nook.',                   img:'https://i.ibb.co/HDpVzPJN/4ffbf6730640.png'},
+  {name:'LF Spatula Set',                     cat:'Home & Kitchen',   desc:'Complete wooden spatula set — artisan kitchen essentials.',                      img:B+'lfspatula-set/img1.jpg'},
+
+  // ── AURA DÉCOR ──
+  {name:'Bloom-O-Saurus Ceramic Showpiece',   cat:'Aura Décor',       desc:'Botanical dinosaur figurine — nature and whimsy in ceramic art.',               img:A+'auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg'},
+  {name:'Terracotta Natural Handiya',         cat:'Aura Décor',       desc:'Traditional terracotta storage jar with tribal art motifs.',                     img:A+'taracota-natural-clr-handiya/img1.jpg'},
+  {name:'Tribal Echo Ceramic Planter',        cat:'Aura Décor',       desc:'Warli-art ceramic planter — ancient tribal voice in modern form.',               img:A+'auranest-dcor-tribal-echo-prism-plumage-vessel-ceramic-warriart-planter/img1.jpg'},
+
+  // ── WALL DÉCOR ──
+  {name:'Key Holder – Stripes',               cat:'Wall Décor',       desc:'Minimal stripe-pattern wooden key holder for your entryway.',                    img:A+'key-holder-with-stripes-wooden/img1.jpg'},
+  {name:'Blue Jharokhe Mirror',               cat:'Wall Décor',       desc:'Ornate blue palace-window mirror — a royal touch for any wall.',                 img:B+'lfblue-jharokhe/img1.jpg'},
+  {name:'Brown Jharokhe Mirror',              cat:'Wall Décor',       desc:'Rich mahogany-toned Jharokha wall mirror with carved detail.',                   img:B+'brown-jharokhe/img1.jpg'},
+  {name:'LF Brown Jharokhe',                  cat:'Wall Décor',       desc:'Large-format brown Jharokha mirror — dramatic focal point piece.',               img:B+'lfbrown-jharokhe/img2.jpg'},
+  {name:'LF Key Holder – Stripes',            cat:'Wall Décor',       desc:'Stripe-pattern wooden key hook board for stylish organisation.',                 img:B+'lfkey-holder-with-stripes/img1.jpg'},
+  {name:'Wooden Round Tray – Lady with Deer', cat:'Wall Décor',       desc:'Folk art platter depicting a lady with deer in painted detail.',                 img:A+'wooden-round-tray-lady-with-deer/img1.jpg'},
+  {name:'Wooden Round Tray – Large',          cat:'Wall Décor',       desc:'Generous round tray with side handles — for serving or display.',               img:B+'wooden-round-tray-large-with-handle/img4.jpg'},
+  {name:'LF Wooden Round Tray – Large',       cat:'Wall Décor',       desc:'Oversized folk-art wooden tray — doubles as stunning wall décor.',              img:B+'lfwooden-round-tray-large/img2.jpg'},
+  {name:'Mayura Live-Edge Peacock Platter',   cat:'Wall Décor',       desc:'Live-edge wooden platter with majestic peacock art in rich hues.',              img:'https://i.ibb.co/Cpvr5p5R/3-set-of-stool-2.jpg'},
+];
+
+const PERPAGE = 6;
+const TOTALPG = Math.ceil(products.length / PERPAGE);
+const wrap    = document.getElementById('wrap');
+const cornerSVG = `<svg viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="22" cy="22" rx="12" ry="52" transform="rotate(45 22 22)" fill="#b8934a" fill-opacity=".9"/>
+  <ellipse cx="10" cy="36" rx="10" ry="44" transform="rotate(22 10 36)" fill="#d4a85c" fill-opacity=".7"/>
+  <ellipse cx="36" cy="10" rx="9"  ry="42" transform="rotate(68 36 10)" fill="#c49330" fill-opacity=".75"/>
+  <ellipse cx="4"  cy="44" rx="7"  ry="36" transform="rotate(10  4 44)" fill="#e0b852" fill-opacity=".5"/>
+  <ellipse cx="44" cy="4"  rx="7"  ry="36" transform="rotate(80 44  4)" fill="#c49330" fill-opacity=".5"/>
+  <circle  cx="90" cy="90" r="5"   fill="#b8934a" fill-opacity=".35"/>
+  <circle  cx="104" cy="76" r="3.5" fill="#d4a85c" fill-opacity=".3"/>
+  <path d="M2 2 Q52 52 112 112" stroke="#b88328" stroke-width="1.6" fill="none" stroke-opacity=".28"/>
+</svg>`;
+
+/* ── COVER PAGE ── */
+const cover = document.createElement('div');
+cover.className = 'pg cover';
+cover.innerHTML = `
+  <div class="cv-corner tl">${cornerSVG}</div>
+  <div class="cv-corner tr">${cornerSVG}</div>
+  <div class="cv-corner bl">${cornerSVG}</div>
+  <div class="cv-corner br">${cornerSVG}</div>
+  <div style="position:relative;z-index:1;text-align:center;padding:0 22mm;">
+    <div class="cv-logo">A</div>
+    <div class="cv-brand">AURANEST DECORS</div>
+    <div class="cv-line"></div>
+    <div class="cv-yr">Product Catalogue &nbsp;·&nbsp; 2026</div>
+    <div class="cv-tag">Handcrafted &nbsp;·&nbsp; Soulful &nbsp;·&nbsp; Timeless</div>
+    <div class="cv-chips">
+      <div class="cv-chip">Decorative Pots</div>
+      <div class="cv-chip">Serveware</div>
+      <div class="cv-chip">Kitchen Tools</div>
+      <div class="cv-chip">Home &amp; Kitchen</div>
+      <div class="cv-chip">Aura Décor</div>
+      <div class="cv-chip">Wall Décor</div>
+    </div>
+    <div class="cv-count" style="color:#5a5550;font-size:10pt;">
+      <span style="color:#b8934a;font-size:22pt;font-family:'Cormorant Garamond',serif;font-weight:700;display:block;margin-bottom:3mm;">${products.length}</span>
+      Artisan Crafted Products
+    </div>
+  </div>
+  <div class="cv-foot">
+    <span>www.auranestdecors.com</span> &nbsp;&nbsp;
+    <span style="color:rgba(184,147,74,.5);">|</span> &nbsp;&nbsp;
+    <span>+91 99977 30768</span> &nbsp;&nbsp;
+    <span style="color:rgba(184,147,74,.5);">|</span> &nbsp;&nbsp;
+    <span>info@auranestdecors.com</span>
+  </div>`;
+wrap.appendChild(cover);
+
+/* ── PRODUCT PAGES ── */
+for (let i = 0; i < products.length; i += PERPAGE) {
+  const chunk  = products.slice(i, i + PERPAGE);
+  const pgNum  = Math.floor(i / PERPAGE) + 1;
+  const pg     = document.createElement('div');
+  pg.className = 'pg';
+
+  const cards = chunk.map(p => `
+    <div class="card">
+      <div class="card-img">
+        <img src="${p.img}" alt="${p.name}" loading="eager"/>
+        <span class="card-badge">${p.cat}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-line">auranestdecors.com</div>
+      </div>
+    </div>`).join('');
+
+  pg.innerHTML = `
+    <div class="ph">
+      <div class="ph-brand">AURANEST DECORS</div>
+      <div class="ph-right">Product Catalogue 2026</div>
+    </div>
+    <div class="pg-grid">${cards}</div>
+    <div class="pf">
+      <div class="pf-l">Handcrafted by Indian Artisans &nbsp;·&nbsp; auranestdecors.com</div>
+      <div class="pf-r">Page ${pgNum} / ${TOTALPG}</div>
+    </div>`;
+  wrap.appendChild(pg);
+}
+
+/* ── WAIT FOR ALL IMAGES → PRINT ── */
+const imgs  = Array.from(document.querySelectorAll('.card-img img'));
+const total = imgs.length;
+let loaded  = 0;
+let fired   = false;
+const fillEl = document.getElementById('lf');
+const txtEl  = document.getElementById('lt');
+
+function tick() {
+  loaded++;
+  const pct = Math.round(loaded / total * 100);
+  fillEl.style.width = pct + '%';
+  txtEl.textContent  = loaded + ' / ' + total + ' images ready…';
+  if (loaded >= total && !fired) go();
+}
+
+function go() {
+  fired = true;
+  txtEl.textContent = 'Opening print dialog…';
+  setTimeout(() => {
+    document.getElementById('ls').style.display = 'none';
+    window.print();
+    /* restore loading screen so user can re-print */
+    document.getElementById('ls').style.display = 'flex';
+    txtEl.textContent = 'Done! Press Ctrl+P to print again.';
+  }, 700);
+}
+
+imgs.forEach(img => {
+  if (img.complete && img.naturalWidth > 0) { tick(); }
+  else {
+    img.addEventListener('load',  tick, {once:true});
+    img.addEventListener('error', tick, {once:true});
+  }
+});
+
+/* safety net — force print after 22 s */
+setTimeout(() => { if (!fired) go(); }, 22000);
+</script>
+</body>
+</html>

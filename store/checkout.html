@@ -9,21 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
-<!-- Firebase compat SDK (synchronous globals — no async module timing issues) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey:            'AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk',
-  authDomain:        'auranest-decors.firebaseapp.com',
-  projectId:         'auranest-decors',
-  storageBucket:     'auranest-decors.firebasestorage.app',
-  messagingSenderId: '55244789649',
-  appId:             '1:55244789649:web:0aab804a8933ce0cf6ec30'
-});
-window._fbAuth = firebase.auth();
-</script>
-
 <!-- React UMD + Babel for in-browser JSX transpilation -->
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -154,8 +139,6 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 </style>
 </head>
 <body>
-<!-- Invisible reCAPTCHA anchor for Firebase Phone Auth -->
-<div id="recaptcha-container" style="position:fixed;bottom:0;right:0;z-index:9999"></div>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -422,19 +405,18 @@ function CartPage({ cart, setCart, onNext }) {
   );
 }
 
-/* ─── OTP MODAL — Firebase Phone Auth ───────────────────── */
+/* ─── OTP MODAL — Serverless (Fast2SMS + HMAC token, no Firebase billing needed) ─── */
 function OTPModal({ onVerified, onGuest }) {
-  const [phase, setPhase]       = useState('phone');
-  const [phone, setPhone]       = useState('');
-  const [otp, setOtp]           = useState(['','','','','','']); // Firebase sends 6-digit OTP
-  const [timer, setTimer]       = useState(0);
-  const [loading, setLoading]   = useState(false);
-  const [err, setErr]           = useState('');
-  const confirmRef              = useRef(null);  // Firebase ConfirmationResult
-  const recaptchaRef            = useRef(null);  // RecaptchaVerifier instance
+  const [phase, setPhase]   = useState('phone');
+  const [phone, setPhone]   = useState('');
+  const [otp, setOtp]       = useState(['','','','','','']);
+  const [timer, setTimer]   = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr]       = useState('');
+  const tokenRef            = useRef('');  // HMAC-signed token from /api/send-otp
   const refs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
-  /* Start countdown when OTP phase begins */
+  /* Countdown once OTP phase starts */
   useEffect(() => {
     if (phase !== 'otp') return;
     setTimer(60);
@@ -443,31 +425,21 @@ function OTPModal({ onVerified, onGuest }) {
     return () => clearInterval(id);
   }, [phase]);
 
-  /* Set up invisible reCAPTCHA (once) using compat API */
-  const setupRecaptcha = () => {
-    if (recaptchaRef.current) return;
-    recaptchaRef.current = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-      size: 'invisible',
-      callback: () => {}
-    });
-  };
-
   const sendOTP = async () => {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
     try {
-      setupRecaptcha();
-      confirmRef.current = await window._fbAuth.signInWithPhoneNumber('+91' + phone, recaptchaRef.current);
+      const res  = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+      tokenRef.current = data.token;
       setPhase('otp');
     } catch (e) {
-      recaptchaRef.current?.clear();
-      recaptchaRef.current = null;
-      const msg = e.code === 'auth/invalid-phone-number'  ? 'Invalid phone number. Check and retry.'
-                : e.code === 'auth/too-many-requests'      ? 'Too many attempts. Please try later.'
-                : e.code === 'auth/captcha-check-failed'   ? 'reCAPTCHA failed. Please reload the page.'
-                : e.code === 'auth/unauthorized-domain'    ? 'Domain not authorised in Firebase.'
-                : `Error: ${e.code || e.message}`;
-      setErr(msg);
+      setErr(e.message || 'Could not send OTP. Please try again.');
     } finally { setLoading(false); }
   };
 
@@ -487,14 +459,16 @@ function OTPModal({ onVerified, onGuest }) {
     if (code.length < 6) { setErr('Enter the 6-digit OTP'); return; }
     setErr(''); setLoading(true);
     try {
-      await confirmRef.current.confirm(code);  // compat ConfirmationResult
+      const res  = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: tokenRef.current, otp: code }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Verification failed');
       onVerified(phone);
     } catch (e) {
-      setErr(
-        e.code === 'auth/invalid-verification-code' ? 'Wrong OTP. Please check and retry.'
-        : e.code === 'auth/code-expired'            ? 'OTP expired. Please resend.'
-        : `Error: ${e.code || e.message}`
-      );
+      setErr(e.message || 'Verification failed. Please try again.');
     } finally { setLoading(false); }
   };
 
@@ -502,8 +476,7 @@ function OTPModal({ onVerified, onGuest }) {
     setPhase('phone');
     setOtp(['','','','','','']);
     setErr('');
-    recaptchaRef.current?.clear();
-    recaptchaRef.current = null;
+    tokenRef.current = '';
   };
 
   return (
