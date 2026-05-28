@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Auranest Decors — Store Images</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0e0c09;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 36px 20px 80px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.lbl {
+  color: #c49330; font-size: 9px; letter-spacing: 0.24em;
+  text-transform: uppercase; margin-bottom: 6px;
+  align-self: flex-start; width: 1080px; max-width: 100%;
+}
+.hint {
+  color: #444; font-size: 9.5px; margin-bottom: 10px;
+  align-self: flex-start; width: 1080px; max-width: 100%;
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════
+   IMAGE 1 — STORE EXTERIOR / SIGNBOARD
+   1080 × 720
+══════════════════════════════════════════ */
+.exterior {
+  width: 1080px;
+  height: 720px;
+  background: #1a1208;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Warm wood texture background */
+.ext-bg {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(139,90,43,0.04) 0px, rgba(139,90,43,0.04) 1px,
+      transparent 1px, transparent 60px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(139,90,43,0.03) 0px, rgba(139,90,43,0.03) 1px,
+      transparent 1px, transparent 40px
+    ),
+    linear-gradient(160deg, #1e1408 0%, #120e06 50%, #1a1208 100%);
+}
+
+/* Large decorative arch/doorway */
+.ext-arch {
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 360px; height: 500px;
+  border: 3px solid rgba(196,147,48,0.35);
+  border-bottom: none;
+  border-radius: 180px 180px 0 0;
+}
+.ext-arch-inner {
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 320px; height: 460px;
+  border: 1px solid rgba(196,147,48,0.18);
+  border-bottom: none;
+  border-radius: 160px 160px 0 0;
+}
+
+/* Product display inside arch */
+.ext-products {
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 310px; height: 420px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 4px;
+  padding: 24px 20px 0;
+}
+.ext-prod-cell {
+  background: rgba(26,18,8,0.8);
+  border: 1px solid rgba(196,147,48,0.2);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px;
+}
+.ext-prod-cell img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+
+/* Left wall display */
+.ext-wall-left {
+  position: absolute;
+  left: 60px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 14px;
+  align-items: center;
+}
+.ext-wall-item {
+  width: 140px; height: 140px;
+  background: rgba(26,18,8,0.9);
+  border: 1px solid rgba(196,147,48,0.25);
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+}
+.ext-wall-item img {
+  width: 100%; height: 100%; object-fit: contain;
+}
+
+/* Right wall display */
+.ext-wall-right {
+  position: absolute;
+  right: 60px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 14px;
+  align-items: center;
+}
+
+/* Hanging lights */
+.lights {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 80px;
+  padding-top: 0;
+}
+.light-string {
+  display: flex; flex-direction: column; align-items: center;
+}
+.light-cord {
+  width: 1px; background: rgba(196,147,48,0.4);
+}
+.light-bulb {
+  width: 14px; height: 20px;
+  background: radial-gradient(ellipse at 50% 30%, #fffae0 0%, #f0c84a 40%, #c49330 100%);
+  border-radius: 7px 7px 5px 5px;
+  box-shadow: 0 0 20px 8px rgba(240,200,74,0.35), 0 0 40px 16px rgba(196,147,48,0.15);
+}
+
+/* Top signboard */
+.ext-signboard {
+  position: absolute;
+  top: 48px; left: 50%; transform: translateX(-50%);
+  background: rgba(8,5,2,0.9);
+  border: 2px solid rgba(196,147,48,0.6);
+  padding: 18px 60px 16px;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 10;
+}
+.ext-signboard::before, .ext-signboard::after {
+  content: '◆';
+  position: absolute; top: 50%; transform: translateY(-50%);
+  color: #c49330; font-size: 12px;
+}
+.ext-signboard::before { left: 14px; }
+.ext-signboard::after  { right: 14px; }
+.ext-sign-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; font-weight: 400;
+  letter-spacing: 0.22em; color: #fff;
+  text-transform: uppercase; line-height: 1;
+}
+.ext-sign-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  color: rgba(196,147,48,0.8); margin-top: 5px;
+  letter-spacing: 0.08em;
+}
+
+/* Floor address strip */
+.ext-address {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 54px;
+  background: rgba(8,5,2,0.92);
+  border-top: 1px solid rgba(196,147,48,0.35);
+  display: flex; align-items: center;
+  justify-content: center; gap: 28px;
+  z-index: 10;
+}
+.ext-addr-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 500;
+  color: rgba(196,147,48,0.8); letter-spacing: 0.08em;
+}
+.ext-addr-dot {
+  width: 3px; height: 3px;
+  background: rgba(196,147,48,0.35); border-radius: 50%;
+}
+
+/* Gold corner ornaments */
+.gc {
+  position: absolute; width: 40px; height: 40px;
+  border-color: rgba(196,147,48,0.5); border-style: solid;
+  z-index: 5;
+}
+.gc.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+.gc.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
+.gc.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; }
+.gc.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
+
+/* ══════════════════════════════════════════
+   IMAGE 2 — INTERIOR / STUDIO WORKSPACE
+   1080 × 720
+══════════════════════════════════════════ */
+.interior {
+  width: 1080px;
+  height: 720px;
+  background: #f5efe4;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Warm cream wall */
+.int-wall {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, #ede4d4 0%, #f5efe4 40%, #ede4d4 100%);
+}
+/* Wall texture lines */
+.int-wall::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(139,100,50,0.04) 0, rgba(139,100,50,0.04) 1px,
+      transparent 1px, transparent 120px
+    );
+}
+
+/* Wooden floor */
+.int-floor {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 220px;
+  background: linear-gradient(180deg, #8B5E3C 0%, #6B4423 100%);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.12) 0, rgba(0,0,0,0.12) 1px,
+      transparent 1px, transparent 80px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 1px,
+      transparent 1px, transparent 20px
+    );
+}
+
+/* Floor–wall seam */
+.int-baseboard {
+  position: absolute;
+  bottom: 218px; left: 0; right: 0;
+  height: 16px;
+  background: #5a3820;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ── BACK WALL: product shelf display ── */
+.int-shelf-unit {
+  position: absolute;
+  top: 80px; left: 50%; transform: translateX(-50%);
+  width: 700px;
+  display: flex; flex-direction: column; gap: 0;
+}
+
+/* Each shelf row */
+.shelf-row {
+  display: flex;
+  gap: 0;
+  position: relative;
+  margin-bottom: 8px;
+}
+.shelf-board {
+  width: 100%; height: 14px;
+  background: linear-gradient(180deg, #8B5E3C 0%, #6B4423 100%);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  border-radius: 2px;
+}
+
+/* Items on shelf */
+.shelf-items {
+  display: flex;
+  gap: 16px;
+  padding: 10px 20px 0;
+  justify-content: center;
+  min-height: 120px;
+  align-items: flex-end;
+}
+.shelf-item {
+  display: flex; align-items: flex-end; justify-content: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+.shelf-item img {
+  object-fit: contain;
+  object-position: bottom;
+  display: block;
+}
+
+/* ── SIDE WALL: jharokha hanging ── */
+.int-jharokha-left {
+  position: absolute;
+  left: 60px; top: 100px;
+  width: 200px; height: 260px;
+  border: 3px solid rgba(139,90,43,0.6);
+  border-radius: 100px 100px 0 0;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.int-jharokha-left img {
+  width: 100%; height: 100%; object-fit: contain; padding: 12px;
+}
+
+.int-jharokha-right {
+  position: absolute;
+  right: 60px; top: 100px;
+  width: 200px; height: 260px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.int-jharokha-right img {
+  width: 100%; height: 100%; object-fit: contain;
+}
+
+/* ── FLOOR ITEMS ── */
+.int-floor-items {
+  position: absolute;
+  bottom: 220px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 24px; align-items: flex-end;
+}
+.floor-item {
+  width: 110px; height: 130px;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.floor-item img {
+  width: 100%; height: 100%; object-fit: contain; object-position: bottom;
+}
+
+/* ── Brand signage on wall ── */
+.int-sign {
+  position: absolute;
+  top: 26px; left: 50%; transform: translateX(-50%);
+  text-align: center; white-space: nowrap;
+}
+.int-sign-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400;
+  letter-spacing: 0.28em; color: #3a2510;
+  text-transform: uppercase;
+}
+.int-sign-rule {
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, transparent, #c49330, transparent);
+  margin: 6px auto;
+}
+.int-sign-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: #8a6030; letter-spacing: 0.1em;
+}
+
+/* Address label bottom */
+.int-address {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 50px;
+  background: rgba(30,16,6,0.88);
+  display: flex; align-items: center;
+  justify-content: center; gap: 22px;
+  z-index: 10;
+}
+.int-addr-item {
+  font-size: 11px; font-weight: 500;
+  color: rgba(196,147,48,0.85); letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: 6px;
+}
+.int-addr-dot {
+  width: 3px; height: 3px;
+  background: rgba(196,147,48,0.35); border-radius: 50%;
+}
+
+/* Gold frame corners for interior */
+.igc {
+  position: absolute; width: 36px; height: 36px;
+  border-color: rgba(196,147,48,0.45); border-style: solid;
+  z-index: 6;
+}
+.igc.tl { top: 14px; left: 14px; border-width: 2px 0 0 2px; }
+.igc.tr { top: 14px; right: 14px; border-width: 2px 2px 0 0; }
+.igc.bl { bottom: 14px; left: 14px; border-width: 0 0 2px 2px; }
+.igc.br { bottom: 14px; right: 14px; border-width: 0 2px 2px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     IMAGE 1 — STORE EXTERIOR / SIGNBOARD
+     Screenshot: 1080 × 720
+     Upload as: "Exterior" photo
+══════════════════════════════════════════ -->
+<div class="lbl">Image 1 — Store Exterior (1080×720) · Upload as "Exterior" photo</div>
+<div class="hint">Win+Shift+S → drag to select exactly this panel</div>
+
+<div class="exterior">
+  <div class="ext-bg"></div>
+
+  <!-- Corner brackets -->
+  <div class="gc tl"></div><div class="gc tr"></div>
+  <div class="gc bl"></div><div class="gc br"></div>
+
+  <!-- Hanging lights -->
+  <div class="lights">
+    <div class="light-string">
+      <div class="light-cord" style="height:60px"></div>
+      <div class="light-bulb"></div>
+    </div>
+    <div class="light-string">
+      <div class="light-cord" style="height:40px"></div>
+      <div class="light-bulb"></div>
+    </div>
+    <div class="light-string">
+      <div class="light-cord" style="height:70px"></div>
+      <div class="light-bulb"></div>
+    </div>
+    <div class="light-string">
+      <div class="light-cord" style="height:45px"></div>
+      <div class="light-bulb"></div>
+    </div>
+    <div class="light-string">
+      <div class="light-cord" style="height:55px"></div>
+      <div class="light-bulb"></div>
+    </div>
+  </div>
+
+  <!-- Signboard -->
+  <div class="ext-signboard">
+    <div class="ext-sign-name">Auranest Decors</div>
+    <div class="ext-sign-tag">"Feel the Beauty of Home"</div>
+  </div>
+
+  <!-- Left wall products -->
+  <div class="ext-wall-left">
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfgreen-jharokhe/img3.jpg" alt="Jharokha"/>
+    </div>
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-blue-leaf/img1.jpg" alt="Planter"/>
+    </div>
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-moon-tray/img2.jpg" alt="Moon Tray"/>
+    </div>
+  </div>
+
+  <!-- Right wall products -->
+  <div class="ext-wall-right">
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg" alt="Brown Jharokha"/>
+    </div>
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg" alt="Figurine"/>
+    </div>
+    <div class="ext-wall-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg" alt="Wooden Tray"/>
+    </div>
+  </div>
+
+  <!-- Arch with product display -->
+  <div class="ext-arch"></div>
+  <div class="ext-arch-inner"></div>
+  <div class="ext-products">
+    <div class="ext-prod-cell">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-bowl/img1.jpg" alt="Terracotta"/>
+    </div>
+    <div class="ext-prod-cell">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Madhubani"/>
+    </div>
+    <div class="ext-prod-cell">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lf3set-of-tray/img1.jpg" alt="Tray Set"/>
+    </div>
+    <div class="ext-prod-cell">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-yellow-or-white-lotus-flower/img1.jpg" alt="Lotus Planter"/>
+    </div>
+  </div>
+
+  <!-- Address strip -->
+  <div class="ext-address">
+    <div class="ext-addr-item">📍 Shatabdi Nagar, Meerut, Uttar Pradesh</div>
+    <div class="ext-addr-dot"></div>
+    <div class="ext-addr-item">📞 +91 86792 12984</div>
+    <div class="ext-addr-dot"></div>
+    <div class="ext-addr-item">🌐 auranestdecors.com</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     IMAGE 2 — STORE INTERIOR / STUDIO
+     Screenshot: 1080 × 720
+     Upload as: "Interior" photo
+══════════════════════════════════════════ -->
+<div class="lbl">Image 2 — Store Interior (1080×720) · Upload as "Interior" photo</div>
+<div class="hint">Win+Shift+S → drag to select exactly this panel</div>
+
+<div class="interior">
+  <div class="int-wall"></div>
+  <div class="int-floor"></div>
+  <div class="int-baseboard"></div>
+
+  <!-- Corner brackets -->
+  <div class="igc tl"></div><div class="igc tr"></div>
+  <div class="igc bl"></div><div class="igc br"></div>
+
+  <!-- Brand sign on wall -->
+  <div class="int-sign">
+    <div class="int-sign-name">Auranest Decors</div>
+    <div class="int-sign-rule"></div>
+    <div class="int-sign-tag">Handcrafted · Wooden · Premium</div>
+  </div>
+
+  <!-- Left Jharokha wall hanging -->
+  <div class="int-jharokha-left">
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfblue-jharokhe/img1.jpg" alt="Blue Jharokha"/>
+  </div>
+
+  <!-- Right Jharokha wall hanging -->
+  <div class="int-jharokha-right">
+    <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg" alt="Brown Jharokha"/>
+  </div>
+
+  <!-- Shelf unit with products -->
+  <div class="int-shelf-unit">
+    <!-- Top shelf -->
+    <div class="shelf-row">
+      <div class="shelf-items">
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg"
+               alt="Figurine" style="width:80px;height:100px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-blue-leaf/img1.jpg"
+               alt="Blue Leaf Planter" style="width:90px;height:110px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg"
+               alt="Peacock Planter" style="width:90px;height:110px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-planter-with-yellow-or-white-lotus-flower/img1.jpg"
+               alt="Lotus Planter" style="width:80px;height:100px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-natural-clr-handiya/img1.jpg"
+               alt="Terracotta Handiya" style="width:80px;height:105px"/>
+        </div>
+      </div>
+    </div>
+    <div class="shelf-board"></div>
+
+    <!-- Bottom shelf -->
+    <div class="shelf-row" style="margin-top:14px">
+      <div class="shelf-items">
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg"
+               alt="Cow Tray" style="width:110px;height:90px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-moon-tray/img2.jpg"
+               alt="Moon Tray" style="width:110px;height:90px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lf3set-of-tray/img1.jpg"
+               alt="3 Set Tray" style="width:120px;height:90px"/>
+        </div>
+        <div class="shelf-item">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/ceramic-plate-orange-base-cow/img2.jpg"
+               alt="Ceramic Plate" style="width:100px;height:90px"/>
+        </div>
+      </div>
+    </div>
+    <div class="shelf-board"></div>
+  </div>
+
+  <!-- Floor products -->
+  <div class="int-floor-items">
+    <div class="floor-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-bowl/img1.jpg" alt="Terracotta Bowl"/>
+    </div>
+    <div class="floor-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/wooden-stool-2-step/img10.jpg" alt="Wooden Stool"/>
+    </div>
+    <div class="floor-item">
+      <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-tribal-echo-prism-plumage-vessel-ceramic-warriart-planter/img1.jpg" alt="Tribal Planter"/>
+    </div>
+  </div>
+
+  <!-- Address bottom -->
+  <div class="int-address">
+    <div class="int-addr-item">📍 Shatabdi Nagar, Meerut, Uttar Pradesh</div>
+    <div class="int-addr-dot"></div>
+    <div class="int-addr-item">📞 +91 86792 12984</div>
+    <div class="int-addr-dot"></div>
+    <div class="int-addr-item">🌐 auranestdecors.com</div>
+  </div>
+</div>
+
+</body>
+</html>
