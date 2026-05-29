@@ -647,6 +647,7 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
         <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
         <button class="btn-export" onclick="exportProductsCSV()" title="Export all products to CSV — edit in Excel, re-upload to update">⬇ Export CSV</button>
+        <button class="btn-export" style="border-color:var(--blue);color:var(--blue)" onclick="exportImageReview()" title="Download HTML file — open in browser to see all product photos">🖼️ Image Review</button>
       </div>
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
@@ -1692,67 +1693,33 @@ window.exportProductsCSV = function() {
     const s = (v === null || v === undefined) ? '' : String(v);
     return '"' + s.replace(/"/g, '""') + '"';
   };
-  // Formula cells: wrap in quotes AND double internal quotes
-  // Google Sheets still evaluates =IMAGE(...) as a formula even when CSV-quoted
-  const formula = f => f ? '"' + f.replace(/"/g, '""') + '"' : '""';
 
-  // Columns:
-  // FirebaseID | ImagePreview (=IMAGE formula → renders in Google Sheets) |
-  // Name | PartNumber | Category | SubCategory | Price | MRP |
-  // Material | Color | Size | Tag | Stock | Description |
-  // ImageLink (raw URL for reference) | Image2 | Image3 | Image4 | Image5
-  const headers = [
-    esc('FirebaseID'),
-    esc('📷 ImagePreview (open in Google Sheets to see photo)'),
-    esc('Name'),
-    esc('PartNumber'),
-    esc('Category'),
-    esc('SubCategory'),
-    esc('Price'),
-    esc('MRP'),
-    esc('Material'),
-    esc('Color'),
-    esc('Size'),
-    esc('Tag'),
-    esc('Stock'),
-    esc('Description'),
-    esc('Image1'),
-    esc('Image2'),
-    esc('Image3'),
-    esc('Image4'),
-    esc('Image5'),
-  ].join(',');
+  const headers = ['FirebaseID','Name','PartNumber','Category','SubCategory',
+                   'Price','MRP','Material','Color','Size','Tag','Stock',
+                   'Description','Image1','Image2','Image3','Image4','Image5'];
 
   const rows = all.map(p => {
     const imgs = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
-    const img1 = imgs[0] || '';
-    // =IMAGE("url",1) → fit image inside cell in Google Sheets
-    const preview = img1 ? `=IMAGE("${img1.replace(/"/g, '""')}",1)` : '';
     return [
-      esc(p.id),
-      formula(preview),      // raw formula — Google Sheets renders as real image
-      esc(p.name        || ''),
-      esc(p.partNumber  || ''),
-      esc(p.category    || ''),
-      esc(p.subCategory || ''),
-      esc(p.price       || 0),
-      esc(p.mrp         || p.price || 0),
-      esc(p.material    || ''),
-      esc(p.color       || ''),
-      esc(p.size        || ''),
-      esc(p.tag         || ''),
-      esc(p.stock       ?? 0),
-      esc(p.description || ''),
-      esc(img1),
-      esc(imgs[1] || ''),
-      esc(imgs[2] || ''),
-      esc(imgs[3] || ''),
-      esc(imgs[4] || ''),
-    ].join(',');
+      p.id,
+      p.name        || '',
+      p.partNumber  || '',
+      p.category    || '',
+      p.subCategory || '',
+      p.price       || 0,
+      p.mrp         || p.price || 0,
+      p.material    || '',
+      p.color       || '',
+      p.size        || '',
+      p.tag         || '',
+      p.stock       ?? 0,
+      p.description || '',
+      imgs[0]||'', imgs[1]||'', imgs[2]||'', imgs[3]||'', imgs[4]||'',
+    ].map(esc).join(',');
   });
 
-  // UTF-8 BOM ensures Excel/Sheets opens special characters correctly
-  const csv = '﻿' + [headers, ...rows].join('\r\n');
+  // UTF-8 BOM ensures Excel opens special chars correctly
+  const csv = '﻿' + [headers.map(esc).join(','), ...rows].join('\r\n');
   const today = new Date().toISOString().slice(0, 10);
   const fname = `auranest_products_${today}.csv`;
 
@@ -1760,7 +1727,78 @@ window.exportProductsCSV = function() {
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = fname;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  showToast(`✅ ${all.length} products exported → open in Google Sheets to see product images!`);
+  showToast(`✅ ${all.length} products exported to ${fname}`);
+};
+
+// ── IMAGE REVIEW HTML EXPORT ─────────────────────────────────
+window.exportImageReview = function() {
+  const all = window.$products || [];
+  if (!all.length) { showToast('⚠️ No products loaded yet'); return; }
+
+  const tableRows = all.map((p, i) => {
+    const imgs  = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
+    const img1  = imgs[0] || '';
+    const thumb = img1
+      ? `<img src="${img1}" style="width:90px;height:90px;object-fit:contain;background:#f5ede0;border-radius:6px;display:block" onerror="this.replaceWith('—')"/>`
+      : '<span style="color:#bbb;font-size:11px">No image</span>';
+    return `<tr>
+      <td style="color:#aaa;font-size:12px">${i+1}</td>
+      <td>${thumb}</td>
+      <td><strong style="font-size:14px">${(p.name||'').replace(/</g,'&lt;')}</strong><br>
+          <span style="font-size:11px;color:#aaa">${p.partNumber||''}</span></td>
+      <td style="font-size:12px">${p.category||''}</td>
+      <td style="font-size:12px;color:#888">${p.subCategory||''}</td>
+      <td style="color:#9a6f28;font-weight:600">₹${(p.price||0).toLocaleString('en-IN')}</td>
+      <td style="font-size:12px">${p.stock??0}</td>
+      <td style="font-size:10px;color:#ccc;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.id}">${p.id}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Auranest Image Review — ${new Date().toLocaleDateString('en-IN')}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f0e8;color:#1c1510;padding:24px}
+  h1{font-size:1.5rem;color:#9a6f28;margin-bottom:4px}
+  .sub{font-size:13px;color:#888;margin-bottom:20px}
+  .tip{background:#fff8e8;border:1px solid rgba(154,111,40,.25);border-left:3px solid #9a6f28;
+       padding:10px 14px;font-size:12px;color:#7a6040;margin-bottom:20px;border-radius:2px}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;
+        box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  thead th{background:#9a6f28;color:#fff;padding:10px 14px;text-align:left;font-size:11px;
+           letter-spacing:.06em;text-transform:uppercase;position:sticky;top:0}
+  td{padding:10px 14px;border-bottom:1px solid #f0e8dc;vertical-align:middle}
+  tr:hover td{background:#fdf8f0}
+  tr:last-child td{border-bottom:none}
+</style>
+</head>
+<body>
+<h1>🏡 Auranest Decors — Product Image Review</h1>
+<p class="sub">Generated: ${new Date().toLocaleString('en-IN')} &nbsp;·&nbsp; ${all.length} products</p>
+<div class="tip">
+  💡 <strong>How to use:</strong> Check each product photo against its Name in column 3.
+  Find wrong names → fix them in your CSV file → go to Admin → Bulk Upload CSV → re-upload to update.
+</div>
+<table>
+  <thead>
+    <tr><th>#</th><th>Photo</th><th>Name / Part No.</th><th>Category</th><th>Sub-Category</th><th>Price</th><th>Stock</th><th>Firebase ID</th></tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `auranest_image_review_${new Date().toISOString().slice(0,10)}.html`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  showToast(`✅ Image review file downloaded — open the .html file in your browser!`);
 };
 
 // ── BULK UPLOAD ──
