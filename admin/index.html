@@ -1687,38 +1687,71 @@ window.exportProductsCSV = function() {
   const all = window.$products || [];
   if (!all.length) { showToast('⚠️ No products loaded yet'); return; }
 
+  // Wrap value in CSV-safe quotes (doubles internal quotes)
   const esc = v => {
     const s = (v === null || v === undefined) ? '' : String(v);
-    // Wrap in quotes, escape internal quotes by doubling them
     return '"' + s.replace(/"/g, '""') + '"';
   };
+  // For formula cells — must NOT be wrapped in quotes so Sheets treats as formula
+  const formula = f => f; // raw, no quoting
 
-  const headers = ['FirebaseID','Name','PartNumber','Category','SubCategory',
-                   'Price','MRP','Material','Color','Size','Tag','Stock',
-                   'Description','Image1','Image2','Image3','Image4','Image5'];
+  // Columns:
+  // FirebaseID | ImagePreview (=IMAGE formula → renders in Google Sheets) |
+  // Name | PartNumber | Category | SubCategory | Price | MRP |
+  // Material | Color | Size | Tag | Stock | Description |
+  // ImageLink (raw URL for reference) | Image2 | Image3 | Image4 | Image5
+  const headers = [
+    esc('FirebaseID'),
+    esc('📷 ImagePreview (open in Google Sheets to see photo)'),
+    esc('Name'),
+    esc('PartNumber'),
+    esc('Category'),
+    esc('SubCategory'),
+    esc('Price'),
+    esc('MRP'),
+    esc('Material'),
+    esc('Color'),
+    esc('Size'),
+    esc('Tag'),
+    esc('Stock'),
+    esc('Description'),
+    esc('Image1'),
+    esc('Image2'),
+    esc('Image3'),
+    esc('Image4'),
+    esc('Image5'),
+  ].join(',');
 
   const rows = all.map(p => {
     const imgs = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
+    const img1 = imgs[0] || '';
+    // =IMAGE("url",1) → stretch image to fill cell in Google Sheets
+    const preview = img1 ? `=IMAGE("${img1.replace(/"/g, '\\"')}",4,80,80)` : '';
     return [
-      p.id,
-      p.name        || '',
-      p.partNumber  || '',
-      p.category    || '',
-      p.subCategory || '',
-      p.price       || 0,
-      p.mrp         || p.price || 0,
-      p.material    || '',
-      p.color       || '',
-      p.size        || '',
-      p.tag         || '',
-      p.stock       ?? 0,
-      p.description || '',
-      imgs[0] || '', imgs[1] || '', imgs[2] || '', imgs[3] || '', imgs[4] || '',
-    ].map(esc).join(',');
+      esc(p.id),
+      formula(preview),      // raw formula — Google Sheets renders as real image
+      esc(p.name        || ''),
+      esc(p.partNumber  || ''),
+      esc(p.category    || ''),
+      esc(p.subCategory || ''),
+      esc(p.price       || 0),
+      esc(p.mrp         || p.price || 0),
+      esc(p.material    || ''),
+      esc(p.color       || ''),
+      esc(p.size        || ''),
+      esc(p.tag         || ''),
+      esc(p.stock       ?? 0),
+      esc(p.description || ''),
+      esc(img1),
+      esc(imgs[1] || ''),
+      esc(imgs[2] || ''),
+      esc(imgs[3] || ''),
+      esc(imgs[4] || ''),
+    ].join(',');
   });
 
-  // Add UTF-8 BOM so Excel opens Hindi/special chars correctly
-  const csv = '﻿' + [headers.map(esc).join(','), ...rows].join('\r\n');
+  // UTF-8 BOM ensures Excel/Sheets opens special characters correctly
+  const csv = '﻿' + [headers, ...rows].join('\r\n');
   const today = new Date().toISOString().slice(0, 10);
   const fname = `auranest_products_${today}.csv`;
 
@@ -1726,7 +1759,7 @@ window.exportProductsCSV = function() {
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = fname;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  showToast(`✅ Exported ${all.length} products → ${fname}`);
+  showToast(`✅ ${all.length} products exported → open in Google Sheets to see product images!`);
 };
 
 // ── BULK UPLOAD ──
