@@ -1692,8 +1692,9 @@ window.exportProductsCSV = function() {
     const s = (v === null || v === undefined) ? '' : String(v);
     return '"' + s.replace(/"/g, '""') + '"';
   };
-  // For formula cells — must NOT be wrapped in quotes so Sheets treats as formula
-  const formula = f => f; // raw, no quoting
+  // Formula cells: wrap in quotes AND double internal quotes
+  // Google Sheets still evaluates =IMAGE(...) as a formula even when CSV-quoted
+  const formula = f => f ? '"' + f.replace(/"/g, '""') + '"' : '""';
 
   // Columns:
   // FirebaseID | ImagePreview (=IMAGE formula → renders in Google Sheets) |
@@ -1725,8 +1726,8 @@ window.exportProductsCSV = function() {
   const rows = all.map(p => {
     const imgs = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
     const img1 = imgs[0] || '';
-    // =IMAGE("url",1) → stretch image to fill cell in Google Sheets
-    const preview = img1 ? `=IMAGE("${img1.replace(/"/g, '\\"')}",4,80,80)` : '';
+    // =IMAGE("url",1) → fit image inside cell in Google Sheets
+    const preview = img1 ? `=IMAGE("${img1.replace(/"/g, '""')}",1)` : '';
     return [
       esc(p.id),
       formula(preview),      // raw formula — Google Sheets renders as real image
