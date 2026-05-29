@@ -142,6 +142,10 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 .pfilter{background:var(--card);border:1px solid var(--border2);color:var(--muted);padding:.6rem 1rem;font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;outline:none;}
 .btn-add{background:var(--gold);color:#fff;border:none;padding:.6rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
 .btn-add:hover{background:var(--gold-lt);}
+.btn-export{background:none;border:1px solid var(--green);color:var(--green);padding:.6rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-export:hover{background:var(--green-dim);}
+.badge-update{display:inline-block;background:var(--blue-dim);color:var(--blue);font-size:.58rem;padding:.15rem .5rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(92,143,224,.25);}
+.badge-addnew{display:inline-block;background:var(--green-dim);color:var(--green);font-size:.58rem;padding:.15rem .5rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(76,175,125,.25);}
 .ptable{width:100%;border-collapse:collapse;}
 .ptable th{padding:.75rem 1rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface);}
 .ptable td{padding:.85rem 1rem;font-size:.8rem;border-bottom:1px solid var(--border2);vertical-align:middle;}
@@ -642,6 +646,7 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
         </select>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
         <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
+        <button class="btn-export" onclick="exportProductsCSV()" title="Export all products to CSV — edit in Excel, re-upload to update">⬇ Export CSV</button>
       </div>
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
@@ -1677,6 +1682,53 @@ async function saveCloudinaryConfig() {
   }
 }
 
+// ── EXPORT PRODUCTS CSV ──────────────────────────────────────
+window.exportProductsCSV = function() {
+  const all = window.$products || [];
+  if (!all.length) { showToast('⚠️ No products loaded yet'); return; }
+
+  const esc = v => {
+    const s = (v === null || v === undefined) ? '' : String(v);
+    // Wrap in quotes, escape internal quotes by doubling them
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+
+  const headers = ['FirebaseID','Name','PartNumber','Category','SubCategory',
+                   'Price','MRP','Material','Color','Size','Tag','Stock',
+                   'Description','Image1','Image2','Image3','Image4','Image5'];
+
+  const rows = all.map(p => {
+    const imgs = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
+    return [
+      p.id,
+      p.name        || '',
+      p.partNumber  || '',
+      p.category    || '',
+      p.subCategory || '',
+      p.price       || 0,
+      p.mrp         || p.price || 0,
+      p.material    || '',
+      p.color       || '',
+      p.size        || '',
+      p.tag         || '',
+      p.stock       ?? 0,
+      p.description || '',
+      imgs[0] || '', imgs[1] || '', imgs[2] || '', imgs[3] || '', imgs[4] || '',
+    ].map(esc).join(',');
+  });
+
+  // Add UTF-8 BOM so Excel opens Hindi/special chars correctly
+  const csv = '﻿' + [headers.map(esc).join(','), ...rows].join('\r\n');
+  const today = new Date().toISOString().slice(0, 10);
+  const fname = `auranest_products_${today}.csv`;
+
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast(`✅ Exported ${all.length} products → ${fname}`);
+};
+
 // ── BULK UPLOAD ──
 function openBulkModal()  { document.getElementById('bulkModal').classList.add('on'); }
 function closeBulkModal() { document.getElementById('bulkModal').classList.remove('on'); BulkUpload.reset(); }
@@ -1771,12 +1823,12 @@ const BulkUpload = {
   _matchImages(row) {
     const map = this._imageMap;
     const urls = [];
-    // Priority 1: explicit ImageFile columns
-    ['imageFile1','imageFile2','imageFile3'].forEach(col => {
+    // Priority 1: explicit ImageFile columns (supports 5 images)
+    ['imageFile1','imageFile2','imageFile3','imageFile4','imageFile5'].forEach(col => {
       const val = (row[col] || '').trim();
       if (!val) return;
-      if (val.startsWith('http')) { urls.push(val); return; }
-      // Try filename lookup
+      if (val.startsWith('http')) { urls.push(val); return; } // full URL — use directly
+      // Try filename lookup from uploaded images
       const cleaned = val.toLowerCase().replace(/[^a-z0-9]/g, '');
       const url = map[val] || map[val.replace(/\.[^.]+$/, '')] || map['__c__' + cleaned];
       if (url) urls.push(url);
@@ -1823,14 +1875,17 @@ const BulkUpload = {
     if (lines.length < 2) return [];
     const headers = this._splitCSV(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
     const idx = (name) => headers.findIndex(h => h.includes(name));
+    const iFirebaseId = headers.findIndex(h => h === 'firebaseid' || h === 'id');
     const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
     const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
     const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
     const iStock = idx('stock'); const iDesc = idx('desc');  const iPart = idx('part');
-    // Support both ImageFile1/2/3 (new) and Image1/2/3 (legacy)
+    // Support ImageFile1/2/3 (template filenames) AND Image1-5 (exported full URLs)
     const iImgF1 = idx('imagefile1') >= 0 ? idx('imagefile1') : idx('image1');
     const iImgF2 = idx('imagefile2') >= 0 ? idx('imagefile2') : idx('image2');
     const iImgF3 = idx('imagefile3') >= 0 ? idx('imagefile3') : idx('image3');
+    const iImgF4 = idx('imagefile4') >= 0 ? idx('imagefile4') : idx('image4');
+    const iImgF5 = idx('imagefile5') >= 0 ? idx('imagefile5') : idx('image5');
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
       const cols = this._splitCSV(lines[i]);
@@ -1838,7 +1893,7 @@ const BulkUpload = {
       if (!name) continue;
       const price = parseInt(cols[iPrice]) || 0;
       if (!price) continue;
-      rows.push({
+      const row = {
         name,
         category:    (cols[iCat]  || 'Aura décor').trim(),
         subCategory: (cols[iSub]  || '').trim(),
@@ -1854,8 +1909,16 @@ const BulkUpload = {
         imageFile1:  (iImgF1 >= 0 ? cols[iImgF1] || '' : '').trim(),
         imageFile2:  (iImgF2 >= 0 ? cols[iImgF2] || '' : '').trim(),
         imageFile3:  (iImgF3 >= 0 ? cols[iImgF3] || '' : '').trim(),
-        icon: '🎁', sold: 0,
-      });
+        imageFile4:  (iImgF4 >= 0 ? cols[iImgF4] || '' : '').trim(),
+        imageFile5:  (iImgF5 >= 0 ? cols[iImgF5] || '' : '').trim(),
+        icon: '🎁',
+      };
+      // If FirebaseID column present → this is an update, not a new insert
+      if (iFirebaseId >= 0) {
+        const fbId = (cols[iFirebaseId] || '').trim();
+        if (fbId) row._firebaseId = fbId;
+      }
+      rows.push(row);
     }
     return rows;
   },
@@ -1877,36 +1940,42 @@ const BulkUpload = {
     const stats   = document.getElementById('bulkStats');
     const preview = document.getElementById('bulkPreview');
     const rows    = this._rows;
-    const cats    = [...new Set(rows.map(r => r.category))];
-    const imagesReady  = [...new Set(Object.values(this._imageMap))].length;
-    const matched = rows.filter(r => this._matchImages(r).length > 0).length;
+    const cats        = [...new Set(rows.map(r => r.category))];
+    const imagesReady = [...new Set(Object.values(this._imageMap))].length;
+    const toUpdate    = rows.filter(r => r._firebaseId).length;
+    const toAdd       = rows.length - toUpdate;
     stats.innerHTML = `
-      <div class="bulk-stat"><div class="bulk-stat-n">${rows.length}</div><div class="bulk-stat-l">Products</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n" style="color:var(--green)">${toUpdate}</div><div class="bulk-stat-l">🔄 To Update</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n" style="color:var(--gold)">${toAdd}</div><div class="bulk-stat-l">✨ To Add New</div></div>
       <div class="bulk-stat"><div class="bulk-stat-n">${cats.length}</div><div class="bulk-stat-l">Categories</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n">${imagesReady}</div><div class="bulk-stat-l">Images Ready</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n">${matched}</div><div class="bulk-stat-l">Matched</div></div>`;
+      <div class="bulk-stat"><div class="bulk-stat-n">${imagesReady}</div><div class="bulk-stat-l">Images Ready</div></div>`;
     const shown = rows.slice(0, 10);
     preview.innerHTML = `<table>
-      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Part No.</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
+      <thead><tr><th>#</th><th>Mode</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Image</th></tr></thead>
       <tbody>${shown.map((r,i) => {
         const imgs = this._matchImages(r);
         const imgCell = imgs.length
           ? `<img src="${imgs[0]}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>✗</span>'"/>`
           : '<span style="font-size:.65rem;color:var(--muted)">—</span>';
+        const modeBadge = r._firebaseId
+          ? '<span class="badge-update">🔄 Update</span>'
+          : '<span class="badge-addnew">✨ New</span>';
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
+          <td>${modeBadge}</td>
           <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
           <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
-          <td style="font-size:.72rem;color:var(--muted)">${r.partNumber || '—'}</td>
           <td style="color:var(--gold)">₹${r.price}</td>
-          <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
-          <td>${imgCell}</td>
           <td>${r.stock}</td>
+          <td>${imgCell}</td>
         </tr>`;
       }).join('')}
-      ${rows.length > 10 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">…and ${rows.length - 10} more products</td></tr>` : ''}
+      ${rows.length > 10 ? `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">…and ${rows.length - 10} more products</td></tr>` : ''}
       </tbody></table>`;
-    document.getElementById('bulkImportBtn').textContent = `⬆ Import All ${rows.length} Products`;
+    const btnLabel = toUpdate && toAdd  ? `⬆ Update ${toUpdate} + Add ${toAdd} Products`
+                   : toUpdate           ? `🔄 Update ${toUpdate} Products`
+                   :                      `⬆ Import All ${rows.length} Products`;
+    document.getElementById('bulkImportBtn').textContent = btnLabel;
     wrap.style.display = 'block';
     this._setStep(3);
     document.getElementById('stepInd3').style.color = 'var(--gold)';
@@ -1922,29 +1991,40 @@ const BulkUpload = {
     const lbl      = document.getElementById('bulkProgLbl');
     btn.disabled = true; btn.textContent = 'Importing…';
     progWrap.style.display = 'block';
-    let done = 0; let errors = 0;
+    let updated = 0; let added = 0; let errors = 0;
     const total = this._rows.length;
     for (const row of this._rows) {
       try {
         const imgs = this._matchImages(row);
-        const { imageFile1, imageFile2, imageFile3, ...rest } = row; // strip helper cols
+        // Strip CSV-only helper columns before saving
+        const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
         const product = {
           ...rest,
-          image:  imgs[0] || '',
-          images: imgs,
-          createdAt: window.$fb.serverTimestamp(),
+          image:     imgs[0] || '',
+          images:    imgs,
+          updatedAt: window.$fb.serverTimestamp(),
         };
-        await window.$fb.addDoc(window.$fb.collection(window.$db, 'products'), product);
-        done++;
+        if (_firebaseId) {
+          // UPDATE existing product
+          await window.$fb.updateDoc(window.$fb.doc(window.$db, 'products', _firebaseId), product);
+          updated++;
+        } else {
+          // ADD new product
+          product.createdAt = window.$fb.serverTimestamp();
+          product.sold = 0;
+          await window.$fb.addDoc(window.$fb.collection(window.$db, 'products'), product);
+          added++;
+        }
       } catch(e) { errors++; console.warn('Import error:', e); }
-      const pct = Math.round((done + errors) / total * 100);
+      const pct = Math.round((updated + added + errors) / total * 100);
       fill.style.width = pct + '%';
-      lbl.textContent = `Importing… ${done + errors} / ${total}`;
+      lbl.textContent = `Processing… ${updated + added + errors} / ${total}`;
     }
-    lbl.textContent = `✅ Done! ${done} imported${errors ? `, ${errors} failed` : ''}.`;
+    const summary = [updated && `${updated} updated`, added && `${added} added`, errors && `${errors} failed`].filter(Boolean).join(', ');
+    lbl.textContent = `✅ Done! ${summary}.`;
     fill.style.background = errors ? 'var(--terra)' : 'var(--green)';
-    showToast(`✅ ${done} products added to Firebase!`);
-    btn.textContent = '✅ Import Complete';
+    showToast(`✅ ${updated + added} products processed (${updated} updated, ${added} new)!`);
+    btn.textContent = '✅ Complete';
     if (typeof window.$loadProducts === 'function') window.$loadProducts();
   },
 
