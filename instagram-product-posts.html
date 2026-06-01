@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Auranest Decors — Instagram Posts with Images</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #100c06;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0 80px;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  gap: 0;
+}
+
+.page-heading {
+  text-align: center;
+  padding: 0 20px 36px;
+  max-width: 640px;
+}
+.page-heading h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300;
+  color: #c49330; letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.page-heading p {
+  font-size: 10px; color: #5a4d38;
+  letter-spacing: 0.14em; margin-top: 8px;
+  line-height: 1.9;
+}
+.page-heading b { color: #c49330; }
+
+/* Slide wrapper — mobile scaling */
+.post-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 600px;
+  max-width: 100%;
+  margin-bottom: 48px;
+}
+.post-label {
+  font-size: 9px; letter-spacing: 0.18em;
+  color: #5a4d38; text-transform: uppercase;
+  padding-bottom: 10px;
+}
+
+.scale-container {
+  width: 600px;
+  max-width: 100%;
+  height: 600px;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  width: 600px;
+  height: 600px;
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: top left;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════
+   POST 1 — Single Product Hero
+   (Madhubani Peacock Planter)
+═══════════════════════════════════ */
+.s1 {
+  background: #0a0704;
+}
+.s1 .bg-img {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg');
+  background-size: cover;
+  background-position: center;
+}
+.s1 .top-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.55) 0%,
+    rgba(0,0,0,0) 35%,
+    rgba(0,0,0,0) 42%,
+    rgba(10,5,2,0.88) 75%,
+    rgba(10,5,2,1) 100%
+  );
+}
+.s1 .top-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 0;
+}
+.s1 .brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 400;
+  letter-spacing: 0.26em;
+  color: #f0e0b8;
+  text-transform: uppercase;
+}
+.s1 .cat-badge {
+  font-size: 8px; letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: #c49330;
+  border: 1px solid rgba(196,147,48,0.5);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+.s1 .bottom-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 0 28px 24px;
+}
+.s1 .tag-line {
+  font-size: 9px; letter-spacing: 0.26em;
+  color: #c49330; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.s1 .prod-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; font-weight: 400;
+  line-height: 1.12;
+  color: #f5ecd8;
+  margin-bottom: 12px;
+}
+.s1 .prod-desc {
+  font-size: 10px; color: #9e8a6a;
+  letter-spacing: 0.10em; line-height: 1.7;
+  margin-bottom: 18px;
+}
+.s1 .divider {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, #c49330, transparent);
+  margin-bottom: 16px;
+}
+.s1 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.s1 .handle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.s1 .handle svg { width: 14px; height: 14px; fill: #c49330; }
+.s1 .handle span {
+  font-size: 9px; letter-spacing: 0.12em;
+  color: #c49330; text-transform: lowercase;
+}
+.s1 .shop-cta {
+  font-size: 8px; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #f5ecd8;
+  border: 1px solid rgba(245,236,216,0.35);
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════
+   POST 2 — Jharokha Feature
+   (Dark bg + centered product)
+═══════════════════════════════════ */
+.s2 {
+  background: #0e0906;
+  display: flex;
+  flex-direction: column;
+}
+.s2 .top-strip {
+  flex: 0 0 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(196,147,48,0.12);
+}
+.s2 .brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; font-weight: 400;
+  letter-spacing: 0.28em; color: #c49330;
+  text-transform: uppercase;
+}
+.s2 .no {
+  font-size: 8px; color: #3a3025;
+  letter-spacing: 0.18em;
+}
+.s2 .img-zone {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 40px;
+}
+.s2 .img-zone::before {
+  content: '';
+  position: absolute;
+  inset: 24px 50px;
+  border: 1px solid rgba(196,147,48,0.15);
+  pointer-events: none;
+}
+.s2 .img-zone img {
+  max-width: 100%; max-height: 100%;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 28px rgba(0,0,0,0.65));
+}
+.s2 .bottom-strip {
+  flex: 0 0 auto;
+  padding: 14px 28px 20px;
+  border-top: 1px solid rgba(196,147,48,0.12);
+}
+.s2 .coll-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300; font-style: italic;
+  color: #f5ecd8; letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.s2 .sub-line {
+  font-size: 8.5px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: #7a6a4e;
+  margin-bottom: 12px;
+}
+.s2 .info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.s2 .handle-row {
+  display: flex; align-items: center; gap: 5px;
+}
+.s2 .handle-row svg { width: 12px; height: 12px; fill: #c49330; }
+.s2 .handle-row span { font-size: 8.5px; color: #c49330; letter-spacing: 0.10em; }
+.s2 .avail {
+  font-size: 7.5px; letter-spacing: 0.14em;
+  color: #5a4d38; text-transform: uppercase;
+}
+.s2 .avail b { color: #c49330; }
+
+/* ═══════════════════════════════════
+   POST 3 — Dual Product (Serveware)
+═══════════════════════════════════ */
+.s3 {
+  background: #0e0906;
+  display: flex;
+  flex-direction: column;
+}
+.s3 .s3-header {
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.s3 .s3-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 28px; right: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c49330, transparent);
+}
+.s3 .s3-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 400;
+  letter-spacing: 0.30em; color: #c49330;
+  text-transform: uppercase;
+}
+.s3 .s3-imgs {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  gap: 2px;
+}
+.s3 .s3-img-col {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.s3 .s3-img-col img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 14px;
+  background: #120d08;
+}
+.s3 .s3-img-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  padding: 20px 12px 10px;
+  text-align: center;
+}
+.s3 .s3-prod-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 400;
+  color: #f5ecd8; line-height: 1.2;
+}
+.s3 .s3-prod-cat {
+  font-size: 7px; letter-spacing: 0.18em;
+  color: #c49330; text-transform: uppercase;
+  margin-top: 3px;
+}
+.s3 .s3-footer {
+  flex: 0 0 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  position: relative;
+}
+.s3 .s3-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 28px; right: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,147,48,0.4), transparent);
+}
+.s3 .s3-coll {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 300; font-style: italic;
+  color: #c49330;
+}
+.s3 .s3-handle {
+  display: flex; align-items: center; gap: 5px;
+}
+.s3 .s3-handle svg { width: 12px; height: 12px; fill: #c49330; }
+.s3 .s3-handle span { font-size: 8.5px; color: #c49330; letter-spacing: 0.10em; }
+
+/* ═══════════════════════════════════
+   POST 4 — 4-Grid Kitchen Collection
+═══════════════════════════════════ */
+.s4 {
+  background: #0a0705;
+  display: flex;
+  flex-direction: column;
+}
+.s4 .s4-header {
+  flex: 0 0 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.s4 .s4-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 300;
+  letter-spacing: 0.30em; color: #c49330;
+  text-transform: uppercase;
+}
+.s4 .s4-title {
+  font-size: 8px; letter-spacing: 0.22em;
+  color: #7a6a4e; text-transform: uppercase;
+}
+.s4 .s4-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+}
+.s4 .s4-cell {
+  position: relative;
+  background: #120d08;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.s4 .s4-cell img {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+.s4 .s4-cell-label {
+  flex: 0 0 auto;
+  background: #0a0705;
+  padding: 5px 10px;
+  font-size: 8.5px;
+  color: #9e8a6a;
+  letter-spacing: 0.10em;
+  border-top: 1px solid rgba(196,147,48,0.10);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.s4 .s4-footer {
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  border-top: 1px solid rgba(196,147,48,0.12);
+}
+.s4 .s4-coll-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 400; font-style: italic;
+  color: #f5ecd8;
+}
+.s4 .s4-handle {
+  display: flex; align-items: center; gap: 5px;
+}
+.s4 .s4-handle svg { width: 12px; height: 12px; fill: #c49330; }
+.s4 .s4-handle span { font-size: 8.5px; color: #c49330; letter-spacing: 0.10em; }
+
+/* ═══════════════════════════════════
+   POST 5 — Gifting Post (3-product)
+═══════════════════════════════════ */
+.s5 {
+  background: #0e0906;
+  display: flex;
+  flex-direction: column;
+}
+.s5 .s5-top {
+  flex: 0 0 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.s5 .s5-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 300; font-style: italic;
+  color: #f5ecd8; letter-spacing: 0.04em;
+}
+.s5 .s5-sub {
+  font-size: 7.5px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: #c49330;
+}
+.s5 .s5-imgs {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  gap: 2px;
+}
+.s5 .s5-main {
+  flex: 1.15 1 0;
+  min-width: 0;
+  background: #120d08;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.s5 .s5-side {
+  flex: 0.85 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.s5 .s5-side-cell {
+  flex: 1 1 0;
+  min-height: 0;
+  background: #120d08;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.s5 .s5-main img,
+.s5 .s5-side-cell img {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  padding: 14px;
+}
+.s5 .s5-cell-name {
+  flex: 0 0 auto;
+  font-size: 8.5px; color: #9e8a6a;
+  letter-spacing: 0.10em;
+  padding: 5px 10px;
+  background: #0a0705;
+  border-top: 1px solid rgba(196,147,48,0.10);
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
+}
+.s5 .s5-footer {
+  flex: 0 0 64px;
+  border-top: 1px solid rgba(196,147,48,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.s5 .s5-platforms {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.s5 .s5-amz {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ff9900;
+  background: rgba(255,153,0,0.10);
+  border: 1px solid rgba(255,153,0,0.25);
+  padding: 3px 10px; border-radius: 2px;
+}
+.s5 .s5-fk {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #2874f0;
+  background: rgba(40,116,240,0.10);
+  border: 1px solid rgba(40,116,240,0.25);
+  padding: 3px 10px; border-radius: 2px;
+}
+.s5 .s5-handle {
+  display: flex; align-items: center; gap: 5px;
+}
+.s5 .s5-handle svg { width: 12px; height: 12px; fill: #c49330; }
+.s5 .s5-handle span { font-size: 8.5px; color: #c49330; letter-spacing: 0.10em; }
+
+/* ═══════════════════════════════════
+   POST 6 — Full Hero (Jharokha BG)
+   "Handcrafted in India" statement
+═══════════════════════════════════ */
+.s6 {
+  background: #0a0705;
+  position: relative;
+}
+.s6 .s6-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfbrown-jharokhe/img2.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.30;
+}
+.s6 .s6-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(10,7,5,0.70),
+    rgba(10,7,5,0.45) 50%,
+    rgba(10,7,5,0.80)
+  );
+}
+.s6 .s6-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 52px;
+  text-align: center;
+}
+.s6 .s6-ornament {
+  font-size: 11px; letter-spacing: 0.34em;
+  color: #c49330; text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.s6 .s6-ornament::before,
+.s6 .s6-ornament::after {
+  content: '——';
+  margin: 0 10px;
+  opacity: 0.5;
+}
+.s6 .s6-main-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 54px; font-weight: 300;
+  color: #f5ecd8;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+.s6 .s6-main-text em {
+  font-style: italic;
+  color: #c49330;
+}
+.s6 .s6-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300; font-style: italic;
+  color: #c49330; letter-spacing: 0.06em;
+  margin-bottom: 28px;
+}
+.s6 .s6-divider {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, #c49330, transparent);
+  margin-bottom: 28px;
+}
+.s6 .s6-desc {
+  font-size: 10px; letter-spacing: 0.14em;
+  color: #9e8a6a; line-height: 1.85;
+  max-width: 380px;
+  margin-bottom: 28px;
+}
+.s6 .s6-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.s6 .s6-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 400;
+  letter-spacing: 0.28em; color: #f5ecd8;
+  text-transform: uppercase;
+}
+.s6 .s6-handle {
+  display: flex; align-items: center; gap: 5px;
+}
+.s6 .s6-handle svg { width: 12px; height: 12px; fill: #c49330; }
+.s6 .s6-handle span { font-size: 9px; color: #c49330; letter-spacing: 0.12em; }
+.s6 .s6-contact {
+  font-size: 8px; color: #5a4d38;
+  letter-spacing: 0.16em;
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-heading">
+  <h1>Auranest Decors</h1>
+  <p>Instagram Posts with Product Images &nbsp;·&nbsp; <b>6 Posts</b><br>
+  Open in Chrome → Right-click each post → <b>Screenshot / Save as image</b></p>
+</div>
+
+<!-- ─── POST 1: Madhubani Peacock Planter ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 1 — Product Hero · Madhubani Peacock Planter</div>
+  <div class="scale-container">
+    <div class="slide s1">
+      <div class="bg-img"></div>
+      <div class="top-grad"></div>
+      <div class="top-bar">
+        <span class="brand-name">Auranest Decors</span>
+        <span class="cat-badge">Decorative Pots</span>
+      </div>
+      <div class="bottom-content">
+        <div class="tag-line">Handpainted Folk Art</div>
+        <div class="prod-name">Madhubani Folk<br>Regal Peacock<br>Planter</div>
+        <div class="prod-desc">Dancing duo painted in authentic Madhubani<br>tradition — a living canvas for your home.</div>
+        <div class="divider"></div>
+        <div class="footer">
+          <div class="handle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span>@Auranestdecors12</span>
+          </div>
+          <div class="shop-cta">Shop Now →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POST 2: Brown Jharokha Mirror ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 2 — Product Feature · Rectangular Brown Jharokha Mirror</div>
+  <div class="scale-container">
+    <div class="slide s2">
+      <div class="top-strip">
+        <span class="brand">Auranest Decors</span>
+        <span class="no">Wall Décor Collection</span>
+      </div>
+      <div class="img-zone">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/jharokha-rectangl-brown/img1.jpg"
+             alt="Rectangular Brown Jharokha Mirror" loading="lazy"/>
+      </div>
+      <div class="bottom-strip">
+        <div class="coll-name">Rectangular Brown Jharokha Mirror</div>
+        <div class="sub-line">Hand-carved Mango Wood &nbsp;·&nbsp; Palace-Window Motif &nbsp;·&nbsp; Premium Wall Décor</div>
+        <div class="info-row">
+          <div class="handle-row">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span>@Auranestdecors12</span>
+          </div>
+          <div class="avail">Available on <b>Amazon</b> &amp; <b>Flipkart</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POST 3: Dual Serveware ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 3 — Duo Feature · Serveware Collection</div>
+  <div class="scale-container">
+    <div class="slide s3">
+      <div class="s3-header">
+        <span class="s3-brand">Auranest Decors</span>
+      </div>
+      <div class="s3-imgs">
+        <div class="s3-img-col">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/round-wooden-tray-cow/img1.jpg"
+               alt="Round Wooden Tray Cow Art" loading="lazy"/>
+          <div class="s3-img-overlay">
+            <div class="s3-prod-name">Round Wooden Tray<br>Cow Folk Art</div>
+            <div class="s3-prod-cat">Serveware</div>
+          </div>
+        </div>
+        <div class="s3-img-col">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lffarming-on-wooden-tray/img5.jpg"
+               alt="Farming Wooden Tray" loading="lazy"/>
+          <div class="s3-img-overlay">
+            <div class="s3-prod-name">Farming Scene<br>Wooden Tray</div>
+            <div class="s3-prod-cat">Serveware</div>
+          </div>
+        </div>
+      </div>
+      <div class="s3-footer">
+        <div class="s3-coll">Serveware Collection</div>
+        <div class="s3-handle">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          <span>@Auranestdecors12</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POST 4: Kitchen 4-Grid ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 4 — 4-Grid · Kitchen Collection</div>
+  <div class="scale-container">
+    <div class="slide s4">
+      <div class="s4-header">
+        <div class="s4-brand">Auranest Decors</div>
+        <div class="s4-title">Kitchen &amp; Home Collection — Handcrafted Wooden Essentials</div>
+      </div>
+      <div class="s4-grid">
+        <div class="s4-cell">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/wooden-spice-box-diamond-shape/img1.jpg"
+               alt="Wooden Spice Box Diamond" loading="lazy"/>
+          <div class="s4-cell-label">Wooden Spice Box – Diamond</div>
+        </div>
+        <div class="s4-cell">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/taracota-kulladh/img1.jpg"
+               alt="Terracotta Kulhad" loading="lazy"/>
+          <div class="s4-cell-label">Terracotta Kulhad</div>
+        </div>
+        <div class="s4-cell">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfmasala-box-with-9-boxex/img1.jpg"
+               alt="Masala Box 9 Sections" loading="lazy"/>
+          <div class="s4-cell-label">Masala Box – 9 Sections</div>
+        </div>
+        <div class="s4-cell">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/wooden-spatula/img1.jpg"
+               alt="Wooden Spatula" loading="lazy"/>
+          <div class="s4-cell-label">Hand-Carved Wooden Spatula</div>
+        </div>
+      </div>
+      <div class="s4-footer">
+        <div class="s4-coll-name">Kitchen Collection</div>
+        <div class="s4-handle">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          <span>@Auranestdecors12</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POST 5: Gifting — 3 Products ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 5 — Gifting Post · Available on Amazon &amp; Flipkart</div>
+  <div class="scale-container">
+    <div class="slide s5">
+      <div class="s5-top">
+        <div class="s5-headline">Perfect Gift for Every Home</div>
+        <div class="s5-sub">Handcrafted Wooden &amp; Ceramic Décor · Est. 2024 · Meerut, India</div>
+      </div>
+      <div class="s5-imgs">
+        <div class="s5-main">
+          <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/ceramic-couple-with-heart/img1.jpg"
+               alt="Ceramic Couple with Heart" loading="lazy"/>
+          <div class="s5-cell-name">Ceramic Couple with Heart</div>
+        </div>
+        <div class="s5-side">
+          <div class="s5-side-cell">
+            <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/lfwooden-heart-large-tray/img2.jpg"
+                 alt="Wooden Heart Tray" loading="lazy"/>
+            <div class="s5-cell-name">Wooden Heart Tray</div>
+          </div>
+          <div class="s5-side-cell">
+            <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest-plain/wooden-coster/img2.jpg"
+                 alt="Wooden Coaster" loading="lazy"/>
+            <div class="s5-cell-name">Wooden Coasters</div>
+          </div>
+        </div>
+      </div>
+      <div class="s5-footer">
+        <div class="s5-platforms">
+          <div class="s5-amz">amazon</div>
+          <div class="s5-fk">flipkart</div>
+        </div>
+        <div class="s5-handle">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          <span>@Auranestdecors12 &nbsp;·&nbsp; +91 86792 12984</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── POST 6: "Handcrafted in India" Statement ─── -->
+<div class="post-wrap">
+  <div class="post-label">Post 6 — Brand Statement · Handcrafted in India</div>
+  <div class="scale-container">
+    <div class="slide s6">
+      <div class="s6-bg"></div>
+      <div class="s6-overlay"></div>
+      <div class="s6-content">
+        <div class="s6-ornament">Est. 2024</div>
+        <div class="s6-main-text">Hand<em>crafted</em></div>
+        <div class="s6-sub">in India, with Love</div>
+        <div class="s6-divider"></div>
+        <div class="s6-desc">
+          Every piece tells a story — carved by skilled artisans,<br>
+          painted in folk traditions, made to last a lifetime.<br>
+          Mango wood · Sheesham · Ceramic · Terracotta
+        </div>
+        <div class="s6-bottom">
+          <div class="s6-brand">Auranest Decors</div>
+          <div class="s6-handle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            <span>@Auranestdecors12</span>
+          </div>
+          <div class="s6-contact">+91 86792 12984 · auranestdecors.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function scaleSlides() {
+  var vw = window.innerWidth;
+  if (vw >= 600) return;
+  var ratio = vw / 600;
+  document.querySelectorAll('.slide').forEach(function(el) {
+    el.style.transform = 'scale(' + ratio + ')';
+  });
+  document.querySelectorAll('.scale-container').forEach(function(el) {
+    el.style.height = Math.round(vw) + 'px';
+  });
+}
+scaleSlides();
+window.addEventListener('resize', scaleSlides);
+</script>
+</body>
+</html>
