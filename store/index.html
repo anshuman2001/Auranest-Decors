@@ -1136,42 +1136,50 @@ select.finp{cursor:pointer;}
       </button>
     </div>
   </div>
-  <!-- Bottom row: Category navigation -->
+  <!-- Bottom row: Collection navigation -->
   <div class="nav-bottom">
     <ul class="nav-cat-list">
       <li><a href="#" onclick="ProductPage.close();CategoryPage.close();window.scrollTo({top:0,behavior:'smooth'});return false;">Home</a></li>
       <li>
-        <span onclick="CategoryPage.open('Home & Kitchen')">Home &amp; Kitchen ▾</span>
+        <span onclick="filterProds('artisan');goToSection('collection')">🎨 Artisan ▾</span>
         <div class="nav-dropdown">
-          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Serveware</a>
-          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Kitchen Tools</a>
-          <a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Tableware</a>
+          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">All Artisan</a>
+          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Madhubani &amp; Folk</a>
+          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Warli &amp; Tribal</a>
+          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Painted Planters</a>
+          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Folk Art Trays</a>
         </div>
       </li>
       <li>
-        <span onclick="CategoryPage.open('Aura décor')">Aura Decor ▾</span>
+        <span onclick="filterProds('woodcraft');goToSection('collection')">🪵 Woodcraft ▾</span>
         <div class="nav-dropdown">
-          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Decorative Pots</a>
-          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Wall Décor</a>
-          <a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Vases</a>
+          <a href="#" onclick="filterProds('woodcraft');goToSection('collection');return false;">All Woodcraft</a>
+          <a href="#" onclick="filterProds('woodcraft');goToSection('collection');return false;">Trays &amp; Platters</a>
+          <a href="#" onclick="filterProds('woodcraft');goToSection('collection');return false;">Jharokha Mirrors</a>
+          <a href="#" onclick="filterProds('woodcraft');goToSection('collection');return false;">Kitchen Tools</a>
+          <a href="#" onclick="filterProds('woodcraft');goToSection('collection');return false;">Key Holders</a>
         </div>
       </li>
       <li>
-        <span onclick="CategoryPage.open('Aesthetic Furniture')">Aesthetic Furniture ▾</span>
+        <span onclick="filterProds('minimal');goToSection('collection')">🏺 Minimal ▾</span>
         <div class="nav-dropdown">
-          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Storage</a>
-          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Racks</a>
-          <a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Shelves</a>
+          <a href="#" onclick="filterProds('minimal');goToSection('collection');return false;">All Minimal</a>
+          <a href="#" onclick="filterProds('minimal');goToSection('collection');return false;">Ceramic Sculptures</a>
+          <a href="#" onclick="filterProds('minimal');goToSection('collection');return false;">Terracotta</a>
+          <a href="#" onclick="filterProds('minimal');goToSection('collection');return false;">Buddha &amp; Yoga</a>
         </div>
       </li>
       <li>
-        <span onclick="CategoryPage.open('Giftings')">Giftings ▾</span>
+        <span onclick="filterProds('gifting');goToSection('collection')">🎁 Gifting ▾</span>
         <div class="nav-dropdown">
-          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Festive</a>
-          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Wedding</a>
-          <a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Artisan</a>
+          <a href="#" onclick="filterByGiftPrice(499,null);goToSection('gifts');return false;">Under ₹499</a>
+          <a href="#" onclick="filterByGiftPrice(999,null);goToSection('gifts');return false;">Under ₹999</a>
+          <a href="#" onclick="filterByGiftPrice(1999,null);goToSection('gifts');return false;">Under ₹1,999</a>
+          <a href="#" onclick="filterByGiftPrice(9999,null);goToSection('gifts');return false;">Premium Gifts</a>
+          <a href="#" onclick="filterProds('gifting');goToSection('collection');return false;">All Gifts</a>
         </div>
       </li>
+      <li><a href="#" onclick="filterProds('under999');goToSection('collection');return false;" style="color:var(--gold)">₹ Under ₹999</a></li>
       <li><a href="#about" onclick="ProductPage.close();CategoryPage.close()">About Us</a></li>
       <li><a href="contact.html">Contact Us</a></li>
       <li><a href="../blog/" style="color:var(--gold);font-weight:600;">✍️ Blog</a></li>
@@ -1192,41 +1200,44 @@ select.finp{cursor:pointer;}
   <div class="mob-links">
     <button class="mob-home" onclick="ProductPage.close();CategoryPage.close();closeMobNav();window.scrollTo({top:0,behavior:'smooth'})">🏠 Home</button>
     <div class="mob-cat-wrap">
-      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Home &amp; Kitchen <span class="mob-arr">›</span></button>
+      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">🎨 Artisan Collection <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a href="home-kitchen.html" onclick="event.preventDefault();CategoryPage.open('Home & Kitchen');closeMobNav()">All Home &amp; Kitchen</a>
-        <a href="home-kitchen.html#serveware" onclick="event.preventDefault();filterProds('Serveware',null);goToSection('collection');closeMobNav()">Serveware</a>
-        <a href="home-kitchen.html#kitchen-tools" onclick="event.preventDefault();filterProds('Kitchen Tools',null);goToSection('collection');closeMobNav()">Kitchen Tools</a>
-        <a href="home-kitchen.html#tableware" onclick="event.preventDefault();filterProds('Tableware',null);goToSection('collection');closeMobNav()">Tableware</a>
+        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">All Artisan</a>
+        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Madhubani &amp; Folk</a>
+        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Warli &amp; Tribal</a>
+        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Painted Planters</a>
+        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Folk Art Trays</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
-      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Aura Décor <span class="mob-arr">›</span></button>
+      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">🪵 Woodcraft Collection <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a href="aura-decor.html" onclick="event.preventDefault();CategoryPage.open('Aura décor');closeMobNav()">All Aura Décor</a>
-        <a href="aura-decor.html#pots" onclick="event.preventDefault();filterProds('Decorative Pots',null);goToSection('collection');closeMobNav()">Decorative Pots</a>
-        <a href="aura-decor.html#wall-decor" onclick="event.preventDefault();filterProds('Wall Décor',null);goToSection('collection');closeMobNav()">Wall Décor</a>
-        <a href="aura-decor.html#vases" onclick="event.preventDefault();filterProds('Vases',null);goToSection('collection');closeMobNav()">Vases</a>
+        <a href="#" onclick="event.preventDefault();filterProds('woodcraft',null);goToSection('collection');closeMobNav()">All Woodcraft</a>
+        <a href="#" onclick="event.preventDefault();filterProds('woodcraft',null);goToSection('collection');closeMobNav()">Trays &amp; Platters</a>
+        <a href="#" onclick="event.preventDefault();filterProds('woodcraft',null);goToSection('collection');closeMobNav()">Jharokha Mirrors</a>
+        <a href="#" onclick="event.preventDefault();filterProds('woodcraft',null);goToSection('collection');closeMobNav()">Kitchen Tools</a>
+        <a href="#" onclick="event.preventDefault();filterProds('woodcraft',null);goToSection('collection');closeMobNav()">Key Holders</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
-      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Aesthetic Furniture <span class="mob-arr">›</span></button>
+      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">🏺 Minimal Collection <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a href="aesthetic-furniture.html" onclick="event.preventDefault();CategoryPage.open('Aesthetic Furniture');closeMobNav()">All Furniture</a>
-        <a href="aesthetic-furniture.html#storage" onclick="event.preventDefault();filterProds('Storage',null);goToSection('collection');closeMobNav()">Storage</a>
-        <a href="aesthetic-furniture.html#racks" onclick="event.preventDefault();filterProds('Racks',null);goToSection('collection');closeMobNav()">Racks</a>
-        <a href="aesthetic-furniture.html#shelves" onclick="event.preventDefault();filterProds('Shelves',null);goToSection('collection');closeMobNav()">Shelves</a>
+        <a href="#" onclick="event.preventDefault();filterProds('minimal',null);goToSection('collection');closeMobNav()">All Minimal</a>
+        <a href="#" onclick="event.preventDefault();filterProds('minimal',null);goToSection('collection');closeMobNav()">Ceramic Sculptures</a>
+        <a href="#" onclick="event.preventDefault();filterProds('minimal',null);goToSection('collection');closeMobNav()">Terracotta</a>
+        <a href="#" onclick="event.preventDefault();filterProds('minimal',null);goToSection('collection');closeMobNav()">Buddha &amp; Yoga</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
-      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">Giftings <span class="mob-arr">›</span></button>
+      <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">🎁 Gifting <span class="mob-arr">›</span></button>
       <div class="mob-sub">
-        <a href="giftings.html" onclick="event.preventDefault();CategoryPage.open('Giftings');closeMobNav()">All Giftings</a>
-        <a href="giftings.html#festive" onclick="event.preventDefault();filterProds('Festive',null);goToSection('collection');closeMobNav()">Festive Gifts</a>
-        <a href="giftings.html#wedding" onclick="event.preventDefault();filterProds('Wedding',null);goToSection('collection');closeMobNav()">Wedding Gifts</a>
-        <a href="giftings.html#artisan" onclick="event.preventDefault();filterProds('Artisan',null);goToSection('collection');closeMobNav()">Artisan Collection</a>
+        <a href="#" onclick="event.preventDefault();filterByGiftPrice(499,null);goToSection('gifts');closeMobNav()">Under ₹499</a>
+        <a href="#" onclick="event.preventDefault();filterByGiftPrice(999,null);goToSection('gifts');closeMobNav()">Under ₹999</a>
+        <a href="#" onclick="event.preventDefault();filterByGiftPrice(1999,null);goToSection('gifts');closeMobNav()">Under ₹1,999</a>
+        <a href="#" onclick="event.preventDefault();filterByGiftPrice(9999,null);goToSection('gifts');closeMobNav()">Premium Gifts</a>
       </div>
     </div>
+    <a class="mob-plain" href="#" onclick="event.preventDefault();filterProds('under999',null);goToSection('collection');closeMobNav()" style="color:var(--gold);font-weight:600;">₹ Under ₹999</a>
     <a class="mob-plain" href="#about" onclick="event.preventDefault();goToSection('about');closeMobNav()">About Us</a>
     <a class="mob-plain" href="#faqs" onclick="event.preventDefault();goToSection('faqs');closeMobNav()">FAQs</a>
     <a class="mob-plain" href="contact.html">Contact Us</a>
