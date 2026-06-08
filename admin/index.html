@@ -456,17 +456,64 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
       <div class="sg"><label class="sl">Price (₹)</label><input class="si" id="mPrice" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">MRP (₹)</label><input class="si" id="mMrp" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">Category</label>
-        <select class="si" id="mCat"><option>Home & Kitchen</option><option>Aura décor</option><option>Aesthetic Furniture</option><option>Giftings</option></select>
+        <select class="si" id="mCat" onchange="updateSubCats(); syncCollection()">
+          <option value="Artisan">🎨 Artisan</option>
+          <option value="Woodcraft">🪵 Woodcraft</option>
+          <option value="Minimal">🏺 Minimal</option>
+          <option value="Gifting">🎁 Gifting</option>
+        </select>
       </div>
       <div class="sg"><label class="sl">Sub-Category</label>
-        <select class="si" id="mSub"><option>Serveware</option><option>Decorative Pots</option><option>Kitchen Tools</option><option>Wall Décor</option><option>Tableware</option></select>
+        <select class="si" id="mSub">
+          <option>Madhubani &amp; Folk</option><option>Warli &amp; Tribal</option>
+          <option>Painted Planters</option><option>Painted Wooden Decor</option>
+          <option>Folk Art Trays</option><option>Painted Serveware</option>
+          <option>Artistic Wall Decor</option>
+        </select>
       </div>
-      <div class="sg"><label class="sl">Material</label><input class="si" id="mMat" placeholder="e.g. Ceramic, Wood"/></div>
+      <div class="sg"><label class="sl">Collection</label>
+        <select class="si" id="mCollection">
+          <option value="artisan">Artisan</option>
+          <option value="woodcraft">Woodcraft</option>
+          <option value="minimal">Minimal</option>
+          <option value="gifting">Gifting</option>
+        </select>
+      </div>
+      <div class="sg"><label class="sl">Style</label>
+        <select class="si" id="mStyle">
+          <option value="">— Select Style —</option>
+          <option value="Madhubani">Madhubani</option>
+          <option value="Warli">Warli</option>
+          <option value="Tribal">Tribal</option>
+          <option value="Folk Art">Folk Art</option>
+          <option value="Painted">Painted</option>
+          <option value="Natural">Natural</option>
+          <option value="Modern">Modern</option>
+          <option value="Traditional">Traditional</option>
+        </select>
+      </div>
+      <div class="sg"><label class="sl">Material</label>
+        <select class="si" id="mMat">
+          <option value="">— Select Material —</option>
+          <option value="Wood">Wood</option>
+          <option value="Ceramic">Ceramic</option>
+          <option value="Terracotta">Terracotta</option>
+          <option value="Metal">Metal</option>
+          <option value="Mixed">Mixed</option>
+        </select>
+      </div>
       <div class="sg"><label class="sl">Color</label><input class="si" id="mColor" placeholder="e.g. Multicolors"/></div>
       <div class="sg"><label class="sl">Size</label><input class="si" id="mSize" placeholder="e.g. 20cm × 15cm"/></div>
-      <div class="sg"><label class="sl">Tag/Badge</label><input class="si" id="mTag" placeholder="e.g. Bestseller"/></div>
+      <div class="sg"><label class="sl">Tag / Badge</label><input class="si" id="mTag" placeholder="e.g. Best Seller"/></div>
       <div class="sg"><label class="sl">Stock</label><input class="si" id="mStock" type="number" placeholder="10"/></div>
       <div class="sg"><label class="sl">Part Number</label><input class="si" id="mPartNumber" placeholder="e.g. AN-001"/></div>
+      <div class="sg" style="display:flex;align-items:center;gap:.8rem;padding:.5rem 0">
+        <label class="sl" style="margin:0">Featured Product</label>
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem">
+          <input type="checkbox" id="mFeatured" style="width:16px;height:16px;accent-color:var(--gold)"/>
+          <span style="color:var(--muted)">Show in homepage highlights</span>
+        </label>
+      </div>
     </div>
     <!-- MULTIPLE IMAGES SECTION -->
     <div class="sg" style="margin-top:.8rem">
@@ -640,14 +687,17 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
       <div class="prod-toolbar">
         <input class="psearch" placeholder="Search products…" oninput="searchProducts(this.value)" id="prodSearch"/>
         <select class="pfilter" onchange="filterProdCat(this.value)">
-          <option value="all">All Categories</option>
-          <option value="Home & Kitchen">Home & Kitchen</option>
-          <option value="Aura décor">Aura Décor</option>
+          <option value="all">All Collections</option>
+          <option value="Artisan">🎨 Artisan</option>
+          <option value="Woodcraft">🪵 Woodcraft</option>
+          <option value="Minimal">🏺 Minimal</option>
+          <option value="Gifting">🎁 Gifting</option>
         </select>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
         <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
         <button class="btn-export" onclick="exportProductsCSV()" title="Export all products to CSV — edit in Excel, re-upload to update">⬇ Export CSV</button>
         <button class="btn-export" style="border-color:var(--blue);color:var(--blue)" onclick="exportImageReview()" title="Download HTML file — open in browser to see all product photos">🖼️ Image Review</button>
+        <button class="btn-export" style="border-color:var(--terra);color:var(--terra)" onclick="runMigration()" title="Auto-classify all products into Artisan / Woodcraft / Minimal / Gifting based on business rules">⚡ Migrate Collections</button>
       </div>
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
@@ -1006,36 +1056,187 @@ async function loadCustomers() {
 }
 
 // ── SAVE / DELETE PRODUCT TO FIREBASE ──
+// ── CATEGORY / SUBCATEGORY / COLLECTION MAPPING ──────────────────────────
+const ADMIN_SUBCATS = {
+  'Artisan':  ['Madhubani & Folk','Warli & Tribal','Painted Planters','Painted Wooden Decor','Folk Art Trays','Painted Serveware','Artistic Wall Decor'],
+  'Woodcraft':['Trays & Platters','Jharokha Mirrors','Kitchen Tools','Key Holders','Wooden Decor','Wooden Serveware'],
+  'Minimal':  ['Decorative Pots','Modern Decor','Plain Ceramic','Natural Terracotta','Minimal Planters'],
+  'Gifting':  ['Wedding Gifts','Housewarming Gifts','Festive Gifts','Under ₹999'],
+};
+
+window.updateSubCats = function() {
+  const cat  = document.getElementById('mCat').value;
+  const sub  = document.getElementById('mSub');
+  const list = ADMIN_SUBCATS[cat] || [];
+  sub.innerHTML = list.map(s => `<option value="${s}">${s}</option>`).join('');
+};
+
+window.syncCollection = function() {
+  const cat  = document.getElementById('mCat').value;
+  const col  = document.getElementById('mCollection');
+  if (col) col.value = cat.toLowerCase();
+};
+
+// ── MIGRATION RULES ───────────────────────────────────────────────────────
+const ART_KEYWORDS = [
+  'madhubani','mithila','warli','folk','painted','hand paint','handpaint',
+  'tribal','dhokra','ethnic art','cow art','lady','matka','farming','peacock',
+  'cultural','lotus','bloom','diffuser with black','plume','keepsake','lady face',
+  'two lady','lady with','folk regal','cultural keepsake','folk peacock',
+  'daily tribal','tribal echo','mayura','cow','fish','deer',
+];
+const GIFT_KEYWORDS = ['couple','heart','wedding','gifting','festive','housewarming'];
+const WOOD_MATERIAL = ['wood','wooden','tray','stool','jharokh','spatula','masala','coaster','platter','spice','bowl'];
+const CERAMIC_WORDS = ['ceramic','planter','pot'];
+const TERRA_WORDS   = ['terracotta','kulhad','handiya','clay'];
+
+function classifyProduct(p) {
+  const n   = (p.name || '').toLowerCase();
+  const d   = (p.description || '').toLowerCase();
+  const mat = (p.material || '').toLowerCase();
+  const tag = (p.tag || '').toLowerCase();
+  const sub = (p.subCategory || '').toLowerCase();
+
+  const hasArt     = ART_KEYWORDS.some(k => n.includes(k) || d.includes(k));
+  const isGifting  = GIFT_KEYWORDS.some(k => n.includes(k) || tag.includes(k) || sub.includes(k)) || p.gifting;
+  const isWood     = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
+  const isCeramic  = CERAMIC_WORDS.some(k => mat.includes(k) || n.includes(k));
+  const isTerra    = TERRA_WORDS.some(k => mat.includes(k) || n.includes(k));
+
+  // PRIMARY RULE: Artwork > Material
+  if (hasArt) {
+    return {
+      category:   'Artisan',
+      collection: 'artisan',
+      style:      deriveStyle(p),
+    };
+  }
+  // Gifting (no art, but gifting context)
+  if (isGifting) {
+    return { category:'Gifting', collection:'gifting', style:'Traditional' };
+  }
+  // Plain wood = Woodcraft
+  if (isWood && !hasArt) {
+    return { category:'Woodcraft', collection:'woodcraft', style:'Natural' };
+  }
+  // Plain ceramic / terracotta = Minimal
+  if ((isCeramic || isTerra) && !hasArt) {
+    return { category:'Minimal', collection:'minimal', style:'Modern' };
+  }
+  // Default fallback
+  return { category:'Artisan', collection:'artisan', style:deriveStyle(p) };
+}
+
+function deriveStyle(p) {
+  const n = (p.name || '').toLowerCase();
+  if (n.includes('madhubani') || n.includes('mithila'))   return 'Madhubani';
+  if (n.includes('warli'))                                 return 'Warli';
+  if (n.includes('tribal') || n.includes('dhokra'))        return 'Tribal';
+  if (n.includes('folk') || n.includes('cow') || n.includes('lady') || n.includes('farming') || n.includes('painted')) return 'Folk Art';
+  const mat = (p.material || '').toLowerCase();
+  if (mat.includes('wood') || n.includes('wooden') || n.includes('tray') || n.includes('jharokh')) return 'Natural';
+  if (n.includes('buddha') || n.includes('yoga') || n.includes('elephant') || n.includes('minimal')) return 'Modern';
+  return 'Traditional';
+}
+
+function getSubCatForProduct(p, newCat) {
+  const n = (p.name || '').toLowerCase();
+  if (newCat === 'Artisan') {
+    if (n.includes('madhubani') || n.includes('mithila') || n.includes('peacock'))   return 'Madhubani & Folk';
+    if (n.includes('warli') || n.includes('tribal') || n.includes('tribal echo'))    return 'Warli & Tribal';
+    if (n.includes('planter') || n.includes('pot') || n.includes('diffuser'))        return 'Painted Planters';
+    if (n.includes('tray') || n.includes('plate') || n.includes('bowl'))             return 'Folk Art Trays';
+    if (n.includes('key holder') || n.includes('jharokh'))                           return 'Artistic Wall Decor';
+    return 'Painted Serveware';
+  }
+  if (newCat === 'Woodcraft') {
+    if (n.includes('tray') || n.includes('platter') || n.includes('board'))          return 'Trays & Platters';
+    if (n.includes('jharokh'))                                                        return 'Jharokha Mirrors';
+    if (n.includes('spatula') || n.includes('masala') || n.includes('spice'))        return 'Kitchen Tools';
+    if (n.includes('key holder'))                                                     return 'Key Holders';
+    return 'Wooden Serveware';
+  }
+  if (newCat === 'Minimal') {
+    if (n.includes('terracotta') || n.includes('kulhad') || n.includes('handiya'))   return 'Natural Terracotta';
+    if (n.includes('planter') || n.includes('pot'))                                  return 'Minimal Planters';
+    return 'Plain Ceramic';
+  }
+  if (newCat === 'Gifting') {
+    if (n.includes('wedding') || n.includes('heart'))                                return 'Wedding Gifts';
+    if (n.includes('festive') || n.includes('diwali'))                               return 'Festive Gifts';
+    return 'Housewarming Gifts';
+  }
+  return '';
+}
+
+// ── MIGRATION: Run on all products in Firestore ───────────────────────────
+window.runMigration = async function() {
+  if (!window.$products?.length) { showToast('⚠️ Load products first'); return; }
+  if (!confirm(`Migrate ${window.$products.length} products to new Artisan / Woodcraft / Minimal / Gifting structure?\n\nThis will update all products in Firestore.`)) return;
+
+  const btn = document.querySelector('[onclick="runMigration()"]');
+  if (btn) { btn.textContent = '⏳ Migrating…'; btn.disabled = true; }
+
+  let done = 0; let errors = 0;
+  for (const p of window.$products) {
+    try {
+      const cls    = classifyProduct(p);
+      const subCat = getSubCatForProduct(p, cls.category);
+      await updateDoc(doc(db, 'products', p.id), {
+        category:   cls.category,
+        collection: cls.collection,
+        style:      cls.style,
+        subCategory: subCat || p.subCategory,
+        updatedAt:  serverTimestamp(),
+      });
+      done++;
+    } catch(e) { errors++; console.warn('Migration error:', p.name, e); }
+  }
+
+  if (btn) { btn.textContent = '⚡ Migrate Collections'; btn.disabled = false; }
+  showToast(`✅ Migration complete! ${done} updated, ${errors} errors.`);
+  await loadProducts();
+};
+
 window.saveProduct = async function() {
   const name  = document.getElementById('mName').value.trim();
   const price = parseInt(document.getElementById('mPrice').value);
   if (!name || !price) { showToast('⚠️ Name and Price are required'); return; }
+  // Validate category
+  const cat = document.getElementById('mCat').value;
+  if (!cat) { showToast('⚠️ Please select a Category'); return; }
   // Collect all 5 image URLs, filter empty ones
   const images = [0,1,2,3,4]
     .map(i => (document.getElementById('mImage'+i)?.value || '').trim())
     .filter(url => url !== '');
   const data = {
-    name, price, mrp: parseInt(document.getElementById('mMrp').value)||price,
-    category:    document.getElementById('mCat').value,
+    name,
+    price,
+    mrp:        parseInt(document.getElementById('mMrp').value) || price,
+    category:   cat,
     subCategory: document.getElementById('mSub').value,
-    material:    document.getElementById('mMat').value,
-    color:       document.getElementById('mColor').value,
-    size:        document.getElementById('mSize').value,
-    tag:         document.getElementById('mTag').value,
-    stock:       parseInt(document.getElementById('mStock').value)||10,
-    partNumber:  document.getElementById('mPartNumber').value.trim(),
-    image:       images[0] || '',
-    images:      images,
+    collection: document.getElementById('mCollection').value || cat.toLowerCase(),
+    style:      document.getElementById('mStyle').value,
+    material:   document.getElementById('mMat').value,
+    color:      document.getElementById('mColor').value,
+    size:       document.getElementById('mSize').value,
+    tag:        document.getElementById('mTag').value,
+    stock:      parseInt(document.getElementById('mStock').value) || 10,
+    partNumber: document.getElementById('mPartNumber').value.trim(),
+    featured:   document.getElementById('mFeatured').checked,
+    image:      images[0] || '',
+    images,
     description: document.getElementById('mDesc').value,
-    icon: '🎁',
-    updatedAt: serverTimestamp(),
+    icon:       '🎁',
+    updatedAt:  serverTimestamp(),
   };
   try {
     if (window.$editingId) {
       await updateDoc(doc(db, 'products', window.$editingId), data);
       showToast('✅ Product updated! ' + images.length + ' image(s) saved.');
     } else {
-      data.createdAt = serverTimestamp(); data.sold = 0;
+      data.createdAt = serverTimestamp();
+      data.sold = 0;
       await addDoc(collection(db, 'products'), data);
       showToast('✅ Product added with ' + images.length + ' image(s)!');
     }
@@ -1200,7 +1401,13 @@ function applyProdFilters() {
   if (day === 'earlier') list = list.filter(p => !isToday(p.createdAt?.seconds));
   // Search filter
   const q = (document.getElementById('prodSearch')?.value || '').toLowerCase();
-  if (q) list = list.filter(p => p.name?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q));
+  if (q) list = list.filter(p =>
+    p.name?.toLowerCase().includes(q) ||
+    p.category?.toLowerCase().includes(q) ||
+    p.collection?.toLowerCase().includes(q) ||
+    p.style?.toLowerCase().includes(q) ||
+    p.subCategory?.toLowerCase().includes(q)
+  );
   // Category filter
   const cat = window._catFilter || 'all';
   if (cat !== 'all') list = list.filter(p => p.category === cat);
@@ -1293,20 +1500,26 @@ window.editProduct = function(id) {
   if (!p) return;
   window.$editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit Product';
-  document.getElementById('mName').value  = p.name||'';
-  document.getElementById('mPrice').value = p.price||'';
-  document.getElementById('mMrp').value   = p.mrp||'';
-  document.getElementById('mCat').value   = p.category||'';
-  document.getElementById('mSub').value   = p.subCategory||'';
-  document.getElementById('mMat').value   = p.material||'';
-  document.getElementById('mColor').value = p.color||'';
-  document.getElementById('mSize').value  = p.size||'';
-  document.getElementById('mTag').value   = p.tag||'';
-  document.getElementById('mStock').value      = p.stock||'';
-  document.getElementById('mDesc').value       = p.description||'';
-  document.getElementById('mPartNumber').value = p.partNumber||'';
-  // Load all images into the 5 fields
-  const imgs = p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []);
+  document.getElementById('mName').value       = p.name || '';
+  document.getElementById('mPrice').value      = p.price || '';
+  document.getElementById('mMrp').value        = p.mrp || '';
+  document.getElementById('mColor').value      = p.color || '';
+  document.getElementById('mSize').value       = p.size || '';
+  document.getElementById('mTag').value        = p.tag || '';
+  document.getElementById('mStock').value      = p.stock || '';
+  document.getElementById('mDesc').value       = p.description || '';
+  document.getElementById('mPartNumber').value = p.partNumber || '';
+  document.getElementById('mFeatured').checked = p.featured || false;
+  // Category → then update subcats → then restore
+  const cat = p.category || 'Artisan';
+  document.getElementById('mCat').value = cat;
+  updateSubCats();
+  document.getElementById('mSub').value        = p.subCategory || '';
+  document.getElementById('mCollection').value = p.collection || cat.toLowerCase();
+  document.getElementById('mStyle').value      = p.style || '';
+  document.getElementById('mMat').value        = p.material || '';
+  // Load images
+  const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
   [0,1,2,3,4].forEach(i => {
     const el = document.getElementById('mImage'+i);
     if (el) { el.value = imgs[i] || ''; previewImg(i, imgs[i] || ''); }
@@ -1616,7 +1829,14 @@ function goPage(id, navEl) {
 function openAddModal() {
   window.$editingId = null;
   document.getElementById('modalTitle').textContent = 'Add New Product';
-  ['mName','mPrice','mMrp','mMat','mColor','mSize','mTag','mStock','mDesc','mPartNumber'].forEach(id=>document.getElementById(id).value='');
+  ['mName','mPrice','mMrp','mColor','mSize','mTag','mStock','mDesc','mPartNumber']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mCat').value        = 'Artisan';
+  document.getElementById('mCollection').value = 'artisan';
+  document.getElementById('mStyle').value      = '';
+  document.getElementById('mMat').value        = '';
+  document.getElementById('mFeatured').checked = false;
+  updateSubCats(); // populate subcats for default Artisan
   [0,1,2,3,4].forEach(i => {
     const el = document.getElementById('mImage'+i);
     if (el) el.value = '';
@@ -1915,9 +2135,9 @@ const BulkUpload = {
   },
 
   downloadTemplate() {
-    const headers = ['Name','PartNumber','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','ImageFile1','ImageFile2','ImageFile3'];
+    const headers = ['Name','PartNumber','Category','SubCategory','Collection','Style','Price','MRP','Material','Color','Size','Tag','Stock','Description','ImageFile1','ImageFile2','ImageFile3'];
     const example = [
-      'Folk Art Ceramic Planter','AN-001','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','folk-art-planter.jpg','','',
+      'Madhubani Folk Peacock Planter','AN-001','Artisan','Madhubani & Folk','artisan','Madhubani','1299','1599','Ceramic','Multicolors','Ø12cm × H14cm','Folk Art','10','Hand-painted Madhubani peacock planter — authentic Indian folk art.','planter-img1.jpg','planter-img2.jpg','',
     ];
     const csv = [headers.join(','), example.map(v => `"${v}"`).join(',')].join('\n');
     const a = document.createElement('a');
@@ -1948,10 +2168,11 @@ const BulkUpload = {
     const headers = this._splitCSV(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
     const idx = (name) => headers.findIndex(h => h.includes(name));
     const iFirebaseId = headers.findIndex(h => h === 'firebaseid' || h === 'id');
-    const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
-    const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
-    const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
-    const iStock = idx('stock'); const iDesc = idx('desc');  const iPart = idx('part');
+    const iName  = idx('name');   const iCat   = idx('cat');    const iSub  = idx('sub');
+    const iPrice = idx('price');  const iMrp   = idx('mrp');    const iMat  = idx('mat');
+    const iColor = idx('color');  const iSize  = idx('size');   const iTag  = idx('tag');
+    const iStock = idx('stock');  const iDesc  = idx('desc');   const iPart = idx('part');
+    const iColl  = idx('collection'); const iStyle = idx('style');
     // Support ImageFile1/2/3 (template filenames) AND Image1-5 (exported full URLs)
     const iImgF1 = idx('imagefile1') >= 0 ? idx('imagefile1') : idx('image1');
     const iImgF2 = idx('imagefile2') >= 0 ? idx('imagefile2') : idx('image2');
@@ -1965,10 +2186,13 @@ const BulkUpload = {
       if (!name) continue;
       const price = parseInt(cols[iPrice]) || 0;
       if (!price) continue;
+      const rawCat = (cols[iCat] || 'Artisan').trim();
       const row = {
         name,
-        category:    (cols[iCat]  || 'Aura décor').trim(),
+        category:    rawCat,
         subCategory: (cols[iSub]  || '').trim(),
+        collection:  (iColl >= 0 ? cols[iColl] || '' : '').trim() || rawCat.toLowerCase(),
+        style:       (iStyle >= 0 ? cols[iStyle] || '' : '').trim(),
         price,
         mrp:         parseInt(cols[iMrp]) || price,
         material:    (cols[iMat]  || '').trim(),
@@ -2070,6 +2294,13 @@ const BulkUpload = {
         const imgs = this._matchImages(row);
         // Strip CSV-only helper columns before saving
         const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
+        // Auto-derive collection/style if not in CSV
+        if (!rest.collection) {
+          const cls = classifyProduct(rest);
+          rest.collection = cls.collection;
+          rest.category   = cls.category;
+          if (!rest.style) rest.style = cls.style;
+        }
         const product = {
           ...rest,
           image:     imgs[0] || '',
