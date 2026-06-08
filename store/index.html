@@ -311,7 +311,7 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .cat-card:hover .cat-emoji{transform:scale(1.15) translateY(-2px);}
 .cat-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;margin-bottom:.35rem;font-weight:400;letter-spacing:.02em;}
 .cat-desc{font-size:.7rem;color:var(--muted);letter-spacing:.05em;}
-/* ── Circular category cards ── */
+/* ── Circular category cards (legacy kept) ── */
 .cat-circles{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap;padding:1rem 0;}
 .cat-circle{text-align:center;cursor:pointer;transition:transform .25s;}
 .cat-circle:hover{transform:translateY(-6px);}
@@ -319,6 +319,31 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .cat-circle:hover .cat-circle-img{border-color:var(--gold);box-shadow:0 16px 48px rgba(18,12,6,.2),0 0 0 8px rgba(196,149,53,.12);transform:scale(1.04);}
 .cat-circle-img img{width:100%;height:100%;object-fit:cover;}
 .cat-circle-name{font-size:.92rem;color:var(--dark);font-weight:500;letter-spacing:.02em;}
+/* ── Collection Cards (new) ── */
+.coll-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;}
+.coll-card{position:relative;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .35s cubic-bezier(.23,1,.32,1),box-shadow .35s;}
+.coll-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(18,12,6,.16);}
+.coll-card-img{height:220px;overflow:hidden;background:#2c2420;}
+.coll-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;}
+.coll-card:hover .coll-card-img img{transform:scale(1.06);}
+.coll-card-body{padding:1.4rem 1.5rem;background:var(--white);}
+.coll-card-eye{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
+.coll-card-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:.3rem;}
+.coll-card-count{font-size:.72rem;color:var(--muted);}
+.coll-card-arrow{position:absolute;bottom:1.3rem;right:1.4rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .25s,transform .25s;transform:translateX(-6px);}
+.coll-card:hover .coll-card-arrow{opacity:1;transform:translateX(0);}
+/* ── Gifts Strip ── */
+.gifts-strip{background:var(--dark);padding:4rem 5rem;}
+.gifts-strip-inner{display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem;}
+.gifts-price-tags{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:2.5rem;}
+.gift-price-tag{padding:.45rem 1.2rem;border:1px solid rgba(196,149,53,.4);color:rgba(210,192,166,.7);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.gift-price-tag.on,.gift-price-tag:hover{background:var(--gold);color:#fff;border-color:var(--gold);}
+/* ── Collection badge on product cards ── */
+.prod-coll-badge{position:absolute;bottom:.6rem;left:.6rem;padding:.18rem .65rem;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;pointer-events:none;}
+.pcb-artisan{background:rgba(184,147,63,.9);color:#fff;}
+.pcb-woodcraft{background:rgba(80,120,70,.9);color:#fff;}
+.pcb-minimal{background:rgba(80,100,150,.9);color:#fff;}
+.pcb-gifting{background:rgba(180,90,60,.9);color:#fff;}
 /* ── Product wishlist heart overlay ── */
 .prod-wish-heart{position:absolute;top:.7rem;left:.7rem;background:rgba(255,255,255,.85);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;font-size:.9rem;transition:all .2s;color:#aaa;}
 .prod-wish-heart:hover,.prod-wish-heart.wished{color:var(--terracotta);background:#fff;}
@@ -699,6 +724,10 @@ select.finp{cursor:pointer;}
   .sec-title{font-size:clamp(1.6rem,5vw,2.5rem);}
   .sec-hdr{margin-bottom:2.5rem;}
   /* CATEGORIES */
+  .coll-cards{grid-template-columns:repeat(2,1fr);gap:.9rem;}
+  .coll-card-img{height:150px;}
+  .gifts-strip{padding:2.5rem 1.2rem;}
+  .gifts-strip-inner{flex-direction:column;align-items:flex-start;gap:1rem;}
   .cat-circles{gap:1.2rem;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding:.5rem 0 1rem;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   .cat-circles::-webkit-scrollbar{display:none;}
   .cat-circle{flex-shrink:0;}
@@ -1320,27 +1349,78 @@ select.finp{cursor:pointer;}
 
 <div class="marquee-strip"><div class="marquee-track" id="mtrack"></div></div>
 
-<!-- CATEGORIES -->
+<!-- SHOP BY COLLECTION -->
 <section class="section" id="shop">
-  <div class="sec-hdr"><p class="sec-eye">Browse by Category</p><h2 class="sec-title">Shop by Category</h2></div>
-  <div class="cat-circles">
-    <a class="cat-circle" href="home-kitchen.html" onclick="event.preventDefault();CategoryPage.open('Home & Kitchen')">
-      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_200/auranest/round-wooden-tray-cow/img1.jpg" alt="Home & Kitchen" loading="lazy"/></div>
-      <div class="cat-circle-name">Home &amp; Kitchen</div>
-    </a>
-    <a class="cat-circle" href="aura-decor.html" onclick="event.preventDefault();CategoryPage.open('Aura décor')">
-      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_200/auranest/auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg" alt="Aura Décor" loading="lazy"/></div>
-      <div class="cat-circle-name">Aura Décor</div>
-    </a>
-    <a class="cat-circle" href="aesthetic-furniture.html" onclick="event.preventDefault();CategoryPage.open('Aesthetic Furniture')">
-      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_200/auranest/jharokha-rectangl-brown/img1.jpg" alt="Aesthetic Furniture" loading="lazy"/></div>
-      <div class="cat-circle-name">Aesthetic Furniture</div>
-    </a>
-    <a class="cat-circle" href="giftings.html" onclick="event.preventDefault();CategoryPage.open('Giftings')">
-      <div class="cat-circle-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_200/auranest/ceramic-planter-with-blue-leaf/img1.jpg" alt="Giftings" loading="lazy"/></div>
-      <div class="cat-circle-name">Giftings</div>
-    </a>
+  <div class="sec-hdr">
+    <p class="sec-eye">Our World</p>
+    <h2 class="sec-title">Shop by Collection</h2>
+    <p class="sec-sub">Four distinct worlds — each crafted to speak to a different facet of your home.</p>
   </div>
+  <div class="coll-cards">
+    <div class="coll-card" onclick="filterProds('artisan'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
+      <div class="coll-card-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Artisan Collection" loading="lazy"/>
+      </div>
+      <div class="coll-card-body">
+        <p class="coll-card-eye">Hand-Painted · Folk Art · Madhubani</p>
+        <h3 class="coll-card-name">Artisan Collection</h3>
+        <p class="coll-card-count" id="coll-count-artisan">21 Pieces</p>
+      </div>
+      <span class="coll-card-arrow">Shop Now →</span>
+    </div>
+    <div class="coll-card" onclick="filterProds('woodcraft'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
+      <div class="coll-card-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/lfblue-jharokhe/img1.jpg" alt="Woodcraft Collection" loading="lazy"/>
+      </div>
+      <div class="coll-card-body">
+        <p class="coll-card-eye">Trays · Jharokhas · Kitchen Craft</p>
+        <h3 class="coll-card-name">Woodcraft Collection</h3>
+        <p class="coll-card-count" id="coll-count-woodcraft">24 Pieces</p>
+      </div>
+      <span class="coll-card-arrow">Shop Now →</span>
+    </div>
+    <div class="coll-card" onclick="filterProds('minimal'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
+      <div class="coll-card-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/black-buddha-face/img1.jpg" alt="Minimal Collection" loading="lazy"/>
+      </div>
+      <div class="coll-card-body">
+        <p class="coll-card-eye">Ceramic · Terracotta · Sculptural</p>
+        <h3 class="coll-card-name">Minimal Collection</h3>
+        <p class="coll-card-count" id="coll-count-minimal">8 Pieces</p>
+      </div>
+      <span class="coll-card-arrow">Shop Now →</span>
+    </div>
+    <div class="coll-card" onclick="filterProds('gifting'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
+      <div class="coll-card-img">
+        <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/ceramic-couple/img1.jpg" alt="Gifting Collection" loading="lazy"/>
+      </div>
+      <div class="coll-card-body">
+        <p class="coll-card-eye">Housewarming · Wedding · Festive</p>
+        <h3 class="coll-card-name">Gifting Collection</h3>
+        <p class="coll-card-count" id="coll-count-gifting">Curated Gifts</p>
+      </div>
+      <span class="coll-card-arrow">Shop Gifts →</span>
+    </div>
+  </div>
+</section>
+
+<!-- GIFTS UNDER ₹999 STRIP -->
+<section class="gifts-strip" id="gifts">
+  <div class="gifts-strip-inner">
+    <div>
+      <p class="sec-eye" style="color:var(--gold-lt)">Perfect Gifts</p>
+      <h2 class="sec-title" style="color:#fff;font-size:clamp(1.8rem,3vw,2.8rem)">Gifts for Every Budget</h2>
+    </div>
+    <button class="btn-primary" onclick="filterProds('gifting'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">Shop All Gifts →</button>
+  </div>
+  <div class="gifts-price-tags">
+    <button class="gift-price-tag on" onclick="filterByGiftPrice('all',this)">All Gifts</button>
+    <button class="gift-price-tag" onclick="filterByGiftPrice(499,this)">Under ₹499</button>
+    <button class="gift-price-tag" onclick="filterByGiftPrice(999,this)">Under ₹999</button>
+    <button class="gift-price-tag" onclick="filterByGiftPrice(1999,this)">Under ₹1,999</button>
+    <button class="gift-price-tag" onclick="filterByGiftPrice(9999,this)">Premium</button>
+  </div>
+  <div class="prod-grid" id="giftsGrid" style="grid-template-columns:repeat(4,1fr);gap:1.2rem;max-height:none;"></div>
 </section>
 
 <!-- SALE COUNTDOWN -->
@@ -1362,15 +1442,18 @@ select.finp{cursor:pointer;}
 
 <!-- PRODUCTS -->
 <section class="section section-alt" id="collection">
-  <div class="sec-hdr"><p class="sec-eye">Our Collection</p><h2 class="sec-title">Artisan Favourites</h2></div>
+  <div class="sec-hdr">
+    <p class="sec-eye">Our Collection</p>
+    <h2 class="sec-title" id="collectionTitle">All Products</h2>
+    <p class="sec-sub" id="collectionSub">Handcrafted Indian décor — curated across four distinct collections.</p>
+  </div>
   <div class="filter-row">
-    <button class="fbtn on"  data-key="all"             onclick="filterProds('all',this)">All</button>
-    <button class="fbtn"     data-key="Home & Kitchen"  onclick="filterProds('Home & Kitchen',this)">Home & Kitchen</button>
-    <button class="fbtn"     data-key="Aura décor"      onclick="filterProds('Aura décor',this)">Aura Décor</button>
-    <button class="fbtn"     data-key="Serveware"       onclick="filterProds('Serveware',this)">Serveware</button>
-    <button class="fbtn"     data-key="Decorative Pots" onclick="filterProds('Decorative Pots',this)">Planters</button>
-    <button class="fbtn"     data-key="Kitchen Tools"   onclick="filterProds('Kitchen Tools',this)">Kitchen Tools</button>
-    <button class="fbtn"     data-key="Wall Décor"      onclick="filterProds('Wall Décor',this)">Wall Décor</button>
+    <button class="fbtn on"  data-key="all"       onclick="filterProds('all',this)">✦ All</button>
+    <button class="fbtn"     data-key="artisan"   onclick="filterProds('artisan',this)">🎨 Artisan</button>
+    <button class="fbtn"     data-key="woodcraft" onclick="filterProds('woodcraft',this)">🪵 Woodcraft</button>
+    <button class="fbtn"     data-key="minimal"   onclick="filterProds('minimal',this)">🏺 Minimal</button>
+    <button class="fbtn"     data-key="gifting"   onclick="filterProds('gifting',this)">🎁 Gifting</button>
+    <button class="fbtn"     data-key="under999"  onclick="filterProds('under999',this)">₹ Under ₹999</button>
   </div>
   <div class="prod-grid" id="prodGrid">
     <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:1.2rem;">Loading products...</div>
@@ -2098,6 +2181,8 @@ async function loadProducts() {
       try { localStorage.setItem('auranest_products', JSON.stringify(window.$products)); } catch(e) {}
       renderProducts(window.$products);
       loadTrending();
+      renderCollectionCounts();
+      filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
       document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
       setFbStatus('🟢 Firebase Connected', true);
     }
@@ -2630,6 +2715,7 @@ function renderProducts(list) {
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
         <button class="prod-qadd" onclick="event.stopPropagation();addToCart('${pid}')">Add to Cart</button>
+        <span class="prod-coll-badge pcb-${getCollection(p)}">${getCollection(p)}</span>
       </div>
       <p class="prod-sub">${p.subCategory}</p>
       <p class="prod-name">${p.name}</p>
@@ -2642,12 +2728,114 @@ function renderProducts(list) {
   }).join('');
 }
 
+// ── COLLECTION MAPPING ─────────────────────────────────────────────────────
+const COLLECTION_MAP = {
+  'Ceramic Planter – Blue Leaf':'artisan','Regal Plume Ceramic Planter':'artisan',
+  'Cultural Keepsake Planter':'artisan','Ceramic Planter – Lotus Flower':'artisan',
+  'Ceramic Planter – Lady Face':'artisan','Madhubani Folk Peacock Planter':'artisan',
+  'Daily Tribal Life Planter':'artisan','Round Wooden Tray – Cow Art':'artisan',
+  'LF Lady with Matka':'artisan','Ceramic Plate – Orange Base':'artisan',
+  'Ceramic Plate – Red Base':'artisan','LF Two Lady Wooden Tray':'artisan',
+  'LF Farming Wooden Tray':'artisan','Wooden Tray – Stripes with Fish':'artisan',
+  'Ceramic Plate – Yellow Base':'artisan','Bloom-O-Saurus Ceramic Showpiece':'artisan',
+  'Tribal Echo Ceramic Planter':'artisan','Diffuser with Black Art':'artisan',
+  'Terracotta Natural Handiya':'artisan','Wooden Round Tray – Lady with Deer':'artisan',
+  'Mayura Live-Edge Peacock Platter':'artisan',
+  'Wooden Round Tray – Small':'woodcraft','LF Round Wooden Tray':'woodcraft',
+  'LF Wooden Moon Tray':'woodcraft','LF Wooden Bowl':'woodcraft',
+  'Wooden Tray – Stripes':'woodcraft','LF 3-Set of Trays':'woodcraft',
+  'Wooden Stool – 2 Step':'woodcraft','Wooden Stool – 3 Step':'woodcraft',
+  'Wooden Moon Tray':'woodcraft','LF Wooden Tray – Stripes':'woodcraft',
+  'Wooden Spatula':'woodcraft','LF Masala Box – 9 Sections':'woodcraft',
+  'LF Wooden Masala Box – 12 Sections':'woodcraft','Wooden Spice Box – Diamond':'woodcraft',
+  'LF Green Jharokhe Mirror':'woodcraft','Rectangular Brown Jharokha':'woodcraft',
+  'LF Blue Jharokhe Mirror':'woodcraft','LF Pizza Platter':'woodcraft',
+  'Wooden Coaster':'woodcraft','LF Oval Shape Tray':'woodcraft',
+  'LF Small Turtle Stool':'woodcraft','LF Spatula Set':'woodcraft',
+  'Key Holder – Stripes':'woodcraft','Blue Jharokhe Mirror':'woodcraft',
+  'Brown Jharokhe Mirror':'woodcraft','LF Brown Jharokhe':'woodcraft',
+  'LF Key Holder – Stripes':'woodcraft','Wooden Round Tray – Large':'woodcraft',
+  'LF Wooden Round Tray – Large':'woodcraft',
+  'Black Buddha Face Planter':'minimal','White Ceramic Elephant':'minimal',
+  'Ceramic Yoga Statue':'minimal','Terracotta Bowl':'minimal','Terracotta Kulhad':'minimal',
+  'Ceramic Couple Figurine':'gifting','Ceramic Couple with Heart':'gifting',
+  'LF Wooden Heart Large Tray':'gifting',
+};
+
+function getCollection(p) {
+  if (p.collection) return p.collection;
+  const name = (p.name || '').trim();
+  if (COLLECTION_MAP[name]) return COLLECTION_MAP[name];
+  const n = name.toLowerCase();
+  const mat = (p.material || '').toLowerCase();
+  if (n.includes('couple') || n.includes('heart') || p.gifting) return 'gifting';
+  if (n.includes('jharokh') || mat === 'wood' || n.includes('wooden') ||
+      n.includes('tray') || n.includes('stool') || n.includes('key holder') ||
+      n.includes('spatula') || n.includes('masala') || n.includes('coaster') ||
+      n.includes('platter') || n.includes('spice box')) return 'woodcraft';
+  if (n.includes('buddha') || n.includes('yoga') || n.includes('elephant') ||
+      n.includes('terracotta') || n.includes('kulhad') || n.includes('handiya')) return 'minimal';
+  return 'artisan';
+}
+
+const COLL_META = {
+  all:       { title:'All Products',          sub:'Handcrafted Indian décor — curated across four distinct collections.' },
+  artisan:   { title:'Artisan Collection',    sub:'Hand-painted folk art, Madhubani, Warli & tribal ceramics.' },
+  woodcraft: { title:'Woodcraft Collection',  sub:'Natural wood trays, Jharokha mirrors, kitchen tools & stools.' },
+  minimal:   { title:'Minimal Collection',    sub:'Plain ceramic sculptures, terracotta & contemporary forms.' },
+  gifting:   { title:'Gifting Collection',    sub:'Curated gifts for housewarming, weddings & festive occasions.' },
+  under999:  { title:'Under ₹999',            sub:'Beautiful handcrafted pieces that make perfect everyday gifts.' },
+};
+
 function filterProds(key, btn) {
   if (btn) { document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+  else {
+    // called programmatically (e.g. from collection card click)
+    document.querySelectorAll('.fbtn').forEach(b => {
+      b.classList.toggle('on', b.dataset.key === key);
+    });
+  }
   const all = window.$products || PRODUCTS;
-  const subFilters = ['Serveware','Decorative Pots','Kitchen Tools','Wall Décor','Tableware'];
-  const list = key === 'all' ? all : subFilters.includes(key) ? all.filter(p => p.subCategory === key) : all.filter(p => p.category === key);
+  let list;
+  if (key === 'all')      list = all;
+  else if (key === 'under999') list = all.filter(p => (p.price || 0) < 999);
+  else                   list = all.filter(p => getCollection(p) === key);
+  const meta = COLL_META[key] || COLL_META.all;
+  const titleEl = document.getElementById('collectionTitle');
+  const subEl   = document.getElementById('collectionSub');
+  if (titleEl) titleEl.textContent = meta.title;
+  if (subEl)   subEl.textContent   = meta.sub;
   renderProducts(list);
+}
+
+function filterByGiftPrice(max, btn) {
+  if (btn) { document.querySelectorAll('.gift-price-tag').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+  const all    = window.$products || PRODUCTS;
+  const gifts  = all.filter(p => getCollection(p) === 'gifting' || p.gifting);
+  const list   = max === 'all' ? gifts : gifts.filter(p => (p.price || 0) <= max);
+  const grid   = document.getElementById('giftsGrid');
+  if (!grid) return;
+  if (!list.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:rgba(255,255,255,.4);font-family:'Cormorant Garamond',serif">No gifts in this range yet.</div>`; return; }
+  grid.innerHTML = list.slice(0,4).map(p => {
+    const img = (p.images?.[0]) || p.image || '';
+    return `<div class="prod-card" onclick="openProduct('${p.id}')" style="cursor:pointer">
+      <div class="p-img-wrap" style="position:relative">
+        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:cover"/>` : '<div style="height:200px;background:#2a2018"></div>'}
+      </div>
+      <div class="p-info">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">₹${(p.price||0).toLocaleString('en-IN')}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCollectionCounts() {
+  const all = window.$products || [];
+  ['artisan','woodcraft','minimal'].forEach(c => {
+    const el = document.getElementById('coll-count-' + c);
+    if (el) { const n = all.filter(p => getCollection(p) === c).length; el.textContent = n + ' Pieces'; }
+  });
 }
 
 function searchProds(query) {
