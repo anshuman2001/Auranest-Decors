@@ -1144,10 +1144,11 @@ select.finp{cursor:pointer;}
         <span onclick="filterProds('artisan');goToSection('collection')">🎨 Artisan ▾</span>
         <div class="nav-dropdown">
           <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">All Artisan</a>
-          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Madhubani &amp; Folk</a>
-          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Warli &amp; Tribal</a>
-          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Painted Planters</a>
-          <a href="#" onclick="filterProds('artisan');goToSection('collection');return false;">Folk Art Trays</a>
+          <a href="#" onclick="filterBySubCat('artisan','Madhubani & Folk');return false;">Madhubani &amp; Folk</a>
+          <a href="#" onclick="filterBySubCat('artisan','Warli & Tribal');return false;">Warli &amp; Tribal</a>
+          <a href="#" onclick="filterBySubCat('artisan','Painted Planters');return false;">Painted Planters</a>
+          <a href="#" onclick="filterBySubCat('artisan','Folk Art Trays');return false;">Folk Art Trays</a>
+          <a href="#" onclick="filterBySubCat('artisan','Painted Wooden Decor');return false;" style="color:var(--gold);font-weight:500">🎨 Painted Wooden Decor</a>
         </div>
       </li>
       <li>
@@ -1203,10 +1204,11 @@ select.finp{cursor:pointer;}
       <button class="mob-cat-hdr" onclick="this.parentElement.classList.toggle('open')">🎨 Artisan Collection <span class="mob-arr">›</span></button>
       <div class="mob-sub">
         <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">All Artisan</a>
-        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Madhubani &amp; Folk</a>
-        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Warli &amp; Tribal</a>
-        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Painted Planters</a>
-        <a href="#" onclick="event.preventDefault();filterProds('artisan',null);goToSection('collection');closeMobNav()">Folk Art Trays</a>
+        <a href="#" onclick="event.preventDefault();filterBySubCat('artisan','Madhubani & Folk');closeMobNav()">Madhubani &amp; Folk</a>
+        <a href="#" onclick="event.preventDefault();filterBySubCat('artisan','Warli & Tribal');closeMobNav()">Warli &amp; Tribal</a>
+        <a href="#" onclick="event.preventDefault();filterBySubCat('artisan','Painted Planters');closeMobNav()">Painted Planters</a>
+        <a href="#" onclick="event.preventDefault();filterBySubCat('artisan','Folk Art Trays');closeMobNav()">Folk Art Trays</a>
+        <a href="#" onclick="event.preventDefault();filterBySubCat('artisan','Painted Wooden Decor');closeMobNav()" style="color:var(--gold);font-weight:500">🎨 Painted Wooden Decor</a>
       </div>
     </div>
     <div class="mob-cat-wrap">
@@ -2773,19 +2775,40 @@ const COLLECTION_MAP = {
   'LF Wooden Heart Large Tray':'gifting',
 };
 
+// Art keywords — any wooden product with these is ARTISAN, not Woodcraft
+const STORE_ART_KW = [
+  'madhubani','mithila','warli','folk','painted','hand paint','tribal',
+  'cow art','lady','matka','farming','peacock','cultural','lotus',
+  'bloom','diffuser','plume','keepsake','two lady','lady with',
+  'deer','fish','ethnic','dhokra',
+];
+
 function getCollection(p) {
   if (p.collection) return p.collection;
   const name = (p.name || '').trim();
   if (COLLECTION_MAP[name]) return COLLECTION_MAP[name];
-  const n = name.toLowerCase();
+  const n   = name.toLowerCase();
   const mat = (p.material || '').toLowerCase();
+
+  // ── BUSINESS RULE: Artwork > Material ─────────────────────────────────
+  // Check art keywords FIRST — before any material/wood check.
+  // A painted wooden tray is ARTISAN, not Woodcraft.
+  const hasArt = STORE_ART_KW.some(k => n.includes(k));
+  if (hasArt) return 'artisan';
+
+  // Gifting (no art)
   if (n.includes('couple') || n.includes('heart') || p.gifting) return 'gifting';
-  if (n.includes('jharokh') || mat === 'wood' || n.includes('wooden') ||
+
+  // PLAIN wood only (no art found above) → Woodcraft
+  if (n.includes('jharokh') || mat.includes('wood') || n.includes('wooden') ||
       n.includes('tray') || n.includes('stool') || n.includes('key holder') ||
       n.includes('spatula') || n.includes('masala') || n.includes('coaster') ||
       n.includes('platter') || n.includes('spice box')) return 'woodcraft';
+
+  // Plain ceramic / terracotta → Minimal
   if (n.includes('buddha') || n.includes('yoga') || n.includes('elephant') ||
       n.includes('terracotta') || n.includes('kulhad') || n.includes('handiya')) return 'minimal';
+
   return 'artisan';
 }
 
@@ -2817,6 +2840,25 @@ function filterProds(key, btn) {
   if (titleEl) titleEl.textContent = meta.title;
   if (subEl)   subEl.textContent   = meta.sub;
   renderProducts(list);
+}
+
+// Filter by collection + subCategory (e.g. Artisan > Painted Wooden Decor)
+function filterBySubCat(coll, subCat) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.toggle('on', b.dataset.key === coll));
+  const all  = window.$products || PRODUCTS;
+  const list = all.filter(p => getCollection(p) === coll && (p.subCategory === subCat));
+  const meta = {
+    title: subCat,
+    sub: subCat === 'Painted Wooden Decor'
+      ? 'Wooden products with Madhubani, Mithila, Warli, Folk Art or hand-painted designs.'
+      : `${coll.charAt(0).toUpperCase() + coll.slice(1)} — ${subCat}`
+  };
+  const titleEl = document.getElementById('collectionTitle');
+  const subEl   = document.getElementById('collectionSub');
+  if (titleEl) titleEl.textContent = meta.title;
+  if (subEl)   subEl.textContent   = meta.sub;
+  renderProducts(list);
+  goToSection('collection');
 }
 
 function filterByGiftPrice(max, btn) {

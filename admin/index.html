@@ -464,12 +464,18 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
         </select>
       </div>
       <div class="sg"><label class="sl">Sub-Category</label>
-        <select class="si" id="mSub">
-          <option>Madhubani &amp; Folk</option><option>Warli &amp; Tribal</option>
-          <option>Painted Planters</option><option>Painted Wooden Decor</option>
-          <option>Folk Art Trays</option><option>Painted Serveware</option>
+        <select class="si" id="mSub" onchange="checkPaintedWoodHint()">
+          <option>Madhubani &amp; Folk</option>
+          <option>Warli &amp; Tribal</option>
+          <option>Painted Planters</option>
+          <option>Painted Wooden Decor</option>
+          <option>Folk Art Trays</option>
+          <option>Painted Serveware</option>
           <option>Artistic Wall Decor</option>
         </select>
+      </div>
+      <div id="paintedWoodHint" style="display:none;grid-column:1/-1;background:rgba(184,147,63,.08);border:1px solid rgba(184,147,63,.25);padding:.6rem .9rem;font-size:.72rem;color:var(--gold)">
+        ✦ <strong>Painted Wooden Decor</strong> selected — this product will appear under Artisan › Painted Wooden Decor and will NOT appear in Woodcraft.
       </div>
       <div class="sg"><label class="sl">Collection</label>
         <select class="si" id="mCollection">
@@ -1058,7 +1064,15 @@ async function loadCustomers() {
 // ── SAVE / DELETE PRODUCT TO FIREBASE ──
 // ── CATEGORY / SUBCATEGORY / COLLECTION MAPPING ──────────────────────────
 const ADMIN_SUBCATS = {
-  'Artisan':  ['Madhubani & Folk','Warli & Tribal','Painted Planters','Painted Wooden Decor','Folk Art Trays','Painted Serveware','Artistic Wall Decor'],
+  'Artisan':  [
+    'Madhubani & Folk',       // Hand-painted ceramic/terracotta — Madhubani / Mithila style
+    'Warli & Tribal',         // Hand-painted ceramic/terracotta — Warli / Tribal style
+    'Painted Planters',       // Hand-painted ceramic pots & planters
+    'Painted Wooden Decor',   // ✦ Any WOODEN product with artwork/painting
+    'Folk Art Trays',         // Hand-painted ceramic/terracotta trays & plates
+    'Painted Serveware',      // Painted bowls, plates, cups (non-wood)
+    'Artistic Wall Decor',    // Painted/artistic wall pieces (non-wood)
+  ],
   'Woodcraft':['Trays & Platters','Jharokha Mirrors','Kitchen Tools','Key Holders','Wooden Decor','Wooden Serveware'],
   'Minimal':  ['Decorative Pots','Modern Decor','Plain Ceramic','Natural Terracotta','Minimal Planters'],
   'Gifting':  ['Wedding Gifts','Housewarming Gifts','Festive Gifts','Under ₹999'],
@@ -1069,6 +1083,14 @@ window.updateSubCats = function() {
   const sub  = document.getElementById('mSub');
   const list = ADMIN_SUBCATS[cat] || [];
   sub.innerHTML = list.map(s => `<option value="${s}">${s}</option>`).join('');
+  checkPaintedWoodHint();
+};
+
+window.checkPaintedWoodHint = function() {
+  const hint = document.getElementById('paintedWoodHint');
+  if (!hint) return;
+  const subVal = document.getElementById('mSub')?.value;
+  hint.style.display = subVal === 'Painted Wooden Decor' ? '' : 'none';
 };
 
 window.syncCollection = function() {
@@ -1085,8 +1107,15 @@ const ART_KEYWORDS = [
   'two lady','lady with','folk regal','cultural keepsake','folk peacock',
   'daily tribal','tribal echo','mayura','cow','fish','deer',
 ];
-const GIFT_KEYWORDS = ['couple','heart','wedding','gifting','festive','housewarming'];
+// Keywords that indicate WOODEN construction (material)
 const WOOD_MATERIAL = ['wood','wooden','tray','stool','jharokh','spatula','masala','coaster','platter','spice','bowl'];
+// Keywords that specifically indicate PAINTED WOOD — subset of art + wood
+const PAINTED_WOOD_KEYWORDS = [
+  'madhubani','mithila','warli','folk art','folk art wooden','tribal art',
+  'painted wooden','painted tray','painted jharokha','painted key',
+  'cow art','lady with matka','farming tray','fish tray','deer tray',
+  'two lady','lady with','lady with deer','warli art wooden',
+];
 const CERAMIC_WORDS = ['ceramic','planter','pot'];
 const TERRA_WORDS   = ['terracotta','kulhad','handiya','clay'];
 
@@ -1097,34 +1126,34 @@ function classifyProduct(p) {
   const tag = (p.tag || '').toLowerCase();
   const sub = (p.subCategory || '').toLowerCase();
 
-  const hasArt     = ART_KEYWORDS.some(k => n.includes(k) || d.includes(k));
-  const isGifting  = GIFT_KEYWORDS.some(k => n.includes(k) || tag.includes(k) || sub.includes(k)) || p.gifting;
-  const isWood     = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
-  const isCeramic  = CERAMIC_WORDS.some(k => mat.includes(k) || n.includes(k));
-  const isTerra    = TERRA_WORDS.some(k => mat.includes(k) || n.includes(k));
+  const hasArt    = ART_KEYWORDS.some(k => n.includes(k) || d.includes(k));
+  const isGifting = GIFT_KEYWORDS.some(k => n.includes(k) || tag.includes(k) || sub.includes(k)) || p.gifting;
+  const isWood    = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
+  const isCeramic = CERAMIC_WORDS.some(k => mat.includes(k) || n.includes(k));
+  const isTerra   = TERRA_WORDS.some(k => mat.includes(k) || n.includes(k));
 
-  // PRIMARY RULE: Artwork > Material
+  // ── PRIMARY RULE: Artwork > Material ──────────────────────────────────────
+  // WOOD + ART = Artisan (NOT Woodcraft)
+  if (hasArt && isWood) {
+    return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: true };
+  }
+  // NON-WOOD + ART = Artisan
   if (hasArt) {
-    return {
-      category:   'Artisan',
-      collection: 'artisan',
-      style:      deriveStyle(p),
-    };
+    return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: false };
   }
   // Gifting (no art, but gifting context)
   if (isGifting) {
-    return { category:'Gifting', collection:'gifting', style:'Traditional' };
+    return { category:'Gifting', collection:'gifting', style:'Traditional', _paintedWood: false };
   }
-  // Plain wood = Woodcraft
-  if (isWood && !hasArt) {
-    return { category:'Woodcraft', collection:'woodcraft', style:'Natural' };
+  // PLAIN WOOD only = Woodcraft
+  if (isWood) {
+    return { category:'Woodcraft', collection:'woodcraft', style:'Natural', _paintedWood: false };
   }
-  // Plain ceramic / terracotta = Minimal
-  if ((isCeramic || isTerra) && !hasArt) {
-    return { category:'Minimal', collection:'minimal', style:'Modern' };
+  // PLAIN ceramic / terracotta = Minimal
+  if (isCeramic || isTerra) {
+    return { category:'Minimal', collection:'minimal', style:'Modern', _paintedWood: false };
   }
-  // Default fallback
-  return { category:'Artisan', collection:'artisan', style:deriveStyle(p) };
+  return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: false };
 }
 
 function deriveStyle(p) {
@@ -1139,14 +1168,23 @@ function deriveStyle(p) {
   return 'Traditional';
 }
 
-function getSubCatForProduct(p, newCat) {
-  const n = (p.name || '').toLowerCase();
+function getSubCatForProduct(p, newCat, cls) {
+  const n   = (p.name || '').toLowerCase();
+  const mat = (p.material || '').toLowerCase();
+  const isWood = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
+
   if (newCat === 'Artisan') {
-    if (n.includes('madhubani') || n.includes('mithila') || n.includes('peacock'))   return 'Madhubani & Folk';
-    if (n.includes('warli') || n.includes('tribal') || n.includes('tribal echo'))    return 'Warli & Tribal';
-    if (n.includes('planter') || n.includes('pot') || n.includes('diffuser'))        return 'Painted Planters';
-    if (n.includes('tray') || n.includes('plate') || n.includes('bowl'))             return 'Folk Art Trays';
-    if (n.includes('key holder') || n.includes('jharokh'))                           return 'Artistic Wall Decor';
+    // ── KEY RULE: Wood + Art → ALWAYS "Painted Wooden Decor" ──────────────
+    // This covers: painted trays, Madhubani wooden trays, Warli wooden trays,
+    // painted jharokhas, painted key holders, folk art wooden wall decor.
+    if (isWood || (cls && cls._paintedWood)) return 'Painted Wooden Decor';
+
+    // Non-wood artisan items → classify by art style
+    if (n.includes('madhubani') || n.includes('mithila') || n.includes('peacock')) return 'Madhubani & Folk';
+    if (n.includes('warli') || n.includes('tribal') || n.includes('tribal echo'))  return 'Warli & Tribal';
+    if (n.includes('planter') || n.includes('pot') || n.includes('diffuser'))      return 'Painted Planters';
+    if (n.includes('tray') || n.includes('plate') || n.includes('bowl'))           return 'Folk Art Trays';
+    if (n.includes('key holder') || n.includes('jharokh'))                         return 'Artistic Wall Decor';
     return 'Painted Serveware';
   }
   if (newCat === 'Woodcraft') {
@@ -1181,7 +1219,7 @@ window.runMigration = async function() {
   for (const p of window.$products) {
     try {
       const cls    = classifyProduct(p);
-      const subCat = getSubCatForProduct(p, cls.category);
+      const subCat = getSubCatForProduct(p, cls.category, cls);
       await updateDoc(doc(db, 'products', p.id), {
         category:   cls.category,
         collection: cls.collection,
