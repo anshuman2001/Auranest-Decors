@@ -382,7 +382,7 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .prod-card{cursor:pointer;animation:fadeUp .5s ease both;transform-style:preserve-3d;transition:transform .4s cubic-bezier(.23,1,.32,1);will-change:transform;}
 .prod-card:hover{transform:translateY(-5px);}
 .prod-card:hover .prod-name{color:var(--gold);}
-.prod-img-wrap{background:var(--warm);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;margin-bottom:1rem;border-radius:14px;transition:box-shadow .4s;}
+.prod-img-wrap{background:#fff;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;margin-bottom:1rem;border-radius:14px;transition:box-shadow .4s;}
 .prod-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-100%) skewX(-15deg);pointer-events:none;}
 .prod-card:hover .prod-img-wrap::after{animation:shimmer .75s ease forwards;}
 .prod-card:hover .prod-img-wrap{box-shadow:0 16px 48px rgba(18,12,6,.18);}
@@ -499,7 +499,7 @@ footer{background:linear-gradient(180deg,#120c06 0%,#0d0804 100%);padding:5rem 5
 .modal-bg.on .modal-box{transform:translateY(0);}
 .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--muted);z-index:2;}
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;}
-.pm-img{background:var(--warm);display:flex;align-items:center;justify-content:center;min-height:360px;font-size:7rem;overflow:hidden;}
+.pm-img{background:#fff;display:flex;align-items:center;justify-content:center;min-height:360px;font-size:7rem;overflow:hidden;}
 .pm-img img{width:100%;height:100%;object-fit:contain;padding:12px;}
 .pm-info{padding:2.8rem 2.2rem;}
 .pm-cat{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:.5rem;}
@@ -2879,7 +2879,7 @@ function filterByGiftPrice(max, btn) {
     const img = (p.images?.[0]) || p.image || '';
     return `<div class="prod-card" onclick="openProduct('${p.id}')" style="cursor:pointer">
       <div class="p-img-wrap" style="position:relative">
-        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:contain;padding:8px;background:var(--warm,#f5ede0)"/>` : '<div style="height:200px;background:#2a2018"></div>'}
+        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:contain;padding:8px;background:#fff"/>` : '<div style="height:200px;background:#2a2018"></div>'}
       </div>
       <div class="p-info">
         <div class="prod-name">${p.name}</div>
