@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Clear Products — Auranest Admin</title>
+<style>
+  body{font-family:sans-serif;background:#0f0d0b;color:#f0ebe3;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+  .box{background:#1a1612;border:1px solid rgba(184,147,63,.2);padding:3rem;max-width:500px;width:90%;text-align:center;}
+  h2{color:#b8933f;font-size:1.4rem;margin-bottom:.5rem;}
+  p{color:#8a7d6e;font-size:.85rem;margin-bottom:1.5rem;line-height:1.6;}
+  .count{font-size:2.5rem;font-weight:700;color:#b8933f;margin:1rem 0;}
+  .log{background:#0f0d0b;border:1px solid rgba(255,255,255,.06);padding:1rem;text-align:left;font-size:.75rem;color:#8a7d6e;max-height:200px;overflow-y:auto;margin:1rem 0;display:none;}
+  button{background:#e05c5c;color:#fff;border:none;padding:.9rem 2rem;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:.5rem;}
+  button:hover{background:#c04444;}
+  button:disabled{background:#3a342d;color:#6a5d4e;cursor:not-allowed;}
+  .done{color:#4caf7d;font-size:1rem;margin-top:1rem;}
+  .warn{background:rgba(224,92,92,.12);border:1px solid rgba(224,92,92,.3);padding:.8rem;font-size:.78rem;color:#e05c5c;margin-bottom:1.5rem;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>⚠️ Clear All Products</h2>
+  <p>This will permanently delete all existing products from Firestore.<br/>Make sure you have the <strong style="color:#b8933f">all-products-import.csv</strong> ready to upload after.</p>
+  <div class="warn">This action cannot be undone. Old products (58) will be removed.</div>
+  <div id="countEl" class="count">—</div>
+  <div id="countLabel" style="color:#8a7d6e;font-size:.78rem;margin-bottom:1rem">products found in database</div>
+  <div id="log" class="log"></div>
+  <button id="loadBtn" onclick="loadCount()">Check Current Products</button>
+  <button id="deleteBtn" onclick="deleteAll()" style="display:none">🗑️ Delete All Products Now</button>
+  <div id="doneMsg" class="done" style="display:none"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
+  authDomain: "auranest-decors.firebaseapp.com",
+  projectId: "auranest-decors",
+  storageBucket: "auranest-decors.firebasestorage.app",
+  messagingSenderId: "55244789649",
+  appId: "1:55244789649:web:0aab804a8933ce0cf6ec30"
+});
+const db = getFirestore(app);
+let _docs = [];
+
+window.loadCount = async function() {
+  const btn = document.getElementById('loadBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  try {
+    const snap = await getDocs(collection(db, 'products'));
+    _docs = snap.docs;
+    document.getElementById('countEl').textContent = _docs.length;
+    document.getElementById('countLabel').textContent = 'products found in database';
+    if (_docs.length > 0) {
+      document.getElementById('deleteBtn').style.display = '';
+      btn.textContent = '↺ Refresh Count';
+      btn.disabled = false;
+    } else {
+      document.getElementById('countEl').textContent = '0';
+      document.getElementById('doneMsg').style.display = '';
+      document.getElementById('doneMsg').textContent = '✅ Database is already empty. Go upload the new CSV from admin panel.';
+      btn.textContent = 'No products found';
+    }
+  } catch(e) {
+    btn.textContent = '❌ Error: ' + e.message;
+    btn.disabled = false;
+  }
+};
+
+window.deleteAll = async function() {
+  if (!confirm(`Delete ALL ${_docs.length} products? This cannot be undone.`)) return;
+  const deleteBtn = document.getElementById('deleteBtn');
+  const loadBtn = document.getElementById('loadBtn');
+  deleteBtn.disabled = true;
+  loadBtn.disabled = true;
+  const log = document.getElementById('log');
+  log.style.display = '';
+  let deleted = 0;
+  for (const d of _docs) {
+    try {
+      await deleteDoc(doc(db, 'products', d.id));
+      deleted++;
+      const name = d.data().name || d.id;
+      log.innerHTML += `✓ Deleted: ${name.slice(0,50)}<br/>`;
+      log.scrollTop = log.scrollHeight;
+      document.getElementById('countEl').textContent = _docs.length - deleted;
+    } catch(e) {
+      log.innerHTML += `✗ Error deleting ${d.id}: ${e.message}<br/>`;
+    }
+  }
+  document.getElementById('doneMsg').style.display = '';
+  document.getElementById('doneMsg').textContent = `✅ Done! ${deleted} products deleted. Now go to admin panel → Bulk Upload CSV to add the 115 new products.`;
+  deleteBtn.style.display = 'none';
+};
+</script>
+</body>
+</html>
