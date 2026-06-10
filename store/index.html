@@ -2199,12 +2199,40 @@ async function loadProducts() {
       filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
       document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
       setFbStatus('🟢 Firebase Connected', true);
+      openDeepLinkProduct();
     }
   } catch (err) {
     setFbStatus('⚠️ Using offline data — add Firebase config!');
     window.$products = PRODUCTS;
     renderProducts(PRODUCTS);
     loadTrending();
+  }
+}
+
+// ── DEEP LINK — open exact product from ?product=<slug|id>&v=<imgBase> (catalog Shop Now) ──
+function openDeepLinkProduct() {
+  const params = new URLSearchParams(location.search);
+  const key = params.get('product');
+  if (!key) return;
+  const imgKey = params.get('v'); // image basename — disambiguates products that share a slug
+  const all = window.$products || PRODUCTS;
+  const baseOf = u => (u || '').split('/').pop().split('?')[0];
+  // 1) all products matching the slug/id
+  let matches = all.filter((x, i) => x.id === key || x.slug === key || String(i) === key);
+  // 2) if several share the slug, pick the one whose image matches
+  if (matches.length > 1 && imgKey) {
+    const exact = matches.find(x => baseOf(x.images?.[0] || x.image) === imgKey);
+    if (exact) matches = [exact];
+  }
+  // 3) if slug found nothing, fall back to matching purely by image
+  if (!matches.length && imgKey) {
+    matches = all.filter(x => baseOf(x.images?.[0] || x.image) === imgKey);
+  }
+  const match = matches[0];
+  if (match && typeof ProductPage !== 'undefined') {
+    ProductPage.open(match.id || match.slug || key);
+  } else {
+    setFbStatus('⚠️ Product not found — showing all products');
   }
 }
 
@@ -3132,7 +3160,7 @@ const ProductPage = {
 
   open(id) {
     const all = window.$products || PRODUCTS;
-    const p   = all.find((x, i) => x.id === id || String(i) === id);
+    const p   = all.find((x, i) => x.id === id || x.slug === id || String(i) === id);
     if (!p) return;
 
     // ── Breadcrumb ──
@@ -3362,8 +3390,8 @@ const ProductPage = {
       ]
     });
 
-    // ── Open overlay ── push history so back button closes it
-    history.pushState({ auranestProd: id }, '', '?product=' + encodeURIComponent(id));
+    // ── Open overlay ── push history so back button closes it (prefer slug URL)
+    history.pushState({ auranestProd: id }, '', '?product=' + encodeURIComponent(p.slug || id));
     const page = document.getElementById('prodPage');
     page.classList.add('open');
     page.scrollTop = 0;

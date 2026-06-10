@@ -27,12 +27,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.95);backdrop-
 .nav-links{display:flex;gap:2rem;list-style:none}
 .nav-links a{text-decoration:none;color:var(--mid);font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--gold)}
-/* HERO */
-.cat-hero{background:linear-gradient(135deg,#1c1a18 0%,#2d2721 100%);color:#fff;text-align:center;padding:5rem 5% 4rem}
-.cat-hero-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
-.cat-hero-title{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:400;margin-bottom:.8rem}
-@media(max-width:600px){.cat-hero-title{font-size:2rem}}
-.cat-hero-sub{font-size:.85rem;color:rgba(255,255,255,.6);letter-spacing:.05em}
+/* PREMIUM CATEGORY BANNER */
+.cat-banner{background:var(--gold-pale);text-align:center;padding:6.5rem 8% 5.5rem;border-bottom:1px solid var(--border)}
+.cat-crumb{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mid);margin-bottom:2.2rem}
+.cat-crumb a{color:var(--mid);text-decoration:none;transition:color .2s}
+.cat-crumb a:hover{color:var(--gold)}
+.cat-crumb .sep{margin:0 .7rem;color:var(--light)}
+.cat-crumb .here{color:var(--gold)}
+.cat-banner-title{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--charcoal);line-height:1.1;margin-bottom:1.4rem}
+.cat-banner-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;color:var(--mid);max-width:560px;margin:0 auto;line-height:1.6}
+@media(max-width:600px){.cat-banner{padding:4rem 6% 3.5rem}.cat-banner-title{font-size:2.4rem;letter-spacing:.06em}.cat-banner-sub{font-size:1.05rem}.cat-crumb{margin-bottom:1.6rem;letter-spacing:.15em}}
 /* FILTER */
 .filter-section{padding:1.5rem 5%;border-bottom:1px solid var(--border);background:var(--white);display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
 .sub-pill{background:none;border:1px solid var(--border);color:var(--mid);padding:6px 16px;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.05em;cursor:pointer;transition:all .2s}
@@ -72,10 +76,10 @@ footer a:hover{color:var(--gold)}
   </ul>
 </nav>
 
-<div class="cat-hero">
-  <div class="cat-hero-label">🏺 Collection</div>
-  <h1 class="cat-hero-title">Minimal Collection</h1>
-  <p class="cat-hero-sub">Ceramic Planters · Figurines · Wind Chimes · Terracotta</p>
+<div class="cat-banner">
+  <nav class="cat-crumb"><a href="../store/">Home</a><span class="sep">›</span><span class="here">Minimal</span></nav>
+  <h1 class="cat-banner-title">Minimal</h1>
+  <p class="cat-banner-sub">Understated ceramic and terracotta pieces — clean forms, natural tones and quiet craftsmanship for the modern home.</p>
 </div>
 
 <div class="filter-section">
