@@ -1,0 +1,24 @@
+Field,Required,Type,Example Value,Notes
+name,YES,text,Madhubani Folk Peacock Planter,Full product name shown on website
+sku,YES,text,MFP-001,Unique product code / part number
+category,YES,select,Decorative Pots,Decorative Pots | Serveware | Kitchen Tools | Home & Kitchen | Aura Décor | Wall Décor
+subCategory,NO,text,Ceramic Planters,Optional sub-grouping
+price,YES,number,799,Selling price in INR (without ₹ symbol)
+mrp,NO,number,999,MRP / original price (for strikethrough display)
+stock,YES,number,10,Available stock quantity
+description,YES,text,Dancing duo painted in authentic Madhubani tradition.,Main product description (2-4 sentences)
+bullet1,NO,text,Hand-painted by skilled artisans,Key feature / bullet point 1
+bullet2,NO,text,"Eco-friendly ceramic, food-safe glaze",Key feature / bullet point 2
+bullet3,NO,text,Ideal for indoor plants up to 4 inch pot,Key feature / bullet point 3
+material,NO,text,Ceramic,Primary material (Ceramic | Mango Wood | Sheesham | Terracotta | Acacia Wood)
+tag,NO,text,bestseller,Tag for filtering: bestseller | new | sale | featured
+weight,NO,text,350g,Product weight (for shipping)
+dimensions,NO,text,6x6x8 inch,L x W x H
+color,NO,text,Multicolor,Primary color
+image1,YES,url,"https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/madhubani-planter/img1.jpg",Main product image URL (Cloudinary preferred)
+image2,NO,url,"https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/madhubani-planter/img2.jpg",Second image URL
+image3,NO,url,"https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto/auranest/madhubani-planter/img3.jpg",Third image URL
+amazonUrl,NO,url,https://www.amazon.in/dp/XXXXX,Amazon product page link
+flipkartUrl,NO,url,https://www.flipkart.com/...,Flipkart product page link
+isFeatured,NO,bool,true,true = show on homepage featured section
+isActive,YES,bool,true,"true = visible on website, false = hidden"
