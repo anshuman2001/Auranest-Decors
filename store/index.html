@@ -386,7 +386,7 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .prod-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-100%) skewX(-15deg);pointer-events:none;}
 .prod-card:hover .prod-img-wrap::after{animation:shimmer .75s ease forwards;}
 .prod-card:hover .prod-img-wrap{box-shadow:0 16px 48px rgba(18,12,6,.18);}
-.prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s cubic-bezier(.23,1,.32,1);}
+.prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;transition:transform .55s cubic-bezier(.23,1,.32,1);}
 .prod-card:hover .prod-img-wrap img{transform:scale(1.08);}
 .prod-emoji{font-size:5.5rem;}
 .prod-tag{position:absolute;top:.7rem;right:.7rem;left:auto;background:linear-gradient(135deg,var(--gold-dk),var(--gold));color:#fff;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .7rem;}
@@ -500,7 +500,7 @@ footer{background:linear-gradient(180deg,#120c06 0%,#0d0804 100%);padding:5rem 5
 .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--muted);z-index:2;}
 .pm-grid{display:grid;grid-template-columns:1fr 1fr;}
 .pm-img{background:var(--warm);display:flex;align-items:center;justify-content:center;min-height:360px;font-size:7rem;overflow:hidden;}
-.pm-img img{width:100%;height:100%;object-fit:cover;}
+.pm-img img{width:100%;height:100%;object-fit:contain;padding:12px;}
 .pm-info{padding:2.8rem 2.2rem;}
 .pm-cat{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:.5rem;}
 .pm-name{font-family:'Cormorant Garamond',serif;font-size:1.75rem;line-height:1.2;margin-bottom:.7rem;}
@@ -2724,7 +2724,7 @@ function renderProducts(list) {
     <div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:16px">
         ${img
-          ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'"/>`
+          ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px" loading="lazy" onerror="this.style.display='none'"/>`
           : `<div class="prod-emoji">${p.icon}</div>`}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
@@ -2879,7 +2879,7 @@ function filterByGiftPrice(max, btn) {
     const img = (p.images?.[0]) || p.image || '';
     return `<div class="prod-card" onclick="openProduct('${p.id}')" style="cursor:pointer">
       <div class="p-img-wrap" style="position:relative">
-        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:cover"/>` : '<div style="height:200px;background:#2a2018"></div>'}
+        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:contain;padding:8px;background:var(--warm,#f5ede0)"/>` : '<div style="height:200px;background:#2a2018"></div>'}
       </div>
       <div class="p-info">
         <div class="prod-name">${p.name}</div>
