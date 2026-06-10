@@ -1651,6 +1651,10 @@ function closeAdminSidebar() {
 document.querySelectorAll('.ni').forEach(el => {
   el.addEventListener('click', () => { if (window.innerWidth <= 900) closeAdminSidebar(); });
 });
+
+// Expose helpers to the non-module script (BulkUpload lives in a plain <script>)
+window.nameToSlug      = nameToSlug;
+window.classifyProduct = classifyProduct;
 </script>
 
 <script>
@@ -2420,16 +2424,17 @@ const BulkUpload = {
     const total = this._rows.length;
     const errorLog = [];
 
+    const slugify = window.nameToSlug || (n => (n||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60));
     const buildProduct = (row, isNew) => {
       const imgs = this._matchImages(row);
       const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
-      if (!rest.collection) {
-        const cls = classifyProduct(rest);
+      if (!rest.collection && window.classifyProduct) {
+        const cls = window.classifyProduct(rest);
         rest.collection = cls.collection;
         rest.category   = cls.category;
         if (!rest.style) rest.style = cls.style;
       }
-      if (!rest.slug && rest.name) rest.slug = nameToSlug(rest.name);
+      if (!rest.slug && rest.name) rest.slug = slugify(rest.name);
       const product = { ...rest, image: imgs[0] || '', images: imgs, updatedAt: window.$fb.serverTimestamp() };
       if (isNew) { product.createdAt = window.$fb.serverTimestamp(); product.sold = 0; }
       return product;
