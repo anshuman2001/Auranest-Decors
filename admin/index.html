@@ -934,7 +934,7 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 <!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
@@ -960,7 +960,7 @@ const storage = getStorage(app);
 window.$db      = db;
 window.$auth    = auth;
 window.$storage = storage;
-window.$fb      = { collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp, storageRef, uploadBytesResumable, getDownloadURL };
+window.$fb      = { collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, query, where, orderBy, onSnapshot, serverTimestamp, storageRef, uploadBytesResumable, getDownloadURL };
 
 // ── THEME TOGGLE ──────────────────────────────────────────────
 (function initTheme() {
@@ -2275,7 +2275,7 @@ const BulkUpload = {
   },
 
   _parseCSV(text) {
-    const lines = text.trim().split('\n').filter(l => l.trim());
+    const lines = text.replace(/\r/g, '').trim().split('\n').filter(l => l.trim());
     if (lines.length < 2) return [];
     const headers = this._splitCSV(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
     const idx = (name) => headers.findIndex(h => h.includes(name));
@@ -2418,46 +2418,77 @@ const BulkUpload = {
     progWrap.style.display = 'block';
     let updated = 0; let added = 0; let errors = 0;
     const total = this._rows.length;
-    for (const row of this._rows) {
+    const errorLog = [];
+
+    const buildProduct = (row, isNew) => {
+      const imgs = this._matchImages(row);
+      const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
+      if (!rest.collection) {
+        const cls = classifyProduct(rest);
+        rest.collection = cls.collection;
+        rest.category   = cls.category;
+        if (!rest.style) rest.style = cls.style;
+      }
+      if (!rest.slug && rest.name) rest.slug = nameToSlug(rest.name);
+      const product = { ...rest, image: imgs[0] || '', images: imgs, updatedAt: window.$fb.serverTimestamp() };
+      if (isNew) { product.createdAt = window.$fb.serverTimestamp(); product.sold = 0; }
+      return product;
+    };
+
+    // Process updates individually
+    for (const row of this._rows.filter(r => r._firebaseId)) {
       try {
-        const imgs = this._matchImages(row);
-        // Strip CSV-only helper columns before saving
-        const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
-        // Auto-derive collection/style if not in CSV
-        if (!rest.collection) {
-          const cls = classifyProduct(rest);
-          rest.collection = cls.collection;
-          rest.category   = cls.category;
-          if (!rest.style) rest.style = cls.style;
-        }
-        // Auto-generate slug if missing
-        if (!rest.slug && rest.name) rest.slug = nameToSlug(rest.name);
-        const product = {
-          ...rest,
-          image:     imgs[0] || '',
-          images:    imgs,
-          updatedAt: window.$fb.serverTimestamp(),
-        };
-        if (_firebaseId) {
-          // UPDATE existing product
-          await window.$fb.updateDoc(window.$fb.doc(window.$db, 'products', _firebaseId), product);
-          updated++;
-        } else {
-          // ADD new product
-          product.createdAt = window.$fb.serverTimestamp();
-          product.sold = 0;
-          await window.$fb.addDoc(window.$fb.collection(window.$db, 'products'), product);
-          added++;
-        }
-      } catch(e) { errors++; console.warn('Import error:', e); }
-      const pct = Math.round((updated + added + errors) / total * 100);
-      fill.style.width = pct + '%';
+        const product = buildProduct(row, false);
+        await window.$fb.updateDoc(window.$fb.doc(window.$db, 'products', row._firebaseId), product);
+        updated++;
+      } catch(e) {
+        errors++;
+        errorLog.push(`Update "${row.name}": ${e.code || e.message}`);
+        console.warn('Update error:', row.name, e);
+      }
+      fill.style.width = Math.round((updated + added + errors) / total * 100) + '%';
       lbl.textContent = `Processing… ${updated + added + errors} / ${total}`;
     }
+
+    // Add new products via batched writes (max 499 per batch)
+    const newRows = this._rows.filter(r => !r._firebaseId);
+    const BATCH_SIZE = 499;
+    for (let i = 0; i < newRows.length; i += BATCH_SIZE) {
+      const chunk = newRows.slice(i, i + BATCH_SIZE);
+      const batch = window.$fb.writeBatch(window.$db);
+      const batchNames = [];
+      for (const row of chunk) {
+        try {
+          const product = buildProduct(row, true);
+          const newRef = window.$fb.doc(window.$fb.collection(window.$db, 'products'));
+          batch.set(newRef, product);
+          batchNames.push(row.name);
+        } catch(e) {
+          errors++;
+          errorLog.push(`Prepare "${row.name}": ${e.code || e.message}`);
+        }
+      }
+      if (batchNames.length) {
+        try {
+          await batch.commit();
+          added += batchNames.length;
+        } catch(e) {
+          errors += batchNames.length;
+          errorLog.push(`Batch ${Math.floor(i / BATCH_SIZE) + 1} failed (${batchNames.length} products): ${e.code || e.message}`);
+          console.warn('Batch error:', e);
+        }
+      }
+      fill.style.width = Math.round((updated + added + errors) / total * 100) + '%';
+      lbl.textContent = `Processing… ${updated + added + errors} / ${total}`;
+    }
+
     const summary = [updated && `${updated} updated`, added && `${added} added`, errors && `${errors} failed`].filter(Boolean).join(', ');
     lbl.textContent = `✅ Done! ${summary}.`;
+    if (errorLog.length) {
+      lbl.innerHTML += `<div style="margin-top:.5rem;max-height:120px;overflow-y:auto;font-size:.68rem;text-align:left;background:var(--red-dim);padding:.5rem;border-radius:4px;color:var(--red)">${errorLog.map(e=>`✗ ${e}`).join('<br>')}</div>`;
+    }
     fill.style.background = errors ? 'var(--terra)' : 'var(--green)';
-    showToast(`✅ ${updated + added} products processed (${updated} updated, ${added} new)!`);
+    showToast(`✅ ${updated + added} products processed!`);
     btn.textContent = '✅ Complete';
     if (typeof window.$loadProducts === 'function') window.$loadProducts();
   },

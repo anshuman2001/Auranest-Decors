@@ -2187,8 +2187,9 @@ async function loadProducts() {
     setFbStatus('⚡ Loading products...');
     const snap = await getDocs(collection(db, 'products'));
     if (snap.empty) {
-      setFbStatus('🌱 Seeding products to Firebase...');
-      await seedToFirebase();
+      setFbStatus('🟡 No products yet — check back soon!');
+      window.$products = [];
+      renderProducts([]);
     } else {
       window.$products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       try { localStorage.setItem('auranest_products', JSON.stringify(window.$products)); } catch(e) {}
