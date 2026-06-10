@@ -10,29 +10,49 @@
   p{color:#8a7d6e;font-size:.85rem;margin-bottom:1.5rem;line-height:1.6;}
   .count{font-size:2.5rem;font-weight:700;color:#b8933f;margin:1rem 0;}
   .log{background:#0f0d0b;border:1px solid rgba(255,255,255,.06);padding:1rem;text-align:left;font-size:.75rem;color:#8a7d6e;max-height:200px;overflow-y:auto;margin:1rem 0;display:none;}
-  button{background:#e05c5c;color:#fff;border:none;padding:.9rem 2rem;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:.5rem;}
-  button:hover{background:#c04444;}
+  .inp{width:100%;background:#0f0d0b;border:1px solid rgba(184,147,63,.3);color:#f0ebe3;padding:.75rem 1rem;font-size:.85rem;box-sizing:border-box;margin-bottom:.7rem;outline:none;}
+  .inp:focus{border-color:#b8933f;}
+  button{background:#b8933f;color:#fff;border:none;padding:.9rem 2rem;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:.3rem;}
+  button:hover{background:#d4aa5f;}
+  button.red{background:#e05c5c;}
+  button.red:hover{background:#c04444;}
   button:disabled{background:#3a342d;color:#6a5d4e;cursor:not-allowed;}
-  .done{color:#4caf7d;font-size:1rem;margin-top:1rem;}
+  .done{color:#4caf7d;font-size:.9rem;margin-top:1rem;line-height:1.5;}
   .warn{background:rgba(224,92,92,.12);border:1px solid rgba(224,92,92,.3);padding:.8rem;font-size:.78rem;color:#e05c5c;margin-bottom:1.5rem;}
+  .section{display:none;}
+  .section.on{display:block;}
+  .green{color:#4caf7d;}
 </style>
 </head>
 <body>
 <div class="box">
   <h2>⚠️ Clear All Products</h2>
-  <p>This will permanently delete all existing products from Firestore.<br/>Make sure you have the <strong style="color:#b8933f">all-products-import.csv</strong> ready to upload after.</p>
-  <div class="warn">This action cannot be undone. Old products (58) will be removed.</div>
-  <div id="countEl" class="count">—</div>
-  <div id="countLabel" style="color:#8a7d6e;font-size:.78rem;margin-bottom:1rem">products found in database</div>
-  <div id="log" class="log"></div>
-  <button id="loadBtn" onclick="loadCount()">Check Current Products</button>
-  <button id="deleteBtn" onclick="deleteAll()" style="display:none">🗑️ Delete All Products Now</button>
-  <div id="doneMsg" class="done" style="display:none"></div>
+  <p>Sign in with your admin account first, then delete all old products.</p>
+
+  <!-- LOGIN SECTION -->
+  <div id="loginSection" class="section on">
+    <input class="inp" id="email" type="email" placeholder="Admin email" value=""/>
+    <input class="inp" id="pass" type="password" placeholder="Password"/>
+    <button onclick="signIn()">Sign In</button>
+    <div id="loginErr" style="color:#e05c5c;font-size:.78rem;margin-top:.7rem;display:none"></div>
+  </div>
+
+  <!-- DELETE SECTION -->
+  <div id="deleteSection" class="section">
+    <div class="warn">This action cannot be undone. All old products will be removed.</div>
+    <div id="countEl" class="count">—</div>
+    <div id="countLabel" style="color:#8a7d6e;font-size:.78rem;margin-bottom:1rem">products found in database</div>
+    <div id="log" class="log"></div>
+    <button id="loadBtn" onclick="loadCount()">Check Current Products</button>
+    <button id="deleteBtn" class="red" onclick="deleteAll()" style="display:none;margin-top:.7rem">🗑️ Delete All Products Now</button>
+    <div id="doneMsg" class="done" style="display:none"></div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
@@ -42,8 +62,31 @@ const app = initializeApp({
   messagingSenderId: "55244789649",
   appId: "1:55244789649:web:0aab804a8933ce0cf6ec30"
 });
-const db = getFirestore(app);
-let _docs = [];
+const db   = getFirestore(app);
+const auth = getAuth(app);
+let _docs  = [];
+
+window.signIn = async function() {
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('pass').value;
+  const btn   = document.querySelector('#loginSection button');
+  const err   = document.getElementById('loginErr');
+  if (!email || !pass) { err.textContent = 'Enter email and password'; err.style.display=''; return; }
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+  err.style.display = 'none';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    document.getElementById('loginSection').classList.remove('on');
+    document.getElementById('deleteSection').classList.add('on');
+    loadCount();
+  } catch(e) {
+    err.textContent = '❌ ' + e.message;
+    err.style.display = '';
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+};
 
 window.loadCount = async function() {
   const btn = document.getElementById('loadBtn');
@@ -53,7 +96,6 @@ window.loadCount = async function() {
     const snap = await getDocs(collection(db, 'products'));
     _docs = snap.docs;
     document.getElementById('countEl').textContent = _docs.length;
-    document.getElementById('countLabel').textContent = 'products found in database';
     if (_docs.length > 0) {
       document.getElementById('deleteBtn').style.display = '';
       btn.textContent = '↺ Refresh Count';
@@ -61,11 +103,11 @@ window.loadCount = async function() {
     } else {
       document.getElementById('countEl').textContent = '0';
       document.getElementById('doneMsg').style.display = '';
-      document.getElementById('doneMsg').textContent = '✅ Database is already empty. Go upload the new CSV from admin panel.';
-      btn.textContent = 'No products found';
+      document.getElementById('doneMsg').textContent = '✅ Database is already empty. Go to admin panel → Bulk Upload CSV.';
+      btn.style.display = 'none';
     }
   } catch(e) {
-    btn.textContent = '❌ Error: ' + e.message;
+    btn.textContent = '❌ ' + e.message;
     btn.disabled = false;
   }
 };
@@ -73,28 +115,38 @@ window.loadCount = async function() {
 window.deleteAll = async function() {
   if (!confirm(`Delete ALL ${_docs.length} products? This cannot be undone.`)) return;
   const deleteBtn = document.getElementById('deleteBtn');
-  const loadBtn = document.getElementById('loadBtn');
+  const loadBtn   = document.getElementById('loadBtn');
   deleteBtn.disabled = true;
-  loadBtn.disabled = true;
+  loadBtn.disabled   = true;
   const log = document.getElementById('log');
   log.style.display = '';
-  let deleted = 0;
+  let deleted = 0, errors = 0;
   for (const d of _docs) {
     try {
       await deleteDoc(doc(db, 'products', d.id));
       deleted++;
-      const name = d.data().name || d.id;
-      log.innerHTML += `✓ Deleted: ${name.slice(0,50)}<br/>`;
-      log.scrollTop = log.scrollHeight;
+      const name = (d.data().name || d.id).slice(0, 50);
+      log.innerHTML += `<span class="green">✓</span> ${name}<br/>`;
+      log.scrollTop  = log.scrollHeight;
       document.getElementById('countEl').textContent = _docs.length - deleted;
     } catch(e) {
-      log.innerHTML += `✗ Error deleting ${d.id}: ${e.message}<br/>`;
+      errors++;
+      log.innerHTML += `✗ Error: ${e.message}<br/>`;
     }
   }
   document.getElementById('doneMsg').style.display = '';
-  document.getElementById('doneMsg').textContent = `✅ Done! ${deleted} products deleted. Now go to admin panel → Bulk Upload CSV to add the 115 new products.`;
+  document.getElementById('doneMsg').innerHTML =
+    `✅ Done! <strong>${deleted}</strong> products deleted${errors ? `, ${errors} errors` : ''}.<br/><br/>` +
+    `Now go to <a href="/admin" style="color:#b8933f">Admin Panel</a> → Bulk Upload CSV to add the 115 new products.`;
   deleteBtn.style.display = 'none';
 };
+
+// Allow Enter key on password field
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pass')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.signIn();
+  });
+});
 </script>
 </body>
 </html>
