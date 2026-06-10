@@ -1660,10 +1660,10 @@ select.finp{cursor:pointer;}
     <div class="pay-row"><div class="pay-pill">Stripe</div><div class="pay-pill">Razorpay</div><div class="pay-pill">COD</div><div class="pay-pill">PayPal</div></div>
   </div>
   <div><p class="foot-h">Shop</p><ul class="foot-ul">
-    <li><a href="home-kitchen.html" onclick="CategoryPage.open('Home & Kitchen');return false;">Home &amp; Kitchen</a></li>
-    <li><a href="aura-decor.html" onclick="CategoryPage.open('Aura décor');return false;">Aura Décor</a></li>
-    <li><a href="aesthetic-furniture.html" onclick="CategoryPage.open('Aesthetic Furniture');return false;">Aesthetic Furniture</a></li>
-    <li><a href="giftings.html" onclick="CategoryPage.open('Giftings');return false;">Giftings</a></li>
+    <li><a href="artisan.html">🎨 Artisan</a></li>
+    <li><a href="woodcraft.html">🪵 Woodcraft</a></li>
+    <li><a href="minimal.html">🏺 Minimal</a></li>
+    <li><a href="giftings.html">🎁 Gifting</a></li>
     <li><a href="../catalog/">📖 Catalogue</a></li>
   </ul></div>
   <div><p class="foot-h">Help</p><ul class="foot-ul">
@@ -2784,7 +2784,12 @@ const STORE_ART_KW = [
 ];
 
 function getCollection(p) {
-  if (p.collection) return p.collection;
+  // Primary: use explicit category field (set by admin/import)
+  const cat = (p.category || '').toLowerCase();
+  if (cat === 'artisan' || cat === 'woodcraft' || cat === 'minimal' || cat === 'gifting') return cat;
+  // Legacy: named-collection field (old-style store data)
+  const coll = (p.collection || '').toLowerCase();
+  if (coll === 'artisan' || coll === 'woodcraft' || coll === 'minimal' || coll === 'gifting') return coll;
   const name = (p.name || '').trim();
   if (COLLECTION_MAP[name]) return COLLECTION_MAP[name];
   const n   = name.toLowerCase();
@@ -3431,42 +3436,50 @@ const ProductPage = {
 // ══════════════════════════════════════════════════
 const CategoryPage = {
   _data: {
-    'Home & Kitchen': {
-      emoji:'🍽️', img:'https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_400/auranest/round-wooden-tray-cow/img1.jpg', displayName:'Home & Kitchen',
-      desc:'Discover our handcrafted kitchenware and artisan dining essentials, made by skilled Indian artisans.',
+    'Artisan': {
+      emoji:'🎨', img:'https://m.media-amazon.com/images/I/71cjBYiw86L.jpg', displayName:'Artisan',
+      desc:'Hand-painted folk art ceramics and wooden décor — Madhubani, Warli, Tribal and Folk Art traditions.',
       subcats:[
-        {key:'Serveware',     emoji:'🍱', desc:'Trays, platters & serving pieces'},
-        {key:'Kitchen Tools', emoji:'🔪', desc:'Spatulas, spice boxes & utensils'},
-        {key:'Tableware',     emoji:'☕', desc:'Mugs, coasters & table décor'},
+        {key:'Madhubani & Folk',     emoji:'🦚', desc:'Madhubani & Mithila painted ceramics'},
+        {key:'Warli & Tribal',       emoji:'🌿', desc:'Warli & tribal art pieces'},
+        {key:'Painted Planters',     emoji:'🌸', desc:'Hand-painted ceramic planters'},
+        {key:'Painted Wooden Decor', emoji:'🪵', desc:'Folk-art painted wooden décor'},
+        {key:'Folk Art Trays',       emoji:'🍱', desc:'Hand-painted trays & platters'},
       ]
     },
-    'Aura décor': {
-      emoji:'🏺', img:'https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_400/auranest/auranest-decors-bloomosaurus-figurine-botanical-florasaur-ceramic-showpiece/img1.jpg', displayName:'Aura Décor',
-      desc:'Handcrafted decorative pieces that celebrate India\'s rich folk art traditions — for every corner of your home.',
+    'Woodcraft': {
+      emoji:'🪵', img:'https://m.media-amazon.com/images/I/61VG0SBi2cL.jpg', displayName:'Woodcraft',
+      desc:'Handcrafted wooden trays, Jharokha mirrors, spice boxes and kitchen tools — plain wood beauty.',
       subcats:[
-        {key:'Decorative Pots', emoji:'🌿', desc:'Planters & ceramic pots'},
-        {key:'Wall Décor',      emoji:'🖼️', desc:'Wall hangings & art platters'},
-        {key:'Vases',           emoji:'💐', desc:'Vases & floral arrangements'},
+        {key:'Spice & Masala Boxes', emoji:'🫙', desc:'Sheesham & pine spice boxes'},
+        {key:'Trays & Platters',     emoji:'🍽️', desc:'Round, oval & rectangular wooden trays'},
+        {key:'Jharokha Mirrors',     emoji:'🪞', desc:'Hand-carved Jharokha wall mirrors'},
+        {key:'Kitchen Tools',        emoji:'🔪', desc:'Chopping boards, spatulas & utensils'},
+        {key:'Key Holders',          emoji:'🗝️', desc:'Wooden key holder boards'},
       ]
     },
-    'Aesthetic Furniture': {
-      emoji:'🪑', img:'https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_400/auranest/jharokha-rectangl-brown/img1.jpg', displayName:'Aesthetic Furniture',
-      desc:'Artisan-crafted furniture pieces that blend traditional craft with contemporary design sensibilities.',
+    'Minimal': {
+      emoji:'🏺', img:'https://m.media-amazon.com/images/I/61LIUAt9o6L.jpg', displayName:'Minimal',
+      desc:'Plain ceramic planters, figurines, terracotta pots and wind chimes — quiet beauty for modern homes.',
       subcats:[
-        {key:'Storage', emoji:'📦', desc:'Boxes, crates & storage units'},
-        {key:'Racks',   emoji:'🗂️', desc:'Display & organization racks'},
-        {key:'Shelves', emoji:'📚', desc:'Wall shelves & display units'},
+        {key:'Decorative Pots',   emoji:'🌱', desc:'Ceramic & stoneware planters'},
+        {key:'Ceramic Figurines', emoji:'🦢', desc:'Sculptural ceramic figurines'},
+        {key:'Wind Chimes',       emoji:'🎐', desc:'Handcrafted hanging wind chimes'},
+        {key:'Natural Terracotta',emoji:'🏺', desc:'Natural terracotta pots & pans'},
+        {key:'Modern Decor',      emoji:'⬜', desc:'Clean-form contemporary décor'},
       ]
     },
-    'Giftings': {
-      emoji:'🎁', img:'https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_400/auranest/ceramic-planter-with-blue-leaf/img1.jpg', displayName:'Giftings',
+    'Gifting': {
+      emoji:'🎁', img:'https://m.media-amazon.com/images/I/71cjBYiw86L.jpg', displayName:'Gifting',
       desc:'Curated artisan gift sets perfect for every occasion — weddings, festivals, and celebrations.',
       subcats:[
-        {key:'Festive', emoji:'🎊', desc:'Diwali, Holi & festival gifts'},
-        {key:'Wedding', emoji:'💍', desc:'Wedding & celebration gifts'},
-        {key:'Artisan', emoji:'🎨', desc:'Premium artisan collections'},
+        {key:'Wedding Gifts',      emoji:'💍', desc:'Wedding & celebration gifts'},
+        {key:'Housewarming Gifts', emoji:'🏠', desc:'Housewarming & new home gifts'},
+        {key:'Festive Gifts',      emoji:'🎊', desc:'Diwali, Holi & festival gifts'},
+        {key:'Under ₹999',         emoji:'💰', desc:'Artisan gifts under ₹999'},
       ]
     }
+  }
   },
 
   open(catKey) {
