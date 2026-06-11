@@ -880,11 +880,16 @@ select.finp{cursor:pointer;}
 .pp-back{background:none;border:none;border-right:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:.35rem;color:var(--dark);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;flex-shrink:0;padding:0 1.2rem 0 0;margin-right:1.2rem;height:100%;transition:color .2s;}
 .pp-back:hover{color:var(--terracotta);}
 .pp-back svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.2;fill:none;flex-shrink:0;}
-.pp-crumb{font-size:.72rem;color:var(--mid);display:flex;align-items:center;gap:.3rem;flex:1;overflow:hidden;}
-.pp-crumb-link{color:var(--mid);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;font-size:.72rem;padding:0;white-space:nowrap;transition:color .2s;flex-shrink:0;}
+/* Premium category banner above product */
+.pp-banner{background:var(--warm);border-bottom:1px solid var(--border);text-align:center;padding:3.4rem 2rem 3rem;}
+.pp-crumb{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);display:flex;align-items:center;justify-content:center;gap:.45rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.pp-crumb-link{color:var(--mid);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:0;white-space:nowrap;transition:color .2s;}
 .pp-crumb-link:hover{color:var(--terracotta);}
-.pp-crumb-sep{color:var(--sand);flex-shrink:0;}
-.pp-crumb-cur{color:var(--dark);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.pp-crumb-sep{color:var(--sand);}
+.pp-crumb-cur{color:var(--gold);font-weight:500;white-space:nowrap;}
+.pp-banner-title{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);line-height:1.15;margin-bottom:.9rem;}
+.pp-banner-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--mid);max-width:520px;margin:0 auto;line-height:1.55;}
+@media(max-width:768px){.pp-banner{padding:2.2rem 1.4rem 2rem;}.pp-banner-title{font-size:1.7rem;letter-spacing:.07em;}.pp-banner-sub{font-size:.95rem;}.pp-crumb{margin-bottom:1rem;letter-spacing:.14em;}}
 /* Two-column layout — both columns scroll with the page */
 .pp-body{display:grid;grid-template-columns:55% 45%;height:auto;overflow:visible;align-items:start;}
 .pp-gallery{display:flex;flex-direction:row;position:sticky;top:0;height:calc(100vh - 116px);}
@@ -1267,7 +1272,11 @@ select.finp{cursor:pointer;}
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       <span>Back</span>
     </button>
+  </div>
+  <div class="pp-banner">
     <nav class="pp-crumb" id="ppCrumb" aria-label="breadcrumb"></nav>
+    <h2 class="pp-banner-title" id="ppBannerTitle"></h2>
+    <p class="pp-banner-sub" id="ppBannerSub"></p>
   </div>
   <div class="pp-body">
     <div class="pp-gallery">
@@ -1280,7 +1289,6 @@ select.finp{cursor:pointer;}
     <div class="pp-info">
       <div>
         <span class="pp-badge" id="ppBadge" style="display:none"></span>
-        <p class="pp-cat-lbl" id="ppCatLbl"></p>
       </div>
       <h1 class="pp-name" id="ppName"></h1>
       <div class="pp-price-row" id="ppPriceRow"></div>
@@ -3155,6 +3163,53 @@ document.getElementById('faqGrid').innerHTML = FAQS.map((f,i)=>`
 // ══════════════════════════════════════════════════
 // POM: ProductPage — full-page product detail with breadcrumb
 // ══════════════════════════════════════════════════
+
+// Short luxe description per subcategory — shown in the premium banner
+const SUBCAT_DESC = {
+  // Artisan
+  'Madhubani & Folk':     'Madhubani and Mithila folk art, hand-painted stroke by stroke onto ceramic and wood.',
+  'Warli & Tribal':       'Tribal Warli motifs that carry village stories onto everyday décor.',
+  'Painted Planters':     'Hand-painted planters that turn every plant into a celebration of folk colour.',
+  'Painted Wooden Decor': 'Wooden décor brought alive with hand-painted folk artistry.',
+  'Folk Art Trays':       'Serving trays adorned with folk motifs — made to be displayed, not hidden.',
+  'Painted Serveware':    'Hand-painted serveware that makes every meal feel like an occasion.',
+  'Artistic Wall Decor':  'Wall pieces painted by hand to bring heritage into your home.',
+  // Woodcraft
+  'Spice & Masala Boxes': 'Traditional sheesham spice boxes that keep the rituals of the Indian kitchen alive.',
+  'Trays & Platters':     'Handcrafted wooden trays and platters for serving with quiet elegance.',
+  'Jharokha Mirrors':     'Traditional jharokha frames, carved in the spirit of Rajasthani windows.',
+  'Kitchen Tools':        'Handcrafted wooden kitchen essentials designed for everyday use.',
+  'Key Holders':          'Carved wooden key holders that greet you at the door.',
+  'Wall Shelves & Mounts':'Wooden shelves and mounts, handcrafted to hold what matters.',
+  'Furniture & Tables':   'Solid wood stools and tables built for a lifetime of use.',
+  'Wooden Decor':         'Warm, handcrafted wooden accents for the modern Indian home.',
+  'Wooden Serveware':     'Natural wooden bowls and serveware, finished by hand.',
+  // Minimal
+  'Decorative Pots':      'Understated ceramic pots with clean forms and quiet character.',
+  'Ceramic Figurines':    'Sculptural ceramic figurines that add a gentle artistic note.',
+  'Wind Chimes':          'Handcrafted chimes that welcome every breeze with soft music.',
+  'Modern Decor':         'Minimal, modern décor pieces with handcrafted soul.',
+  'Plain Ceramic':        'Pure ceramic forms — simple, calm and timeless.',
+  'Natural Terracotta':   'Earthy terracotta shaped by hand from natural clay.',
+  'Minimal Planters':     'Clean-lined planters that let your greens do the talking.',
+};
+const CAT_DESC = {
+  'Artisan':   'Hand-painted folk art ceramics and wooden décor by Indian artisans.',
+  'Woodcraft': 'Handcrafted wooden essentials and décor, carved for everyday warmth.',
+  'Minimal':   'Understated ceramic and terracotta pieces for the modern home.',
+  'Gifting':   'Handcrafted pieces chosen to be given — and treasured.',
+};
+
+// Display name: cut Amazon-length titles at the first "|" (and long comma chains)
+function ppShortName(n) {
+  let s = (n || '').split('|')[0].trim();
+  if (s.length > 70) {
+    const c = s.indexOf(',', 35);
+    if (c > 0) s = s.slice(0, c).trim();
+  }
+  return s || n;
+}
+
 const ProductPage = {
   _imgs: [],
 
@@ -3163,23 +3218,24 @@ const ProductPage = {
     const p   = all.find((x, i) => x.id === id || x.slug === id || String(i) === id);
     if (!p) return;
 
-    // ── Breadcrumb ──
+    // ── Breadcrumb (no product name) + premium banner ──
     const catLabel = p.category === 'Aura décor' ? 'Aura Décor' : p.category;
     document.getElementById('ppCrumb').innerHTML =
       `<button class="pp-crumb-link" onclick="ProductPage.goHome()">Home</button>
        <span class="pp-crumb-sep">›</span>
        <button class="pp-crumb-link" onclick="ProductPage.goCategory('${p.category}')">${catLabel}</button>
-       <span class="pp-crumb-sep">›</span>
-       <button class="pp-crumb-link" onclick="ProductPage.goSubcat('${p.category}','${p.subCategory}')">${p.subCategory}</button>
-       <span class="pp-crumb-sep">›</span>
-       <span class="pp-crumb-cur">${p.name}</span>`;
+       ${p.subCategory ? `<span class="pp-crumb-sep">›</span>
+       <span class="pp-crumb-cur">${p.subCategory}</span>` : ''}`;
+    document.getElementById('ppBannerTitle').textContent = p.subCategory || catLabel;
+    document.getElementById('ppBannerSub').textContent =
+      SUBCAT_DESC[p.subCategory] || CAT_DESC[p.category] ||
+      'Handcrafted in India with love, tradition and skill.';
 
-    // ── Badge, category label, name ──
+    // ── Badge & name (display name trimmed of marketplace-length suffixes) ──
     const badgeEl = document.getElementById('ppBadge');
     if (p.tag) { badgeEl.textContent = p.tag; badgeEl.style.display = 'inline-block'; }
     else         { badgeEl.style.display = 'none'; }
-    document.getElementById('ppCatLbl').textContent = `${p.category === 'Aura décor' ? 'Aura Décor' : p.category} · ${p.subCategory}`;
-    document.getElementById('ppName').textContent   = p.name;
+    document.getElementById('ppName').textContent = ppShortName(p.name);
 
     // ── Price ──
     const savings = p.mrp > p.price ? Math.round((p.mrp - p.price) / p.mrp * 100) : 0;
