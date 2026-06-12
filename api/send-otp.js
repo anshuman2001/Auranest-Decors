@@ -71,6 +71,10 @@ module.exports = async function handler(req, res) {
       console.error('[send-otp] fetch failed:', err.message);
       return res.status(502).json({ error: 'SMS service unavailable. Please try again.' });
     }
+  } else if (process.env.VERCEL === '1') {
+    // Production on Vercel but FAST2SMS_API_KEY not set — fail clearly
+    console.error('[send-otp] FAST2SMS_API_KEY not configured in Vercel environment variables');
+    return res.status(503).json({ error: 'OTP service is not set up yet. Please continue as guest or contact support.' });
   } else {
     // DEV / local: log OTP so you can test without Fast2SMS key
     console.log(`[DEV] OTP for ${phone} → ${otp}  (token: ${token})`);
