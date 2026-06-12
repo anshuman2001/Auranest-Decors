@@ -637,16 +637,7 @@ function PersonalPage({ data, setData, cart, onNext, onBack }) {
           {errors.email && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.email}</p>}
           <FloatInput label="Mobile Number" id="ph" type="tel" value={data.phone} onChange={v => upd('phone', v.replace(/\D/g,'').slice(0,10))} inputMode="numeric" />
 
-          <div style={{ marginBottom: 16 }}>
-            <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10 }}>Gender</p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {['Male', 'Female', 'Non-binary', 'Prefer not to say'].map(g => (
-                <button key={g} className={`pill${data.gender === g ? ' active' : ''}`} onClick={() => upd('gender', g)}>{g}</button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ background: '#fdf8ed', borderRadius: 12, padding: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+<div style={{ background: '#fdf8ed', borderRadius: 12, padding: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
             <span style={{ fontSize: '1.2rem' }}>🎁</span>
             <div>
               <p style={{ fontSize: '.8rem', fontWeight: 700 }}>Birthday treat</p>
