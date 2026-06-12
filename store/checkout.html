@@ -14,10 +14,11 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<!-- Firebase Phone Auth (free, no API key needed) -->
+<!-- Firebase Phone Auth + Firestore -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const app = initializeApp({
   apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
   authDomain:"auranest-decors.firebaseapp.com",
@@ -27,9 +28,14 @@ const app = initializeApp({
   appId:"1:55244789649:web:0aab804a8933ce0cf6ec30"
 });
 const auth = getAuth(app);
+const db   = getFirestore(app);
 window._fbAuth = auth;
 window._RecaptchaVerifier = RecaptchaVerifier;
 window._fbSignIn = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
+window._saveOrder = async (data) => {
+  const ref = await addDoc(collection(db, 'orders'), { ...data, createdAt: serverTimestamp() });
+  return ref.id;
+};
 </script>
 
 <style>
@@ -758,15 +764,45 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
     { id:'cod',  icon:'📦', label:'COD' },
   ];
 
+  const buildCustomer = () => ({
+    name:    `${personal.firstName} ${personal.lastName}`.trim(),
+    email:   personal.email,
+    phone:   personal.phone,
+    address: address.line1,
+    address2: address.line2,
+    city:    address.city,
+    state:   address.state,
+    country: address.country,
+    pincode: address.pincode,
+  });
+
+  const buildItems = () => cart.map(i => ({
+    id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image || ''
+  }));
+
   const placeOrder = async () => {
     setError(''); setLoading(true);
     try {
       if (method === 'cod') {
         await new Promise(r => setTimeout(r, 1100));
+        const orderId = 'COD-' + Date.now().toString(36).toUpperCase();
+        await window._saveOrder({
+          orderId,
+          customer:      buildCustomer(),
+          items:         buildItems(),
+          subtotal:      sub,
+          discount:      disc,
+          shipping:      free ? 0 : 79,
+          totalAmount:   total,
+          paymentMethod: 'Cash on Delivery',
+          paymentStatus: 'pending',
+          orderStatus:   'pending',
+        });
         CartStore.clear();
-        onSuccess({ orderId: 'COD-' + Date.now().toString(36).toUpperCase(), method: 'Cash on Delivery', total });
+        onSuccess({ orderId, method: 'Cash on Delivery', total });
         return;
       }
+
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -782,13 +818,14 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
           description: `${cart.length} item${cart.length > 1 ? 's' : ''}`,
           image: LOGO_URL || undefined,
           prefill: {
-            name: `${personal.firstName} ${personal.lastName}`.trim(),
-            email: personal.email,
+            name:    `${personal.firstName} ${personal.lastName}`.trim(),
+            email:   personal.email,
             contact: personal.phone ? `+91${personal.phone}` : ''
           },
           theme: { color: '#c49330' },
           handler: async (response) => {
             try {
+              const customer = buildCustomer();
               const v = await fetch('/api/verify-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -796,17 +833,33 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
                   razorpay_order_id:   response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature:  response.razorpay_signature,
-                  cart,
-                  customer: {
-                    name:    `${personal.firstName} ${personal.lastName}`.trim(),
-                    email:   personal.email, phone: personal.phone,
-                    address: address.line1, address2: address.line2,
-                    city: address.city, state: address.state,
-                    country: address.country, pincode: address.pincode
-                  }
+                  orderData: {
+                    orderId:     response.razorpay_payment_id,
+                    customer,
+                    items:       buildItems(),
+                    subtotal:    sub,
+                    totalAmount: total,
+                  },
                 })
               });
               if (!v.ok) throw new Error('Verification failed');
+              const vData = await v.json();
+              await window._saveOrder({
+                orderId:             response.razorpay_payment_id,
+                customer,
+                items:               buildItems(),
+                subtotal:            sub,
+                discount:            disc,
+                shipping:            free ? 0 : 79,
+                totalAmount:         total,
+                paymentMethod:       method.toUpperCase(),
+                paymentStatus:       'paid',
+                orderStatus:         'confirmed',
+                razorpayPaymentId:   response.razorpay_payment_id,
+                razorpayOrderId:     response.razorpay_order_id,
+                shiprocketOrderId:   vData.shiprocketOrderId   || null,
+                shiprocketShipmentId: vData.shiprocketShipmentId || null,
+              });
               CartStore.clear();
               resolve(response.razorpay_payment_id);
             } catch (e) { reject(e); }
