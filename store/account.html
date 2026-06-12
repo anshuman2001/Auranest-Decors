@@ -15,7 +15,7 @@ import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.7.1/fireba
 import { getAuth, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
-         collection, query, where, orderBy, serverTimestamp }
+         collection, query, where, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const app  = initializeApp({
@@ -54,16 +54,19 @@ window._addAddr      = (uid, data)     => addDoc(collection(db,'customers',uid,'
 window._serverTs     = serverTimestamp;
 window._ordersQuery  = async (uid) => {
   try {
-    const q    = query(collection(db,'orders'), where('customerId','==',uid), orderBy('createdAt','desc'));
+    // No orderBy — avoids composite index requirement; sort client-side
+    const q    = query(collection(db,'orders'), where('customerId','==',uid));
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({id:d.id,...d.data()}));
-  } catch {
-    // fallback without index (orders may use different field name)
-    try {
-      const q2   = query(collection(db,'orders'), where('customer.uid','==',uid));
-      const snap2 = await getDocs(q2);
-      return snap2.docs.map(d => ({id:d.id,...d.data()}));
-    } catch { return []; }
+    const docs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    // sort newest first by createdAt timestamp
+    return docs.sort((a,b) => {
+      const ta = a.createdAt?.seconds || 0;
+      const tb = b.createdAt?.seconds || 0;
+      return tb - ta;
+    });
+  } catch(e) {
+    console.error('ordersQuery error:', e);
+    return [];
   }
 };
 </script>
