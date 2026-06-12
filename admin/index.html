@@ -6,47 +6,10 @@
 <title>Auranest Admin – Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0f0d0b;--surface:#1a1612;--card:#221e19;--border:rgba(184,147,63,0.15);--border2:rgba(255,255,255,0.06);--gold:#b8933f;--gold-lt:#d4aa5f;--gold-dim:rgba(184,147,63,0.12);--terra:#c07b4f;--terra-dim:rgba(192,123,79,0.12);--green:#4caf7d;--green-dim:rgba(76,175,125,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.12);--blue:#5c8fe0;--blue-dim:rgba(92,143,224,0.12);--text:#f0ebe3;--muted:#8a7d6e;--subtle:#3a342d;--sw:240px;--shadow:none;--shadow-card:none;}
-/* ══ LIGHT THEME ══ */
-html.light{--bg:#f2ece2;--surface:#ffffff;--card:#ffffff;--border:rgba(160,115,40,0.22);--border2:rgba(0,0,0,0.08);--gold:#9a6f28;--gold-lt:#b88535;--gold-dim:rgba(154,111,40,0.10);--terra:#b05530;--terra-dim:rgba(176,85,48,0.11);--green:#1e7a4a;--green-dim:rgba(30,122,74,0.10);--red:#c03535;--red-dim:rgba(192,53,53,0.10);--blue:#2a5faa;--blue-dim:rgba(42,95,170,0.10);--text:#1c1510;--muted:#7a6550;--subtle:#e8dece;--shadow:0 1px 4px rgba(0,0,0,.06);--shadow-card:0 2px 12px rgba(0,0,0,.07);}
-/* Smooth transitions for all theme-dependent elements */
-body,aside,.topbar,.sidebar,.main,.sc,.panel,.cc,.mbox,.rtable td,.ptable td,.day-banner,.dtab,.badge,.modal-bg,.mbox,.bulk-drop,
-.psearch,.pfilter,.tb-search,.si,.li,.btn-add,.ebtn,.dbtn,#toast{transition:background .25s,color .25s,border-color .25s,box-shadow .25s;}
+:root{--bg:#0f0d0b;--surface:#1a1612;--card:#221e19;--border:rgba(184,147,63,0.15);--border2:rgba(255,255,255,0.06);--gold:#b8933f;--gold-lt:#d4aa5f;--gold-dim:rgba(184,147,63,0.12);--terra:#c07b4f;--terra-dim:rgba(192,123,79,0.12);--green:#4caf7d;--green-dim:rgba(76,175,125,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.12);--blue:#5c8fe0;--blue-dim:rgba(92,143,224,0.12);--text:#f0ebe3;--muted:#8a7d6e;--subtle:#3a342d;--sw:240px;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--surface);}::-webkit-scrollbar-thumb{background:var(--gold);}
-/* Light theme card shadows & depth */
-html.light .sc,html.light .panel,html.light .cc,html.light .mbox{box-shadow:var(--shadow-card);}
-html.light .sidebar{box-shadow:2px 0 16px rgba(0,0,0,.08);}
-html.light .topbar{box-shadow:0 1px 8px rgba(0,0,0,.07);}
-html.light .ptable th{background:#fdf9f4;}
-html.light .si,html.light .li,html.light .psearch,html.light .tb-search,html.light .pfilter{background:#fdf9f4;color:var(--text);}
-html.light .bulk-drop{background:#fdf9f4;}
-html.light .cc-stat{background:#faf5ee;}
-html.light .bulk-preview th{background:#fdf9f4;}
-html.light .bulk-stats{background:#faf5ee;}
-html.light .stab{background:#fdf9f4;}
-html.light .dtab{background:#fdf9f4;}
-html.light .modal-bg{background:rgba(60,45,30,.55);}
-html.light #globalUpload{box-shadow:0 4px 20px rgba(0,0,0,.12);}
-html.light .sb-badge{border-color:var(--border);}
-/* Colored stat card tints in light mode */
-html.light .sc-gold{background:linear-gradient(135deg,#fff 60%,rgba(184,133,53,.08));}
-html.light .sc-terra{background:linear-gradient(135deg,#fff 60%,rgba(176,85,48,.08));}
-html.light .sc-green{background:linear-gradient(135deg,#fff 60%,rgba(30,122,74,.08));}
-html.light .sc-blue{background:linear-gradient(135deg,#fff 60%,rgba(42,95,170,.08));}
-/* Colored sidebar in light mode */
-html.light .sidebar{background:linear-gradient(180deg,#fffdf9 0%,#fdf6ea 100%);}
-html.light .sb-logo{background:transparent;}
-html.light .ni{color:var(--muted);}
-html.light .ni:hover{background:rgba(154,111,40,.08);color:var(--gold);}
-html.light .ni.active{background:rgba(154,111,40,.12);color:var(--gold);border-left-color:var(--gold);}
-/* Theme toggle button */
-.theme-toggle{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .25s;flex-shrink:0;}
-.theme-toggle:hover{border-color:var(--gold);background:var(--gold-dim);transform:rotate(20deg) scale(1.05);}
-/* Light mode specific overrides for today-row */
-html.light .today-row td{background:rgba(30,122,74,.05)!important;}
-html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!important;}
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;}
 #loginScreen.hide{display:none;}
@@ -142,10 +105,6 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 .pfilter{background:var(--card);border:1px solid var(--border2);color:var(--muted);padding:.6rem 1rem;font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;outline:none;}
 .btn-add{background:var(--gold);color:#fff;border:none;padding:.6rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
 .btn-add:hover{background:var(--gold-lt);}
-.btn-export{background:none;border:1px solid var(--green);color:var(--green);padding:.6rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.btn-export:hover{background:var(--green-dim);}
-.badge-update{display:inline-block;background:var(--blue-dim);color:var(--blue);font-size:.58rem;padding:.15rem .5rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(92,143,224,.25);}
-.badge-addnew{display:inline-block;background:var(--green-dim);color:var(--green);font-size:.58rem;padding:.15rem .5rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(76,175,125,.25);}
 .ptable{width:100%;border-collapse:collapse;}
 .ptable th{padding:.75rem 1rem;text-align:left;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface);}
 .ptable td{padding:.85rem 1rem;font-size:.8rem;border-bottom:1px solid var(--border2);vertical-align:middle;}
@@ -157,26 +116,6 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 .ebtn:hover{border-color:var(--gold);color:var(--gold);}
 .dbtn{background:none;border:1px solid var(--border2);color:var(--muted);padding:.3rem .8rem;font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-left:.4rem;}
 .dbtn:hover{border-color:var(--red);color:var(--red);}
-/* ── TODAY / EARLIER FILTER ── */
-.day-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:var(--card);border:1px solid var(--border);padding:.9rem 1.4rem;margin-bottom:1.2rem;}
-.db-group{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
-.db-item{display:flex;align-items:center;gap:.8rem;}
-.db-num{font-family:'Cormorant Garamond',serif;font-size:1.75rem;line-height:1;font-weight:600;}
-.db-lbl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.15rem;}
-.db-divider{width:1px;height:36px;background:var(--border);}
-.db-date{font-size:.72rem;color:var(--muted);text-align:right;line-height:1.6;}
-.db-date strong{color:var(--gold);display:block;font-size:.8rem;}
-.day-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem;}
-.dtab{padding:.38rem 1rem;background:var(--card);border:1px solid var(--border2);color:var(--muted);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.dtab:hover{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
-.dtab.on{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
-.dtab.on.green-tab{border-color:var(--green);color:var(--green);background:var(--green-dim);}
-.today-row{position:relative;}
-.today-row td:first-child{border-left:2px solid var(--green)!important;}
-.today-row td{background:rgba(76,175,125,.04)!important;}
-.ptable tr.today-row:hover td{background:rgba(76,175,125,.09)!important;}
-.badge-new{display:inline-block;background:var(--green-dim);color:var(--green);font-size:.55rem;padding:.18rem .55rem;letter-spacing:.07em;text-transform:uppercase;vertical-align:middle;margin-left:.45rem;border:1px solid rgba(76,175,125,.3);}
-.badge-old{display:inline-block;background:var(--gold-dim);color:var(--gold);font-size:.55rem;padding:.18rem .55rem;letter-spacing:.07em;text-transform:uppercase;vertical-align:middle;margin-left:.45rem;border:1px solid var(--border);}
 /* CUSTOMERS */
 .cust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
 .cc{background:var(--card);border:1px solid var(--border);padding:1.3rem;transition:border-color .2s;}
@@ -256,55 +195,39 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
 .sb-overlay.on{display:block;}
 
-/* ══ RESPONSIVE: 900px (tablet) ══ */
+/* ══ RESPONSIVE: 900px ══ */
 @media(max-width:900px){
+  /* SIDEBAR */
   .sidebar{transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
   .sidebar.mob-open{transform:translateX(0);}
   .main{margin-left:0;}
+  /* TOPBAR */
   .topbar{padding:0 1rem;}
   .adm-ham{display:flex;align-items:center;}
   .page-title{font-size:1.1rem;}
-  .breadcrumb{display:none;}
-  .tb-search{width:160px;}
+  .tb-search{width:140px;}
+  /* GRIDS */
   .stats-row{grid-template-columns:repeat(2,1fr);gap:.8rem;}
   .dash-grid{grid-template-columns:1fr;}
   .cust-grid{grid-template-columns:repeat(2,1fr);}
   .settings-grid{grid-template-columns:1fr;}
   .mgrid{grid-template-columns:1fr;}
+  /* CONTENT */
   .content{padding:1.2rem;}
+  /* MODAL */
   .mbox{width:calc(100vw - 2rem);max-width:100%;}
-  /* Day tabs — horizontal scroll on tablet */
-  .day-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.3rem;scrollbar-width:none;}
-  .day-tabs::-webkit-scrollbar{display:none;}
-  .dtab{flex-shrink:0;}
-  /* Inventory & recent-orders tables */
-  .rtable{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  .rtable th,.rtable td{white-space:nowrap;}
 }
 
-/* ══ RESPONSIVE: 600px (mobile) ══ */
+/* ══ RESPONSIVE: 600px ══ */
 @media(max-width:600px){
-  /* TOPBAR */
-  .topbar{height:54px;padding:0 .8rem;}
-  .tb-r{gap:.5rem;}
+  .topbar{height:52px;}
+  .tb-r{gap:.6rem;}
   .tb-search{display:none;}
-  .tb-btn{padding:.5rem .75rem;font-size:.7rem;}
-  .tb-btn-text{display:none;}
-  .theme-toggle{width:32px;height:32px;font-size:.9rem;}
-  /* LOGIN */
-  .lb{width:92vw;max-width:400px;padding:2rem 1.4rem;}
-  /* STATS */
+  .tb-btn{padding:.45rem .9rem;font-size:.68rem;}
   .stats-row{grid-template-columns:1fr 1fr;gap:.6rem;}
-  .sc{padding:1rem;}
-  .sc-val{font-size:1.75rem;}
-  .sc-icon{font-size:1.2rem;margin-bottom:.5rem;}
-  /* CONTENT */
-  .content{padding:.9rem;}
-  /* PAGE TITLE */
-  .page-title{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42vw;}
-  /* PANELS */
-  .panel{padding:1.1rem;}
-  /* CUSTOMERS */
+  .sc{padding:1.1rem;}
+  .sc-val{font-size:1.8rem;}
+  .content{padding:1rem;}
   .cust-grid{grid-template-columns:1fr;}
   /* TABLES — horizontal scroll */
   .ptable,.rtable{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -313,53 +236,14 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
   .stabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.3rem;scrollbar-width:none;}
   .stabs::-webkit-scrollbar{display:none;}
   .stab{flex-shrink:0;}
-  /* DAY BANNER — stack vertically */
-  .day-banner{flex-direction:column;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;}
-  .db-group{gap:1.2rem;flex-wrap:wrap;}
-  .db-date{text-align:left;}
-  /* DAY TABS — horizontal scroll */
-  .day-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.4rem;scrollbar-width:none;}
-  .day-tabs::-webkit-scrollbar{display:none;}
-  .dtab{flex-shrink:0;white-space:nowrap;}
-  /* PRODUCT TOOLBAR */
-  .prod-toolbar{flex-wrap:wrap;gap:.6rem;}
+  /* TOOLBAR */
+  .prod-toolbar{flex-wrap:wrap;}
   .psearch{min-width:100%;order:-1;}
-  .pfilter{flex:1;min-width:120px;}
-  .btn-add{flex:0 0 auto;}
   /* CHART */
-  .chart-wrap{height:110px;}
-  /* DONUT */
-  .donut-wrap{flex-direction:column;gap:1rem;}
-  /* MODAL — bottom sheet */
+  .chart-wrap{height:120px;}
+  /* MODAL */
   .modal-bg{align-items:flex-end;padding:0;}
-  .mbox{width:100%;max-height:92vh;border-radius:0;padding:1.4rem 1.2rem;}
-  /* MODAL image upload rows */
-  .mbox [style*="display:flex"][style*="gap:.5rem"]{flex-wrap:wrap;}
-  /* BULK UPLOAD */
-  .bulk-drop{padding:1.5rem 1rem;}
-  .bulk-actions{flex-direction:column;}
-  .bulk-actions .btn-dl,.bulk-actions .btn-save{width:100%;text-align:center;}
-  /* TOUCH TARGETS */
-  .ni{min-height:46px;}
-  .ebtn,.dbtn{min-height:34px;}
-  .dtab,.stab{min-height:34px;display:flex;align-items:center;}
-  /* TOAST */
-  #toast{left:.7rem;right:.7rem;bottom:.7rem;max-width:none;}
-  /* SAFE AREA (notched phones) */
-  .sidebar,.topbar{padding-left:max(.8rem, env(safe-area-inset-left));}
-  .content{padding-bottom:max(.9rem, env(safe-area-inset-bottom));}
-}
-
-/* ══ RESPONSIVE: 400px (small phones) ══ */
-@media(max-width:400px){
-  .stats-row{grid-template-columns:1fr;}
-  .db-group{flex-direction:column;gap:.7rem;}
-  .db-divider{display:none;}
-  .content{padding:.7rem;}
-  .topbar{padding:0 .6rem;}
-  .sc-val{font-size:1.6rem;}
-  .mgrid{gap:.6rem;}
-  .tb-btn{padding:.45rem .6rem;font-size:.68rem;}
+  .mbox{width:100%;max-height:90vh;border-radius:0;}
 }
 </style>
 </head>
@@ -456,93 +340,17 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
       <div class="sg"><label class="sl">Price (₹)</label><input class="si" id="mPrice" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">MRP (₹)</label><input class="si" id="mMrp" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">Category</label>
-        <select class="si" id="mCat" onchange="updateSubCats(); syncCollection()">
-          <option value="Artisan">🎨 Artisan</option>
-          <option value="Woodcraft">🪵 Woodcraft</option>
-          <option value="Minimal">🏺 Minimal</option>
-          <option value="Gifting">🎁 Gifting</option>
-        </select>
+        <select class="si" id="mCat"><option>Home & Kitchen</option><option>Aura décor</option><option>Aesthetic Furniture</option><option>Giftings</option></select>
       </div>
       <div class="sg"><label class="sl">Sub-Category</label>
-        <select class="si" id="mSub" onchange="checkPaintedWoodHint()">
-          <option>Madhubani &amp; Folk</option>
-          <option>Warli &amp; Tribal</option>
-          <option>Painted Planters</option>
-          <option>Painted Wooden Decor</option>
-          <option>Folk Art Trays</option>
-          <option>Painted Serveware</option>
-          <option>Artistic Wall Decor</option>
-        </select>
+        <select class="si" id="mSub"><option>Serveware</option><option>Decorative Pots</option><option>Kitchen Tools</option><option>Wall Décor</option><option>Tableware</option></select>
       </div>
-      <div id="paintedWoodHint" style="display:none;grid-column:1/-1;background:rgba(184,147,63,.08);border:1px solid rgba(184,147,63,.25);padding:.6rem .9rem;font-size:.72rem;color:var(--gold)">
-        ✦ <strong>Painted Wooden Decor</strong> selected — this product will appear under Artisan › Painted Wooden Decor and will NOT appear in Woodcraft.
-      </div>
-      <div class="sg"><label class="sl">Collection</label>
-        <select class="si" id="mCollection">
-          <option value="">— Select Collection —</option>
-          <option value="folk-heritage">Folk Heritage</option>
-          <option value="forest-nature">Forest &amp; Nature</option>
-          <option value="boho-living">Boho Living</option>
-          <option value="kitchen-essentials">Kitchen Essentials</option>
-          <option value="wall-stories">Wall Stories</option>
-          <option value="gift-worthy">Gift Worthy</option>
-          <option value="earthy-tones">Earthy Tones</option>
-          <option value="handcrafted-india">Handcrafted India</option>
-        </select>
-      </div>
-      <div class="sg"><label class="sl">Style</label>
-        <select class="si" id="mStyle">
-          <option value="">— Select Style —</option>
-          <option value="Madhubani">Madhubani</option>
-          <option value="Warli">Warli</option>
-          <option value="Tribal">Tribal</option>
-          <option value="Folk Art">Folk Art</option>
-          <option value="Painted">Painted</option>
-          <option value="Natural">Natural</option>
-          <option value="Modern">Modern</option>
-          <option value="Traditional">Traditional</option>
-        </select>
-      </div>
-      <div class="sg"><label class="sl">Material</label>
-        <select class="si" id="mMat">
-          <option value="">— Select Material —</option>
-          <option value="Wood">Wood</option>
-          <option value="Ceramic">Ceramic</option>
-          <option value="Terracotta">Terracotta</option>
-          <option value="Metal">Metal</option>
-          <option value="Mixed">Mixed</option>
-        </select>
-      </div>
+      <div class="sg"><label class="sl">Material</label><input class="si" id="mMat" placeholder="e.g. Ceramic, Wood"/></div>
       <div class="sg"><label class="sl">Color</label><input class="si" id="mColor" placeholder="e.g. Multicolors"/></div>
       <div class="sg"><label class="sl">Size</label><input class="si" id="mSize" placeholder="e.g. 20cm × 15cm"/></div>
-      <div class="sg"><label class="sl">Tag / Badge</label><input class="si" id="mTag" placeholder="e.g. Best Seller"/></div>
+      <div class="sg"><label class="sl">Tag/Badge</label><input class="si" id="mTag" placeholder="e.g. Bestseller"/></div>
       <div class="sg"><label class="sl">Stock</label><input class="si" id="mStock" type="number" placeholder="10"/></div>
       <div class="sg"><label class="sl">Part Number</label><input class="si" id="mPartNumber" placeholder="e.g. AN-001"/></div>
-      <div class="sg" style="display:flex;align-items:center;gap:.8rem;padding:.5rem 0">
-        <label class="sl" style="margin:0">Featured Product</label>
-        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem">
-          <input type="checkbox" id="mFeatured" style="width:16px;height:16px;accent-color:var(--gold)"/>
-          <span style="color:var(--muted)">Show in homepage highlights</span>
-        </label>
-      </div>
-      <!-- ── EXTENDED FIELDS ── -->
-      <div class="sg"><label class="sl">Art Type</label><input class="si" id="mArtType" placeholder="Madhubani / Warli / Folk Art / Tribal"/></div>
-      <div class="sg"><label class="sl">Wood Type</label><input class="si" id="mWoodType" placeholder="Sheesham / Pine / Mango / Mixed"/></div>
-      <div class="sg"><label class="sl">Weight</label><input class="si" id="mWeight" placeholder="e.g. 350g"/></div>
-      <div class="sg"><label class="sl">Dimensions</label><input class="si" id="mDimensions" placeholder="e.g. 15cm × 10cm × 5cm"/></div>
-      <div class="sg"><label class="sl">Amazon URL</label><input class="si" id="mAmazonUrl" type="url" placeholder="https://amazon.in/dp/..."/></div>
-      <div class="sg"><label class="sl">Flipkart URL</label><input class="si" id="mFlipkartUrl" type="url" placeholder="https://flipkart.com/..."/></div>
-      <div class="sg" style="grid-column:1/-1"><label class="sl">URL Slug <span style="color:var(--muted);font-size:.65rem;font-weight:400">(auto-generated — edit if needed)</span></label><input class="si" id="mSlug" placeholder="e.g. madhubani-ceramic-planter"/></div>
-      <div class="sg" style="grid-column:1/-1">
-        <label class="sl">Product Flags</label>
-        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;padding:.4rem 0">
-          <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem;color:var(--text)"><input type="checkbox" id="mHandPainted" style="width:15px;height:15px;accent-color:var(--gold)"/><span>Hand Painted</span></label>
-          <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem;color:var(--text)"><input type="checkbox" id="mBestSeller" style="width:15px;height:15px;accent-color:var(--gold)"/><span>Best Seller</span></label>
-          <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem;color:var(--text)"><input type="checkbox" id="mNewArrival" style="width:15px;height:15px;accent-color:var(--gold)"/><span>New Arrival</span></label>
-          <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem;color:var(--text)"><input type="checkbox" id="mGiftReady" style="width:15px;height:15px;accent-color:var(--gold)"/><span>Gift Ready</span></label>
-          <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.8rem;color:var(--green)"><input type="checkbox" id="mIsActive" checked style="width:15px;height:15px;accent-color:var(--green)"/><span>Active / In Stock</span></label>
-        </div>
-      </div>
     </div>
     <!-- MULTIPLE IMAGES SECTION -->
     <div class="sg" style="margin-top:.8rem">
@@ -641,9 +449,8 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
       <div><div class="page-title" id="pageTitle">Dashboard</div><div class="breadcrumb" id="breadcrumb">Home / Dashboard</div></div>
     </div>
     <div class="tb-r">
-      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light / dark theme">🌙</button>
       <input class="tb-search" placeholder="Search products, orders…" oninput="globalSearch(this.value)"/>
-      <button class="tb-btn" onclick="goPage('products'); openAddModal()">+ <span class="tb-btn-text">Add Product</span></button>
+      <button class="tb-btn" onclick="goPage('products'); openAddModal()">+ Add Product</button>
     </div>
   </div>
 
@@ -675,64 +482,21 @@ html.light .ptable tr.today-row:hover td{background:rgba(30,122,74,.10)!importan
 
     <!-- PRODUCTS -->
     <div class="page" id="page-products">
-
-      <!-- Day Summary Banner -->
-      <div class="day-banner" id="prodDayBanner">
-        <div class="db-group">
-          <div class="db-item">
-            <div>
-              <div class="db-num" id="dbTodayNum" style="color:var(--green)">0</div>
-              <div class="db-lbl">✦ Added Today</div>
-            </div>
-          </div>
-          <div class="db-divider"></div>
-          <div class="db-item">
-            <div>
-              <div class="db-num" id="dbEarlierNum" style="color:var(--gold)">0</div>
-              <div class="db-lbl">Already in Catalog</div>
-            </div>
-          </div>
-          <div class="db-divider"></div>
-          <div class="db-item">
-            <div>
-              <div class="db-num" id="dbTotalNum" style="color:var(--text)">0</div>
-              <div class="db-lbl">Total Products</div>
-            </div>
-          </div>
-        </div>
-        <div class="db-date">
-          <strong id="dbDateStr">—</strong>
-          <span>Products added on this day are highlighted in green</span>
-        </div>
-      </div>
-
-      <!-- Day Filter Tabs -->
-      <div class="day-tabs">
-        <div class="dtab on" id="dtAll"     onclick="filterByDay('all',this)">📦 All Products</div>
-        <div class="dtab green-tab" id="dtToday"   onclick="filterByDay('today',this)">🟢 Added Today</div>
-        <div class="dtab" id="dtEarlier" onclick="filterByDay('earlier',this)">📂 Added Earlier</div>
-      </div>
-
       <div class="prod-toolbar">
         <input class="psearch" placeholder="Search products…" oninput="searchProducts(this.value)" id="prodSearch"/>
         <select class="pfilter" onchange="filterProdCat(this.value)">
           <option value="all">All Categories</option>
-          <option value="Artisan">🎨 Artisan</option>
-          <option value="Woodcraft">🪵 Woodcraft</option>
-          <option value="Minimal">🏺 Minimal</option>
-          <option value="Gifting">🎁 Gifting</option>
+          <option value="Home & Kitchen">Home & Kitchen</option>
+          <option value="Aura décor">Aura Décor</option>
         </select>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
         <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
-        <button class="btn-export" onclick="exportProductsCSV()" title="Export all products to CSV — edit in Excel, re-upload to update">⬇ Export CSV</button>
-        <button class="btn-export" style="border-color:var(--blue);color:var(--blue)" onclick="exportImageReview()" title="Download HTML file — open in browser to see all product photos">🖼️ Image Review</button>
-        <button class="btn-export" style="border-color:var(--terra);color:var(--terra)" onclick="runMigration()" title="Auto-classify all products into Artisan / Woodcraft / Minimal / Gifting based on business rules">⚡ Migrate Collections</button>
       </div>
       <div class="panel" style="padding:0;">
         <div style="overflow-x:auto;">
           <table class="ptable">
-            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Part No.</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Date Added</th><th>Actions</th></tr></thead>
-            <tbody id="prodTableBody"><tr><td colspan="11" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
+            <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Sub-Category</th><th>Part No.</th><th>Material</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="prodTableBody"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:2rem">Loading products from Firebase...</td></tr></tbody>
           </table>
         </div>
         <div style="padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
@@ -962,30 +726,6 @@ window.$auth    = auth;
 window.$storage = storage;
 window.$fb      = { collection, doc, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, query, where, orderBy, onSnapshot, serverTimestamp, storageRef, uploadBytesResumable, getDownloadURL };
 
-// ── THEME TOGGLE ──────────────────────────────────────────────
-(function initTheme() {
-  const saved = localStorage.getItem('auranest-admin-theme') || 'dark';
-  applyTheme(saved);
-})();
-
-function applyTheme(mode) {
-  const btn = document.getElementById('themeToggleBtn');
-  if (mode === 'light') {
-    document.documentElement.classList.add('light');
-    if (btn) btn.textContent = '☀️';
-    localStorage.setItem('auranest-admin-theme', 'light');
-  } else {
-    document.documentElement.classList.remove('light');
-    if (btn) btn.textContent = '🌙';
-    localStorage.setItem('auranest-admin-theme', 'dark');
-  }
-}
-
-window.toggleTheme = function() {
-  const isLight = document.documentElement.classList.contains('light');
-  applyTheme(isLight ? 'dark' : 'light');
-};
-
 // UPDATE settings page
 try {
   document.getElementById('fbProjectId').value = firebaseConfig.projectId;
@@ -1041,9 +781,7 @@ async function loadProducts() {
     const count = window.$products.length;
     document.getElementById('statProds').textContent    = count;
     document.getElementById('sbProdCount').textContent  = count;
-    if (!window._dayFilter)  window._dayFilter  = 'all';
-    if (!window._catFilter)  window._catFilter  = 'all';
-    applyProdFilters();
+    renderProductsTable(window.$products);
     renderInventory(window.$products);
   } catch (err) {
     console.error('Products error:', err);
@@ -1085,233 +823,36 @@ async function loadCustomers() {
 }
 
 // ── SAVE / DELETE PRODUCT TO FIREBASE ──
-// ── CATEGORY / SUBCATEGORY / COLLECTION MAPPING ──────────────────────────
-const ADMIN_SUBCATS = {
-  'Artisan':  [
-    'Madhubani & Folk',       // Hand-painted ceramic/terracotta — Madhubani / Mithila style
-    'Warli & Tribal',         // Hand-painted ceramic/terracotta — Warli / Tribal style
-    'Painted Planters',       // Hand-painted ceramic pots & planters
-    'Painted Wooden Decor',   // ✦ Any WOODEN product with artwork/painting
-    'Folk Art Trays',         // Hand-painted ceramic/terracotta trays & plates
-    'Painted Serveware',      // Painted bowls, plates, cups (non-wood)
-    'Artistic Wall Decor',    // Painted/artistic wall pieces (non-wood)
-  ],
-  'Woodcraft':['Spice & Masala Boxes','Trays & Platters','Jharokha Mirrors','Kitchen Tools','Key Holders','Wall Shelves & Mounts','Furniture & Tables','Wooden Decor','Wooden Serveware'],
-  'Minimal':  ['Decorative Pots','Ceramic Figurines','Wind Chimes','Modern Decor','Plain Ceramic','Natural Terracotta','Minimal Planters'],
-  'Gifting':  ['Wedding Gifts','Housewarming Gifts','Festive Gifts','Under ₹999'],
-};
-
-window.updateSubCats = function() {
-  const cat  = document.getElementById('mCat').value;
-  const sub  = document.getElementById('mSub');
-  const list = ADMIN_SUBCATS[cat] || [];
-  sub.innerHTML = list.map(s => `<option value="${s}">${s}</option>`).join('');
-  checkPaintedWoodHint();
-};
-
-window.checkPaintedWoodHint = function() {
-  const hint = document.getElementById('paintedWoodHint');
-  if (!hint) return;
-  const subVal = document.getElementById('mSub')?.value;
-  hint.style.display = subVal === 'Painted Wooden Decor' ? '' : 'none';
-};
-
-window.syncCollection = function() {
-  // Collection is independent of category — no auto-sync needed
-};
-
-function nameToSlug(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
-}
-
-// ── MIGRATION RULES ───────────────────────────────────────────────────────
-const ART_KEYWORDS = [
-  'madhubani','mithila','warli','folk','painted','hand paint','handpaint',
-  'tribal','dhokra','ethnic art','cow art','lady','matka','farming','peacock',
-  'cultural','lotus','bloom','diffuser with black','plume','keepsake','lady face',
-  'two lady','lady with','folk regal','cultural keepsake','folk peacock',
-  'daily tribal','tribal echo','mayura','cow','fish','deer',
-];
-// Keywords that indicate WOODEN construction (material)
-const WOOD_MATERIAL = ['wood','wooden','tray','stool','jharokh','spatula','masala','coaster','platter','spice','bowl'];
-// Keywords that specifically indicate PAINTED WOOD — subset of art + wood
-const PAINTED_WOOD_KEYWORDS = [
-  'madhubani','mithila','warli','folk art','folk art wooden','tribal art',
-  'painted wooden','painted tray','painted jharokha','painted key',
-  'cow art','lady with matka','farming tray','fish tray','deer tray',
-  'two lady','lady with','lady with deer','warli art wooden',
-];
-const CERAMIC_WORDS = ['ceramic','planter','pot'];
-const TERRA_WORDS   = ['terracotta','kulhad','handiya','clay'];
-
-function classifyProduct(p) {
-  const n   = (p.name || '').toLowerCase();
-  const d   = (p.description || '').toLowerCase();
-  const mat = (p.material || '').toLowerCase();
-  const tag = (p.tag || '').toLowerCase();
-  const sub = (p.subCategory || '').toLowerCase();
-
-  const hasArt    = ART_KEYWORDS.some(k => n.includes(k) || d.includes(k));
-  const isGifting = GIFT_KEYWORDS.some(k => n.includes(k) || tag.includes(k) || sub.includes(k)) || p.gifting;
-  const isWood    = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
-  const isCeramic = CERAMIC_WORDS.some(k => mat.includes(k) || n.includes(k));
-  const isTerra   = TERRA_WORDS.some(k => mat.includes(k) || n.includes(k));
-
-  // ── PRIMARY RULE: Artwork > Material ──────────────────────────────────────
-  // WOOD + ART = Artisan (NOT Woodcraft)
-  if (hasArt && isWood) {
-    return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: true };
-  }
-  // NON-WOOD + ART = Artisan
-  if (hasArt) {
-    return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: false };
-  }
-  // Gifting (no art, but gifting context)
-  if (isGifting) {
-    return { category:'Gifting', collection:'gifting', style:'Traditional', _paintedWood: false };
-  }
-  // PLAIN WOOD only = Woodcraft
-  if (isWood) {
-    return { category:'Woodcraft', collection:'woodcraft', style:'Natural', _paintedWood: false };
-  }
-  // PLAIN ceramic / terracotta = Minimal
-  if (isCeramic || isTerra) {
-    return { category:'Minimal', collection:'minimal', style:'Modern', _paintedWood: false };
-  }
-  return { category:'Artisan', collection:'artisan', style:deriveStyle(p), _paintedWood: false };
-}
-
-function deriveStyle(p) {
-  const n = (p.name || '').toLowerCase();
-  if (n.includes('madhubani') || n.includes('mithila'))   return 'Madhubani';
-  if (n.includes('warli'))                                 return 'Warli';
-  if (n.includes('tribal') || n.includes('dhokra'))        return 'Tribal';
-  if (n.includes('folk') || n.includes('cow') || n.includes('lady') || n.includes('farming') || n.includes('painted')) return 'Folk Art';
-  const mat = (p.material || '').toLowerCase();
-  if (mat.includes('wood') || n.includes('wooden') || n.includes('tray') || n.includes('jharokh')) return 'Natural';
-  if (n.includes('buddha') || n.includes('yoga') || n.includes('elephant') || n.includes('minimal')) return 'Modern';
-  return 'Traditional';
-}
-
-function getSubCatForProduct(p, newCat, cls) {
-  const n   = (p.name || '').toLowerCase();
-  const mat = (p.material || '').toLowerCase();
-  const isWood = WOOD_MATERIAL.some(k => mat.includes(k) || n.includes(k));
-
-  if (newCat === 'Artisan') {
-    // ── KEY RULE: Wood + Art → ALWAYS "Painted Wooden Decor" ──────────────
-    // This covers: painted trays, Madhubani wooden trays, Warli wooden trays,
-    // painted jharokhas, painted key holders, folk art wooden wall decor.
-    if (isWood || (cls && cls._paintedWood)) return 'Painted Wooden Decor';
-
-    // Non-wood artisan items → classify by art style
-    if (n.includes('madhubani') || n.includes('mithila') || n.includes('peacock')) return 'Madhubani & Folk';
-    if (n.includes('warli') || n.includes('tribal') || n.includes('tribal echo'))  return 'Warli & Tribal';
-    if (n.includes('planter') || n.includes('pot') || n.includes('diffuser'))      return 'Painted Planters';
-    if (n.includes('tray') || n.includes('plate') || n.includes('bowl'))           return 'Folk Art Trays';
-    if (n.includes('key holder') || n.includes('jharokh'))                         return 'Artistic Wall Decor';
-    return 'Painted Serveware';
-  }
-  if (newCat === 'Woodcraft') {
-    if (n.includes('tray') || n.includes('platter') || n.includes('board'))          return 'Trays & Platters';
-    if (n.includes('jharokh'))                                                        return 'Jharokha Mirrors';
-    if (n.includes('spatula') || n.includes('masala') || n.includes('spice'))        return 'Kitchen Tools';
-    if (n.includes('key holder'))                                                     return 'Key Holders';
-    return 'Wooden Serveware';
-  }
-  if (newCat === 'Minimal') {
-    if (n.includes('terracotta') || n.includes('kulhad') || n.includes('handiya'))   return 'Natural Terracotta';
-    if (n.includes('planter') || n.includes('pot'))                                  return 'Minimal Planters';
-    return 'Plain Ceramic';
-  }
-  if (newCat === 'Gifting') {
-    if (n.includes('wedding') || n.includes('heart'))                                return 'Wedding Gifts';
-    if (n.includes('festive') || n.includes('diwali'))                               return 'Festive Gifts';
-    return 'Housewarming Gifts';
-  }
-  return '';
-}
-
-// ── MIGRATION: Run on all products in Firestore ───────────────────────────
-window.runMigration = async function() {
-  if (!window.$products?.length) { showToast('⚠️ Load products first'); return; }
-  if (!confirm(`Migrate ${window.$products.length} products to new Artisan / Woodcraft / Minimal / Gifting structure?\n\nThis will update all products in Firestore.`)) return;
-
-  const btn = document.querySelector('[onclick="runMigration()"]');
-  if (btn) { btn.textContent = '⏳ Migrating…'; btn.disabled = true; }
-
-  let done = 0; let errors = 0;
-  for (const p of window.$products) {
-    try {
-      const cls    = classifyProduct(p);
-      const subCat = getSubCatForProduct(p, cls.category, cls);
-      await updateDoc(doc(db, 'products', p.id), {
-        category:   cls.category,
-        collection: cls.collection,
-        style:      cls.style,
-        subCategory: subCat || p.subCategory,
-        updatedAt:  serverTimestamp(),
-      });
-      done++;
-    } catch(e) { errors++; console.warn('Migration error:', p.name, e); }
-  }
-
-  if (btn) { btn.textContent = '⚡ Migrate Collections'; btn.disabled = false; }
-  showToast(`✅ Migration complete! ${done} updated, ${errors} errors.`);
-  await loadProducts();
-};
-
 window.saveProduct = async function() {
   const name  = document.getElementById('mName').value.trim();
   const price = parseInt(document.getElementById('mPrice').value);
   if (!name || !price) { showToast('⚠️ Name and Price are required'); return; }
-  // Validate category
-  const cat = document.getElementById('mCat').value;
-  if (!cat) { showToast('⚠️ Please select a Category'); return; }
   // Collect all 5 image URLs, filter empty ones
   const images = [0,1,2,3,4]
     .map(i => (document.getElementById('mImage'+i)?.value || '').trim())
     .filter(url => url !== '');
   const data = {
-    name,
-    price,
-    mrp:        parseInt(document.getElementById('mMrp').value) || price,
-    category:   cat,
+    name, price, mrp: parseInt(document.getElementById('mMrp').value)||price,
+    category:    document.getElementById('mCat').value,
     subCategory: document.getElementById('mSub').value,
-    collection: document.getElementById('mCollection').value || cat.toLowerCase(),
-    style:      document.getElementById('mStyle').value,
-    material:   document.getElementById('mMat').value,
-    color:      document.getElementById('mColor').value,
-    size:       document.getElementById('mSize').value,
-    tag:        document.getElementById('mTag').value,
-    stock:      parseInt(document.getElementById('mStock').value) || 10,
-    partNumber: document.getElementById('mPartNumber').value.trim(),
-    featured:    document.getElementById('mFeatured').checked,
-    artType:     document.getElementById('mArtType').value.trim(),
-    woodType:    document.getElementById('mWoodType').value.trim(),
-    weight:      document.getElementById('mWeight').value.trim(),
-    dimensions:  document.getElementById('mDimensions').value.trim(),
-    amazonUrl:   document.getElementById('mAmazonUrl').value.trim(),
-    flipkartUrl: document.getElementById('mFlipkartUrl').value.trim(),
-    slug:        document.getElementById('mSlug').value.trim() || nameToSlug(name),
-    handPainted: document.getElementById('mHandPainted').checked,
-    bestSeller:  document.getElementById('mBestSeller').checked,
-    newArrival:  document.getElementById('mNewArrival').checked,
-    giftReady:   document.getElementById('mGiftReady').checked,
-    isActive:    document.getElementById('mIsActive').checked,
+    material:    document.getElementById('mMat').value,
+    color:       document.getElementById('mColor').value,
+    size:        document.getElementById('mSize').value,
+    tag:         document.getElementById('mTag').value,
+    stock:       parseInt(document.getElementById('mStock').value)||10,
+    partNumber:  document.getElementById('mPartNumber').value.trim(),
     image:       images[0] || '',
-    images,
+    images:      images,
     description: document.getElementById('mDesc').value,
-    icon:        '🎁',
-    updatedAt:   serverTimestamp(),
+    icon: '🎁',
+    updatedAt: serverTimestamp(),
   };
   try {
     if (window.$editingId) {
       await updateDoc(doc(db, 'products', window.$editingId), data);
       showToast('✅ Product updated! ' + images.length + ' image(s) saved.');
     } else {
-      data.createdAt = serverTimestamp();
-      data.sold = 0;
+      data.createdAt = serverTimestamp(); data.sold = 0;
       await addDoc(collection(db, 'products'), data);
       showToast('✅ Product added with ' + images.length + ' image(s)!');
     }
@@ -1385,108 +926,24 @@ function renderOrdersTable(orders) {
       </tr>`).join('');
 }
 
-// ── DATE HELPERS ─────────────────────────────────────────────
-function isToday(tsSeconds) {
-  if (!tsSeconds) return false;
-  const d = new Date(tsSeconds * 1000), n = new Date();
-  return d.getDate() === n.getDate() &&
-         d.getMonth() === n.getMonth() &&
-         d.getFullYear() === n.getFullYear();
-}
-function fmtDate(tsSeconds) {
-  if (!tsSeconds) return '—';
-  return new Date(tsSeconds * 1000).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-}
-function updateDayBanner() {
-  const all = window.$products || [];
-  const tod = all.filter(p => isToday(p.createdAt?.seconds)).length;
-  const ear = all.filter(p => !isToday(p.createdAt?.seconds)).length;
-  document.getElementById('dbTodayNum').textContent   = tod;
-  document.getElementById('dbEarlierNum').textContent = ear;
-  document.getElementById('dbTotalNum').textContent   = all.length;
-  document.getElementById('dbDateStr').textContent    =
-    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  // Pulse the today count if > 0
-  const el = document.getElementById('dbTodayNum');
-  el.style.animation = tod > 0 ? 'pulse 2s infinite' : 'none';
-}
-
-// ── RENDER PRODUCTS TABLE ─────────────────────────────────────
 function renderProductsTable(list) {
-  document.getElementById('prodCount2').textContent = `Showing ${list.length} of ${(window.$products||[]).length} products`;
-  updateDayBanner();
-  if (list.length === 0) {
-    document.getElementById('prodTableBody').innerHTML =
-      '<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:2rem">No products found for this filter.</td></tr>';
-    return;
-  }
-  document.getElementById('prodTableBody').innerHTML = list.map((p, i) => {
-    const today   = isToday(p.createdAt?.seconds);
-    const dateStr = fmtDate(p.createdAt?.seconds);
-    return `
-      <tr class="${today ? 'today-row' : ''}">
-        <td style="color:var(--muted)">${i + 1}</td>
-        <td>
-          <span class="p-name-cell">${p.name}</span>
-          ${today ? '<span class="badge-new">New Today</span>' : ''}
-          <div class="p-sub">${p.tag || ''}</div>
-        </td>
-        <td>${p.category}</td>
-        <td>${p.subCategory}</td>
-        <td style="font-size:.72rem;color:var(--muted)">${p.partNumber || '—'}</td>
-        <td>${p.material}</td>
-        <td class="price-cell">₹${p.price?.toLocaleString('en-IN')}</td>
-        <td>${p.stock || 0}</td>
-        <td><span class="badge b-active">Active</span></td>
-        <td style="font-size:.72rem;white-space:nowrap;color:${today ? 'var(--green)' : 'var(--muted)'}">
-          ${today
-            ? `<span style="display:flex;align-items:center;gap:.35rem">
-                 <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite"></span>
-                 Today
-               </span>`
-            : dateStr}
-        </td>
-        <td>
-          <button class="ebtn" onclick="editProduct('${p.id}')">Edit</button>
-          <button class="dbtn" onclick="deleteProduct('${p.id}')">Delete</button>
-        </td>
-      </tr>`;
-  }).join('');
-}
-
-// ── DAY FILTER ────────────────────────────────────────────────
-window.filterByDay = function(type, el) {
-  // Update active tab styling
-  document.querySelectorAll('.dtab').forEach(t => t.classList.remove('on'));
-  if (el) {
-    el.classList.add('on');
-    // green tab style for "today"
-    document.getElementById('dtToday').classList.toggle('green-tab', type === 'today');
-  }
-  window._dayFilter = type;
-  applyProdFilters();
-};
-
-// Central filter coordinator (day + search + category all go through here)
-function applyProdFilters() {
-  let list = window.$products || [];
-  // Day filter
-  const day = window._dayFilter || 'all';
-  if (day === 'today')   list = list.filter(p => isToday(p.createdAt?.seconds));
-  if (day === 'earlier') list = list.filter(p => !isToday(p.createdAt?.seconds));
-  // Search filter
-  const q = (document.getElementById('prodSearch')?.value || '').toLowerCase();
-  if (q) list = list.filter(p =>
-    p.name?.toLowerCase().includes(q) ||
-    p.category?.toLowerCase().includes(q) ||
-    p.collection?.toLowerCase().includes(q) ||
-    p.style?.toLowerCase().includes(q) ||
-    p.subCategory?.toLowerCase().includes(q)
-  );
-  // Category filter
-  const cat = window._catFilter || 'all';
-  if (cat !== 'all') list = list.filter(p => p.category === cat);
-  renderProductsTable(list);
+  document.getElementById('prodCount2').textContent = `Showing ${list.length} products`;
+  document.getElementById('prodTableBody').innerHTML = list.map((p,i)=>`
+    <tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td><span class="p-name-cell">${p.name}</span><div class="p-sub">${p.tag||''}</div></td>
+      <td>${p.category}</td>
+      <td>${p.subCategory}</td>
+      <td style="font-size:.72rem;color:var(--muted)">${p.partNumber||'—'}</td>
+      <td>${p.material}</td>
+      <td class="price-cell">₹${p.price?.toLocaleString('en-IN')}</td>
+      <td>${p.stock||0}</td>
+      <td><span class="badge b-active">Active</span></td>
+      <td>
+        <button class="ebtn" onclick="editProduct('${p.id}')">Edit</button>
+        <button class="dbtn" onclick="deleteProduct('${p.id}')">Delete</button>
+      </td>
+    </tr>`).join('');
 }
 
 function renderCustomers(custs) {
@@ -1575,38 +1032,20 @@ window.editProduct = function(id) {
   if (!p) return;
   window.$editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit Product';
-  document.getElementById('mName').value       = p.name || '';
-  document.getElementById('mPrice').value      = p.price || '';
-  document.getElementById('mMrp').value        = p.mrp || '';
-  document.getElementById('mColor').value      = p.color || '';
-  document.getElementById('mSize').value       = p.size || '';
-  document.getElementById('mTag').value        = p.tag || '';
-  document.getElementById('mStock').value      = p.stock || '';
-  document.getElementById('mDesc').value       = p.description || '';
-  document.getElementById('mPartNumber').value = p.partNumber || '';
-  document.getElementById('mFeatured').checked = p.featured || false;
-  // Category → then update subcats → then restore
-  const cat = p.category || 'Artisan';
-  document.getElementById('mCat').value = cat;
-  updateSubCats();
-  document.getElementById('mSub').value        = p.subCategory || '';
-  document.getElementById('mCollection').value = p.collection || cat.toLowerCase();
-  document.getElementById('mStyle').value       = p.style || '';
-  document.getElementById('mMat').value         = p.material || '';
-  document.getElementById('mArtType').value     = p.artType || '';
-  document.getElementById('mWoodType').value    = p.woodType || '';
-  document.getElementById('mWeight').value      = p.weight || '';
-  document.getElementById('mDimensions').value  = p.dimensions || '';
-  document.getElementById('mAmazonUrl').value   = p.amazonUrl || '';
-  document.getElementById('mFlipkartUrl').value = p.flipkartUrl || '';
-  document.getElementById('mSlug').value        = p.slug || '';
-  document.getElementById('mHandPainted').checked = p.handPainted || false;
-  document.getElementById('mBestSeller').checked  = p.bestSeller || false;
-  document.getElementById('mNewArrival').checked  = p.newArrival || false;
-  document.getElementById('mGiftReady').checked   = p.giftReady || false;
-  document.getElementById('mIsActive').checked    = p.isActive !== false;
-  // Load images
-  const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
+  document.getElementById('mName').value  = p.name||'';
+  document.getElementById('mPrice').value = p.price||'';
+  document.getElementById('mMrp').value   = p.mrp||'';
+  document.getElementById('mCat').value   = p.category||'';
+  document.getElementById('mSub').value   = p.subCategory||'';
+  document.getElementById('mMat').value   = p.material||'';
+  document.getElementById('mColor').value = p.color||'';
+  document.getElementById('mSize').value  = p.size||'';
+  document.getElementById('mTag').value   = p.tag||'';
+  document.getElementById('mStock').value      = p.stock||'';
+  document.getElementById('mDesc').value       = p.description||'';
+  document.getElementById('mPartNumber').value = p.partNumber||'';
+  // Load all images into the 5 fields
+  const imgs = p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []);
   [0,1,2,3,4].forEach(i => {
     const el = document.getElementById('mImage'+i);
     if (el) { el.value = imgs[i] || ''; previewImg(i, imgs[i] || ''); }
@@ -1622,12 +1061,13 @@ window.filterOrders = function(status, btn) {
 };
 
 window.filterProdCat = function(cat) {
-  window._catFilter = cat || 'all';
-  applyProdFilters();
+  const list = cat==='all' ? (window.$products||[]) : (window.$products||[]).filter(p=>p.category===cat);
+  renderProductsTable(list);
 };
 
 window.searchProducts = function(q) {
-  applyProdFilters();
+  const list = q ? (window.$products||[]).filter(p=>p.name.toLowerCase().includes(q.toLowerCase())) : (window.$products||[]);
+  renderProductsTable(list);
 };
 
 window.globalSearch = function(q) {
@@ -1651,10 +1091,6 @@ function closeAdminSidebar() {
 document.querySelectorAll('.ni').forEach(el => {
   el.addEventListener('click', () => { if (window.innerWidth <= 900) closeAdminSidebar(); });
 });
-
-// Expose helpers to the non-module script (BulkUpload lives in a plain <script>)
-window.nameToSlug      = nameToSlug;
-window.classifyProduct = classifyProduct;
 </script>
 
 <script>
@@ -1910,30 +1346,14 @@ function goPage(id, navEl) {
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id)?.classList.add('active');
   if (navEl) navEl.classList.add('active');
-  else document.querySelectorAll('.ni').forEach(n=>{ if(n.textContent.trim().toLowerCase().startsWith(PAGE_TITLES[id]?.toLowerCase()||'')) n.classList.add('active'); });
   document.getElementById('pageTitle').textContent  = PAGE_TITLES[id]||id;
   document.getElementById('breadcrumb').textContent = `Home / ${PAGE_TITLES[id]||id}`;
-  // Scroll to top on mobile
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function openAddModal() {
   window.$editingId = null;
   document.getElementById('modalTitle').textContent = 'Add New Product';
-  ['mName','mPrice','mMrp','mColor','mSize','mTag','mStock','mDesc','mPartNumber',
-   'mArtType','mWoodType','mWeight','mDimensions','mAmazonUrl','mFlipkartUrl','mSlug']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('mCat').value        = 'Artisan';
-  document.getElementById('mCollection').value = '';
-  document.getElementById('mStyle').value      = '';
-  document.getElementById('mMat').value        = '';
-  document.getElementById('mFeatured').checked  = false;
-  document.getElementById('mHandPainted').checked = false;
-  document.getElementById('mBestSeller').checked  = false;
-  document.getElementById('mNewArrival').checked  = false;
-  document.getElementById('mGiftReady').checked   = false;
-  document.getElementById('mIsActive').checked    = true;
-  updateSubCats(); // populate subcats for default Artisan
+  ['mName','mPrice','mMrp','mMat','mColor','mSize','mTag','mStock','mDesc','mPartNumber'].forEach(id=>document.getElementById(id).value='');
   [0,1,2,3,4].forEach(i => {
     const el = document.getElementById('mImage'+i);
     if (el) el.value = '';
@@ -1999,143 +1419,6 @@ async function saveCloudinaryConfig() {
     statusEl.textContent = '❌ ' + e.message + ' — check Cloud Name and Preset name';
   }
 }
-
-// ── EXPORT PRODUCTS CSV ──────────────────────────────────────
-window.exportProductsCSV = function() {
-  const all = window.$products || [];
-  if (!all.length) { showToast('⚠️ No products loaded yet'); return; }
-
-  // Wrap value in CSV-safe quotes (doubles internal quotes)
-  const esc = v => {
-    const s = (v === null || v === undefined) ? '' : String(v);
-    return '"' + s.replace(/"/g, '""') + '"';
-  };
-
-  const headers = ['FirebaseID','Name','PartNumber','SKU','Slug','Category','SubCategory','Collection',
-                   'Style','ArtType','WoodType','Material','Color','Size','Weight','Dimensions',
-                   'Price','MRP','Stock','Tag',
-                   'HandPainted','BestSeller','NewArrival','GiftReady','Featured','IsActive',
-                   'AmazonURL','FlipkartURL',
-                   'Description','Image1','Image2','Image3','Image4','Image5'];
-
-  const rows = all.map(p => {
-    const imgs = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
-    return [
-      p.id,
-      p.name        || '',
-      p.partNumber  || '',
-      p.sku         || p.partNumber || '',
-      p.slug        || '',
-      p.category    || '',
-      p.subCategory || '',
-      p.collection  || '',
-      p.style       || '',
-      p.artType     || '',
-      p.woodType    || '',
-      p.material    || '',
-      p.color       || '',
-      p.size        || '',
-      p.weight      || '',
-      p.dimensions  || '',
-      p.price       || 0,
-      p.mrp         || p.price || 0,
-      p.stock       ?? 0,
-      p.tag         || '',
-      p.handPainted ? 'Yes' : 'No',
-      p.bestSeller  ? 'Yes' : 'No',
-      p.newArrival  ? 'Yes' : 'No',
-      p.giftReady   ? 'Yes' : 'No',
-      p.featured    ? 'Yes' : 'No',
-      p.isActive !== false ? 'Yes' : 'No',
-      p.amazonUrl   || '',
-      p.flipkartUrl || '',
-      p.description || '',
-      imgs[0]||'', imgs[1]||'', imgs[2]||'', imgs[3]||'', imgs[4]||'',
-    ].map(esc).join(',');
-  });
-
-  // UTF-8 BOM ensures Excel opens special chars correctly
-  const csv = '﻿' + [headers.map(esc).join(','), ...rows].join('\r\n');
-  const today = new Date().toISOString().slice(0, 10);
-  const fname = `auranest_products_${today}.csv`;
-
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = fname;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  showToast(`✅ ${all.length} products exported to ${fname}`);
-};
-
-// ── IMAGE REVIEW HTML EXPORT ─────────────────────────────────
-window.exportImageReview = function() {
-  const all = window.$products || [];
-  if (!all.length) { showToast('⚠️ No products loaded yet'); return; }
-
-  const tableRows = all.map((p, i) => {
-    const imgs  = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
-    const img1  = imgs[0] || '';
-    const thumb = img1
-      ? `<img src="${img1}" style="width:90px;height:90px;object-fit:contain;background:#f5ede0;border-radius:6px;display:block" onerror="this.replaceWith('—')"/>`
-      : '<span style="color:#bbb;font-size:11px">No image</span>';
-    return `<tr>
-      <td style="color:#aaa;font-size:12px">${i+1}</td>
-      <td>${thumb}</td>
-      <td><strong style="font-size:14px">${(p.name||'').replace(/</g,'&lt;')}</strong><br>
-          <span style="font-size:11px;color:#aaa">${p.partNumber||''}</span></td>
-      <td style="font-size:12px">${p.category||''}</td>
-      <td style="font-size:12px;color:#888">${p.subCategory||''}</td>
-      <td style="color:#9a6f28;font-weight:600">₹${(p.price||0).toLocaleString('en-IN')}</td>
-      <td style="font-size:12px">${p.stock??0}</td>
-      <td style="font-size:10px;color:#ccc;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.id}">${p.id}</td>
-    </tr>`;
-  }).join('');
-
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Auranest Image Review — ${new Date().toLocaleDateString('en-IN')}</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f0e8;color:#1c1510;padding:24px}
-  h1{font-size:1.5rem;color:#9a6f28;margin-bottom:4px}
-  .sub{font-size:13px;color:#888;margin-bottom:20px}
-  .tip{background:#fff8e8;border:1px solid rgba(154,111,40,.25);border-left:3px solid #9a6f28;
-       padding:10px 14px;font-size:12px;color:#7a6040;margin-bottom:20px;border-radius:2px}
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;
-        box-shadow:0 2px 12px rgba(0,0,0,.08)}
-  thead th{background:#9a6f28;color:#fff;padding:10px 14px;text-align:left;font-size:11px;
-           letter-spacing:.06em;text-transform:uppercase;position:sticky;top:0}
-  td{padding:10px 14px;border-bottom:1px solid #f0e8dc;vertical-align:middle}
-  tr:hover td{background:#fdf8f0}
-  tr:last-child td{border-bottom:none}
-</style>
-</head>
-<body>
-<h1>🏡 Auranest Decors — Product Image Review</h1>
-<p class="sub">Generated: ${new Date().toLocaleString('en-IN')} &nbsp;·&nbsp; ${all.length} products</p>
-<div class="tip">
-  💡 <strong>How to use:</strong> Check each product photo against its Name in column 3.
-  Find wrong names → fix them in your CSV file → go to Admin → Bulk Upload CSV → re-upload to update.
-</div>
-<table>
-  <thead>
-    <tr><th>#</th><th>Photo</th><th>Name / Part No.</th><th>Category</th><th>Sub-Category</th><th>Price</th><th>Stock</th><th>Firebase ID</th></tr>
-  </thead>
-  <tbody>${tableRows}</tbody>
-</table>
-</body>
-</html>`;
-
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = `auranest_image_review_${new Date().toISOString().slice(0,10)}.html`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
-  showToast(`✅ Image review file downloaded — open the .html file in your browser!`);
-};
 
 // ── BULK UPLOAD ──
 function openBulkModal()  { document.getElementById('bulkModal').classList.add('on'); }
@@ -2231,12 +1514,12 @@ const BulkUpload = {
   _matchImages(row) {
     const map = this._imageMap;
     const urls = [];
-    // Priority 1: explicit ImageFile columns (supports 5 images)
-    ['imageFile1','imageFile2','imageFile3','imageFile4','imageFile5'].forEach(col => {
+    // Priority 1: explicit ImageFile columns
+    ['imageFile1','imageFile2','imageFile3'].forEach(col => {
       const val = (row[col] || '').trim();
       if (!val) return;
-      if (val.startsWith('http')) { urls.push(val); return; } // full URL — use directly
-      // Try filename lookup from uploaded images
+      if (val.startsWith('http')) { urls.push(val); return; }
+      // Try filename lookup
       const cleaned = val.toLowerCase().replace(/[^a-z0-9]/g, '');
       const url = map[val] || map[val.replace(/\.[^.]+$/, '')] || map['__c__' + cleaned];
       if (url) urls.push(url);
@@ -2251,9 +1534,9 @@ const BulkUpload = {
   },
 
   downloadTemplate() {
-    const headers = ['Name','PartNumber','Category','SubCategory','Collection','Style','Price','MRP','Material','Color','Size','Tag','Stock','Description','ImageFile1','ImageFile2','ImageFile3'];
+    const headers = ['Name','PartNumber','Category','SubCategory','Price','MRP','Material','Color','Size','Tag','Stock','Description','ImageFile1','ImageFile2','ImageFile3'];
     const example = [
-      'Madhubani Folk Peacock Planter','AN-001','Artisan','Madhubani & Folk','artisan','Madhubani','1299','1599','Ceramic','Multicolors','Ø12cm × H14cm','Folk Art','10','Hand-painted Madhubani peacock planter — authentic Indian folk art.','planter-img1.jpg','planter-img2.jpg','',
+      'Folk Art Ceramic Planter','AN-001','Aura décor','Decorative Pots','849','999','Ceramic','Multicolors','Ø9cm × H8.5cm','Folk Art','10','Hand-painted ceramic planter with folk art motifs','folk-art-planter.jpg','','',
     ];
     const csv = [headers.join(','), example.map(v => `"${v}"`).join(',')].join('\n');
     const a = document.createElement('a');
@@ -2283,23 +1566,14 @@ const BulkUpload = {
     if (lines.length < 2) return [];
     const headers = this._splitCSV(lines[0]).map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g,''));
     const idx = (name) => headers.findIndex(h => h.includes(name));
-    const iFirebaseId = headers.findIndex(h => h === 'firebaseid' || h === 'id');
-    const iName  = idx('name');   const iCat   = idx('cat');    const iSub  = idx('sub');
-    const iPrice = idx('price');  const iMrp   = idx('mrp');    const iMat  = idx('mat');
-    const iColor = idx('color');  const iSize  = idx('size');   const iTag  = idx('tag');
-    const iStock = idx('stock');  const iDesc  = idx('desc');   const iPart = idx('part');
-    const iColl  = idx('collection'); const iStyle = idx('style');
-    const iArtType = idx('arttype'); const iWoodType = idx('woodtype');
-    const iWeight  = idx('weight');  const iDims    = idx('dimensions');
-    const iAmazon  = idx('amazon');  const iFlip    = idx('flipkart');
-    const iSlug    = idx('slug');
-    const iBool = (colIdx, cols) => { const v = (cols[colIdx]||'').trim().toLowerCase(); return v==='yes'||v==='true'||v==='1'; };
-    // Support ImageFile1/2/3 (template filenames) AND Image1-5 (exported full URLs)
+    const iName  = idx('name');  const iCat  = idx('cat');   const iSub  = idx('sub');
+    const iPrice = idx('price'); const iMrp  = idx('mrp');   const iMat  = idx('mat');
+    const iColor = idx('color'); const iSize = idx('size');  const iTag  = idx('tag');
+    const iStock = idx('stock'); const iDesc = idx('desc');  const iPart = idx('part');
+    // Support both ImageFile1/2/3 (new) and Image1/2/3 (legacy)
     const iImgF1 = idx('imagefile1') >= 0 ? idx('imagefile1') : idx('image1');
     const iImgF2 = idx('imagefile2') >= 0 ? idx('imagefile2') : idx('image2');
     const iImgF3 = idx('imagefile3') >= 0 ? idx('imagefile3') : idx('image3');
-    const iImgF4 = idx('imagefile4') >= 0 ? idx('imagefile4') : idx('image4');
-    const iImgF5 = idx('imagefile5') >= 0 ? idx('imagefile5') : idx('image5');
     const rows = [];
     for (let i = 1; i < lines.length; i++) {
       const cols = this._splitCSV(lines[i]);
@@ -2307,25 +1581,10 @@ const BulkUpload = {
       if (!name) continue;
       const price = parseInt(cols[iPrice]) || 0;
       if (!price) continue;
-      const rawCat = (cols[iCat] || 'Artisan').trim();
-      const row = {
+      rows.push({
         name,
-        category:    rawCat,
+        category:    (cols[iCat]  || 'Aura décor').trim(),
         subCategory: (cols[iSub]  || '').trim(),
-        collection:  (iColl >= 0 ? cols[iColl] || '' : '').trim(),
-        style:       (iStyle >= 0 ? cols[iStyle] || '' : '').trim(),
-        artType:     (iArtType >= 0 ? cols[iArtType] || '' : '').trim(),
-        woodType:    (iWoodType >= 0 ? cols[iWoodType] || '' : '').trim(),
-        weight:      (iWeight >= 0 ? cols[iWeight] || '' : '').trim(),
-        dimensions:  (iDims >= 0 ? cols[iDims] || '' : '').trim(),
-        amazonUrl:   (iAmazon >= 0 ? cols[iAmazon] || '' : '').trim(),
-        flipkartUrl: (iFlip >= 0 ? cols[iFlip] || '' : '').trim(),
-        slug:        (iSlug >= 0 ? cols[iSlug] || '' : '').trim(),
-        handPainted: iArtType >= 0 ? iBool(headers.findIndex(h=>h==='handpainted'), cols) : false,
-        bestSeller:  iBool(headers.findIndex(h=>h==='bestseller'), cols),
-        newArrival:  iBool(headers.findIndex(h=>h==='newarrival'), cols),
-        giftReady:   iBool(headers.findIndex(h=>h==='giftready'), cols),
-        isActive:    headers.findIndex(h=>h==='isactive') >= 0 ? iBool(headers.findIndex(h=>h==='isactive'), cols) : true,
         price,
         mrp:         parseInt(cols[iMrp]) || price,
         material:    (cols[iMat]  || '').trim(),
@@ -2338,16 +1597,8 @@ const BulkUpload = {
         imageFile1:  (iImgF1 >= 0 ? cols[iImgF1] || '' : '').trim(),
         imageFile2:  (iImgF2 >= 0 ? cols[iImgF2] || '' : '').trim(),
         imageFile3:  (iImgF3 >= 0 ? cols[iImgF3] || '' : '').trim(),
-        imageFile4:  (iImgF4 >= 0 ? cols[iImgF4] || '' : '').trim(),
-        imageFile5:  (iImgF5 >= 0 ? cols[iImgF5] || '' : '').trim(),
-        icon: '🎁',
-      };
-      // If FirebaseID column present → this is an update, not a new insert
-      if (iFirebaseId >= 0) {
-        const fbId = (cols[iFirebaseId] || '').trim();
-        if (fbId) row._firebaseId = fbId;
-      }
-      rows.push(row);
+        icon: '🎁', sold: 0,
+      });
     }
     return rows;
   },
@@ -2369,42 +1620,36 @@ const BulkUpload = {
     const stats   = document.getElementById('bulkStats');
     const preview = document.getElementById('bulkPreview');
     const rows    = this._rows;
-    const cats        = [...new Set(rows.map(r => r.category))];
-    const imagesReady = [...new Set(Object.values(this._imageMap))].length;
-    const toUpdate    = rows.filter(r => r._firebaseId).length;
-    const toAdd       = rows.length - toUpdate;
+    const cats    = [...new Set(rows.map(r => r.category))];
+    const imagesReady  = [...new Set(Object.values(this._imageMap))].length;
+    const matched = rows.filter(r => this._matchImages(r).length > 0).length;
     stats.innerHTML = `
-      <div class="bulk-stat"><div class="bulk-stat-n" style="color:var(--green)">${toUpdate}</div><div class="bulk-stat-l">🔄 To Update</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n" style="color:var(--gold)">${toAdd}</div><div class="bulk-stat-l">✨ To Add New</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${rows.length}</div><div class="bulk-stat-l">Products</div></div>
       <div class="bulk-stat"><div class="bulk-stat-n">${cats.length}</div><div class="bulk-stat-l">Categories</div></div>
-      <div class="bulk-stat"><div class="bulk-stat-n">${imagesReady}</div><div class="bulk-stat-l">Images Ready</div></div>`;
+      <div class="bulk-stat"><div class="bulk-stat-n">${imagesReady}</div><div class="bulk-stat-l">Images Ready</div></div>
+      <div class="bulk-stat"><div class="bulk-stat-n">${matched}</div><div class="bulk-stat-l">Matched</div></div>`;
     const shown = rows.slice(0, 10);
     preview.innerHTML = `<table>
-      <thead><tr><th>#</th><th>Mode</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Image</th></tr></thead>
+      <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Part No.</th><th>Price</th><th>MRP</th><th>Image</th><th>Stock</th></tr></thead>
       <tbody>${shown.map((r,i) => {
         const imgs = this._matchImages(r);
         const imgCell = imgs.length
           ? `<img src="${imgs[0]}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.outerHTML='<span style=color:var(--red);font-size:.65rem>✗</span>'"/>`
           : '<span style="font-size:.65rem;color:var(--muted)">—</span>';
-        const modeBadge = r._firebaseId
-          ? '<span class="badge-update">🔄 Update</span>'
-          : '<span class="badge-addnew">✨ New</span>';
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
-          <td>${modeBadge}</td>
           <td><div style="font-weight:500">${r.name}</div><div style="font-size:.65rem;color:var(--muted)">${r.subCategory}</div></td>
           <td><span style="font-size:.7rem;background:var(--gold-dim);color:var(--gold);padding:.15rem .5rem">${r.category}</span></td>
+          <td style="font-size:.72rem;color:var(--muted)">${r.partNumber || '—'}</td>
           <td style="color:var(--gold)">₹${r.price}</td>
-          <td>${r.stock}</td>
+          <td style="color:var(--muted);text-decoration:line-through;font-size:.72rem">₹${r.mrp}</td>
           <td>${imgCell}</td>
+          <td>${r.stock}</td>
         </tr>`;
       }).join('')}
-      ${rows.length > 10 ? `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">…and ${rows.length - 10} more products</td></tr>` : ''}
+      ${rows.length > 10 ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:.8rem;font-size:.72rem">…and ${rows.length - 10} more products</td></tr>` : ''}
       </tbody></table>`;
-    const btnLabel = toUpdate && toAdd  ? `⬆ Update ${toUpdate} + Add ${toAdd} Products`
-                   : toUpdate           ? `🔄 Update ${toUpdate} Products`
-                   :                      `⬆ Import All ${rows.length} Products`;
-    document.getElementById('bulkImportBtn').textContent = btnLabel;
+    document.getElementById('bulkImportBtn').textContent = `⬆ Import All ${rows.length} Products`;
     wrap.style.display = 'block';
     this._setStep(3);
     document.getElementById('stepInd3').style.color = 'var(--gold)';
@@ -2424,17 +1669,16 @@ const BulkUpload = {
     const total = this._rows.length;
     const errorLog = [];
 
-    const slugify = window.nameToSlug || (n => (n||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60));
     const buildProduct = (row, isNew) => {
       const imgs = this._matchImages(row);
       const { imageFile1, imageFile2, imageFile3, imageFile4, imageFile5, _firebaseId, sold, ...rest } = row;
-      if (!rest.collection && window.classifyProduct) {
-        const cls = window.classifyProduct(rest);
+      if (!rest.collection) {
+        const cls = classifyProduct(rest);
         rest.collection = cls.collection;
         rest.category   = cls.category;
         if (!rest.style) rest.style = cls.style;
       }
-      if (!rest.slug && rest.name) rest.slug = slugify(rest.name);
+      if (!rest.slug && rest.name) rest.slug = nameToSlug(rest.name);
       const product = { ...rest, image: imgs[0] || '', images: imgs, updatedAt: window.$fb.serverTimestamp() };
       if (isNew) { product.createdAt = window.$fb.serverTimestamp(); product.sold = 0; }
       return product;
