@@ -147,6 +147,16 @@ const { useState, useEffect, useRef } = React;
 /* ─── LOGO — reads from localStorage (set by store page) ── */
 const LOGO_URL = localStorage.getItem('auranest_logo') || '';
 
+/* ─── Trim Amazon-length product names ── */
+function trimName(n) {
+  if (!n) return n;
+  let s = n.split('|')[0].trim();
+  const SPEC = /\b(bpa|eco.friendly|multipurpose|anti.microbial|food.grade|pack of|non.stick|non.slip)\b/i;
+  if (SPEC.test(s)) { const c = s.indexOf(',', 15); if (c > 0) s = s.slice(0, c).trim(); }
+  else if (s.length > 55) { const c = s.indexOf(',', 25); if (c > 0) s = s.slice(0, c).trim(); }
+  return s || n;
+}
+
 function BrandLogo({ size = 36 }) {
   const [broken, setBroken] = useState(!LOGO_URL);
   if (!broken && LOGO_URL) {
@@ -270,7 +280,7 @@ function OrderSidebar({ cart, isFreeShipping, discount }) {
                 : it.icon || '🏺'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: '.8rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.name}</p>
+              <p style={{ fontSize: '.8rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{trimName(it.name)}</p>
               <p style={{ fontSize: '.75rem', color: 'var(--muted)' }}>Qty {it.qty}</p>
             </div>
             <p style={{ fontSize: '.8rem', fontWeight: 700, flexShrink: 0 }}>{rupee(it.price * it.qty)}</p>
@@ -359,7 +369,7 @@ function CartPage({ cart, setCart, onNext }) {
                   {it.image ? <img src={cdnImg(it.image, 200)} alt={it.name} onError={e => e.target.style.display = 'none'} /> : (it.icon || '🏺')}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontWeight: 600, fontSize: '.9rem', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.name}</p>
+                  <p style={{ fontWeight: 600, fontSize: '.9rem', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{trimName(it.name)}</p>
                   <p style={{ color: 'var(--gold)', fontWeight: 700, fontSize: '.9rem', marginBottom: 10 }}>{rupee(it.price)}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     <div className="qty-wrap">
