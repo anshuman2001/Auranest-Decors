@@ -1043,6 +1043,21 @@ function SuccessPage({ orderId, method, total }) {
   );
 }
 
+/* ─── OTP SESSION (30-minute local cache) ───────────────── */
+const OTP_SESSION_KEY = 'auranest_otp_session';
+const OTP_SESSION_TTL = 30 * 60 * 1000; // 30 minutes
+
+function saveOtpSession(phone) {
+  try { localStorage.setItem(OTP_SESSION_KEY, JSON.stringify({ phone, ts: Date.now() })); } catch {}
+}
+function loadOtpSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(OTP_SESSION_KEY) || 'null');
+    if (s && s.phone && Date.now() - s.ts < OTP_SESSION_TTL) return s.phone;
+  } catch {}
+  return null;
+}
+
 /* ─── MAIN APP ──────────────────────────────────────────── */
 function App() {
   const [step, setStep]         = useState(1);
@@ -1067,6 +1082,24 @@ function App() {
   const goNext = () => setStep(s => s + 1);
   const goBack = () => setStep(s => s - 1);
 
+  const handleCartNext = (d) => {
+    setDiscount(d);
+    const cached = loadOtpSession();
+    if (cached) {
+      setPersonal(p => ({...p, phone: cached}));
+      goNext(); // skip OTP — session still valid
+    } else {
+      setShowOTP(true);
+    }
+  };
+
+  const handleOtpVerified = (phone) => {
+    saveOtpSession(phone);
+    setPersonal(p => ({...p, phone}));
+    setShowOTP(false);
+    goNext();
+  };
+
   return (
     <div>
       {/* Navbar */}
@@ -1086,14 +1119,14 @@ function App() {
         {/* OTP Modal */}
         {showOTP && (
           <OTPModal
-            onVerified={phone => { setPersonal(p => ({...p, phone})); setShowOTP(false); goNext(); }}
+            onVerified={handleOtpVerified}
             onGuest={() => { setShowOTP(false); goNext(); }}
           />
         )}
 
         {step === 1 && (
           <CartPage cart={cart} setCart={setCart}
-            onNext={d => { setDiscount(d); setShowOTP(true); }} />
+            onNext={handleCartNext} />
         )}
         {step === 2 && !showOTP && (
           <PersonalPage data={personal} setData={setPersonal} cart={cart} onNext={goNext} onBack={() => setStep(1)} />
