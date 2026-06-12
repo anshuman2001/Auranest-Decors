@@ -735,7 +735,6 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
   const [upiId, setUpiId]   = useState('');
   const [card, setCard]     = useState({ num: '', name: '', exp: '', cvv: '' });
   const [bank, setBank]     = useState('');
-  const [emi, setEmi]       = useState(3);
   const [loading, setLoading] = useState(false);
   const [error, setError]   = useState('');
 
@@ -751,7 +750,6 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
     { id:'upi',  icon:'📲', label:'UPI' },
     { id:'card', icon:'💳', label:'Card' },
     { id:'net',  icon:'🏦', label:'Net Banking' },
-    { id:'emi',  icon:'📅', label:'EMI' },
     { id:'cod',  icon:'📦', label:'COD' },
   ];
 
@@ -950,29 +948,6 @@ function PaymentPage({ cart, address, personal, discount, onSuccess, onBack }) {
                 <FloatSelect label="Other banks" id="obank" value={bank}
                   onChange={setBank}
                   options={['Punjab National Bank','Union Bank','Bank of Baroda','Canara Bank','IndusInd Bank','Federal Bank']} />
-              </div>
-            )}
-
-            {/* EMI */}
-            {method === 'emi' && (
-              <div>
-                <p style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: 16 }}>Choose EMI tenure</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 16 }}>
-                  {[3, 6, 9, 12, 18, 24].map(m => {
-                    const e = Math.ceil((total * (1 + m * 0.012)) / m);
-                    return (
-                      <button key={m} onClick={() => setEmi(m)}
-                        style={{
-                          padding: 12, borderRadius: 12, border: `2px solid ${emi === m ? 'var(--gold)' : '#f0e4c8'}`,
-                          background: emi === m ? '#fffbf0' : '#fff', cursor: 'pointer', fontFamily: 'inherit'
-                        }}>
-                        <p style={{ fontWeight: 700, fontSize: '.88rem', color: 'var(--ink)' }}>{rupee(e)}/mo</p>
-                        <p style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{m} months</p>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p style={{ fontSize: '.75rem', color: 'var(--muted)' }}>EMI available on credit cards. Bank charges may apply.</p>
               </div>
             )}
 
