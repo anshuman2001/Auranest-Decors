@@ -14,6 +14,24 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+<!-- Firebase Phone Auth (free, no API key needed) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+const app = initializeApp({
+  apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
+  authDomain:"auranest-decors.firebaseapp.com",
+  projectId:"auranest-decors",
+  storageBucket:"auranest-decors.firebasestorage.app",
+  messagingSenderId:"55244789649",
+  appId:"1:55244789649:web:0aab804a8933ce0cf6ec30"
+});
+const auth = getAuth(app);
+window._fbAuth = auth;
+window._RecaptchaVerifier = RecaptchaVerifier;
+window._fbSignIn = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
+</script>
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
@@ -420,19 +438,18 @@ function CartPage({ cart, setCart, onNext }) {
   );
 }
 
-/* ─── OTP MODAL — Serverless (Fast2SMS + HMAC token, no Firebase billing needed) ─── */
+/* ─── OTP MODAL — Firebase Phone Auth (free, no API key needed) ─── */
 function OTPModal({ onVerified, onGuest }) {
-  const [phase, setPhase]   = useState('phone');
-  const [phone, setPhone]   = useState('');
-  const [otp, setOtp]       = useState(['','','','','','']);
-  const [timer, setTimer]   = useState(0);
+  const [phase, setPhase]     = useState('phone');
+  const [phone, setPhone]     = useState('');
+  const [otp, setOtp]         = useState(['','','','','','']);
+  const [timer, setTimer]     = useState(0);
   const [loading, setLoading] = useState(false);
-  const [err, setErr]       = useState('');
-  const [smsDown, setSmsDown] = useState(false);
-  const tokenRef            = useRef('');  // HMAC-signed token from /api/send-otp
+  const [err, setErr]         = useState('');
+  const confirmRef            = useRef(null);
+  const recaptchaRef          = useRef(null);
   const refs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
-  /* Countdown once OTP phase starts */
   useEffect(() => {
     if (phase !== 'otp') return;
     setTimer(60);
@@ -445,21 +462,24 @@ function OTPModal({ onVerified, onGuest }) {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
     try {
-      const res  = await fetch('/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
-      tokenRef.current = data.token;
+      if (!window._fbAuth) throw new Error('Please refresh the page and try again.');
+      if (!recaptchaRef.current) {
+        recaptchaRef.current = new window._RecaptchaVerifier(
+          window._fbAuth, 'recaptcha-container', { size: 'invisible' }
+        );
+      }
+      confirmRef.current = await window._fbSignIn('+91' + phone, recaptchaRef.current);
       setPhase('otp');
     } catch (e) {
-      const msg = e.message || 'Could not send OTP. Please try again.';
-      setErr(msg);
-      if (msg.toLowerCase().includes('not set up') || msg.toLowerCase().includes('unavailable') || msg.toLowerCase().includes('service')) {
-        setSmsDown(true);
+      if (recaptchaRef.current) {
+        try { recaptchaRef.current.clear(); } catch {}
+        recaptchaRef.current = null;
       }
+      const msg = e.code === 'auth/invalid-phone-number'  ? 'Invalid phone number. Enter 10 digits.' :
+                  e.code === 'auth/too-many-requests'     ? 'Too many attempts. Please try after some time.' :
+                  e.code === 'auth/captcha-check-failed'  ? 'Verification failed. Please try again.' :
+                  e.message || 'Could not send OTP. Please try again.';
+      setErr(msg);
     } finally { setLoading(false); }
   };
 
@@ -477,18 +497,16 @@ function OTPModal({ onVerified, onGuest }) {
   const verify = async () => {
     const code = otp.join('');
     if (code.length < 6) { setErr('Enter the 6-digit OTP'); return; }
+    if (!confirmRef.current) { setErr('Session expired. Please request a new OTP.'); return; }
     setErr(''); setLoading(true);
     try {
-      const res  = await fetch('/api/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: tokenRef.current, otp: code }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Verification failed');
-      onVerified(phone);
+      const result = await confirmRef.current.confirm(code);
+      onVerified(result.user.phoneNumber.replace('+91', ''));
     } catch (e) {
-      setErr(e.message || 'Verification failed. Please try again.');
+      const msg = e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Please check and retry.' :
+                  e.code === 'auth/code-expired'              ? 'OTP expired. Please request a new one.' :
+                  'Verification failed. Please try again.';
+      setErr(msg);
     } finally { setLoading(false); }
   };
 
@@ -496,7 +514,11 @@ function OTPModal({ onVerified, onGuest }) {
     setPhase('phone');
     setOtp(['','','','','','']);
     setErr('');
-    tokenRef.current = '';
+    confirmRef.current = null;
+    if (recaptchaRef.current) {
+      try { recaptchaRef.current.clear(); } catch {}
+      recaptchaRef.current = null;
+    }
   };
 
   return (
@@ -505,6 +527,7 @@ function OTPModal({ onVerified, onGuest }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
       background: 'rgba(0,0,0,.55)', backdropFilter: 'blur(6px)'
     }}>
+      <div id="recaptcha-container" style={{ position: 'absolute', bottom: 0 }} />
       <div className="a-scale" style={{ background: '#fff', borderRadius: 24, padding: 'clamp(20px,5vw,36px) clamp(16px,5vw,32px)', width: '100%', maxWidth: 380, boxShadow: '0 24px 60px rgba(0,0,0,.18)' }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
@@ -566,15 +589,9 @@ function OTPModal({ onVerified, onGuest }) {
           <span style={{ fontSize: '.75rem', color: 'var(--muted)' }}>or</span>
           <div style={{ flex: 1, height: 1, background: '#f0e4c8' }} />
         </div>
-        {smsDown ? (
-          <Btn variant="outline" onClick={onGuest} style={{ width: '100%' }}>
-            Continue as Guest →
-          </Btn>
-        ) : (
-          <button onClick={onGuest} style={{ width: '100%', fontSize: '.83rem', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 8, fontFamily: 'inherit' }}>
-            Continue as Guest →
-          </button>
-        )}
+        <button onClick={onGuest} style={{ width: '100%', fontSize: '.83rem', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 8, fontFamily: 'inherit' }}>
+          Continue as Guest →
+        </button>
       </div>
     </div>
   );
