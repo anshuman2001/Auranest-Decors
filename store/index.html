@@ -1991,6 +1991,7 @@ select.finp{cursor:pointer;}
     <span class="orders-nav-eyebrow">Auranest Decors</span>
     <div class="orders-nav-divider"></div>
     <h2 class="orders-nav-title">My Orders</h2>
+    <button class="orders-nav-close" onclick="doLogout();closeOrdersPage();" style="margin-right:.6rem;border-color:rgba(220,80,80,.35);color:rgba(220,120,120,.8);">Sign Out</button>
     <button class="orders-nav-close" onclick="closeOrdersPage()">✕ Close</button>
   </div>
   <div class="orders-hero">
@@ -2396,6 +2397,13 @@ window.doLogout = async function() {
 
 // ── MY ORDERS — LUXURY FULL PAGE ──
 window.openMyOrders = async function() {
+  // If customer phone-auth session is active → use dedicated account page
+  try {
+    const sess = JSON.parse(localStorage.getItem('auranest_session'));
+    if (sess && Date.now() - sess.ts < 3600000) {
+      window.location.href = 'account.html'; return;
+    }
+  } catch {}
   if (!window.$user) { openAuth(); return; }
   const page = document.getElementById('ordersPage');
   const list = document.getElementById('myOrdersList');
@@ -2417,7 +2425,7 @@ window.openMyOrders = async function() {
   }
 
   try {
-    const q    = query(collection(db, 'orders'), where('userId', '==', window.$user.uid));
+    const q    = query(collection(db, 'orders'), where('customerId', '==', window.$user.uid));
     const snap = await getDocs(q);
     const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
