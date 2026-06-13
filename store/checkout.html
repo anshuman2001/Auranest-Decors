@@ -649,7 +649,11 @@ function OTPModal({ onVerified, onGuest }) {
       if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
       window._setSession(user.uid);
       await window._fbLinkPIN(user, phone, password);
-      await window._createCustomer(user.uid, { name: name.trim(), email: email.trim(), mobile: phone, hasPIN: true });
+      try {
+        await window._createCustomer(user.uid, { name: name.trim(), email: email.trim(), mobile: phone, hasPIN: true });
+      } catch (fsErr) {
+        console.warn('Customer profile save failed (check Firestore rules):', fsErr.message);
+      }
       onVerified(phone, user, { name: name.trim(), email: email.trim() });
     } catch (e) { setErr(authErrMsg(e)); }
     finally { setLoading(false); }
