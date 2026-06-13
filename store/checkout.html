@@ -497,6 +497,46 @@ function CartPage({ cart, setCart, onNext }) {
 }
 
 /* ─── OTP MODAL — Firebase Phone Auth (free, no API key needed) ─── */
+/* ─── helpers defined outside OTPModal so React never unmounts them on re-render ─── */
+const handleBox = (arr, setArr, refs, i, val, maxLen) => {
+  if (!/^\d?$/.test(val)) return;
+  const next = [...arr]; next[i] = val; setArr(next);
+  if (val && i < maxLen-1) refs[i+1].current?.focus();
+};
+const handleBoxBs = (arr, refs, i, e) => {
+  if (e.key === 'Backspace' && !arr[i] && i > 0) refs[i-1].current?.focus();
+};
+
+const AuthCard = ({ children, onGuest }) => (
+  <div style={{ position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16,background:'rgba(0,0,0,.55)',backdropFilter:'blur(6px)' }}>
+    <div id="recaptcha-container" style={{ position:'absolute',bottom:0 }} />
+    <div className="a-scale" style={{ background:'#fff',borderRadius:24,padding:'clamp(20px,5vw,36px) clamp(16px,5vw,32px)',width:'100%',maxWidth:380,boxShadow:'0 24px 60px rgba(0,0,0,.18)' }}>
+      <div style={{ textAlign:'center',marginBottom:20 }}>
+        <div style={{ display:'flex',justifyContent:'center',marginBottom:8 }}><BrandLogo size={40} /></div>
+      </div>
+      {children}
+      <div style={{ display:'flex',alignItems:'center',gap:12,margin:'16px 0' }}>
+        <div style={{ flex:1,height:1,background:'#f0e4c8' }} /><span style={{ fontSize:'.75rem',color:'var(--muted)' }}>or</span><div style={{ flex:1,height:1,background:'#f0e4c8' }} />
+      </div>
+      <button onClick={onGuest} style={{ width:'100%',fontSize:'.83rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:8,fontFamily:'inherit' }}>Continue as Guest →</button>
+    </div>
+  </div>
+);
+
+const BoxRow = ({ arr, setArr, refs, label, maxLen = 4 }) => (
+  <div style={{ marginBottom:12 }}>
+    <p style={{ fontSize:'.78rem',color:'var(--muted)',marginBottom:6 }}>{label}</p>
+    <div style={{ display:'flex',gap:'clamp(4px,2vw,10px)',justifyContent:'center' }}>
+      {arr.map((d,i) => (
+        <input key={i} ref={refs[i]} className="otp-box" type="password" inputMode="numeric" maxLength={1} value={d}
+          style={{ width:'clamp(48px,12vw,56px)',height:'clamp(48px,12vw,56px)',fontSize:'1.3rem' }}
+          onChange={e => handleBox(arr, setArr, refs, i, e.target.value, maxLen)}
+          onKeyDown={e => handleBoxBs(arr, refs, i, e)} />
+      ))}
+    </div>
+  </div>
+);
+
 function OTPModal({ onVerified, onGuest }) {
   // phase: 'phone' | 'pin' | 'otp' | 'profile' | 'new-pin'
   const [phase, setPhase]     = useState('phone');
@@ -615,47 +655,9 @@ function OTPModal({ onVerified, onGuest }) {
     finally { setLoading(false); }
   };
 
-  const handleBox = (arr, setArr, refs, i, val, maxLen) => {
-    if (!/^\d?$/.test(val)) return;
-    const next = [...arr]; next[i] = val; setArr(next);
-    if (val && i < maxLen-1) refs[i+1].current?.focus();
-  };
-  const handleBoxBs = (arr, refs, i, e) => {
-    if (e.key === 'Backspace' && !arr[i] && i > 0) refs[i-1].current?.focus();
-  };
-
-  const Card = ({ children }) => (
-    <div style={{ position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16,background:'rgba(0,0,0,.55)',backdropFilter:'blur(6px)' }}>
-      <div id="recaptcha-container" style={{ position:'absolute',bottom:0 }} />
-      <div className="a-scale" style={{ background:'#fff',borderRadius:24,padding:'clamp(20px,5vw,36px) clamp(16px,5vw,32px)',width:'100%',maxWidth:380,boxShadow:'0 24px 60px rgba(0,0,0,.18)' }}>
-        <div style={{ textAlign:'center',marginBottom:20 }}>
-          <div style={{ display:'flex',justifyContent:'center',marginBottom:8 }}><BrandLogo size={40} /></div>
-        </div>
-        {children}
-        <div style={{ display:'flex',alignItems:'center',gap:12,margin:'16px 0' }}>
-          <div style={{ flex:1,height:1,background:'#f0e4c8' }} /><span style={{ fontSize:'.75rem',color:'var(--muted)' }}>or</span><div style={{ flex:1,height:1,background:'#f0e4c8' }} />
-        </div>
-        <button onClick={onGuest} style={{ width:'100%',fontSize:'.83rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:8,fontFamily:'inherit' }}>Continue as Guest →</button>
-      </div>
-    </div>
-  );
-
-  const BoxRow = ({ arr, setArr, refs, label, maxLen = 4 }) => (
-    <div style={{ marginBottom:12 }}>
-      <p style={{ fontSize:'.78rem',color:'var(--muted)',marginBottom:6 }}>{label}</p>
-      <div style={{ display:'flex',gap:'clamp(4px,2vw,10px)',justifyContent:'center' }}>
-        {arr.map((d,i) => (
-          <input key={i} ref={refs[i]} className="otp-box" type="password" inputMode="numeric" maxLength={1} value={d}
-            style={{ width:'clamp(48px,12vw,56px)',height:'clamp(48px,12vw,56px)',fontSize:'1.3rem' }}
-            onChange={e => handleBox(arr, setArr, refs, i, e.target.value, maxLen)}
-            onKeyDown={e => handleBoxBs(arr, refs, i, e)} />
-        ))}
-      </div>
-    </div>
-  );
 
   if (phase === 'phone') return (
-    <Card>
+    <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Sign in to continue</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile to continue</p>
       <div style={{ display:'flex',marginBottom:4 }}>
@@ -667,22 +669,22 @@ function OTPModal({ onVerified, onGuest }) {
       </div>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={checkPhone} loading={loading} style={{ width:'100%',marginBottom:12 }}>Continue →</Btn>
-    </Card>
+    </AuthCard>
   );
 
   if (phase === 'pin') return (
-    <Card>
+    <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome back!</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone} · Enter your PIN</p>
       <BoxRow arr={pin} setArr={setPin} refs={pin1Refs} label="4-digit PIN" />
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
       <Btn onClick={loginWithPIN} loading={loading} style={{ width:'100%',marginBottom:8 }}>Login →</Btn>
       <button onClick={() => { setIsNewUser(false); sendOTP(); }} style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>Forgot PIN? Use OTP →</button>
-    </Card>
+    </AuthCard>
   );
 
   if (phase === 'otp') return (
-    <Card>
+    <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Verify your number</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>OTP sent to +91 {phone}</p>
       <div style={{ display:'flex',justifyContent:'center',gap:'clamp(4px,1.5vw,8px)',marginBottom:8 }}>
@@ -700,11 +702,11 @@ function OTPModal({ onVerified, onGuest }) {
           ? <p style={{ fontSize:'.78rem',color:'var(--muted)' }}>Resend in {timer}s</p>
           : <button onClick={sendOTP} style={{ fontSize:'.78rem',color:'var(--gold)',fontWeight:700,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>Resend OTP</button>}
       </div>
-    </Card>
+    </AuthCard>
   );
 
   if (phase === 'profile') return (
-    <Card>
+    <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create your account</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Save your details for faster checkout</p>
       <input className="fl-input" placeholder="Full Name *" value={name} onChange={e=>setName(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
@@ -713,18 +715,18 @@ function OTPModal({ onVerified, onGuest }) {
       <BoxRow arr={pin2} setArr={setPin2} refs={pin2Refs} label="Confirm PIN" />
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
       <Btn onClick={createAccount} loading={loading} style={{ width:'100%' }}>Create Account & Continue →</Btn>
-    </Card>
+    </AuthCard>
   );
 
   return (
-    <Card>
+    <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Set a new PIN</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>You'll use this for future logins</p>
       <BoxRow arr={pin} setArr={setPin} refs={pin1Refs} label="New 4-digit PIN" />
       <BoxRow arr={pin2} setArr={setPin2} refs={pin2Refs} label="Confirm PIN" />
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
       <Btn onClick={saveNewPIN} loading={loading} style={{ width:'100%' }}>Save PIN & Continue →</Btn>
-    </Card>
+    </AuthCard>
   );
 }
 
