@@ -12,10 +12,11 @@
 <!-- Firebase -->
 <script type="module">
 import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword,
-         EmailAuthProvider, linkWithCredential, updatePassword, onAuthStateChanged, signOut }
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber,
+         onAuthStateChanged, signOut,
+         browserLocalPersistence, setPersistence }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, setDoc, updateDoc, serverTimestamp }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const app  = initializeApp({
@@ -29,43 +30,31 @@ const app  = initializeApp({
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-/* ── session helpers ── */
-function setSession(uid) { localStorage.setItem('auranest_session', JSON.stringify({uid, ts: Date.now()})); }
-function clearSession()  { localStorage.removeItem('auranest_session'); }
-function getSession()    {
-  try { const s = JSON.parse(localStorage.getItem('auranest_session'));
-    if (s && Date.now() - s.ts < 3600000) return s;
-  } catch {} return null;
-}
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-/* ── redirect target ── */
 const params = new URLSearchParams(location.search);
-const NEXT   = params.get('next') || 'checkout.html';
+const NEXT   = params.get('next') || 'account.html';
 
-/* ── expose to page script ── */
 window._auth      = auth;
-window._db        = db;
 window._RV        = RecaptchaVerifier;
 window._signPhone = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
-window._signEmail = (email, pass)     => signInWithEmailAndPassword(auth, email, pass);
-window._linkCred  = (user, email, pass) =>
-  linkWithCredential(user, EmailAuthProvider.credential(email, pass));
-window._updatePw  = (user, pass)      => updatePassword(user, pass);
-window._onAuth    = (cb)              => onAuthStateChanged(auth, cb);
-window._signOut   = ()                => signOut(auth);
-window._setDoc    = (path, id, data)  => setDoc(doc(db, path, id), data);
-window._updateDoc = (path, id, data)  => updateDoc(doc(db, path, id), data);
-window._serverTs  = serverTimestamp;
-window._queryMobile = async (mobile) => {
-  const q   = query(collection(db,'customers'), where('mobile','==', mobile));
-  const snap = await getDocs(q);
-  if (snap.empty) return null;
-  return { id: snap.docs[0].id, ...snap.docs[0].data() };
+window._onAuth    = (cb) => onAuthStateChanged(auth, cb);
+window._NEXT      = NEXT;
+
+window._checkOrCreateCustomer = async (uid, phone) => {
+  const ref = doc(db, 'customers', uid);
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    try { await updateDoc(ref, { lastLogin: serverTimestamp() }); } catch {}
+    const data = snap.data();
+    if (data.name) localStorage.setItem('auranest_name', data.name);
+    return { uid, ...data };
+  }
+  const savedName = localStorage.getItem('auranest_name') || '';
+  const newDoc = { mobile: phone, name: savedName, createdAt: serverTimestamp(), lastLogin: serverTimestamp() };
+  try { await setDoc(ref, newDoc); } catch {}
+  return { uid, ...newDoc };
 };
-window._setSession    = setSession;
-window._clearSession  = clearSession;
-window._getSession    = getSession;
-window._NEXT          = NEXT;
 </script>
 
 <style>
@@ -101,8 +90,6 @@ nav{
   padding:2.8rem 2.4rem 2.4rem;
   box-shadow:0 12px 48px rgba(28,26,24,.07)
 }
-.card-logo{width:52px;height:52px;border-radius:50%;overflow:hidden;margin:0 auto 1.4rem;border:2px solid var(--gold-pale);display:block}
-.card-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .card-logo-fallback{
   width:52px;height:52px;border-radius:50%;
   background:linear-gradient(135deg,var(--gold),var(--gold-lt));
@@ -128,32 +115,16 @@ nav{
   background:var(--gold-pale);border:1.5px solid var(--border);border-right:none;
   font-size:.85rem;font-weight:600;color:var(--charcoal);white-space:nowrap;flex-shrink:0
 }
-input[type=text],input[type=tel],input[type=email]{
+input[type=text],input[type=tel]{
   width:100%;padding:.78rem .95rem;
   border:1.5px solid var(--border);background:var(--white);
   font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--charcoal);
   outline:none;transition:border-color .2s,box-shadow .2s
 }
-input[type=text]:focus,input[type=tel]:focus,input[type=email]:focus{
+input[type=text]:focus,input[type=tel]:focus{
   border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.12)
 }
-input.inp-joined{border-radius:0 0 0 0}
 .input-row input{flex:1;border-radius:0}
-.input-solo{width:100%}
-
-/* ── PIN BOXES ── */
-.pin-row{display:flex;gap:.7rem;justify-content:center;margin-bottom:.4rem}
-.pin-box{
-  width:62px;height:68px;border:2px solid var(--border);
-  text-align:center;font-size:2rem;font-weight:600;font-family:'Outfit',sans-serif;
-  background:var(--white);color:var(--charcoal);outline:none;
-  transition:border-color .2s,box-shadow .2s;letter-spacing:.04em
-}
-.pin-box:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.15)}
-/* Confirmed PIN — smaller side by side */
-.pin-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.1rem}
-.pin-set{display:flex;gap:.5rem;justify-content:center}
-.pin-set .pin-box{width:52px;height:58px;font-size:1.6rem}
 
 /* ── OTP BOXES ── */
 .otp-row{display:flex;gap:.65rem;justify-content:center;margin-bottom:.4rem}
@@ -174,8 +145,6 @@ input.inp-joined{border-radius:0 0 0 0}
 .btn-gold{background:var(--gold);color:#fff}
 .btn-gold:hover{background:#a5823e}
 .btn-gold:disabled{opacity:.5;cursor:not-allowed}
-.btn-outline{background:var(--white);color:var(--gold);border:1.5px solid var(--gold);margin-top:.6rem}
-.btn-outline:hover{background:var(--gold-pale)}
 
 /* ── SPINNER ── */
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -183,12 +152,11 @@ input.inp-joined{border-radius:0 0 0 0}
   width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
   border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0
 }
-.spinner-gold{border-color:rgba(184,147,74,.3);border-top-color:var(--gold)}
 
 /* ── ERROR / INFO ── */
 .err{font-size:.78rem;color:#c0392b;margin-top:.5rem;line-height:1.5;padding:.5rem .7rem;background:#fff5f5;border-left:3px solid #c0392b}
 .info{font-size:.78rem;color:var(--mid);text-align:center;margin-top:.8rem;line-height:1.5}
-.info a,.lnk{color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;text-decoration:underline;padding:0}
+.lnk{color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;text-decoration:underline;padding:0}
 .lnk:hover{color:#a5823e}
 .divider{display:flex;align-items:center;gap:.9rem;margin:1.4rem 0}
 .divider span{font-size:.73rem;color:var(--light)}
@@ -209,7 +177,6 @@ footer a:hover{color:var(--gold)}
 
 @media(max-width:460px){
   .auth-card{padding:2rem 1.3rem 2rem}
-  .pin-box{width:52px;height:60px;font-size:1.7rem}
   .otp-box{width:40px;height:48px;font-size:1.25rem}
 }
 </style>
@@ -240,7 +207,7 @@ footer a:hover{color:var(--gold)}
     <!-- ─── PHASE: phone ─────────────────────────── -->
     <div class="phase active" id="phase-phone">
       <h1 class="card-title">Welcome Back</h1>
-      <p class="card-sub">Enter your mobile number to continue</p>
+      <p class="card-sub">Enter your mobile number to receive an OTP</p>
 
       <div class="input-group">
         <label class="input-label">Mobile Number</label>
@@ -253,36 +220,16 @@ footer a:hover{color:var(--gold)}
       <div id="phone-err" class="err" style="display:none"></div>
 
       <button class="btn btn-gold" id="phone-btn">
-        <span id="phone-btn-text">Continue</span>
+        <span id="phone-btn-text">Send OTP</span>
       </button>
 
       <div class="divider"><span>or</span></div>
       <button class="guest-link" id="phone-guest">Continue as Guest →</button>
     </div>
 
-    <!-- ─── PHASE: pin ───────────────────────────── -->
-    <div class="phase" id="phase-pin">
-      <button class="back-link" id="pin-back">← Back</button>
-      <h1 class="card-title">Welcome Back</h1>
-      <p class="card-sub" id="pin-sub">Enter your password</p>
-
-      <div class="input-group">
-        <label class="input-label">Password</label>
-        <input type="password" id="pin-password" class="input-solo" placeholder="Your password" autocomplete="current-password"/>
-      </div>
-      <div id="pin-err" class="err" style="display:none"></div>
-
-      <button class="btn btn-gold" id="pin-btn" style="margin-top:.4rem">
-        <span id="pin-btn-text">Sign In</span>
-      </button>
-      <p class="info"><button class="lnk" id="forgot-pin-link">Forgot password? Use OTP →</button></p>
-      <div class="divider"><span>or</span></div>
-      <button class="guest-link" id="pin-guest">Continue as Guest →</button>
-    </div>
-
     <!-- ─── PHASE: otp ───────────────────────────── -->
     <div class="phase" id="phase-otp">
-      <button class="back-link" id="otp-back">← Back</button>
+      <button class="back-link" id="otp-back">← Change number</button>
       <h1 class="card-title">Verify Number</h1>
       <p class="card-sub" id="otp-sub">OTP sent to your mobile</p>
 
@@ -302,54 +249,6 @@ footer a:hover{color:var(--gold)}
       <div class="timer" id="otp-timer"></div>
     </div>
 
-    <!-- ─── PHASE: profile ──────────────────────── -->
-    <div class="phase" id="phase-profile">
-      <h1 class="card-title">Create Account</h1>
-      <p class="card-sub">A few details to get started</p>
-
-      <div class="input-group">
-        <label class="input-label">Full Name *</label>
-        <input type="text" id="profile-name" class="input-solo" placeholder="Your full name"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Email (optional)</label>
-        <input type="email" id="profile-email" class="input-solo" placeholder="you@email.com"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Set Password (min 6 characters)</label>
-        <input type="password" id="profile-pin" class="input-solo" placeholder="Choose a password" autocomplete="new-password"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Confirm Password</label>
-        <input type="password" id="profile-cpin" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
-      </div>
-      <div id="profile-err" class="err" style="display:none"></div>
-
-      <button class="btn btn-gold" id="profile-btn">
-        <span id="profile-btn-text">Create Account</span>
-      </button>
-    </div>
-
-    <!-- ─── PHASE: new-pin ──────────────────────── -->
-    <div class="phase" id="phase-new-pin">
-      <h1 class="card-title">Set New Password</h1>
-      <p class="card-sub">Choose a new password for your account</p>
-
-      <div class="input-group">
-        <label class="input-label">New Password (min 6 characters)</label>
-        <input type="password" id="newpin-pw" class="input-solo" placeholder="New password" autocomplete="new-password"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Confirm Password</label>
-        <input type="password" id="newpin-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
-      </div>
-      <div id="newpin-err" class="err" style="display:none"></div>
-
-      <button class="btn btn-gold" id="newpin-btn">
-        <span id="newpin-btn-text">Save Password & Continue</span>
-      </button>
-    </div>
-
   </div><!-- /auth-card -->
 </div><!-- /page-body -->
 
@@ -358,17 +257,17 @@ footer a:hover{color:var(--gold)}
 
 <footer>
   <a href="../store/">Home</a>
-  <a href="terms.html">Terms & Privacy</a>
+  <a href="terms.html">Terms &amp; Privacy</a>
   <a href="contact.html">Support</a>
   <p style="margin-top:.6rem">© 2025 Auranest Decors</p>
 </footer>
 
 <script>
-/* ─── Wait for Firebase bridge ─────────────────────────── */
-function waitFor(key, cb, tries=0) {
+function waitFor(key, cb, tries) {
+  tries = tries || 0;
   if (window[key]) { cb(); return; }
   if (tries > 40) { console.error('Firebase not loaded'); return; }
-  setTimeout(() => waitFor(key, cb, tries+1), 150);
+  setTimeout(() => waitFor(key, cb, tries + 1), 150);
 }
 
 waitFor('_auth', init);
@@ -376,99 +275,78 @@ waitFor('_auth', init);
 function init() {
   /* ── attempt logo image ── */
   const lf = document.getElementById('logo-fallback');
-  const img = document.createElement('img');
+  const img = new Image();
   img.src = '../assets/logo.jpg';
   img.onload = () => {
-    const wrap = document.getElementById('logo-wrap');
-    const logoDiv = document.createElement('div');
-    logoDiv.className = 'card-logo';
-    logoDiv.style.cssText = 'width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold-pale);margin:0 auto 1.4rem;display:block';
-    const imgEl = document.createElement('img');
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold-pale);margin:0 auto 1.4rem';
+    const imgEl = new Image();
     imgEl.src = '../assets/logo.jpg';
     imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-    logoDiv.appendChild(imgEl);
-    wrap.replaceChild(logoDiv, lf);
+    wrap.appendChild(imgEl);
+    lf.replaceWith(wrap);
   };
 
   /* ── already logged in? ── */
   window._onAuth(user => {
-    if (user && window._getSession()) {
-      redirect();
-    }
+    if (user) redirect();
   });
 
-  setupBoxNav('otp-boxes', '.otp-box', 6);
+  setupBoxNav();
 
-  // Enter key on password inputs
-  document.getElementById('pin-password').addEventListener('keydown', e => { if(e.key==='Enter') handlePin(); });
-  document.getElementById('profile-cpin').addEventListener('keydown', e => { if(e.key==='Enter') handleProfile(); });
-  document.getElementById('newpin-cpw').addEventListener('keydown', e => { if(e.key==='Enter') handleNewPin(); });
-
-  /* STATE */
-  let phase        = 'phone';
-  let phone        = '';         // raw 10 digits
-  let otpIntent    = '';         // 'new' | 'migration' | 'forgot'
-  let confirmResult = null;
-  let authedUser   = null;
-  let existingDoc  = null;
-  let recapVerifier = null;
+  let phone          = '';
+  let confirmResult  = null;
+  let recapVerifier  = null;
+  let timerInterval  = null;
 
   /* ─── HELPERS ─── */
   function showPhase(p) {
-    phase = p;
     document.querySelectorAll('.phase').forEach(el => el.classList.remove('active'));
     document.getElementById('phase-' + p).classList.add('active');
   }
 
   function setErr(id, msg) {
     const el = document.getElementById(id);
-    if (!msg) { el.style.display='none'; el.textContent=''; return; }
-    el.textContent = msg; el.style.display='block';
+    if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+    el.textContent = msg; el.style.display = 'block';
   }
 
   function setLoading(btnId, textId, loading, label) {
     const btn  = document.getElementById(btnId);
     const span = document.getElementById(textId);
     btn.disabled = loading;
-    span.innerHTML = loading
-      ? '<span class="spinner"></span>' + (label || 'Please wait…')
-      : label || span.dataset.label || span.textContent;
-    if (label && !loading) span.dataset.label = label;
+    span.innerHTML = loading ? '<span class="spinner"></span>' + (label || 'Please wait…') : (label || span.textContent);
   }
 
   function redirect() {
     window.location.href = window._NEXT;
   }
 
-  function getBoxVal(containerId, selector) {
-    return [...document.getElementById(containerId).querySelectorAll(selector)]
-      .map(b => b.value).join('');
+  function getBoxVal() {
+    return [...document.querySelectorAll('#otp-boxes .otp-box')].map(b => b.value).join('');
   }
 
-  function clearBoxes(containerId, selector) {
-    document.getElementById(containerId).querySelectorAll(selector)
-      .forEach(b => { b.value=''; });
+  function clearBoxes() {
+    document.querySelectorAll('#otp-boxes .otp-box').forEach(b => { b.value = ''; });
   }
-
-  function buildEmail(p) { return p + '@au.auranest-usr'; }
 
   /* ─── RECAPTCHA ─── */
   function ensureRecaptcha() {
     if (!recapVerifier) {
-      recapVerifier = new window._RV(window._auth, 'recaptcha-container', {size:'invisible'});
+      recapVerifier = new window._RV(window._auth, 'recaptcha-container', { size: 'invisible' });
     }
     return recapVerifier;
   }
+
   function resetRecaptcha() {
     if (recapVerifier) { try { recapVerifier.clear(); } catch {} recapVerifier = null; }
     confirmResult = null;
   }
 
   /* ─── TIMER ─── */
-  let timerInterval = null;
-  function startTimer(secs, id) {
+  function startTimer(secs) {
     clearInterval(timerInterval);
-    const el = document.getElementById(id);
+    const el = document.getElementById('otp-timer');
     let t = secs;
     el.textContent = 'Resend OTP in ' + t + 's';
     timerInterval = setInterval(() => {
@@ -485,248 +363,118 @@ function init() {
 
   /* ─── PHONE SUBMIT ─── */
   document.getElementById('phone-btn').addEventListener('click', handlePhone);
-  document.getElementById('phone-input').addEventListener('keydown', e => { if(e.key==='Enter') handlePhone(); });
+  document.getElementById('phone-input').addEventListener('keydown', e => { if (e.key === 'Enter') handlePhone(); });
 
   async function handlePhone() {
-    const raw = document.getElementById('phone-input').value.replace(/\D/g,'').slice(0,10);
-    setErr('phone-err','');
-    if (raw.length !== 10) { setErr('phone-err','Enter a valid 10-digit mobile number'); return; }
+    const raw = document.getElementById('phone-input').value.replace(/\D/g, '').slice(0, 10);
+    setErr('phone-err', '');
+    if (raw.length !== 10) { setErr('phone-err', 'Enter a valid 10-digit mobile number'); return; }
     phone = raw;
-    setLoading('phone-btn','phone-btn-text',true,'Checking…');
+    setLoading('phone-btn', 'phone-btn-text', true, 'Sending…');
     try {
-      existingDoc = await window._queryMobile(phone);
-      if (existingDoc && existingDoc.hasPIN) {
-        document.getElementById('pin-sub').textContent = '+91 ' + phone;
-        showPhase('pin');
-      } else if (existingDoc) {
-        // migration — has doc, no PIN
-        otpIntent = 'migration';
-        await sendOTP();
-      } else {
-        // new user
-        otpIntent = 'new';
-        await sendOTP();
-      }
-    } catch(e) {
+      await sendOTP();
+    } catch (e) {
       setErr('phone-err', e.message || 'Something went wrong. Please try again.');
     } finally {
-      setLoading('phone-btn','phone-btn-text',false,'Continue');
+      setLoading('phone-btn', 'phone-btn-text', false, 'Send OTP');
     }
   }
 
   /* ─── SEND OTP ─── */
   async function sendOTP() {
+    const verifier = ensureRecaptcha();
     try {
-      const verifier = ensureRecaptcha();
-      confirmResult  = await window._signPhone('+91' + phone, verifier);
-      document.getElementById('otp-sub').textContent = '6-digit OTP sent to +91 ' + phone;
-      showPhase('otp');
-      clearBoxes('otp-boxes','.otp-box');
-      setErr('otp-err','');
-      startTimer(60, 'otp-timer');
-      setTimeout(() => {
-        const first = document.querySelector('#otp-boxes .otp-box');
-        if (first) first.focus();
-      }, 100);
-    } catch(e) {
+      confirmResult = await window._signPhone('+91' + phone, verifier);
+    } catch (e) {
       resetRecaptcha();
-      const msg = e.code === 'auth/invalid-phone-number'  ? 'Invalid phone number.' :
-                  e.code === 'auth/too-many-requests'     ? 'Too many attempts. Try later.' :
-                  e.code === 'auth/captcha-check-failed'  ? 'Verification failed. Refresh and retry.' :
+      const msg = e.code === 'auth/invalid-phone-number' ? 'Invalid phone number.' :
+                  e.code === 'auth/too-many-requests'    ? 'Too many attempts. Try later.' :
+                  e.code === 'auth/captcha-check-failed' ? 'Verification failed. Refresh and retry.' :
                   e.message || 'Could not send OTP.';
-      setErr('phone-err', msg);
-      showPhase('phone');
+      throw new Error(msg);
     }
+    document.getElementById('otp-sub').textContent = '6-digit OTP sent to +91 ' + phone;
+    showPhase('otp');
+    clearBoxes();
+    setErr('otp-err', '');
+    startTimer(60);
+    setTimeout(() => {
+      const first = document.querySelector('#otp-boxes .otp-box');
+      if (first) first.focus();
+    }, 100);
   }
 
   /* ─── RESEND ─── */
   function handleResend() {
     resetRecaptcha();
-    sendOTP();
+    sendOTP().catch(e => setErr('otp-err', e.message));
   }
-
-  /* ─── PIN SUBMIT ─── */
-  document.getElementById('pin-btn').addEventListener('click', handlePin);
-
-  async function handlePin() {
-    const password = document.getElementById('pin-password').value;
-    setErr('pin-err','');
-    if (password.length < 6) { setErr('pin-err','Password must be at least 6 characters'); return; }
-    setLoading('pin-btn','pin-btn-text',true,'Signing in…');
-    try {
-      const cred = await window._signEmail(buildEmail(phone), password);
-      authedUser = cred.user;
-      try { await window._updateDoc('customers', authedUser.uid, { lastLogin: window._serverTs() }); } catch {}
-      window._setSession(authedUser.uid);
-      redirect();
-    } catch(e) {
-      const msg = e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential'
-        ? 'Incorrect password. Try again or use "Forgot password?".'
-        : e.message || 'Sign in failed.';
-      setErr('pin-err', msg);
-      document.getElementById('pin-password').value = '';
-      document.getElementById('pin-password').focus();
-    } finally {
-      setLoading('pin-btn','pin-btn-text',false,'Sign In');
-    }
-  }
-
-  /* ─── FORGOT PIN ─── */
-  document.getElementById('forgot-pin-link').addEventListener('click', () => {
-    otpIntent = 'forgot';
-    setErr('pin-err','');
-    sendOTP();
-  });
 
   /* ─── OTP VERIFY ─── */
   document.getElementById('otp-btn').addEventListener('click', handleOtp);
 
   async function handleOtp() {
-    const code = getBoxVal('otp-boxes','.otp-box');
-    setErr('otp-err','');
-    if (code.length !== 6) { setErr('otp-err','Enter the 6-digit OTP'); return; }
-    if (!confirmResult)    { setErr('otp-err','Session expired. Request a new OTP.'); return; }
-    setLoading('otp-btn','otp-btn-text',true,'Verifying…');
+    const code = getBoxVal();
+    setErr('otp-err', '');
+    if (code.length !== 6) { setErr('otp-err', 'Enter the 6-digit OTP'); return; }
+    if (!confirmResult) { setErr('otp-err', 'Session expired. Request a new OTP.'); return; }
+    setLoading('otp-btn', 'otp-btn-text', true, 'Verifying…');
     try {
       const cred = await confirmResult.confirm(code);
-      authedUser = cred.user;
       clearInterval(timerInterval);
-      // Detect existing registered users even if their Firestore doc is missing
-      const hasPassword = authedUser.providerData.some(p => p.providerId === 'password');
-      if (hasPassword) {
-        // Already registered — phone verified, create session and proceed
-        window._setSession(authedUser.uid);
-        redirect();
-      } else if (otpIntent === 'new') {
-        showPhase('profile');
-      } else {
-        showPhase('new-pin');
-      }
-    } catch(e) {
-      const msg = e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP.' :
+      await window._checkOrCreateCustomer(cred.user.uid, phone);
+      redirect();
+    } catch (e) {
+      const msg = e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
                   e.code === 'auth/code-expired'              ? 'OTP expired. Request a new one.' :
                   'Verification failed.';
       setErr('otp-err', msg);
     } finally {
-      setLoading('otp-btn','otp-btn-text',false,'Verify OTP');
+      setLoading('otp-btn', 'otp-btn-text', false, 'Verify OTP');
     }
   }
 
-  /* ─── PROFILE SUBMIT ─── */
-  document.getElementById('profile-btn').addEventListener('click', handleProfile);
-
-  async function handleProfile() {
-    const name     = document.getElementById('profile-name').value.trim();
-    const email    = document.getElementById('profile-email').value.trim();
-    const password = document.getElementById('profile-pin').value;
-    const cpassword= document.getElementById('profile-cpin').value;
-    setErr('profile-err','');
-    if (!name)               { setErr('profile-err','Full name is required.'); return; }
-    if (password.length < 6) { setErr('profile-err','Password must be at least 6 characters.'); return; }
-    if (password !== cpassword) { setErr('profile-err','Passwords do not match.'); return; }
-    setLoading('profile-btn','profile-btn-text',true,'Creating…');
-    try {
-      try {
-        await window._linkCred(authedUser, buildEmail(phone), password);
-      } catch(linkErr) {
-        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
-          await window._updatePw(authedUser, password);
-        } else { throw linkErr; }
-      }
-      localStorage.setItem('auranest_name', name);
-      try {
-        await window._setDoc('customers', authedUser.uid, {
-          name, mobile: phone, email: email || '',
-          hasPIN: true, createdAt: window._serverTs(), lastLogin: window._serverTs()
-        });
-      } catch {}
-      window._setSession(authedUser.uid);
-      redirect();
-    } catch(e) {
-      setErr('profile-err', e.message || 'Could not create account.');
-    } finally {
-      setLoading('profile-btn','profile-btn-text',false,'Create Account');
-    }
-  }
-
-  /* ─── NEW PIN SUBMIT ─── */
-  document.getElementById('newpin-btn').addEventListener('click', handleNewPin);
-
-  async function handleNewPin() {
-    const password  = document.getElementById('newpin-pw').value;
-    const cpassword = document.getElementById('newpin-cpw').value;
-    setErr('newpin-err','');
-    if (password.length < 6) { setErr('newpin-err','Password must be at least 6 characters.'); return; }
-    if (password !== cpassword) { setErr('newpin-err','Passwords do not match.'); return; }
-    setLoading('newpin-btn','newpin-btn-text',true,'Saving…');
-    try {
-      await window._updatePw(authedUser, password);
-      const uid = authedUser.uid;
-      try {
-        await window._updateDoc('customers', uid, { hasPIN: true, lastLogin: window._serverTs() });
-      } catch {
-        try { await window._setDoc('customers', uid, {
-          mobile: phone, hasPIN: true,
-          createdAt: window._serverTs(), lastLogin: window._serverTs()
-        }); } catch {}
-      }
-      window._setSession(uid);
-      redirect();
-    } catch(e) {
-      setErr('newpin-err', e.message || 'Could not update password.');
-    } finally {
-      setLoading('newpin-btn','newpin-btn-text',false,'Save Password & Continue');
-    }
-  }
-
-  /* ─── BACK BUTTONS ─── */
-  document.getElementById('pin-back').addEventListener('click', () => showPhase('phone'));
+  /* ─── BACK BUTTON ─── */
   document.getElementById('otp-back').addEventListener('click', () => {
     resetRecaptcha();
     clearInterval(timerInterval);
     showPhase('phone');
   });
 
-  /* ─── GUEST LINKS ─── */
-  function guestRedirect() {
+  /* ─── GUEST LINK ─── */
+  document.getElementById('phone-guest').addEventListener('click', () => {
     const url = new URL(window._NEXT, window.location.href);
-    url.searchParams.set('guest','1');
+    url.searchParams.set('guest', '1');
     window.location.href = url.toString();
-  }
-  document.getElementById('phone-guest').addEventListener('click', guestRedirect);
-  document.getElementById('pin-guest').addEventListener('click', guestRedirect);
+  });
 }
 
-/* ─── Box keyboard navigation ─────────────────────────── */
-function setupBoxNav(containerId, selector, count) {
-  // We use event delegation on the container
+/* ─── OTP box keyboard navigation ─── */
+function setupBoxNav() {
   const setup = () => {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    const boxes = [...container.querySelectorAll(selector)];
+    const boxes = [...document.querySelectorAll('#otp-boxes .otp-box')];
     boxes.forEach((box, i) => {
       box.addEventListener('input', () => {
-        const v = box.value.replace(/\D/g,'');
-        box.value = v.slice(-1);
-        if (box.value && i < boxes.length - 1) boxes[i+1].focus();
+        box.value = box.value.replace(/\D/g, '').slice(-1);
+        if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
       });
       box.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !box.value && i > 0) boxes[i-1].focus();
-        if (e.key === 'ArrowLeft'  && i > 0)              boxes[i-1].focus();
-        if (e.key === 'ArrowRight' && i < boxes.length-1) boxes[i+1].focus();
+        if (e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus();
+        if (e.key === 'ArrowLeft'  && i > 0)              boxes[i - 1].focus();
+        if (e.key === 'ArrowRight' && i < boxes.length-1) boxes[i + 1].focus();
+        if (e.key === 'Enter') document.getElementById('otp-btn').click();
       });
       box.addEventListener('paste', e => {
         e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'');
+        const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
         text.slice(0, boxes.length).split('').forEach((ch, j) => {
-          if (boxes[i+j]) boxes[i+j].value = ch;
+          if (boxes[i + j]) boxes[i + j].value = ch;
         });
         const last = Math.min(i + text.length, boxes.length - 1);
         boxes[last].focus();
       });
     });
   };
-  // run after DOM is ready
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
   else setup();
 }

@@ -12,7 +12,8 @@
 <!-- Firebase -->
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut }
+import { getAuth, onAuthStateChanged, signOut,
+         browserLocalPersistence, setPersistence }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
          collection, query, where, serverTimestamp }
@@ -29,20 +30,12 @@ const app  = initializeApp({
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-function getSession() {
-  try {
-    const s = JSON.parse(localStorage.getItem('auranest_session'));
-    if (s && Date.now() - s.ts < 3600000) return s;
-  } catch {} return null;
-}
-function clearSession() { localStorage.removeItem('auranest_session'); }
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
 window._auth         = auth;
 window._db           = db;
 window._onAuth       = cb => onAuthStateChanged(auth, cb);
 window._signOut      = ()  => signOut(auth);
-window._clearSession = clearSession;
-window._getSession   = getSession;
 
 window._getDoc       = (col, id)       => getDoc(doc(db, col, id));
 window._getDocs      = (col, ...path)  => getDocs(collection(db, col, ...path));
@@ -619,9 +612,7 @@ function init() {
 
   /* ── auth check ── */
   window._onAuth(async user => {
-    if (!user || !window._getSession()) {
-      if (user) window._signOut().catch(()=>{});
-      window._clearSession();
+    if (!user) {
       window.location.href = 'login.html?next=account.html';
       return;
     }
@@ -639,11 +630,7 @@ function init() {
 
   /* ── logout ── */
   function doLogout() {
-    window._signOut().then(() => {
-      window._clearSession();
-      window.location.href = '../store/';
-    }).catch(() => {
-      window._clearSession();
+    window._signOut().finally(() => {
       window.location.href = '../store/';
     });
   }

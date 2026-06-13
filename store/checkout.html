@@ -18,10 +18,11 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber,
-         signInWithEmailAndPassword, EmailAuthProvider,
-         linkWithCredential, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+         onAuthStateChanged, signOut,
+         browserLocalPersistence, setPersistence }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp,
-         doc, getDoc, setDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+         doc, getDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const app = initializeApp({
   apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
   authDomain:"auranest-decors.firebaseapp.com",
@@ -32,76 +33,61 @@ const app = initializeApp({
 });
 const auth = getAuth(app);
 const db   = getFirestore(app);
-const VDOM = '@au.auranest-usr';
-const SESSION_TTL = 3600000;
 
-function setSession(uid){ localStorage.setItem('auranest_session',JSON.stringify({uid,ts:Date.now()})); }
-function clearSession(){ localStorage.removeItem('auranest_session'); }
-function getSession(){
-  try{ const s=JSON.parse(localStorage.getItem('auranest_session'));
-    if(s&&Date.now()-s.ts<SESSION_TTL) return s; }catch{}
-  return null;
-}
-['click','keydown','touchstart'].forEach(e=>document.addEventListener(e,()=>{
-  const s=getSession(); if(s) setSession(s.uid);
-},{passive:true}));
+// 30-day persistence — users stay logged in across visits
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
 onAuthStateChanged(auth, async user => {
-  if(!user||!getSession()){ if(user) signOut(auth); window._fbUser=null; window._fbCustomer=null; return; }
-  window._fbUser = user;
-  try{
+  window._fbUser = user || null;
+  if (!user) { window._fbCustomer=null; return; }
+  try {
     const snap = await getDoc(doc(db,'customers',user.uid));
     window._fbCustomer = snap.exists() ? {uid:user.uid,...snap.data()} : null;
-    if(window._fbCustomer){
-      const addrSnap = await getDocs(collection(db,'customers',user.uid,'addresses'));
-      const addrs = []; addrSnap.forEach(d=>addrs.push({id:d.id,...d.data()}));
-      window._fbAddresses = addrs;
-      window._fbDefaultAddr = addrs.find(a=>a.isDefault) || addrs[0] || null;
-    }
-  }catch(e){ window._fbCustomer=null; }
-  if(window._onAuthReady) window._onAuthReady(window._fbUser, window._fbCustomer);
+    const addrs=[];
+    try {
+      const aSnap = await getDocs(collection(db,'customers',user.uid,'addresses'));
+      aSnap.forEach(d=>addrs.push({id:d.id,...d.data()}));
+    } catch {}
+    window._fbAddresses   = addrs;
+    window._fbDefaultAddr = addrs.find(a=>a.isDefault)||addrs[0]||null;
+  } catch(e) { window._fbCustomer=null; }
+  if (window._onAuthReady) window._onAuthReady(window._fbUser, window._fbCustomer);
 });
 
 window._fbAuth        = auth;
 window._fbDb          = db;
 window._RecaptchaVerifier = RecaptchaVerifier;
 window._fbSignInPhone = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
-window._fbSignInPIN   = (phone, pin) => signInWithEmailAndPassword(auth, phone+VDOM, pin);
-window._fbLinkPIN     = (user, phone, pin) => linkWithCredential(user, EmailAuthProvider.credential(phone+VDOM, pin));
-window._fbSignOut     = () => { signOut(auth); clearSession(); };
-window._setSession    = setSession;
-window._getSession    = getSession;
-window._clearSession  = clearSession;
+window._fbSignOut     = () => signOut(auth);
 
-window._lookupCustomer = async (phone) => {
-  const snap = await getDocs(query(collection(db,'customers'),where('mobile','==',phone)));
-  if(snap.empty) return null;
-  const d=snap.docs[0]; return {uid:d.id,...d.data()};
+// After OTP verify: load existing profile OR create new customer record
+window._checkOrCreateCustomer = async (uid, phone) => {
+  try {
+    const snap = await getDoc(doc(db,'customers',uid));
+    const addrs=[];
+    try {
+      const aSnap = await getDocs(collection(db,'customers',uid,'addresses'));
+      aSnap.forEach(d=>addrs.push({id:d.id,...d.data()}));
+    } catch {}
+    window._fbAddresses   = addrs;
+    window._fbDefaultAddr = addrs.find(a=>a.isDefault)||addrs[0]||null;
+    if (snap.exists()) return {uid,...snap.data()};
+    // New customer — create minimal record
+    const data = {mobile:phone, createdAt:serverTimestamp(), lastLogin:serverTimestamp()};
+    await setDoc(doc(db,'customers',uid), data).catch(()=>{});
+    return {uid, mobile:phone};
+  } catch(e) {
+    console.warn('checkOrCreateCustomer:', e.message);
+    return {uid, mobile:phone};
+  }
 };
-window._createCustomer = async (uid, data) => {
-  await setDoc(doc(db,'customers',uid),{...data,createdAt:serverTimestamp(),lastLogin:serverTimestamp()});
-};
+
 window._saveAddress = async (uid, addr) => {
   await addDoc(collection(db,'customers',uid,'addresses'),addr);
 };
 window._saveOrder = async (data) => {
   const ref = await addDoc(collection(db,'orders'),{...data,createdAt:serverTimestamp()});
   return ref.id;
-};
-window._fetchProfile = async (uid) => {
-  try {
-    const snap = await getDoc(doc(db,'customers',uid));
-    const addrs = [];
-    try {
-      const aSnap = await getDocs(collection(db,'customers',uid,'addresses'));
-      aSnap.forEach(d => addrs.push({id:d.id,...d.data()}));
-    } catch {}
-    window._fbAddresses    = addrs;
-    window._fbDefaultAddr  = addrs.find(a=>a.isDefault) || addrs[0] || null;
-    if (snap.exists()) return {uid,...snap.data()};
-  } catch(e) { console.warn('fetchProfile:', e.message); }
-  const savedName = localStorage.getItem('auranest_name');
-  return savedName ? {name:savedName} : null;
 };
 
 // Pre-init reCAPTCHA at body level so it's never inside a transformed parent
@@ -549,36 +535,15 @@ const AuthCard = ({ children, onGuest }) => (
   </div>
 );
 
-const BoxRow = ({ arr, setArr, refs, label, maxLen = 4 }) => (
-  <div style={{ marginBottom:12 }}>
-    <p style={{ fontSize:'.78rem',color:'var(--muted)',marginBottom:6 }}>{label}</p>
-    <div style={{ display:'flex',gap:'clamp(4px,2vw,10px)',justifyContent:'center' }}>
-      {arr.map((d,i) => (
-        <input key={i} ref={refs[i]} className="otp-box" type="password" inputMode="numeric" maxLength={1} value={d}
-          style={{ width:'clamp(48px,12vw,56px)',height:'clamp(48px,12vw,56px)',fontSize:'1.3rem' }}
-          onChange={e => handleBox(arr, setArr, refs, i, e.target.value, maxLen)}
-          onKeyDown={e => handleBoxBs(arr, refs, i, e)} />
-      ))}
-    </div>
-  </div>
-);
-
 function OTPModal({ onVerified, onGuest }) {
-  // phase: 'phone' | 'pin' | 'otp' | 'profile' | 'new-pin'
+  // phases: 'phone' | 'otp'
   const [phase, setPhase]     = useState('phone');
   const [phone, setPhone]     = useState('');
-  const [password, setPassword]   = useState('');
-  const [password2, setPassword2] = useState('');
   const [otp, setOtp]         = useState(['','','','','','']);
-  const [name, setName]       = useState('');
-  const [email, setEmail]     = useState('');
   const [timer, setTimer]     = useState(0);
   const [loading, setLoading] = useState(false);
   const [err, setErr]         = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
-  const confirmRef   = useRef(null);
-  const recaptchaRef = useRef(null);
-  const verifiedUserRef = useRef(null);
+  const confirmRef = useRef(null);
   const otpRefs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
   useEffect(() => {
@@ -590,56 +555,27 @@ function OTPModal({ onVerified, onGuest }) {
   }, [phase]);
 
   useEffect(() => {
-    // Ensure the global reCAPTCHA is initialised (fallback if page-load init was too early)
     if (window._initRecaptcha) window._initRecaptcha();
   }, []);
 
   const authErrMsg = e =>
-    e.code === 'auth/invalid-phone-number'       ? 'Invalid phone number.' :
-    e.code === 'auth/too-many-requests'          ? 'Too many attempts. Try later.' :
-    e.code === 'auth/wrong-password'             ? 'Incorrect password. Try again.' :
-    e.code === 'auth/invalid-verification-code'  ? 'Incorrect OTP. Check and retry.' :
-    e.code === 'auth/code-expired'               ? 'OTP expired. Resend.' :
-    e.code === 'auth/internal-error'             ? 'OTP sent — please enter it below.' :
+    e.code === 'auth/invalid-phone-number'      ? 'Invalid phone number.' :
+    e.code === 'auth/too-many-requests'         ? 'Too many attempts. Try later.' :
+    e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
+    e.code === 'auth/code-expired'              ? 'OTP expired. Resend.' :
+    e.code === 'auth/internal-error'            ? 'OTP sent — please enter it below.' :
     e.message || 'Something went wrong. Try again.';
 
-  const checkPhone = async () => {
+  const sendOTP = async () => {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
     try {
-      let existing = null;
-      try { existing = await window._lookupCustomer(phone); } catch(le) { console.warn('Lookup failed, proceeding as new:', le.message); }
-      if (existing && existing.hasPIN) { setIsNewUser(false); setPhase('pin'); }
-      else { setIsNewUser(!existing); sendOTP(); return; }
-    } catch(e) { setErr(authErrMsg(e)); }
-    finally { setLoading(false); }
-  };
-
-  const loginWithPIN = async () => {
-    if (password.length < 6) { setErr('Enter your password (min 6 characters)'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const cred = await window._fbSignInPIN(phone, password);
-      window._setSession(cred.user.uid);
-      const profile = await window._fetchProfile(cred.user.uid);
-      onVerified(phone, cred.user, profile);
-    } catch (e) { setErr(authErrMsg(e)); }
-    finally { setLoading(false); }
-  };
-
-  const sendOTP = async () => {
-    setErr(''); setLoading(true);
-    try {
-      // Use the global body-level verifier (never inside a fixed/transformed parent)
-      const verifier = window._initRecaptcha ? window._initRecaptcha() : recaptchaRef.current;
-      if (!verifier) throw new Error('reCAPTCHA not ready. Please refresh the page.');
+      const verifier = window._initRecaptcha ? window._initRecaptcha() : null;
+      if (!verifier) throw new Error('reCAPTCHA not ready. Please refresh.');
       confirmRef.current = await window._fbSignInPhone('+91' + phone, verifier);
       setPhase('otp');
-    } catch (e) {
-      try { recaptchaRef.current?.clear(); } catch {}
-      recaptchaRef.current = null;
-      setErr(authErrMsg(e));
-    } finally { setLoading(false); }
+    } catch (e) { setErr(authErrMsg(e)); }
+    finally { setLoading(false); }
   };
 
   const verifyOTP = async () => {
@@ -648,102 +584,36 @@ function OTPModal({ onVerified, onGuest }) {
     setErr(''); setLoading(true);
     try {
       const cred = await confirmRef.current.confirm(code);
-      verifiedUserRef.current = cred.user;
-      const user = cred.user;
-      // If user already has a password linked they are a returning customer
-      // (e.g. Firestore doc missing so lookup returned null, but account exists in Firebase Auth)
-      const hasPassword = user.providerData.some(p => p.providerId === 'password');
-      if (hasPassword) {
-        window._setSession(user.uid);
-        const profile = await window._fetchProfile(user.uid);
-        onVerified(phone, user, profile);
-      } else if (isNewUser) {
-        setPhase('profile');
-      } else {
-        setPhase('new-pin');
-      }
+      const user  = cred.user;
+      const profile = await window._checkOrCreateCustomer(user.uid, phone);
+      onVerified(phone, user, profile);
     } catch (e) { setErr(authErrMsg(e)); }
     finally { setLoading(false); }
   };
 
-  const createAccount = async () => {
-    if (!name.trim()) { setErr('Please enter your name'); return; }
-    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (password !== password2) { setErr('Passwords do not match'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const user = verifiedUserRef.current || window._fbAuth?.currentUser;
-      if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
-      window._setSession(user.uid);
-      try {
-        await window._fbLinkPIN(user, phone, password);
-      } catch (linkErr) {
-        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
-          const { updatePassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-          await updatePassword(user, password);
-        } else { throw linkErr; }
-      }
-      localStorage.setItem('auranest_name', name.trim());
-      try {
-        await window._createCustomer(user.uid, { name: name.trim(), email: email.trim(), mobile: phone, hasPIN: true });
-      } catch (fsErr) {
-        console.warn('Customer profile save failed (check Firestore rules):', fsErr.message);
-      }
-      onVerified(phone, user, { name: name.trim(), email: email.trim() });
-    } catch (e) { setErr(authErrMsg(e)); }
-    finally { setLoading(false); }
+  const resendOTP = async () => {
+    setOtp(['','','','','','']);
+    setErr('');
+    await sendOTP();
   };
-
-  const saveNewPIN = async () => {
-    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (password !== password2) { setErr('Passwords do not match'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const { updatePassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-      const user = verifiedUserRef.current || window._fbAuth?.currentUser;
-      if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
-      window._setSession(user.uid);
-      try { await window._fbLinkPIN(user, phone, password); }
-      catch { await updatePassword(user, password); }
-      const { doc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-      await updateDoc(doc(window._fbDb,'customers',user.uid), { hasPIN: true, lastLogin: serverTimestamp() });
-      window._setSession(user.uid);
-      onVerified(phone, user);
-    } catch (e) { setErr(authErrMsg(e)); }
-    finally { setLoading(false); }
-  };
-
 
   if (phase === 'phone') return (
     <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Sign in to continue</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile to continue</p>
+      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile number</p>
       <div style={{ display:'flex',marginBottom:4 }}>
         <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>🇮🇳 +91</span>
         <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',paddingTop:12,paddingBottom:12 }}
           type="tel" placeholder="10-digit mobile number" value={phone}
           onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
-          onKeyDown={e => e.key==='Enter' && checkPhone()} inputMode="numeric" autoComplete="tel" />
+          onKeyDown={e => e.key==='Enter' && sendOTP()} inputMode="numeric" autoComplete="tel" autoFocus />
       </div>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={checkPhone} loading={loading} style={{ width:'100%',marginBottom:12 }}>Continue →</Btn>
+      <Btn onClick={sendOTP} loading={loading} style={{ width:'100%',marginBottom:12 }}>Send OTP →</Btn>
     </AuthCard>
   );
 
-  if (phase === 'pin') return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome back!</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone}</p>
-      <input className="fl-input" type="password" placeholder="Password" value={password}
-        onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key==='Enter' && loginWithPIN()}
-        style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={loginWithPIN} loading={loading} style={{ width:'100%',marginBottom:8 }}>Login →</Btn>
-      <button onClick={() => { setIsNewUser(false); sendOTP(); }} style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>Forgot password? Use OTP →</button>
-    </AuthCard>
-  );
-
-  if (phase === 'otp') return (
+  return (
     <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Verify your number</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>OTP sent to +91 {phone}</p>
@@ -760,38 +630,12 @@ function OTPModal({ onVerified, onGuest }) {
       <div style={{ textAlign:'center' }}>
         {timer > 0
           ? <p style={{ fontSize:'.78rem',color:'var(--muted)' }}>Resend in {timer}s</p>
-          : <button onClick={sendOTP} style={{ fontSize:'.78rem',color:'var(--gold)',fontWeight:700,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>Resend OTP</button>}
+          : <button onClick={resendOTP} style={{ fontSize:'.78rem',color:'var(--gold)',fontWeight:700,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>Resend OTP</button>}
       </div>
-    </AuthCard>
-  );
-
-  if (phase === 'profile') return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create your account</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Save your details for faster checkout</p>
-      <input className="fl-input" placeholder="Full Name *" value={name} onChange={e=>setName(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
-      <input className="fl-input" placeholder="Email (optional)" type="email" value={email} onChange={e=>setEmail(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
-      <input className="fl-input" type="password" placeholder="Set a password (min 6 chars)" value={password}
-        onChange={e => setPassword(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
-      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
-        onChange={e => setPassword2(e.target.value)} onKeyDown={e => e.key==='Enter' && createAccount()}
-        style={{ marginBottom:12,paddingTop:12,paddingBottom:12 }} />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={createAccount} loading={loading} style={{ width:'100%' }}>Create Account & Continue →</Btn>
-    </AuthCard>
-  );
-
-  return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Set a new password</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>You'll use this for future logins</p>
-      <input className="fl-input" type="password" placeholder="New password (min 6 chars)" value={password}
-        onChange={e => setPassword(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
-      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
-        onChange={e => setPassword2(e.target.value)} onKeyDown={e => e.key==='Enter' && saveNewPIN()}
-        style={{ marginBottom:12,paddingTop:12,paddingBottom:12 }} />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={saveNewPIN} loading={loading} style={{ width:'100%' }}>Save Password & Continue →</Btn>
+      <button onClick={() => { setPhase('phone'); setOtp(['','','','','','']); setErr(''); }}
+        style={{ display:'block',width:'100%',marginTop:6,fontSize:'.75rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>
+        ← Change number
+      </button>
     </AuthCard>
   );
 }
@@ -1345,7 +1189,7 @@ function App() {
 
   const handleCartNext = (d) => {
     setDiscount(d);
-    if (window._getSession?.() && window._fbUser) { goNext(); return; }
+    if (window._fbAuth?.currentUser) { goNext(); return; }
     setShowOTP(true);
   };
 
