@@ -576,10 +576,11 @@ function OTPModal({ onVerified, onGuest }) {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
     setErr(''); setLoading(true);
     try {
-      const existing = await window._lookupCustomer(phone);
+      let existing = null;
+      try { existing = await window._lookupCustomer(phone); } catch(le) { console.warn('Lookup failed, proceeding as new:', le.message); }
       if (existing && existing.hasPIN) { setIsNewUser(false); setPhase('pin'); }
       else { setIsNewUser(!existing); sendOTP(); return; }
-    } catch { setErr('Could not check account. Try again.'); }
+    } catch(e) { setErr(authErrMsg(e)); }
     finally { setLoading(false); }
   };
 
