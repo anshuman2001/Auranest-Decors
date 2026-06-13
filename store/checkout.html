@@ -552,8 +552,8 @@ function OTPModal({ onVerified, onGuest }) {
   // phase: 'phone' | 'pin' | 'otp' | 'profile' | 'new-pin'
   const [phase, setPhase]     = useState('phone');
   const [phone, setPhone]     = useState('');
-  const [pin, setPin]         = useState(['','','','']);
-  const [pin2, setPin2]       = useState(['','','','']);
+  const [password, setPassword]   = useState('');
+  const [password2, setPassword2] = useState('');
   const [otp, setOtp]         = useState(['','','','','','']);
   const [name, setName]       = useState('');
   const [email, setEmail]     = useState('');
@@ -564,9 +564,7 @@ function OTPModal({ onVerified, onGuest }) {
   const confirmRef   = useRef(null);
   const recaptchaRef = useRef(null);
   const verifiedUserRef = useRef(null);
-  const otpRefs  = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
-  const pin1Refs = [useRef(),useRef(),useRef(),useRef()];
-  const pin2Refs = [useRef(),useRef(),useRef(),useRef()];
+  const otpRefs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
   useEffect(() => {
     if (phase !== 'otp') return;
@@ -584,7 +582,7 @@ function OTPModal({ onVerified, onGuest }) {
   const authErrMsg = e =>
     e.code === 'auth/invalid-phone-number'       ? 'Invalid phone number.' :
     e.code === 'auth/too-many-requests'          ? 'Too many attempts. Try later.' :
-    e.code === 'auth/wrong-password'             ? 'Incorrect PIN. Try again.' :
+    e.code === 'auth/wrong-password'             ? 'Incorrect password. Try again.' :
     e.code === 'auth/invalid-verification-code'  ? 'Incorrect OTP. Check and retry.' :
     e.code === 'auth/code-expired'               ? 'OTP expired. Resend.' :
     e.code === 'auth/internal-error'             ? 'OTP sent — please enter it below.' :
@@ -603,11 +601,10 @@ function OTPModal({ onVerified, onGuest }) {
   };
 
   const loginWithPIN = async () => {
-    const code = pin.join('');
-    if (code.length < 4) { setErr('Enter your 4-digit PIN'); return; }
+    if (password.length < 6) { setErr('Enter your password (min 6 characters)'); return; }
     setErr(''); setLoading(true);
     try {
-      const cred = await window._fbSignInPIN(phone, code);
+      const cred = await window._fbSignInPIN(phone, password);
       window._setSession(cred.user.uid);
       onVerified(phone, cred.user);
     } catch (e) { setErr(authErrMsg(e)); }
@@ -644,15 +641,14 @@ function OTPModal({ onVerified, onGuest }) {
 
   const createAccount = async () => {
     if (!name.trim()) { setErr('Please enter your name'); return; }
-    const p = pin.join(''), p2 = pin2.join('');
-    if (p.length < 4) { setErr('Set a 4-digit PIN'); return; }
-    if (p !== p2) { setErr('PINs do not match'); return; }
+    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
+    if (password !== password2) { setErr('Passwords do not match'); return; }
     setErr(''); setLoading(true);
     try {
       const user = verifiedUserRef.current || window._fbAuth?.currentUser;
       if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
       window._setSession(user.uid);
-      await window._fbLinkPIN(user, phone, p);
+      await window._fbLinkPIN(user, phone, password);
       await window._createCustomer(user.uid, { name: name.trim(), email: email.trim(), mobile: phone, hasPIN: true });
       onVerified(phone, user, { name: name.trim(), email: email.trim() });
     } catch (e) { setErr(authErrMsg(e)); }
@@ -660,17 +656,16 @@ function OTPModal({ onVerified, onGuest }) {
   };
 
   const saveNewPIN = async () => {
-    const p = pin.join(''), p2 = pin2.join('');
-    if (p.length < 4) { setErr('Enter a 4-digit PIN'); return; }
-    if (p !== p2) { setErr('PINs do not match'); return; }
+    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
+    if (password !== password2) { setErr('Passwords do not match'); return; }
     setErr(''); setLoading(true);
     try {
       const { updatePassword } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
       const user = verifiedUserRef.current || window._fbAuth?.currentUser;
       if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
       window._setSession(user.uid);
-      try { await window._fbLinkPIN(user, phone, p); }
-      catch { await updatePassword(user, p); }
+      try { await window._fbLinkPIN(user, phone, password); }
+      catch { await updatePassword(user, password); }
       const { doc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
       await updateDoc(doc(window._fbDb,'customers',user.uid), { hasPIN: true, lastLogin: serverTimestamp() });
       window._setSession(user.uid);
@@ -699,11 +694,13 @@ function OTPModal({ onVerified, onGuest }) {
   if (phase === 'pin') return (
     <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome back!</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone} · Enter your PIN</p>
-      <BoxRow arr={pin} setArr={setPin} refs={pin1Refs} label="4-digit PIN" />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
+      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone}</p>
+      <input className="fl-input" type="password" placeholder="Password" value={password}
+        onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key==='Enter' && loginWithPIN()}
+        style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
+      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={loginWithPIN} loading={loading} style={{ width:'100%',marginBottom:8 }}>Login →</Btn>
-      <button onClick={() => { setIsNewUser(false); sendOTP(); }} style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>Forgot PIN? Use OTP →</button>
+      <button onClick={() => { setIsNewUser(false); sendOTP(); }} style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>Forgot password? Use OTP →</button>
     </AuthCard>
   );
 
@@ -733,23 +730,29 @@ function OTPModal({ onVerified, onGuest }) {
     <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create your account</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Save your details for faster checkout</p>
-      <input className="fl-input" placeholder="Full Name *" value={name} onChange={e=>setName(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
-      <input className="fl-input" placeholder="Email (optional)" type="email" value={email} onChange={e=>setEmail(e.target.value)} style={{ marginBottom:12,paddingTop:12,paddingBottom:12 }} />
-      <BoxRow arr={pin} setArr={setPin} refs={pin1Refs} label="Set a 4-digit PIN for future logins" />
-      <BoxRow arr={pin2} setArr={setPin2} refs={pin2Refs} label="Confirm PIN" />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
+      <input className="fl-input" placeholder="Full Name *" value={name} onChange={e=>setName(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
+      <input className="fl-input" placeholder="Email (optional)" type="email" value={email} onChange={e=>setEmail(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
+      <input className="fl-input" type="password" placeholder="Set a password (min 6 chars)" value={password}
+        onChange={e => setPassword(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} />
+      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
+        onChange={e => setPassword2(e.target.value)} onKeyDown={e => e.key==='Enter' && createAccount()}
+        style={{ marginBottom:12,paddingTop:12,paddingBottom:12 }} />
+      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={createAccount} loading={loading} style={{ width:'100%' }}>Create Account & Continue →</Btn>
     </AuthCard>
   );
 
   return (
     <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Set a new PIN</p>
+      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Set a new password</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>You'll use this for future logins</p>
-      <BoxRow arr={pin} setArr={setPin} refs={pin1Refs} label="New 4-digit PIN" />
-      <BoxRow arr={pin2} setArr={setPin2} refs={pin2Refs} label="Confirm PIN" />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={saveNewPIN} loading={loading} style={{ width:'100%' }}>Save PIN & Continue →</Btn>
+      <input className="fl-input" type="password" placeholder="New password (min 6 chars)" value={password}
+        onChange={e => setPassword(e.target.value)} style={{ marginBottom:10,paddingTop:12,paddingBottom:12 }} autoFocus />
+      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
+        onChange={e => setPassword2(e.target.value)} onKeyDown={e => e.key==='Enter' && saveNewPIN()}
+        style={{ marginBottom:12,paddingTop:12,paddingBottom:12 }} />
+      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
+      <Btn onClick={saveNewPIN} loading={loading} style={{ width:'100%' }}>Save Password & Continue →</Btn>
     </AuthCard>
   );
 }
