@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Deploy
 
 on:
   push:
@@ -11,8 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+      - name: Install CLI tools
+        run: npm install -g vercel@latest firebase-tools@latest
+
+      - name: Deploy Firestore Rules
+        run: firebase deploy --only firestore:rules --project auranest-decors --token=${{ secrets.FIREBASE_TOKEN }}
 
       - name: Deploy to Vercel (Production)
         run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
