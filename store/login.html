@@ -591,10 +591,15 @@ function init() {
       const cred = await confirmResult.confirm(code);
       authedUser = cred.user;
       clearInterval(timerInterval);
-      if (otpIntent === 'new') {
+      // Detect existing registered users even if their Firestore doc is missing
+      const hasPassword = authedUser.providerData.some(p => p.providerId === 'password');
+      if (hasPassword) {
+        // Already registered — phone verified, create session and proceed
+        window._setSession(authedUser.uid);
+        redirect();
+      } else if (otpIntent === 'new') {
         showPhase('profile');
       } else {
-        // migration or forgot → set new PIN
         showPhase('new-pin');
       }
     } catch(e) {

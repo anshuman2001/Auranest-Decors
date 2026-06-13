@@ -420,6 +420,8 @@ select.form-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://ww
   <button class="mt-tab active" data-tab="dashboard">&#9672; Dashboard</button>
   <button class="mt-tab" data-tab="orders">&#9672; Orders</button>
   <button class="mt-tab" data-tab="addresses">&#9672; Addresses</button>
+  <button class="mt-tab" data-tab="track">&#9672; Track</button>
+  <button class="mt-tab" data-tab="profile">&#9672; Profile</button>
 </div>
 
 <!-- LAYOUT -->
@@ -434,6 +436,8 @@ select.form-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://ww
       <li><button class="active" data-tab="dashboard"><span class="sb-icon">&#9672;</span>Dashboard</button></li>
       <li><button data-tab="orders"><span class="sb-icon">&#9672;</span>My Orders</button></li>
       <li><button data-tab="addresses"><span class="sb-icon">&#9672;</span>My Addresses</button></li>
+      <li><button data-tab="track"><span class="sb-icon">&#9672;</span>Track Order</button></li>
+      <li><button data-tab="profile"><span class="sb-icon">&#9672;</span>My Profile</button></li>
     </ul>
     <div class="sb-logout">
       <button id="sidebar-logout-btn">Sign Out</button>
@@ -549,10 +553,21 @@ select.form-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://ww
       </div>
     </div>
 
+    <!-- ─── TRACK ORDER ─── -->
+    <div class="section" id="section-track">
+      <div class="sec-hdr">
+        <h2 class="sec-title">Track Order</h2>
+        <p class="sec-sub">Real-time status of all your orders</p>
+      </div>
+      <div id="track-list">
+        <div class="loading-overlay"><span class="spinner spinner-gold"></span> Loading…</div>
+      </div>
+    </div>
+
     <!-- ─── PROFILE ─── -->
     <div class="section" id="section-profile">
       <div class="sec-hdr">
-        <h2 class="sec-title">Profile</h2>
+        <h2 class="sec-title">My Profile</h2>
         <p class="sec-sub">Manage your personal information</p>
       </div>
       <div class="profile-form">
@@ -679,6 +694,7 @@ function init() {
     if      (tab === 'dashboard')  renderDashboard();
     else if (tab === 'orders')     renderOrders();
     else if (tab === 'addresses')  renderAddresses();
+    else if (tab === 'track')      renderTrack();
     else if (tab === 'profile')    renderProfile();
   }
 
@@ -1000,6 +1016,50 @@ function init() {
       btn.disabled = false; btn.textContent = 'Save Address';
     }
   });
+
+  /* ═══════════════════════════════════════
+     TRACK ORDER
+  ═══════════════════════════════════════ */
+  async function renderTrack() {
+    const listEl = document.getElementById('track-list');
+    listEl.innerHTML = loadingHTML();
+    const orders = await fetchOrders();
+    if (orders.length === 0) {
+      listEl.innerHTML = emptyState('No orders to track', 'Orders you place will appear here with live status.');
+      return;
+    }
+    const TL_STEPS = ['Order Placed','Processing','Packed','Shipped','Out for Delivery','Delivered'];
+    const STATUS_IDX = {'pending':0,'confirmed':1,'processing':1,'packed':2,'shipped':3,'out-for-delivery':4,'delivered':5,'cancelled':-1};
+    listEl.innerHTML = orders.map(o => {
+      const oid    = o.orderId || o.id || '';
+      const status = (o.orderStatus || o.status || 'pending').toLowerCase().replace(/\s+/g,'-');
+      const label  = o.orderStatus || o.status || 'Pending';
+      const curIdx = STATUS_IDX[status] !== undefined ? STATUS_IDX[status] : 0;
+      const isCancelled = status === 'cancelled';
+      const tlHTML = TL_STEPS.map((step, i) => {
+        let cls = '';
+        if (!isCancelled) {
+          if (i < curIdx) cls = 'done';
+          else if (i === curIdx) cls = 'current';
+        }
+        return `<div class="tl-step ${cls}">
+          <div class="tl-dot">${cls==='done'?'&#10003;':''}</div>
+          <span class="tl-label">${step}</span>
+        </div>${i<TL_STEPS.length-1?'<div style="flex:1;height:2px;background:var(--border);margin-bottom:1.5rem;min-width:8px"></div>':''}`;
+      }).join('');
+      return `<div class="order-card" style="margin-bottom:1.4rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600">#${esc(oid.slice(0,20))}${oid.length>20?'…':''}</div>
+            <div style="font-size:.75rem;color:var(--mid)">${fmtDate(o.createdAt)}</div>
+          </div>
+          <span class="status-badge s-${esc(status)}">${esc(label)}</span>
+        </div>
+        <div class="timeline" style="padding:.5rem 0">${tlHTML}</div>
+        <div style="font-size:.82rem;color:var(--mid);margin-top:.8rem;font-weight:600">${rupee(o.totalAmount||o.total||0)} · ${(o.items||[]).length} item${(o.items||[]).length!==1?'s':''}</div>
+      </div>`;
+    }).join('');
+  }
 
   /* ═══════════════════════════════════════
      PROFILE

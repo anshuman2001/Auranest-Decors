@@ -88,6 +88,21 @@ window._saveOrder = async (data) => {
   const ref = await addDoc(collection(db,'orders'),{...data,createdAt:serverTimestamp()});
   return ref.id;
 };
+window._fetchProfile = async (uid) => {
+  try {
+    const snap = await getDoc(doc(db,'customers',uid));
+    const addrs = [];
+    try {
+      const aSnap = await getDocs(collection(db,'customers',uid,'addresses'));
+      aSnap.forEach(d => addrs.push({id:d.id,...d.data()}));
+    } catch {}
+    window._fbAddresses    = addrs;
+    window._fbDefaultAddr  = addrs.find(a=>a.isDefault) || addrs[0] || null;
+    if (snap.exists()) return {uid,...snap.data()};
+  } catch(e) { console.warn('fetchProfile:', e.message); }
+  const savedName = localStorage.getItem('auranest_name');
+  return savedName ? {name:savedName} : null;
+};
 
 // Pre-init reCAPTCHA at body level so it's never inside a transformed parent
 window._initRecaptcha = () => {
@@ -606,7 +621,8 @@ function OTPModal({ onVerified, onGuest }) {
     try {
       const cred = await window._fbSignInPIN(phone, password);
       window._setSession(cred.user.uid);
-      onVerified(phone, cred.user);
+      const profile = await window._fetchProfile(cred.user.uid);
+      onVerified(phone, cred.user, profile);
     } catch (e) { setErr(authErrMsg(e)); }
     finally { setLoading(false); }
   };
@@ -633,8 +649,19 @@ function OTPModal({ onVerified, onGuest }) {
     try {
       const cred = await confirmRef.current.confirm(code);
       verifiedUserRef.current = cred.user;
-      if (isNewUser) { setPhase('profile'); }
-      else { setPhase('new-pin'); }
+      const user = cred.user;
+      // If user already has a password linked they are a returning customer
+      // (e.g. Firestore doc missing so lookup returned null, but account exists in Firebase Auth)
+      const hasPassword = user.providerData.some(p => p.providerId === 'password');
+      if (hasPassword) {
+        window._setSession(user.uid);
+        const profile = await window._fetchProfile(user.uid);
+        onVerified(phone, user, profile);
+      } else if (isNewUser) {
+        setPhase('profile');
+      } else {
+        setPhase('new-pin');
+      }
     } catch (e) { setErr(authErrMsg(e)); }
     finally { setLoading(false); }
   };
@@ -1287,21 +1314,27 @@ function App() {
 
   // Listen for Firebase auth ready + auto-fill from customer profile
   useEffect(() => {
-    window._onAuthReady = (user, profile) => {
+    const applyProfile = (profile) => {
       if (!profile) return;
       const nameParts = (profile.name || '').trim().split(' ');
       setCustomer(profile);
       setPersonal(p => ({
         ...p,
-        firstName: nameParts[0] || '',
-        lastName:  nameParts.slice(1).join(' ') || '',
-        email:     profile.email || '',
-        phone:     profile.mobile || '',
+        firstName: nameParts[0] || p.firstName || '',
+        lastName:  nameParts.slice(1).join(' ') || p.lastName || '',
+        email:     profile.email || p.email || '',
+        phone:     profile.mobile || p.phone || '',
       }));
       const addrs = window._fbAddresses || [];
       setSavedAddrs(addrs);
       const def = window._fbDefaultAddr;
       if (def) setAddress({ line1:def.line1||'', line2:def.line2||'', city:def.city||'', state:def.state||'', country:'IN', pincode:def.pincode||'' });
+    };
+    window._onAuthReady = (user, profile) => {
+      // Fall back to localStorage name if Firestore doc missing
+      const savedName = localStorage.getItem('auranest_name');
+      const effective = profile || (savedName ? {name:savedName} : null);
+      applyProfile(effective);
     };
     if (window._fbCustomer) window._onAuthReady(window._fbUser, window._fbCustomer);
     return () => { window._onAuthReady = null; };
@@ -1317,14 +1350,20 @@ function App() {
   };
 
   const handleOtpVerified = (phone, user, profile) => {
-    const nameParts = (profile?.name || '').trim().split(' ');
+    const savedName = localStorage.getItem('auranest_name');
+    const effectiveProfile = profile || (savedName ? {name:savedName} : null);
+    const nameParts = (effectiveProfile?.name || '').trim().split(' ');
     setPersonal(p => ({
       ...p, phone,
       firstName: nameParts[0] || p.firstName,
       lastName:  nameParts.slice(1).join(' ') || p.lastName,
-      email:     profile?.email || p.email,
+      email:     effectiveProfile?.email || p.email,
     }));
-    if (profile) setCustomer({ uid: user?.uid, ...profile });
+    if (effectiveProfile) setCustomer({ uid: user?.uid, ...effectiveProfile });
+    const addrs = window._fbAddresses || [];
+    setSavedAddrs(addrs);
+    const def = window._fbDefaultAddr;
+    if (def) setAddress({ line1:def.line1||'', line2:def.line2||'', city:def.city||'', state:def.state||'', country:'IN', pincode:def.pincode||'' });
     setShowOTP(false);
     goNext();
   };
