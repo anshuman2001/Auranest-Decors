@@ -787,12 +787,7 @@ select.finp{cursor:pointer;}
   .auth-box{max-width:100%;grid-template-columns:1fr;}
   .auth-left{display:none;}
   .auth-right{padding:2rem 1.5rem;}
-  /* PRODUCT PAGE */
-  .pp-body{grid-template-columns:1fr;height:auto;overflow:visible;}
-  .pp-gallery{height:56vw;min-height:260px;max-height:360px;}
-  .pp-info{height:auto;padding:1.5rem 1.2rem;overflow:visible;}
-  .pp-meta{grid-template-columns:1fr;}
-  .pp-name{font-size:1.6rem;}
+  /* PRODUCT PAGE — legacy gallery/meta height overrides removed; see premium PDP block */
   .pp-price{font-size:1.3rem;}
   .pp-related-grid{grid-template-columns:repeat(2,1fr);}
   /* CAT OVERLAY */
@@ -843,8 +838,7 @@ select.finp{cursor:pointer;}
   .cd-num{font-size:1.5rem;}
   .cd-unit{padding:0 .5rem;}
   .cd-lbl{font-size:.58rem;}
-  .pp-gallery{height:55vw;min-height:220px;}
-  .pp-name{font-size:1.35rem;}
+  .pp-name{font-size:1.4rem;}
   .sale-countdown{padding:.4rem .5rem;}
   .oc-status{margin-left:0;}
 }
@@ -1024,9 +1018,11 @@ body.pdp-open .wa-float{display:none;}
   .pp-crumb{padding:.8rem 1.1rem .5rem;}
   .pp-card{padding:1rem;border-radius:16px;margin-bottom:1.2rem;}
   .pp-body{grid-template-columns:1fr;gap:1rem;}
-  .pp-gallery{position:static;top:auto;flex-direction:column;gap:.7rem;}
-  .pp-main-img{aspect-ratio:1/1;}
-  .pp-main-img img{padding:.8rem;}
+  .pp-gallery{position:static;top:auto;flex-direction:column;gap:.7rem;height:auto;}
+  /* Large, dominant main image — explicit height beats flex-collapse */
+  .pp-main-img{aspect-ratio:auto;width:100%;height:clamp(320px,82vw,450px);flex:0 0 auto;}
+  .pp-main-img img{padding:.9rem;}
+  .pp-thumbs{flex:0 0 auto;}
   .pp-info{gap:.7rem;}
   .pp-name{font-size:1.55rem;}
   .pp-price{font-size:1.8rem;}
