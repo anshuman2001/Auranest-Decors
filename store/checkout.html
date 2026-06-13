@@ -682,7 +682,7 @@ function OTPModal({ onVerified, onGuest }) {
         <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',...IS }}
           type="tel" placeholder="10-digit mobile number" value={phone}
           onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
-          onKeyDown={e => e.key==='Enter' && checkPhone()} inputMode="numeric" autoComplete="tel" autoFocus />
+          onKeyDown={e => e.key==='Enter' && checkPhone()} inputMode="numeric" name="phone" autoComplete="tel-national" pattern="[0-9]*" autoFocus />
       </div>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={checkPhone} loading={loading} style={{ width:'100%',marginBottom:12 }}>Continue →</Btn>

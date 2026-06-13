@@ -182,8 +182,9 @@ footer a:hover{color:var(--gold)}
         <label>Mobile Number</label>
         <div class="input-row">
           <span class="prefix">🇮🇳 +91</span>
-          <input type="tel" id="inp-phone" placeholder="10-digit mobile number"
-            inputmode="numeric" autocomplete="tel" maxlength="10"/>
+          <input type="tel" id="inp-phone" name="phone" placeholder="10-digit mobile number"
+            inputmode="numeric" autocomplete="tel-national" maxlength="10"
+            pattern="[0-9]*"/>
         </div>
       </div>
       <div id="err-phone" class="err"></div>
@@ -388,6 +389,10 @@ function init() {
   /* ─── PHASE: phone ─── */
   document.getElementById('btn-phone').onclick = handlePhone;
   document.getElementById('inp-phone').onkeydown = e=>{ if(e.key==='Enter') handlePhone(); };
+  /* Strip anything non-numeric live (blocks email/text autofill into the phone field) */
+  document.getElementById('inp-phone').oninput = e=>{
+    e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
+  };
 
   async function handlePhone() {
     const raw = document.getElementById('inp-phone').value.replace(/\D/g,'').slice(0,10);
