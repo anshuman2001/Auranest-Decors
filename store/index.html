@@ -325,18 +325,14 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .cat-circle-img img{width:100%;height:100%;object-fit:cover;}
 .cat-circle-name{font-size:.92rem;color:var(--dark);font-weight:500;letter-spacing:.02em;}
 /* ── Collection Cards (new) ── */
-.coll-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;}
-.coll-card{position:relative;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .35s cubic-bezier(.23,1,.32,1),box-shadow .35s;}
-.coll-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(18,12,6,.16);}
-.coll-card-img{height:220px;overflow:hidden;background:#2c2420;}
-.coll-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;}
-.coll-card:hover .coll-card-img img{transform:scale(1.06);}
-.coll-card-body{padding:1.4rem 1.5rem;background:var(--white);}
-.coll-card-eye{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem;}
-.coll-card-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:.3rem;}
-.coll-card-count{font-size:.72rem;color:var(--muted);}
-.coll-card-arrow{position:absolute;bottom:1.3rem;right:1.4rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);opacity:0;transition:opacity .25s,transform .25s;transform:translateX(-6px);}
-.coll-card:hover .coll-card-arrow{opacity:1;transform:translateX(0);}
+/* Circular category cards (Varee-style) */
+.coll-cards{display:flex;justify-content:center;flex-wrap:wrap;gap:2.6rem;}
+.coll-card{cursor:pointer;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:1rem;width:210px;transition:transform .3s cubic-bezier(.23,1,.32,1);}
+.coll-card:hover{transform:scale(1.05);}
+.coll-card-img{width:210px;height:210px;border-radius:50%;overflow:hidden;background:var(--beige);box-shadow:0 12px 30px rgba(18,12,6,.12);transition:box-shadow .3s;}
+.coll-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.coll-card:hover .coll-card-img{box-shadow:0 18px 44px rgba(18,12,6,.2);}
+.coll-card-name{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:500;text-align:center;color:var(--dark);line-height:1.3;}
 /* ── Gifts Strip ── */
 .gifts-strip{background:var(--dark);padding:4rem 5rem;}
 .gifts-strip-inner{display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2.5rem;}
@@ -737,8 +733,11 @@ select.finp{cursor:pointer;}
   .sec-title{font-size:clamp(1.6rem,5vw,2.5rem);}
   .sec-hdr{margin-bottom:2.5rem;}
   /* CATEGORIES */
-  .coll-cards{grid-template-columns:repeat(2,1fr);gap:.9rem;}
-  .coll-card-img{height:150px;}
+  .coll-cards{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;gap:1.4rem;padding:.4rem 1.2rem 1rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .coll-cards::-webkit-scrollbar{display:none;}
+  .coll-card{flex:0 0 auto;width:150px;scroll-snap-align:center;}
+  .coll-card-img{width:150px;height:150px;}
+  .coll-card-name{font-size:1.1rem;}
   .gifts-strip{padding:2.5rem 1.2rem;}
   .gifts-strip-inner{flex-direction:column;align-items:flex-start;gap:1rem;}
   .cat-circles{gap:1.2rem;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding:.5rem 0 1rem;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
@@ -1432,45 +1431,25 @@ select.finp{cursor:pointer;}
       <div class="coll-card-img">
         <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Artisan Collection" loading="lazy"/>
       </div>
-      <div class="coll-card-body">
-        <p class="coll-card-eye">Hand-Painted · Folk Art · Madhubani</p>
-        <h3 class="coll-card-name">Artisan Collection</h3>
-        <p class="coll-card-count" id="coll-count-artisan">21 Pieces</p>
-      </div>
-      <span class="coll-card-arrow">Shop Now →</span>
+      <h3 class="coll-card-name">Artisan Collection</h3>
     </div>
     <div class="coll-card" onclick="filterProds('woodcraft'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
       <div class="coll-card-img">
         <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/lfblue-jharokhe/img1.jpg" alt="Woodcraft Collection" loading="lazy"/>
       </div>
-      <div class="coll-card-body">
-        <p class="coll-card-eye">Trays · Jharokhas · Kitchen Craft</p>
-        <h3 class="coll-card-name">Woodcraft Collection</h3>
-        <p class="coll-card-count" id="coll-count-woodcraft">24 Pieces</p>
-      </div>
-      <span class="coll-card-arrow">Shop Now →</span>
+      <h3 class="coll-card-name">Woodcraft Collection</h3>
     </div>
     <div class="coll-card" onclick="filterProds('minimal'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
       <div class="coll-card-img">
         <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/black-buddha-face/img1.jpg" alt="Minimal Collection" loading="lazy"/>
       </div>
-      <div class="coll-card-body">
-        <p class="coll-card-eye">Ceramic · Terracotta · Sculptural</p>
-        <h3 class="coll-card-name">Minimal Collection</h3>
-        <p class="coll-card-count" id="coll-count-minimal">8 Pieces</p>
-      </div>
-      <span class="coll-card-arrow">Shop Now →</span>
+      <h3 class="coll-card-name">Minimal Collection</h3>
     </div>
     <div class="coll-card" onclick="filterProds('gifting'); document.getElementById('collection').scrollIntoView({behavior:'smooth'})">
       <div class="coll-card-img">
         <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_600/auranest-plain/ceramic-couple/img1.jpg" alt="Gifting Collection" loading="lazy"/>
       </div>
-      <div class="coll-card-body">
-        <p class="coll-card-eye">Housewarming · Wedding · Festive</p>
-        <h3 class="coll-card-name">Gifting Collection</h3>
-        <p class="coll-card-count" id="coll-count-gifting">Curated Gifts</p>
-      </div>
-      <span class="coll-card-arrow">Shop Gifts →</span>
+      <h3 class="coll-card-name">Gifting Collection</h3>
     </div>
   </div>
 </section>
