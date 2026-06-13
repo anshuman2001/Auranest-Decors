@@ -88,6 +88,17 @@ window._saveOrder = async (data) => {
   const ref = await addDoc(collection(db,'orders'),{...data,createdAt:serverTimestamp()});
   return ref.id;
 };
+
+// Pre-init reCAPTCHA at body level so it's never inside a transformed parent
+window._initRecaptcha = () => {
+  if (window._rcVerifier) return window._rcVerifier;
+  try {
+    window._rcVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size:'invisible' });
+    window._rcVerifier.render().catch(()=>{});
+  } catch(e) { console.warn('reCAPTCHA init failed:', e.message); }
+  return window._rcVerifier;
+};
+setTimeout(window._initRecaptcha, 300);
 </script>
 
 <style>
@@ -220,6 +231,7 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 </style>
 </head>
 <body>
+<div id="recaptcha-container" style="position:fixed;bottom:0;left:0;z-index:9999"></div>
 <div id="root"></div>
 
 <script type="text/babel">
@@ -509,7 +521,6 @@ const handleBoxBs = (arr, refs, i, e) => {
 
 const AuthCard = ({ children, onGuest }) => (
   <div style={{ position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16,background:'rgba(0,0,0,.55)',backdropFilter:'blur(6px)' }}>
-    <div id="recaptcha-container" style={{ position:'absolute',bottom:0 }} />
     <div className="a-scale" style={{ background:'#fff',borderRadius:24,padding:'clamp(20px,5vw,36px) clamp(16px,5vw,32px)',width:'100%',maxWidth:380,boxShadow:'0 24px 60px rgba(0,0,0,.18)' }}>
       <div style={{ textAlign:'center',marginBottom:20 }}>
         <div style={{ display:'flex',justifyContent:'center',marginBottom:8 }}><BrandLogo size={40} /></div>
@@ -564,19 +575,9 @@ function OTPModal({ onVerified, onGuest }) {
     return () => clearInterval(id);
   }, [phase]);
 
-  // Pre-initialise reCAPTCHA once the modal mounts so it's ready when user hits Continue
   useEffect(() => {
-    const init = () => {
-      try {
-        if (!recaptchaRef.current && window._RecaptchaVerifier && window._fbAuth) {
-          recaptchaRef.current = new window._RecaptchaVerifier(window._fbAuth, 'recaptcha-container', { size:'invisible' });
-          recaptchaRef.current.render().catch(() => {});
-        }
-      } catch {}
-    };
-    // give the module script a moment to assign window._RecaptchaVerifier
-    const t = setTimeout(init, 500);
-    return () => { clearTimeout(t); try { recaptchaRef.current?.clear(); } catch {} recaptchaRef.current = null; };
+    // Ensure the global reCAPTCHA is initialised (fallback if page-load init was too early)
+    if (window._initRecaptcha) window._initRecaptcha();
   }, []);
 
   const authErrMsg = e =>
@@ -615,17 +616,10 @@ function OTPModal({ onVerified, onGuest }) {
   const sendOTP = async () => {
     setErr(''); setLoading(true);
     try {
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = new window._RecaptchaVerifier(window._fbAuth, 'recaptcha-container', { size:'invisible' });
-        await recaptchaRef.current.render().catch(() => {});
-      }
-      try {
-        confirmRef.current = await window._fbSignInPhone('+91' + phone, recaptchaRef.current);
-      } catch(e) {
-        // auth/internal-error can fire even when SMS is delivered — proceed if confirmResult was obtained
-        if (!confirmRef.current) throw e;
-        console.warn('signInWithPhoneNumber error (OTP may still have been sent):', e.message);
-      }
+      // Use the global body-level verifier (never inside a fixed/transformed parent)
+      const verifier = window._initRecaptcha ? window._initRecaptcha() : recaptchaRef.current;
+      if (!verifier) throw new Error('reCAPTCHA not ready. Please refresh the page.');
+      confirmRef.current = await window._fbSignInPhone('+91' + phone, verifier);
       setPhase('otp');
     } catch (e) {
       try { recaptchaRef.current?.clear(); } catch {}
