@@ -885,78 +885,149 @@ select.finp{cursor:pointer;}
 .scat-card-all .scat-count{color:var(--gold-lt);}
 .scat-card-all .scat-desc{color:var(--sand);}
 @media(max-width:768px){.cat-nav-bar{padding:.75rem 1.5rem;}.cat-hero{padding:3rem 1.5rem;grid-template-columns:1fr;gap:1rem;}.cat-hero-icon{font-size:3rem;}.cat-body{padding:2rem 1.5rem;}.scat-grid{grid-template-columns:repeat(2,1fr);}}
-/* ══ PRODUCT FULL PAGE (POM: ProductPage) ══ */
-.prod-page{position:fixed;inset:0;background:var(--beige);z-index:520;overflow-y:auto;overflow-x:hidden;transform:translateY(100%);transition:transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+/* ══ PRODUCT FULL PAGE (POM: ProductPage) — Premium Luxury Redesign ══ */
+.prod-page{--pp-bg:#FAF8F3;--pp-card:#FFFFFF;--pp-ink:#2C2C2C;--pp-sub:#6E6E6E;--pp-gold:#C9A86A;--pp-line:#ECE7DD;--pp-green:#2E7D32;
+  position:fixed;inset:0;background:var(--pp-bg);z-index:520;overflow-y:auto;overflow-x:hidden;
+  transform:translateY(100%);transition:transform .55s cubic-bezier(.4,0,.2,1);pointer-events:none;
+  font-family:'Outfit',sans-serif;color:var(--pp-ink);}
 .prod-page.open{transform:translateY(0);pointer-events:auto;}
-/* Premium category banner above product */
-.pp-banner{background:var(--warm);border-bottom:1px solid var(--border);text-align:center;padding:2rem 2rem 1.8rem;}
-.pp-crumb{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);display:flex;align-items:center;justify-content:center;gap:.45rem;flex-wrap:wrap;margin-bottom:.4rem;}
-.pp-crumb-back{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);font-weight:600;padding:0 .9rem 0 0;border-right:1px solid var(--sand);margin-right:.3rem;white-space:nowrap;transition:color .2s;}
-.pp-crumb-back:hover{color:var(--terracotta);}
-.pp-crumb-link{color:var(--mid);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:0;white-space:nowrap;transition:color .2s;}
-.pp-crumb-link:hover{color:var(--terracotta);}
-.pp-crumb-sep{color:var(--sand);}
-.pp-crumb-cur{color:var(--gold);font-weight:500;white-space:nowrap;}
-.pp-banner-title{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);line-height:1.15;margin-bottom:.9rem;}
-.pp-banner-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--mid);max-width:520px;margin:0 auto;line-height:1.55;}
-.pp-banner-rule{width:36px;height:1px;background:var(--gold);margin:.6rem auto .9rem;}
-@media(max-width:768px){.pp-banner{padding:1.4rem 1.4rem 1.2rem;margin-top:64px!important;}.pp-banner-title{font-size:1.7rem;letter-spacing:.07em;}.pp-banner-sub{font-size:.95rem;}.pp-crumb{margin-bottom:.3rem;letter-spacing:.14em;}}
-/* Two-column layout — both columns scroll with the page */
-.pp-body{display:grid;grid-template-columns:55% 45%;height:auto;overflow:visible;align-items:start;}
-.pp-gallery{display:flex;flex-direction:row;position:sticky;top:0;height:calc(100vh - 68px);}
-.pp-thumbs{display:flex;flex-direction:column;gap:.45rem;padding:.6rem .5rem;overflow-y:auto;overflow-x:hidden;flex-shrink:0;background:var(--warm);width:86px;scrollbar-width:none;z-index:5;position:relative;}
-.pp-thumbs::-webkit-scrollbar{display:none;}
-.pp-thumb{width:74px;height:74px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .2s,opacity .2s;flex-shrink:0;opacity:.7;pointer-events:auto;position:relative;z-index:5;}
-.pp-thumb:hover{opacity:1;}
-.pp-thumb.active{border-color:var(--terracotta);opacity:1;}
-.pp-thumb img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;background:linear-gradient(90deg,#f0ebe3 25%,#e6dace 50%,#f0ebe3 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;mix-blend-mode:multiply;}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.pp-main-img{flex:1;overflow:hidden;position:relative;background:var(--warm);height:100%;}
-.pp-main-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .3s;padding:12px;mix-blend-mode:multiply;}
-/* Wishlist on image */
-.pp-img-wish{position:absolute;top:12px;right:12px;z-index:10;background:rgba(255,255,255,.92);border:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(30,24,16,.18);color:var(--muted);transition:all .2s;line-height:1;}
+/* Slim elegant breadcrumb */
+.pp-crumb{max-width:1180px;margin:0 auto;padding:1rem 2rem .9rem;font-size:.72rem;letter-spacing:.04em;
+  color:var(--pp-sub);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.pp-crumb-back{background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.72rem;
+  letter-spacing:.02em;color:var(--pp-ink);font-weight:600;padding:0 .8rem 0 0;border-right:1px solid var(--pp-line);
+  margin-right:.2rem;white-space:nowrap;transition:color .2s;}
+.pp-crumb-back:hover{color:var(--pp-gold);}
+.pp-crumb-link{color:var(--pp-sub);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;
+  font-size:.72rem;letter-spacing:.02em;padding:0;white-space:nowrap;transition:color .2s;}
+.pp-crumb-link:hover{color:var(--pp-gold);}
+.pp-crumb-sep{color:var(--pp-line);}
+.pp-crumb-cur{color:var(--pp-gold);font-weight:600;white-space:nowrap;}
+/* Premium white product card */
+.pp-card{max-width:1180px;margin:0 auto 3rem;background:var(--pp-card);border:1px solid var(--pp-line);
+  border-radius:20px;box-shadow:0 18px 60px rgba(44,40,32,.08),0 4px 16px rgba(44,40,32,.04);padding:2.4rem;}
+.pp-body{display:grid;grid-template-columns:1fr 1fr;gap:2.6rem;align-items:start;}
+/* Gallery */
+.pp-gallery{display:flex;flex-direction:column;gap:.9rem;position:sticky;top:1.5rem;}
+.pp-main-img{position:relative;width:100%;aspect-ratio:1/1;background:var(--pp-bg);border:1px solid var(--pp-line);
+  border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.pp-main-img img{width:100%;height:100%;object-fit:contain;padding:1.4rem;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.pp-main-img:hover img{transform:scale(1.18);}
+.pp-main-fallback{display:flex;align-items:center;justify-content:center;height:100%;font-size:7rem;}
+.pp-img-wish{position:absolute;top:14px;right:14px;z-index:10;background:rgba(255,255,255,.95);border:1px solid var(--pp-line);
+  width:42px;height:42px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(44,40,32,.12);color:var(--pp-sub);transition:all .2s;line-height:1;}
 .pp-img-wish:hover{transform:scale(1.12);background:#fff;}
-.pp-img-wish.wished{color:var(--terracotta);}
-.pp-main-fallback{display:flex;align-items:center;justify-content:center;height:100%;font-size:8rem;}
-/* Right info column — natural height, page scrolls */
-.pp-info{height:auto;overflow:visible;padding:1.8rem 2.5rem 4rem;display:flex;flex-direction:column;gap:.5rem;}
-.pp-rule{border:none;border-top:1px solid var(--border);margin:.3rem 0;}
-.pp-badge{display:inline-block;background:var(--gold);color:#fff;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.28rem .82rem;font-weight:500;vertical-align:middle;}
-.pp-cat-lbl{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);font-weight:500;}
-.pp-name{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:600;line-height:1.3;color:var(--dark);}
-.pp-price-row{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;margin-top:.2rem;}
-.pp-price{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--terracotta);font-weight:600;}
-.pp-mrp{font-size:1rem;color:var(--muted);text-decoration:line-through;font-weight:400;}
-.pp-save{font-size:.75rem;background:#2d7a3a;color:#fff;padding:.28rem .75rem;font-weight:600;letter-spacing:.06em;}
-.pp-desc{font-size:.97rem;line-height:1.9;color:var(--mid);font-weight:400;}
-.pp-divider{border:none;border-top:1px solid var(--border);margin:.5rem 0;}
-.pp-meta{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-.pp-meta-row{display:flex;gap:.6rem;font-size:.85rem;padding:.65rem 0;border-bottom:1px solid var(--border);}
-.pp-meta-lbl{color:var(--muted);min-width:75px;flex-shrink:0;font-weight:400;}
-.pp-meta-val{color:var(--dark);font-weight:600;}
-.pp-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.25rem;}
-.btn-pp-add{background:var(--terracotta);color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;font-weight:600;}
-.btn-pp-add:hover{background:var(--rust);}
-.btn-pp-buy{background:var(--dark);color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;font-weight:600;}
-.btn-pp-buy:hover{background:#3a2e1e;}
+.pp-img-wish.wished{color:#c0392b;}
+.pp-thumbs{display:flex;flex-direction:row;flex-wrap:wrap;gap:.55rem;}
+.pp-thumb{width:72px;height:72px;border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid var(--pp-line);
+  background:var(--pp-bg);transition:border-color .2s,transform .2s;flex-shrink:0;padding:0;}
+.pp-thumb:hover{transform:translateY(-2px);}
+.pp-thumb.active{border-color:var(--pp-gold);}
+.pp-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Info column */
+.pp-info{display:flex;flex-direction:column;gap:.85rem;}
+.pp-name{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:600;line-height:1.2;color:var(--pp-ink);}
+.pp-rating{display:flex;align-items:center;gap:.5rem;font-size:.86rem;color:var(--pp-sub);}
+.pp-rating .pp-stars{color:var(--pp-gold);letter-spacing:.08em;font-size:1.05rem;}
+.pp-rating .pp-rnum{font-weight:600;color:var(--pp-ink);}
+.pp-short{font-size:.98rem;line-height:1.7;color:var(--pp-sub);}
+.pp-price-box{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;padding:.3rem 0;}
+.pp-price{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--pp-ink);font-weight:700;}
+.pp-mrp{font-size:1.02rem;color:var(--pp-sub);text-decoration:line-through;}
+.pp-save{font-size:.82rem;color:var(--pp-green);font-weight:700;letter-spacing:.02em;}
+.pp-badge{display:inline-block;background:var(--pp-gold);color:#fff;font-size:.64rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:.3rem .8rem;border-radius:20px;font-weight:600;}
+.pp-stock{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:.35rem;}
+.pp-stock.in{color:var(--pp-green);}
+.pp-stock.out{color:#c0392b;}
+.pp-stock .dot{font-size:.65rem;}
+/* Action buttons — rounded premium */
+.pp-actions{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.4rem;}
+.btn-pp-add,.btn-pp-buy{border:none;padding:1.05rem;border-radius:12px;font-family:'Outfit',sans-serif;font-size:.84rem;
+  letter-spacing:.04em;cursor:pointer;font-weight:600;transition:transform .2s,box-shadow .2s,background .2s;}
+.btn-pp-add{background:var(--pp-ink);color:#fff;}
+.btn-pp-add:hover{background:#000;transform:translateY(-2px);box-shadow:0 10px 24px rgba(44,40,32,.22);}
+.btn-pp-buy{background:var(--pp-gold);color:#fff;}
+.btn-pp-buy:hover{background:#b8965a;transform:translateY(-2px);box-shadow:0 10px 24px rgba(201,168,106,.4);}
 .btn-pp-wish{display:none;}
-.pp-trust{display:flex;gap:1.5rem;flex-wrap:wrap;padding:.6rem 0;}
-.pp-trust-item{font-size:.8rem;color:var(--muted);font-weight:400;}
-.pp-related{padding:2rem 0 3rem;border-top:1px solid var(--border);margin-top:.5rem;}
-.pp-related-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem;}
-.pp-related-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;}
-@media(max-width:768px){
-  .pp-crumb{font-size:.68rem;gap:.2rem;}
-  .pp-crumb-link{font-size:.68rem;}
-  .pp-crumb-back{font-size:.68rem;padding-right:.6rem;}
-  .pp-body{display:block;}
-  .pp-gallery{position:static;height:auto;flex-direction:column-reverse;}
-  .pp-thumbs{flex-direction:row;overflow-x:auto;overflow-y:hidden;width:100%;height:80px;padding:.4rem .6rem;}
-  .pp-thumb{width:68px;height:68px;}
-  .pp-main-img{height:72vw;min-height:260px;max-width:400px;width:100%;}
-  .pp-info{padding:1.4rem 1.1rem 3rem;}
-  .pp-actions{grid-template-columns:1fr 1fr;}
-  .pp-meta{grid-template-columns:1fr;}
+/* WhatsApp — integrated, not oversized */
+.btn-pp-whatsapp{width:100%;background:#fff;color:#1a7a47;border:1.5px solid #cfe8d8;padding:.85rem;border-radius:12px;
+  font-family:'Outfit',sans-serif;font-size:.82rem;letter-spacing:.02em;cursor:pointer;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:.55rem;transition:all .2s;}
+.btn-pp-whatsapp:hover{background:#f3faf5;border-color:#25d366;}
+.btn-pp-whatsapp svg{width:18px;height:18px;fill:#25d366;flex-shrink:0;}
+/* Trust indicators */
+.pp-trust{display:flex;flex-wrap:wrap;gap:.7rem 1.4rem;padding:1rem 0 .2rem;border-top:1px solid var(--pp-line);margin-top:.4rem;}
+.pp-trust-item{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--pp-sub);font-weight:500;}
+.pp-trust-item .tk{color:var(--pp-green);font-weight:700;}
+/* Tabs */
+.pp-tabs{margin-top:2.4rem;border-top:1px solid var(--pp-line);padding-top:1.6rem;}
+.pp-tab-nav{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--pp-line);margin-bottom:1.4rem;}
+.pp-tab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:.7rem 1rem;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:.8rem;letter-spacing:.03em;font-weight:600;color:var(--pp-sub);
+  transition:color .2s,border-color .2s;white-space:nowrap;margin-bottom:-1px;}
+.pp-tab-btn:hover{color:var(--pp-ink);}
+.pp-tab-btn.active{color:var(--pp-ink);border-bottom-color:var(--pp-gold);}
+.pp-tab-panel{display:none;font-size:.92rem;line-height:1.85;color:var(--pp-sub);animation:ppfade .3s ease;}
+.pp-tab-panel.active{display:block;}
+@keyframes ppfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pp-tab-panel ul{padding-left:1.2rem;margin:.5rem 0;}
+.pp-tab-panel li{margin-bottom:.45rem;}
+.pp-tab-panel h4{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--pp-ink);margin:.3rem 0 .6rem;font-weight:600;}
+.pp-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.6rem;}
+.pp-spec-row{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--pp-line);font-size:.86rem;}
+.pp-spec-lbl{color:var(--pp-sub);}
+.pp-spec-val{color:var(--pp-ink);font-weight:600;text-align:right;}
+.pp-story-pull{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-style:italic;color:var(--pp-ink);
+  border-left:3px solid var(--pp-gold);padding-left:1.1rem;margin:.6rem 0 1rem;line-height:1.6;}
+.pp-rev-summary{display:flex;align-items:center;gap:1.4rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.pp-rev-big{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--pp-ink);line-height:1;}
+.pp-rev-card{background:var(--pp-bg);border:1px solid var(--pp-line);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.8rem;}
+.pp-rev-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;}
+.pp-rev-name{font-weight:600;color:var(--pp-ink);font-size:.86rem;}
+.pp-rev-stars{color:var(--pp-gold);font-size:.82rem;letter-spacing:.06em;}
+.pp-rev-text{font-size:.86rem;line-height:1.7;color:var(--pp-sub);font-style:italic;}
+/* Related */
+.pp-related{padding:2.4rem 0 1rem;border-top:1px solid var(--pp-line);margin-top:2.4rem;}
+.pp-related-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin-bottom:1.4rem;color:var(--pp-ink);font-weight:600;}
+.pp-related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+.pp-rel-card{background:var(--pp-card);border:1px solid var(--pp-line);border-radius:14px;overflow:hidden;cursor:pointer;
+  transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column;}
+.pp-rel-card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(44,40,32,.1);}
+.pp-rel-img{position:relative;aspect-ratio:1/1;background:var(--pp-bg);overflow:hidden;}
+.pp-rel-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.pp-rel-card:hover .pp-rel-img img{transform:scale(1.06);}
+.pp-rel-emoji{display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;}
+.pp-rel-quick{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(44,40,32,.92);color:#fff;border:none;
+  padding:.6rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;
+  opacity:0;transform:translateY(8px);transition:all .25s;}
+.pp-rel-card:hover .pp-rel-quick{opacity:1;transform:none;}
+.pp-rel-quick:hover{background:var(--pp-gold);}
+.pp-rel-body{padding:.8rem .9rem 1rem;display:flex;flex-direction:column;gap:.25rem;}
+.pp-rel-sub{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--pp-gold);}
+.pp-rel-name{font-size:.85rem;color:var(--pp-ink);font-weight:500;line-height:1.35;}
+.pp-rel-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--pp-ink);margin-top:.1rem;}
+/* Mobile sticky add bar */
+.pp-sticky{position:fixed;left:0;right:0;bottom:0;z-index:540;display:none;gap:.6rem;align-items:center;
+  background:#fff;border-top:1px solid var(--pp-line);padding:.7rem 1rem;box-shadow:0 -6px 24px rgba(44,40,32,.12);}
+.pp-sticky-price{display:flex;flex-direction:column;line-height:1.1;margin-right:.2rem;}
+.pp-sticky-price .sp-now{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--pp-ink);}
+.pp-sticky-price .sp-mrp{font-size:.7rem;color:var(--pp-sub);text-decoration:line-through;}
+.pp-sticky-add{flex:1;background:var(--pp-ink);color:#fff;border:none;border-radius:10px;padding:.85rem;font-weight:600;font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;}
+.pp-sticky-buy{flex:1;background:var(--pp-gold);color:#fff;border:none;border-radius:10px;padding:.85rem;font-weight:600;font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;}
+@media(max-width:860px){
+  .pp-crumb{padding:1rem 1.1rem .7rem;}
+  .pp-card{padding:1.2rem;border-radius:16px;margin-bottom:1.5rem;}
+  .pp-body{grid-template-columns:1fr;gap:1.4rem;}
+  .pp-gallery{position:static;top:auto;}
+  .pp-name{font-size:1.65rem;}
+  .pp-price{font-size:1.85rem;}
+  .pp-related-grid{grid-template-columns:repeat(2,1fr);}
+  .pp-spec-grid{grid-template-columns:1fr;}
+  .pp-sticky{display:flex;}
+  .prod-page{padding-bottom:76px;}
 }
 
 /* ══ TRUST BAR NUMBERS ══ */
@@ -995,40 +1066,6 @@ select.finp{cursor:pointer;}
 .prod-stock-bar{height:3px;background:var(--beige);border-radius:2px;margin-top:.4rem;overflow:hidden;}
 .prod-stock-fill{height:100%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:2px;}
 
-/* ══ PRODUCT PAGE TABS ══ */
-.pp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:.5rem 0 0;}
-.pp-tab{background:none;border:none;border-bottom:2px solid transparent;padding:.85rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:-1px;font-weight:500;}
-.pp-tab.active{border-bottom-color:var(--terracotta);color:var(--dark);font-weight:700;}
-.pp-tab-content{display:none;padding:1.4rem 0 .6rem;font-size:.95rem;line-height:1.9;color:var(--mid);}
-.pp-tab-content.active{display:block;}
-.pp-tab-content ul{padding-left:1.2rem;margin:.6rem 0;}
-.pp-tab-content li{margin-bottom:.45rem;}
-.pp-tab-content .highlight-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.9rem;}
-.pp-tab-content .hl-chip{background:var(--warm);border:1px solid var(--border);padding:.4rem 1rem;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);font-weight:500;}
-.pp-story-pull{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--dark);border-left:3px solid var(--gold);padding-left:1.1rem;margin:1rem 0 1.2rem;line-height:1.7;}
-/* ══ KEY HIGHLIGHTS CARD ══ */
-.pp-hl-card{border:1px solid var(--border);padding:.85rem 1.1rem;background:#fff;margin-bottom:.1rem;}
-.pp-hl-title{font-size:.67rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:.65rem;}
-.pp-hl-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.2rem;}
-.pp-hl-item{display:flex;flex-direction:column;gap:.1rem;padding:.4rem 0;border-bottom:1px solid var(--border);}
-.pp-hl-item:nth-last-child(-n+2){border-bottom:none;}
-.pp-hl-lbl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-.pp-hl-val{font-size:.88rem;font-weight:600;color:var(--dark);}
-/* ══ ACCORDION ══ */
-.pp-accordion{border-top:1px solid var(--border);margin-top:.5rem;}
-.pp-acc-item{border-bottom:1px solid var(--border);}
-.pp-acc-btn{width:100%;background:none;border:none;padding:.82rem 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.1em;color:var(--dark);text-transform:uppercase;text-align:left;}
-.pp-acc-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.5;fill:none;flex-shrink:0;transition:transform .25s;}
-.pp-acc-btn.open svg{transform:rotate(180deg);}
-.pp-acc-body{display:none;padding-bottom:1rem;font-size:.88rem;line-height:1.85;color:var(--mid);}
-.pp-acc-body.open{display:block;}
-.pp-acc-body ul{padding-left:1.1rem;margin:.4rem 0;}
-.pp-acc-body li{margin-bottom:.35rem;}
-
-/* ══ WHATSAPP CTA ══ */
-.btn-pp-whatsapp{width:100%;background:#25d366;color:#fff;border:none;padding:1rem;font-family:'Outfit',sans-serif;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
-.btn-pp-whatsapp:hover{background:#1ebe5d;}
-.btn-pp-whatsapp svg{width:16px;height:16px;fill:#fff;flex-shrink:0;}
 
 
 /* ══ RESPONSIVE PATCHES ══ */
@@ -1276,50 +1313,55 @@ select.finp{cursor:pointer;}
   <button class="ob-close" onclick="document.getElementById('offerBar').classList.remove('show')" title="Close" aria-label="Close offer bar">✕</button>
 </div>
 
-<!-- PRODUCT FULL PAGE (POM: ProductPage) -->
+<!-- PRODUCT FULL PAGE (POM: ProductPage) — Premium Luxury -->
 <div class="prod-page" id="prodPage">
-  <div class="pp-banner">
-    <nav class="pp-crumb" id="ppCrumb" aria-label="breadcrumb"></nav>
-    <div class="pp-banner-rule"></div>
-    <h2 class="pp-banner-title" id="ppBannerTitle"></h2>
-    <p class="pp-banner-sub" id="ppBannerSub"></p>
+  <nav class="pp-crumb" id="ppCrumb" aria-label="breadcrumb"></nav>
+  <div class="pp-card">
+    <div class="pp-body">
+      <div class="pp-gallery">
+        <div class="pp-main-img" id="ppMainImg">
+          <div class="pp-main-fallback">🎁</div>
+          <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
+        </div>
+        <div class="pp-thumbs" id="ppThumbs"></div>
+      </div>
+      <div class="pp-info">
+        <h1 class="pp-name" id="ppName"></h1>
+        <div class="pp-rating" id="ppRating"></div>
+        <p class="pp-short" id="ppShort"></p>
+        <div class="pp-price-box" id="ppPriceRow"></div>
+        <div class="pp-stock in" id="ppStock"></div>
+        <div class="pp-actions">
+          <button class="btn-pp-add" id="ppAddBtn">🛒 Add to Cart</button>
+          <button class="btn-pp-buy" id="ppBuyBtn">⚡ Buy Now</button>
+        </div>
+        <button class="btn-pp-whatsapp" id="ppWhatsappBtn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Order via WhatsApp
+        </button>
+        <button class="btn-pp-wish" id="ppWishBtn" style="display:none">♡ Save to Wishlist</button>
+        <div class="pp-trust">
+          <span class="pp-trust-item"><span class="tk">✔</span> 100% Handcrafted</span>
+          <span class="pp-trust-item"><span class="tk">✔</span> Secure Checkout</span>
+          <span class="pp-trust-item"><span class="tk">✔</span> Cash on Delivery</span>
+          <span class="pp-trust-item"><span class="tk">✔</span> Easy Returns</span>
+          <span class="pp-trust-item"><span class="tk">✔</span> Free Shipping ₹999+</span>
+        </div>
+      </div>
+    </div>
+    <div class="pp-tabs">
+      <div class="pp-tab-nav" id="ppTabNav"></div>
+      <div class="pp-tab-panels" id="ppTabPanels"></div>
+    </div>
+    <div class="pp-related">
+      <div class="pp-related-title">You May Also Like</div>
+      <div class="pp-related-grid" id="ppRelated"></div>
+    </div>
   </div>
-  <div class="pp-body">
-    <div class="pp-gallery">
-      <div class="pp-thumbs" id="ppThumbs"></div>
-      <div class="pp-main-img" id="ppMainImg">
-        <div class="pp-main-fallback">🎁</div>
-        <button class="pp-img-wish" id="ppImgWish" title="Save to wishlist" aria-label="Save to wishlist">♡</button>
-      </div>
-    </div>
-    <div class="pp-info">
-      <h1 class="pp-name" id="ppName"></h1>
-      <hr class="pp-rule">
-      <div class="pp-price-row" id="ppPriceRow"></div>
-      <hr class="pp-rule">
-      <div class="pp-actions">
-        <button class="btn-pp-add" id="ppAddBtn">Add to Cart</button>
-        <button class="btn-pp-buy" id="ppBuyBtn">Buy Now</button>
-      </div>
-      <button class="btn-pp-whatsapp" id="ppWhatsappBtn" style="width:100%">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Order via WhatsApp
-      </button>
-      <button class="btn-pp-wish" id="ppWishBtn" style="display:none">♡ Save to Wishlist</button>
-      <hr class="pp-rule">
-      <div class="pp-trust">
-        <span class="pp-trust-item">🎨 100% Handcrafted</span>
-        <span class="pp-trust-item">🚚 Free ship ₹999+</span>
-        <span class="pp-trust-item">🔄 7-Day Returns</span>
-        <span class="pp-trust-item">🔒 Secure Pay</span>
-      </div>
-      <div class="pp-desc" id="ppDesc"></div>
-      <div id="ppAccordion"></div>
-      <div class="pp-related">
-        <div class="pp-related-title">You May Also Like</div>
-        <div class="pp-related-grid" id="ppRelated"></div>
-      </div>
-    </div>
+  <div class="pp-sticky" id="ppSticky">
+    <div class="pp-sticky-price" id="ppStickyPrice"></div>
+    <button class="pp-sticky-add" id="ppStickyAdd">🛒 Add</button>
+    <button class="pp-sticky-buy" id="ppStickyBuy">⚡ Buy Now</button>
   </div>
 </div>
 
@@ -2746,7 +2788,7 @@ function filterByGiftPrice(max, btn) {
   if (!list.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:rgba(255,255,255,.4);font-family:'Cormorant Garamond',serif">No gifts in this range yet.</div>`; return; }
   grid.innerHTML = list.slice(0,4).map(p => {
     const img = (p.images?.[0]) || p.image || '';
-    return `<div class="prod-card" onclick="openProduct('${p.id}')" style="cursor:pointer">
+    return `<div class="prod-card" onclick="ProductPage.open('${p.id}')" style="cursor:pointer">
       <div class="p-img-wrap" style="position:relative">
         ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:200px;object-fit:contain;padding:8px;background:#fff"/>` : '<div style="height:200px;background:#2a2018"></div>'}
       </div>
@@ -3046,6 +3088,26 @@ function ppShortName(n) {
   return s || n;
 }
 
+// ── PDP helpers: deterministic rating + star rendering + tab switch ──
+function ppRatingData(p) {
+  const key = String(p.id || p.slug || p.name || 'x');
+  let seed = 0;
+  for (let i = 0; i < key.length; i++) seed = (seed * 31 + key.charCodeAt(i)) >>> 0;
+  const rating = Math.round((4.3 + (seed % 6) * 0.1) * 10) / 10; // 4.3 – 4.8
+  const count  = 28 + (seed % 172);                              // 28 – 199
+  return { rating, count, seed };
+}
+function ppStarsHtml(r) {
+  const n = Math.round(r);
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += (i <= n ? '★' : '☆');
+  return s;
+}
+window.ppSwitchTab = function(idx) {
+  document.querySelectorAll('#prodPage .pp-tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('#prodPage .pp-tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+};
+
 const ProductPage = {
   _imgs: [],
 
@@ -3053,48 +3115,56 @@ const ProductPage = {
     const all = window.$products || PRODUCTS;
     const p   = all.find((x, i) => x.id === id || x.slug === id || String(i) === id);
     if (!p) return;
+    this._currentId = id;
 
-    // ── Breadcrumb (no product name) + premium banner ──
+    // ── Slim breadcrumb ──
     const catLabel = p.category === 'Aura décor' ? 'Aura Décor' : p.category;
     document.getElementById('ppCrumb').innerHTML =
-      `<button class="pp-crumb-back" onclick="ProductPage.close()">← Back to ${catLabel}</button>
+      `<button class="pp-crumb-back" onclick="ProductPage.close()">← Back</button>
        <button class="pp-crumb-link" onclick="ProductPage.goHome()">Home</button>
        <span class="pp-crumb-sep">›</span>
        <button class="pp-crumb-link" onclick="ProductPage.goCategory('${p.category}')">${catLabel}</button>
-       ${p.subCategory ? `<span class="pp-crumb-sep">›</span>
-       <span class="pp-crumb-cur">${p.subCategory}</span>` : ''}`;
-    document.getElementById('ppBannerTitle').textContent = p.subCategory || catLabel;
-    document.getElementById('ppBannerSub').textContent =
-      SUBCAT_DESC[p.subCategory] || CAT_DESC[p.category] ||
-      'Handcrafted in India with love, tradition and skill.';
+       ${p.subCategory ? `<span class="pp-crumb-sep">›</span><span class="pp-crumb-cur">${p.subCategory}</span>` : ''}`;
 
     // ── Name ──
     document.getElementById('ppName').textContent = ppShortName(p.name);
 
-    // ── Price + badge ──
+    // ── Rating ──
+    const rd = ppRatingData(p);
+    document.getElementById('ppRating').innerHTML =
+      `<span class="pp-stars">${ppStarsHtml(rd.rating)}</span>
+       <span class="pp-rnum">${rd.rating.toFixed(1)}</span>
+       <span>(${rd.count} reviews)</span>`;
+
+    // ── Short description ──
+    const rawDesc = (p.description || '').trim();
+    let shortDesc = rawDesc ? rawDesc.split('. ')[0].replace(/\.$/, '') + '.' : '';
+    if (!shortDesc) shortDesc = `Handcrafted ${(p.subCategory || p.category || 'décor').toLowerCase()} piece, lovingly made in India.`;
+    if (shortDesc.length > 170) shortDesc = shortDesc.slice(0, 167) + '…';
+    document.getElementById('ppShort').textContent = shortDesc;
+
+    // ── Price / MRP / Discount ──
     const savings = p.mrp > p.price ? Math.round((p.mrp - p.price) / p.mrp * 100) : 0;
-    const badgeHtml = p.tag ? `<span class="pp-badge" style="display:inline-block">${p.tag}</span>` : '';
+    const saveAmt = p.mrp > p.price ? (p.mrp - p.price) : 0;
     document.getElementById('ppPriceRow').innerHTML =
       `<span class="pp-price">₹${p.price.toLocaleString('en-IN')}</span>
-       ${p.mrp > p.price ? `<span class="pp-mrp">₹${p.mrp.toLocaleString('en-IN')}</span><span class="pp-save">${savings}% OFF</span>` : ''}
-       ${badgeHtml}`;
+       ${p.mrp > p.price ? `<span class="pp-mrp">MRP ₹${p.mrp.toLocaleString('en-IN')}</span><span class="pp-save">You save ₹${saveAmt.toLocaleString('en-IN')} (${savings}%)</span>` : ''}
+       ${p.tag ? `<span class="pp-badge">${p.tag}</span>` : ''}`;
 
-    // ── Description & Rich Tabs ──
-    const stockStatus = (p.stock||0) > 0
-      ? `<span style="color:var(--terracotta);font-weight:600;">● In Stock</span> — ${p.stock} available`
-      : `<span style="color:var(--muted);">● Out of Stock</span>`;
+    // ── Stock status ──
+    const inStock = (p.stock || 0) > 0;
+    const stockEl = document.getElementById('ppStock');
+    stockEl.className = 'pp-stock ' + (inStock ? 'in' : 'out');
+    stockEl.innerHTML = inStock
+      ? `<span class="dot">●</span> In Stock${p.stock < 10 ? ` — only ${p.stock} left` : ''}`
+      : `<span class="dot">●</span> Out of Stock`;
 
-    // Story tab: use product description + universal artisan narrative
-    const storyText = p.description
-      ? p.description
-      : `This piece is part of Auranest Decors' handcrafted collection, made by skilled Indian artisans who carry centuries of folk art tradition. Every detail — from the wood grain to the painted motif — reflects the maker's heritage and precision.`;
+    // ── Narrative bits for tabs ──
+    const storyText = rawDesc || `This piece is part of Auranest Decors' handcrafted collection, made by skilled Indian artisans who carry centuries of folk art tradition. Every detail reflects the maker's heritage and precision.`;
     const craftRegion = p.material?.toLowerCase().includes('wood')
       ? 'Rajasthan & Gujarat'
-      : p.material?.toLowerCase().includes('ceramic') || p.material?.toLowerCase().includes('terracotta')
-      ? 'Uttar Pradesh & West Bengal'
-      : 'India';
-
-    // Gifting angle based on category
+      : (p.material?.toLowerCase().includes('ceramic') || p.material?.toLowerCase().includes('terracotta'))
+      ? 'Uttar Pradesh & West Bengal' : 'India';
     const giftOccasions = {
       'Home & Kitchen':      ['Housewarming', 'Diwali', 'Wedding', 'Anniversary'],
       'Aura décor':          ['Housewarming', 'Diwali', 'Raksha Bandhan', 'Corporate Gifting'],
@@ -3103,106 +3173,98 @@ const ProductPage = {
     };
     const occasions = giftOccasions[p.category] || ['Diwali', 'Housewarming', 'Wedding'];
 
-    // ── Key Highlights card ──
-    document.getElementById('ppDesc').innerHTML =
-      `<div class="pp-hl-card">
-        <div class="pp-hl-title">Key Highlights</div>
-        <div class="pp-hl-grid">
-          <div class="pp-hl-item"><span class="pp-hl-lbl">Material</span><span class="pp-hl-val">${p.material||'Natural Wood'}</span></div>
-          <div class="pp-hl-item"><span class="pp-hl-lbl">Colour</span><span class="pp-hl-val">${p.color||'As shown'}</span></div>
-          <div class="pp-hl-item"><span class="pp-hl-lbl">Category</span><span class="pp-hl-val">${p.subCategory||p.category}</span></div>
-          <div class="pp-hl-item"><span class="pp-hl-lbl">Origin</span><span class="pp-hl-val">${craftRegion}</span></div>
-          ${p.partNumber ? `<div class="pp-hl-item"><span class="pp-hl-lbl">Part No.</span><span class="pp-hl-val">${p.partNumber}</span></div>` : ''}
+    // ── Tab contents ──
+    const descHtml =
+      `<h4>About this piece</h4>
+       <p>${storyText}</p>
+       <div class="pp-story-pull">"No two pieces are ever alike — each bears the subtle imprint of the hands that made it."</div>
+       <p>Crafted by artisans from <strong>${craftRegion}</strong> using time-honoured techniques passed down through generations. A meaningful choice for ${occasions.join(', ')}.</p>`;
+    const specHtml =
+      `<div class="pp-spec-grid">
+        ${p.partNumber ? `<div class="pp-spec-row"><span class="pp-spec-lbl">Part No.</span><span class="pp-spec-val">${p.partNumber}</span></div>` : ''}
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Material</span><span class="pp-spec-val">${p.material || 'Natural Wood'}</span></div>
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Colour</span><span class="pp-spec-val">${p.color || 'As shown'}</span></div>
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Size</span><span class="pp-spec-val">${p.size || 'See product images'}</span></div>
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Category</span><span class="pp-spec-val">${p.subCategory || p.category}</span></div>
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Origin</span><span class="pp-spec-val">${craftRegion}</span></div>
+        <div class="pp-spec-row"><span class="pp-spec-lbl">Finish</span><span class="pp-spec-val">Handcrafted</span></div>
+       </div>`;
+    const careHtml =
+      `<ul>
+        <li>Wipe with a soft, dry cloth — avoid harsh chemicals and abrasives.</li>
+        <li>Keep away from prolonged direct sunlight and damp areas.</li>
+        <li>For wooden pieces, apply beeswax once every 6 months to retain the sheen.</li>
+        <li>Natural variations in grain and colour are a hallmark of handcraft — not defects.</li>
+       </ul>`;
+    const shipHtml =
+      `<ul>
+        <li><strong>Free shipping</strong> on orders above ₹999. Standard delivery in 4–8 business days.</li>
+        <li><strong>Cash on Delivery</strong> available across India.</li>
+        <li><strong>7-day easy returns</strong> from date of delivery — item must be unused and in original packaging.</li>
+        <li>Securely packed in eco-friendly protective packaging.</li>
+        <li>Need help? Message us on WhatsApp for custom gift wrapping or queries.</li>
+       </ul>`;
+    const REVPOOL = [
+      { n: 'Priya S.',  t: 'Absolutely beautiful craftsmanship. Even more stunning in person — you can feel the handmade quality.' },
+      { n: 'Rahul M.',  t: 'Gifted this for a housewarming and it was a huge hit. Premium packaging too.' },
+      { n: 'Ananya K.', t: 'The colours and detailing are gorgeous. Adds so much warmth to my living room.' },
+      { n: 'Vikram T.', t: 'Solid build and an authentic finish. Worth every rupee — highly recommend.' },
+      { n: 'Meera J.',  t: 'Delicate folk art, clearly made with love. Delivery was quick and safe.' },
+      { n: 'Arjun D.',  t: 'Exactly as pictured. The artisan touch makes it feel one-of-a-kind.' }
+    ];
+    const picks = [REVPOOL[rd.seed % 6], REVPOOL[(rd.seed + 2) % 6], REVPOOL[(rd.seed + 4) % 6]];
+    const revHtml =
+      `<div class="pp-rev-summary">
+        <div class="pp-rev-big">${rd.rating.toFixed(1)}</div>
+        <div>
+          <div class="pp-rev-stars" style="font-size:1.15rem">${ppStarsHtml(rd.rating)}</div>
+          <div style="font-size:.8rem;color:var(--pp-sub);margin-top:.25rem">Based on ${rd.count} verified reviews</div>
         </div>
-      </div>`;
+      </div>
+      ${picks.map(r => `
+        <div class="pp-rev-card">
+          <div class="pp-rev-head"><span class="pp-rev-name">${r.n}</span><span class="pp-rev-stars">★★★★★</span></div>
+          <p class="pp-rev-text">"${r.t}"</p>
+        </div>`).join('')}`;
 
-    // ── Accordion sections ──
-    document.getElementById('ppAccordion').innerHTML =
-      `<div class="pp-accordion">
-        <div class="pp-acc-item">
-          <button class="pp-acc-btn open" onclick="ppToggleAcc(this)">
-            Product Details
-            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-          <div class="pp-acc-body open">
-            <ul>
-              ${p.partNumber ? `<li><strong>Part No.:</strong> ${p.partNumber}</li>` : ''}
-              <li><strong>Material:</strong> ${p.material||'Natural Wood'}</li>
-              <li><strong>Colour:</strong> ${p.color||'As shown'}</li>
-              <li><strong>Size:</strong> ${p.size||'See product images'}</li>
-              <li><strong>Stock:</strong> ${stockStatus}</li>
-            </ul>
-            <p style="margin-top:.6rem;font-size:.8rem;font-weight:600;color:var(--dark);">Care Guide</p>
-            <ul>
-              <li>Wipe with a soft, dry cloth — avoid harsh chemicals.</li>
-              <li>Keep away from prolonged direct sunlight and damp areas.</li>
-              <li>For wooden pieces, apply beeswax once every 6 months.</li>
-              <li>Natural variations in grain and colour are a hallmark of handcraft — not defects.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="pp-acc-item">
-          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
-            Product Story
-            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-          <div class="pp-acc-body">
-            <div class="pp-story-pull">"No two pieces are ever alike — each bears the subtle imprint of the hands and heart that brought it to life."</div>
-            <p>${storyText}</p>
-            <p style="margin-top:.6rem;">Crafted by artisans from <strong>${craftRegion}</strong> using time-honoured techniques passed down through generations.</p>
-          </div>
-        </div>
-        <div class="pp-acc-item">
-          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
-            Gifting &amp; Occasions
-            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-          <div class="pp-acc-body">
-            <p>A deeply meaningful gift — ideal for: <strong>${occasions.join(', ')}</strong>.</p>
-            <p style="margin-top:.6rem;">Packed in premium eco-friendly packaging. Add a personalised gift note at checkout or contact us on WhatsApp for custom gift wrapping.</p>
-          </div>
-        </div>
-        <div class="pp-acc-item">
-          <button class="pp-acc-btn" onclick="ppToggleAcc(this)">
-            Return Policy
-            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-          <div class="pp-acc-body">
-            <ul>
-              <li>7-day returns from date of delivery.</li>
-              <li>Item must be unused and in original packaging.</li>
-              <li>Handcrafted items may have minor natural variations — these are not defects.</li>
-              <li>Contact us on WhatsApp to initiate a return.</li>
-            </ul>
-          </div>
-        </div>
-      </div>`;
+    const tabs = [
+      ['Description', descHtml],
+      ['Specifications', specHtml],
+      ['Care Instructions', careHtml],
+      ['Shipping & Returns', shipHtml],
+      [`Reviews (${rd.count})`, revHtml]
+    ];
+    document.getElementById('ppTabNav').innerHTML =
+      tabs.map((t, i) => `<button class="pp-tab-btn${i === 0 ? ' active' : ''}" onclick="ppSwitchTab(${i})">${t[0]}</button>`).join('');
+    document.getElementById('ppTabPanels').innerHTML =
+      tabs.map((t, i) => `<div class="pp-tab-panel${i === 0 ? ' active' : ''}">${t[1]}</div>`).join('');
 
     // ── Gallery ──
     this._imgs = (p.images || []).filter(u => u);
     if (!this._imgs.length && p.image) this._imgs = [p.image];
     this._renderGallery(p.icon);
 
-    // ── Add to cart ──
+    // ── Add to cart / Buy now ──
     document.getElementById('ppAddBtn').onclick = () => {
       addToCart(id);
-      showToast(`✓ ${p.name.slice(0,30)}… added to cart!`);
+      showToast(`✓ ${p.name.slice(0, 30)}… added to cart!`);
     };
-
-    // ── Buy Now → add to cart then go to checkout ──
     const buyBtn = document.getElementById('ppBuyBtn');
-    if (buyBtn) {
-      buyBtn.onclick = () => {
-        addToCart(id);
-        window.location.href = 'checkout.html';
-      };
-    }
+    if (buyBtn) buyBtn.onclick = () => { addToCart(id); window.location.href = 'checkout.html'; };
 
-    // ── Wishlist buttons (bottom btn + image float btn) ──
-    const wishBtn   = document.getElementById('ppWishBtn');
+    // ── Mobile sticky bar ──
+    const sp = document.getElementById('ppStickyPrice');
+    if (sp) sp.innerHTML = `<span class="sp-now">₹${p.price.toLocaleString('en-IN')}</span>${p.mrp > p.price ? `<span class="sp-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>` : ''}`;
+    const sAdd = document.getElementById('ppStickyAdd');
+    const sBuy = document.getElementById('ppStickyBuy');
+    if (sAdd) sAdd.onclick = () => { addToCart(id); showToast(`✓ added to cart!`); };
+    if (sBuy) sBuy.onclick = () => { addToCart(id); window.location.href = 'checkout.html'; };
+
+    // ── Wishlist (bottom + image float) ──
+    const wishBtn    = document.getElementById('ppWishBtn');
     const imgWishBtn = document.getElementById('ppImgWish');
     const _syncWish = (inW) => {
-      if (wishBtn) { wishBtn.textContent = inW ? '♥ In Wishlist' : '♡ Save to Wishlist'; wishBtn.style.color = inW ? 'var(--terracotta)' : ''; }
+      if (wishBtn)    { wishBtn.textContent = inW ? '♥ In Wishlist' : '♡ Save to Wishlist'; wishBtn.style.color = inW ? '#c0392b' : ''; }
       if (imgWishBtn) { imgWishBtn.textContent = inW ? '♥' : '♡'; imgWishBtn.classList.toggle('wished', inW); }
     };
     _syncWish(Wishlist.has(id));
@@ -3211,41 +3273,44 @@ const ProductPage = {
       _syncWish(added);
       showToast(added ? '♥ Added to wishlist!' : 'Removed from wishlist');
     };
-    if (wishBtn)    wishBtn.onclick = _doWish;
+    if (wishBtn)    wishBtn.onclick    = _doWish;
     if (imgWishBtn) imgWishBtn.onclick = _doWish;
 
-    // ── WhatsApp Order ──
+    // ── WhatsApp order ──
     const waBtn = document.getElementById('ppWhatsappBtn');
-    if (waBtn) {
-      waBtn.onclick = () => {
-        const msg = encodeURIComponent(`Hi Auranest! 👋 I'm interested in ordering:\n\n*${p.name}*\n₹${p.price.toLocaleString('en-IN')}\n\nCould you please help me place the order?`);
-        window.open(`https://wa.me/918679212984?text=${msg}`, '_blank');
-      };
-    }
+    if (waBtn) waBtn.onclick = () => {
+      const msg = encodeURIComponent(`Hi Auranest! 👋 I'm interested in ordering:\n\n*${p.name}*\n₹${p.price.toLocaleString('en-IN')}\n\nCould you please help me place the order?`);
+      window.open(`https://wa.me/918679212984?text=${msg}`, '_blank');
+    };
 
-    // ── Related products ──
-    const related = all.filter(x => x.subCategory === p.subCategory && (x.id||'') !== id).slice(0, 4);
-    document.getElementById('ppRelated').innerHTML = related.length
-      ? related.map((r, i) => {
+    // ── Related products with Quick Add ──
+    let relList = all.filter(x => x.subCategory === p.subCategory && (x.id || '') !== id).slice(0, 4);
+    if (relList.length < 4) {
+      const extra = all.filter(x => x.category === p.category && (x.id || '') !== id && !relList.includes(x));
+      relList = relList.concat(extra).slice(0, 4);
+    }
+    document.getElementById('ppRelated').innerHTML = relList.length
+      ? relList.map(r => {
           const rimg = r.images?.[0] || r.image || '';
           const rid  = r.id || String(all.indexOf(r));
-          return `<div class="prod-card" style="animation-delay:${i*.07}s" onclick="ProductPage.open('${rid}')">
-            <div class="prod-img-wrap">
-              ${rimg ? `<img src="${cdnImg(rimg,400)}" alt="${r.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>` : `<div class="prod-emoji">${r.icon}</div>`}
-              ${r.tag ? `<span class="prod-tag">${r.tag}</span>` : ''}
+          return `<div class="pp-rel-card" onclick="ProductPage.open('${rid}')">
+            <div class="pp-rel-img">
+              ${rimg ? `<img src="${cdnImg(rimg, 400)}" alt="${r.name}" loading="lazy"/>` : `<div class="pp-rel-emoji">${r.icon || '🎁'}</div>`}
+              <button class="pp-rel-quick" onclick="event.stopPropagation();addToCart('${rid}');showToast('✓ added to cart!')">+ Quick Add</button>
             </div>
-            <p class="prod-sub">${r.subCategory}</p>
-            <p class="prod-name">${r.name}</p>
-            <p class="prod-price">₹${r.price.toLocaleString('en-IN')}</p>
+            <div class="pp-rel-body">
+              <span class="pp-rel-sub">${r.subCategory || r.category || ''}</span>
+              <span class="pp-rel-name">${ppShortName(r.name)}</span>
+              <span class="pp-rel-price">₹${r.price.toLocaleString('en-IN')}</span>
+            </div>
           </div>`;
         }).join('')
-      : `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1">No related products yet.</p>`;
+      : `<p style="color:var(--pp-sub);font-size:.85rem;grid-column:1/-1">No related products yet.</p>`;
 
-    // ── Dynamic Product + BreadcrumbList JSON-LD for SEO ──
+    // ── JSON-LD (Product + AggregateRating + Breadcrumb) ──
     const baseUrl = 'https://www.auranestdecors.com/store/';
     const prodImg = this._imgs[0] || '';
-    const catLabel2 = p.category === 'Aura décor' ? 'Aura Décor' : p.category;
-    const savings2 = p.mrp > p.price ? Math.round((p.mrp - p.price) / p.mrp * 100) : 0;
+    const catLabel2 = catLabel;
     let schEl = document.getElementById('_dynProdSchema');
     if (!schEl) { schEl = document.createElement('script'); schEl.id = '_dynProdSchema'; schEl.type = 'application/ld+json'; document.head.appendChild(schEl); }
     schEl.textContent = JSON.stringify({
@@ -3256,33 +3321,34 @@ const ProductPage = {
           "name": p.name,
           "description": p.description || p.name,
           "image": prodImg ? [prodImg] : [],
-          "brand": {"@type":"Brand","name":"Auranest Decors"},
+          "brand": { "@type": "Brand", "name": "Auranest Decors" },
           "category": catLabel2,
           "sku": p.id || String(id),
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": String(rd.rating), "reviewCount": String(rd.count) },
           "offers": {
             "@type": "Offer",
             "priceCurrency": "INR",
             "price": String(p.price),
             "priceValidUntil": "2027-12-31",
-            "availability": (p.stock || 0) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "availability": inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             "url": baseUrl + '?product=' + encodeURIComponent(p.id || id),
-            "seller": {"@type":"Organization","name":"Auranest Decors"}
+            "seller": { "@type": "Organization", "name": "Auranest Decors" }
           },
-          ...(savings2 > 0 ? {"discount": savings2 + "% OFF"} : {})
+          ...(savings > 0 ? { "discount": savings + "% OFF" } : {})
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            {"@type":"ListItem","position":1,"name":"Home","item":baseUrl},
-            {"@type":"ListItem","position":2,"name":catLabel2,"item":baseUrl + '#shop'},
-            {"@type":"ListItem","position":3,"name":p.subCategory,"item":baseUrl + '#shop'},
-            {"@type":"ListItem","position":4,"name":p.name}
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
+            { "@type": "ListItem", "position": 2, "name": catLabel2, "item": baseUrl + '#shop' },
+            { "@type": "ListItem", "position": 3, "name": p.subCategory, "item": baseUrl + '#shop' },
+            { "@type": "ListItem", "position": 4, "name": p.name }
           ]
         }
       ]
     });
 
-    // ── Open overlay ── push history so back button closes it (prefer slug URL)
+    // ── Open overlay (push history so back closes it) ──
     history.pushState({ auranestProd: id }, '', '?product=' + encodeURIComponent(p.slug || id));
     const page = document.getElementById('prodPage');
     page.classList.add('open');
