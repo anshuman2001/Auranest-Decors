@@ -656,6 +656,7 @@ function OTPModal({ onVerified, onGuest }) {
           await updatePassword(user, password);
         } else { throw linkErr; }
       }
+      localStorage.setItem('auranest_name', name.trim());
       try {
         await window._createCustomer(user.uid, { name: name.trim(), email: email.trim(), mobile: phone, hasPIN: true });
       } catch (fsErr) {

@@ -420,7 +420,6 @@ select.form-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://ww
   <button class="mt-tab active" data-tab="dashboard">&#9672; Dashboard</button>
   <button class="mt-tab" data-tab="orders">&#9672; Orders</button>
   <button class="mt-tab" data-tab="addresses">&#9672; Addresses</button>
-  <button class="mt-tab" data-tab="profile">&#9672; Profile</button>
 </div>
 
 <!-- LAYOUT -->
@@ -435,7 +434,6 @@ select.form-sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://ww
       <li><button class="active" data-tab="dashboard"><span class="sb-icon">&#9672;</span>Dashboard</button></li>
       <li><button data-tab="orders"><span class="sb-icon">&#9672;</span>My Orders</button></li>
       <li><button data-tab="addresses"><span class="sb-icon">&#9672;</span>My Addresses</button></li>
-      <li><button data-tab="profile"><span class="sb-icon">&#9672;</span>Profile</button></li>
     </ul>
     <div class="sb-logout">
       <button id="sidebar-logout-btn">Sign Out</button>
@@ -663,12 +661,16 @@ function init() {
 
   /* ── render sidebar ── */
   function renderSidebar() {
-    const name   = customer.name || 'Customer';
+    const savedName = localStorage.getItem('auranest_name') || '';
+    const name   = customer.name || savedName || currentUser.displayName || 'Customer';
     const mobile = customer.mobile ? '+91 ' + customer.mobile : '';
     const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('sb-avatar').textContent = initials || 'A';
     document.getElementById('sb-name').textContent   = name;
     document.getElementById('sb-mobile').textContent = mobile;
+    // Update nav "My Account" link to show user's first name
+    const navLink = document.querySelector('.nav-links a.active');
+    if (navLink) navLink.textContent = name.split(' ')[0] || 'Account';
   }
 
   /* ── render section ── */

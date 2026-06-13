@@ -2177,13 +2177,18 @@ getDoc(doc(db, 'settings', 'branding')).then(snap => {
 // ── AUTH STATE LISTENER ──
 onAuthStateChanged(auth, (user) => {
   window.$user = user;
-  const btn = document.getElementById('authBtn');
+  const btn     = document.getElementById('authBtn');
+  const userBtn = document.getElementById('userBtn');
   if (user) {
-    btn.textContent = user.displayName?.split(' ')[0] || 'My Account';
-    btn.onclick = openMyOrders;
+    const savedName = localStorage.getItem('auranest_name');
+    const firstName = user.displayName?.split(' ')[0] || savedName?.split(' ')[0] || '';
+    btn.textContent = firstName || 'Account';
+    btn.onclick     = openMyOrders;
+    userBtn.onclick = openMyOrders;
   } else {
     btn.textContent = 'Sign In';
-    btn.onclick = openAuth;
+    btn.onclick     = openAuth;
+    userBtn.onclick = openAuth;
   }
 });
 
@@ -2528,134 +2533,16 @@ window.doLogout = async function() {
 
 // ── MY ORDERS — LUXURY FULL PAGE ──
 window.openMyOrders = async function() {
-  // If customer phone-auth session is active → use dedicated account page
+  // Phone-auth session active → go to account page
   try {
     const sess = JSON.parse(localStorage.getItem('auranest_session'));
     if (sess && Date.now() - sess.ts < 3600000) {
       window.location.href = 'account.html'; return;
     }
   } catch {}
-  if (!window.$user) { openAuth(); return; }
-  const page = document.getElementById('ordersPage');
-  const list = document.getElementById('myOrdersList');
-  const heroSub = document.getElementById('ordersHeroSub');
-  list.innerHTML = '<div style="text-align:center;padding:5rem 2rem;color:rgba(250,246,240,.28);font-family:\'Cormorant Garamond\',serif;font-size:1.15rem;letter-spacing:.06em;">Loading your orders…</div>';
-  heroSub.textContent = 'Loading your order history…';
-  page.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  // Status steps for timeline
-  const STEPS = ['Pending','Confirmed','Processing','Shipped','Delivered'];
-  function stepState(orderStatus, stepName) {
-    const si = STEPS.map(s=>s.toLowerCase()).indexOf(stepName.toLowerCase());
-    const oi = STEPS.map(s=>s.toLowerCase()).indexOf((orderStatus||'pending').toLowerCase());
-    if (oi < 0 || si < 0) return '';
-    if (si < oi)  return 'done';
-    if (si === oi) return 'active';
-    return '';
-  }
-
-  try {
-    const q    = query(collection(db, 'orders'), where('customerId', '==', window.$user.uid));
-    const snap = await getDocs(q);
-    const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    if (!orders.length) {
-      heroSub.textContent = 'You haven\'t placed any orders yet.';
-      list.innerHTML = `
-        <div class="orders-empty">
-          <span class="orders-empty-icon">📦</span>
-          <div class="orders-empty-title">No Orders Yet</div>
-          <div class="orders-empty-sub">Your placed orders will appear here once you shop with us.</div>
-        </div>`;
-      return;
-    }
-
-    const sorted = orders.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-    heroSub.textContent = sorted.length + ' order' + (sorted.length !== 1 ? 's' : '') + ' found';
-
-    const fmt = ts => ts?.seconds
-      ? new Date(ts.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
-      : '—';
-
-    list.innerHTML = sorted.map((o,idx) => {
-      const items  = o.items || [];
-      const status = (o.orderStatus||'pending');
-      const statusClass = status.toLowerCase().replace(/\s+/g,'-');
-      const isCancelled = statusClass === 'cancelled';
-
-      // Items HTML
-      const itemsHtml = items.length ? items.map(it => `
-        <div class="oe-item">
-          <div class="oe-item-img">${it.image ? `<img src="${cdnImg(it.image,120)}" alt="${it.name}" onerror="this.style.display='none'"/>` : (it.icon||'🏺')}</div>
-          <div class="oe-item-info">
-            <div class="oe-item-name">${it.name}</div>
-            <div class="oe-item-meta">Qty: ${it.qty} &nbsp;·&nbsp; ₹${(it.price).toLocaleString('en-IN')} each</div>
-          </div>
-          <div class="oe-item-price">₹${(it.price * it.qty).toLocaleString('en-IN')}</div>
-        </div>`).join('')
-      : '<div style="font-size:.8rem;color:rgba(250,246,240,.25);padding:.8rem 0">No item details available</div>';
-
-      // Timeline HTML (hidden if cancelled)
-      const timelineHtml = !isCancelled ? `
-        <div class="oe-timeline">
-          ${STEPS.map((step, i) => {
-            const state = stepState(status, step);
-            const isLast = i === STEPS.length - 1;
-            return `
-            <div class="oe-step ${state}">
-              <div class="oe-step-dot"></div>
-              <div class="oe-step-label">${step}</div>
-            </div>
-            ${!isLast ? `<div class="oe-step-line ${state === 'done' ? 'done' : ''}"></div>` : ''}`;
-          }).join('')}
-        </div>` : '';
-
-      // Address
-      const addr = o.customer
-        ? `${o.customer.name||''}${o.customer.address ? ', '+o.customer.address : ''}${o.customer.city ? ', '+o.customer.city : ''}${o.customer.pincode ? ' – '+o.customer.pincode : ''}<br><span style="opacity:.6">📞 ${o.customer.phone||'—'}</span>`
-        : '<span style="opacity:.4">—</span>';
-
-      return `
-      <div class="order-entry">
-        <div class="oe-header">
-          <div class="oe-number-wrap">
-            <div class="oe-number">Order #${o.orderId||o.id.slice(-8).toUpperCase()}</div>
-            <div class="oe-date">Placed on ${fmt(o.createdAt)}</div>
-          </div>
-          <div class="oe-status-badge s-${statusClass}">${status}</div>
-        </div>
-        ${timelineHtml}
-        <div class="oe-items-label">Items Ordered (${items.length})</div>
-        <div class="oe-items-list">${itemsHtml}</div>
-        <div class="oe-details">
-          <div>
-            <div class="oe-detail-label">Delivery Address</div>
-            <div class="oe-addr-val">${addr}</div>
-          </div>
-          <div>
-            <div class="oe-detail-label">Payment</div>
-            <div class="oe-payment-val">${o.paymentMethod?.toUpperCase()||'—'}</div>
-          </div>
-          <div class="oe-total-wrap">
-            <div class="oe-total-label">Order Total</div>
-            <div class="oe-total-amt">₹${(o.totalAmount||0).toLocaleString('en-IN')}</div>
-            <div class="oe-total-sub">${items.reduce((a,x)=>a+x.qty,0)} item${items.reduce((a,x)=>a+x.qty,0)!==1?'s':''} · incl. taxes</div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-
-  } catch(err) {
-    heroSub.textContent = 'Could not load orders';
-    list.innerHTML = `
-      <div class="orders-empty">
-        <span class="orders-empty-icon">⚠️</span>
-        <div class="orders-empty-title">Something went wrong</div>
-        <div class="orders-empty-sub">${err.message}</div>
-      </div>`;
-  }
-};
+  // No active session → go to login (phone OTP)
+  window.location.href = 'login.html?next=account.html';
+}
 
 window.closeOrdersPage = function() {
   document.getElementById('ordersPage').classList.remove('open');

@@ -263,21 +263,19 @@ footer a:hover{color:var(--gold)}
     <!-- ─── PHASE: pin ───────────────────────────── -->
     <div class="phase" id="phase-pin">
       <button class="back-link" id="pin-back">← Back</button>
-      <h1 class="card-title">Enter PIN</h1>
-      <p class="card-sub" id="pin-sub">Enter your 4-digit PIN</p>
+      <h1 class="card-title">Welcome Back</h1>
+      <p class="card-sub" id="pin-sub">Enter your password</p>
 
-      <div class="pin-row" id="pin-boxes">
-        <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-        <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-        <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-        <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <input type="password" id="pin-password" class="input-solo" placeholder="Your password" autocomplete="current-password"/>
       </div>
       <div id="pin-err" class="err" style="display:none"></div>
 
-      <button class="btn btn-gold" id="pin-btn" style="margin-top:1.2rem">
+      <button class="btn btn-gold" id="pin-btn" style="margin-top:.4rem">
         <span id="pin-btn-text">Sign In</span>
       </button>
-      <p class="info"><button class="lnk" id="forgot-pin-link">Forgot PIN?</button></p>
+      <p class="info"><button class="lnk" id="forgot-pin-link">Forgot password? Use OTP →</button></p>
       <div class="divider"><span>or</span></div>
       <button class="guest-link" id="pin-guest">Continue as Guest →</button>
     </div>
@@ -317,26 +315,13 @@ footer a:hover{color:var(--gold)}
         <label class="input-label">Email (optional)</label>
         <input type="email" id="profile-email" class="input-solo" placeholder="you@email.com"/>
       </div>
-
-      <div class="pin-pair">
-        <div>
-          <label class="input-label" style="margin-bottom:.6rem">Set PIN</label>
-          <div class="pin-set" id="profile-pin-boxes">
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-          </div>
-        </div>
-        <div>
-          <label class="input-label" style="margin-bottom:.6rem">Confirm PIN</label>
-          <div class="pin-set" id="profile-cpin-boxes">
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-          </div>
-        </div>
+      <div class="input-group">
+        <label class="input-label">Set Password (min 6 characters)</label>
+        <input type="password" id="profile-pin" class="input-solo" placeholder="Choose a password" autocomplete="new-password"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Confirm Password</label>
+        <input type="password" id="profile-cpin" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
       </div>
       <div id="profile-err" class="err" style="display:none"></div>
 
@@ -347,33 +332,21 @@ footer a:hover{color:var(--gold)}
 
     <!-- ─── PHASE: new-pin ──────────────────────── -->
     <div class="phase" id="phase-new-pin">
-      <h1 class="card-title">Set New PIN</h1>
-      <p class="card-sub">Choose a new 4-digit PIN for your account</p>
+      <h1 class="card-title">Set New Password</h1>
+      <p class="card-sub">Choose a new password for your account</p>
 
-      <div class="pin-pair">
-        <div>
-          <label class="input-label" style="margin-bottom:.6rem">New PIN</label>
-          <div class="pin-set" id="newpin-boxes">
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-          </div>
-        </div>
-        <div>
-          <label class="input-label" style="margin-bottom:.6rem">Confirm PIN</label>
-          <div class="pin-set" id="newpin-cboxes">
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-            <input type="text" class="pin-box" inputmode="numeric" maxlength="1"/>
-          </div>
-        </div>
+      <div class="input-group">
+        <label class="input-label">New Password (min 6 characters)</label>
+        <input type="password" id="newpin-pw" class="input-solo" placeholder="New password" autocomplete="new-password"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Confirm Password</label>
+        <input type="password" id="newpin-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
       </div>
       <div id="newpin-err" class="err" style="display:none"></div>
 
       <button class="btn btn-gold" id="newpin-btn">
-        <span id="newpin-btn-text">Save PIN & Continue</span>
+        <span id="newpin-btn-text">Save Password & Continue</span>
       </button>
     </div>
 
@@ -424,12 +397,12 @@ function init() {
     }
   });
 
-  setupBoxNav('pin-boxes',  '.pin-box',  4);
-  setupBoxNav('otp-boxes',  '.otp-box',  6);
-  setupBoxNav('profile-pin-boxes',  '.pin-box', 4);
-  setupBoxNav('profile-cpin-boxes', '.pin-box', 4);
-  setupBoxNav('newpin-boxes',  '.pin-box', 4);
-  setupBoxNav('newpin-cboxes', '.pin-box', 4);
+  setupBoxNav('otp-boxes', '.otp-box', 6);
+
+  // Enter key on password inputs
+  document.getElementById('pin-password').addEventListener('keydown', e => { if(e.key==='Enter') handlePin(); });
+  document.getElementById('profile-cpin').addEventListener('keydown', e => { if(e.key==='Enter') handleProfile(); });
+  document.getElementById('newpin-cpw').addEventListener('keydown', e => { if(e.key==='Enter') handleNewPin(); });
 
   /* STATE */
   let phase        = 'phone';
@@ -576,23 +549,23 @@ function init() {
   document.getElementById('pin-btn').addEventListener('click', handlePin);
 
   async function handlePin() {
-    const pin = getBoxVal('pin-boxes','.pin-box');
+    const password = document.getElementById('pin-password').value;
     setErr('pin-err','');
-    if (pin.length !== 4 || !/^\d{4}$/.test(pin)) { setErr('pin-err','Enter your 4-digit PIN'); return; }
+    if (password.length < 6) { setErr('pin-err','Password must be at least 6 characters'); return; }
     setLoading('pin-btn','pin-btn-text',true,'Signing in…');
     try {
-      const cred = await window._signEmail(buildEmail(phone), pin);
+      const cred = await window._signEmail(buildEmail(phone), password);
       authedUser = cred.user;
-      await window._updateDoc('customers', authedUser.uid, { lastLogin: window._serverTs() });
+      try { await window._updateDoc('customers', authedUser.uid, { lastLogin: window._serverTs() }); } catch {}
       window._setSession(authedUser.uid);
       redirect();
     } catch(e) {
       const msg = e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential'
-        ? 'Incorrect PIN. Try again or use "Forgot PIN?".'
+        ? 'Incorrect password. Try again or use "Forgot password?".'
         : e.message || 'Sign in failed.';
       setErr('pin-err', msg);
-      clearBoxes('pin-boxes','.pin-box');
-      document.querySelector('#pin-boxes .pin-box').focus();
+      document.getElementById('pin-password').value = '';
+      document.getElementById('pin-password').focus();
     } finally {
       setLoading('pin-btn','pin-btn-text',false,'Sign In');
     }
@@ -638,30 +611,34 @@ function init() {
   document.getElementById('profile-btn').addEventListener('click', handleProfile);
 
   async function handleProfile() {
-    const name  = document.getElementById('profile-name').value.trim();
-    const email = document.getElementById('profile-email').value.trim();
-    const pin   = getBoxVal('profile-pin-boxes','.pin-box');
-    const cpin  = getBoxVal('profile-cpin-boxes','.pin-box');
+    const name     = document.getElementById('profile-name').value.trim();
+    const email    = document.getElementById('profile-email').value.trim();
+    const password = document.getElementById('profile-pin').value;
+    const cpassword= document.getElementById('profile-cpin').value;
     setErr('profile-err','');
-    if (!name)          { setErr('profile-err','Full name is required.'); return; }
-    if (pin.length!==4) { setErr('profile-err','Set a 4-digit PIN.'); return; }
-    if (pin !== cpin)   { setErr('profile-err','PINs do not match.'); return; }
+    if (!name)               { setErr('profile-err','Full name is required.'); return; }
+    if (password.length < 6) { setErr('profile-err','Password must be at least 6 characters.'); return; }
+    if (password !== cpassword) { setErr('profile-err','Passwords do not match.'); return; }
     setLoading('profile-btn','profile-btn-text',true,'Creating…');
     try {
-      await window._linkCred(authedUser, buildEmail(phone), pin);
-      await window._setDoc('customers', authedUser.uid, {
-        name, mobile: phone, email: email || '',
-        hasPIN: true,
-        createdAt: window._serverTs(),
-        lastLogin: window._serverTs()
-      });
+      try {
+        await window._linkCred(authedUser, buildEmail(phone), password);
+      } catch(linkErr) {
+        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
+          await window._updatePw(authedUser, password);
+        } else { throw linkErr; }
+      }
+      localStorage.setItem('auranest_name', name);
+      try {
+        await window._setDoc('customers', authedUser.uid, {
+          name, mobile: phone, email: email || '',
+          hasPIN: true, createdAt: window._serverTs(), lastLogin: window._serverTs()
+        });
+      } catch {}
       window._setSession(authedUser.uid);
       redirect();
     } catch(e) {
-      const msg = e.code === 'auth/provider-already-linked'
-        ? 'Account already linked. Please sign in.'
-        : e.message || 'Could not create account.';
-      setErr('profile-err', msg);
+      setErr('profile-err', e.message || 'Could not create account.');
     } finally {
       setLoading('profile-btn','profile-btn-text',false,'Create Account');
     }
@@ -671,33 +648,29 @@ function init() {
   document.getElementById('newpin-btn').addEventListener('click', handleNewPin);
 
   async function handleNewPin() {
-    const pin  = getBoxVal('newpin-boxes','.pin-box');
-    const cpin = getBoxVal('newpin-cboxes','.pin-box');
+    const password  = document.getElementById('newpin-pw').value;
+    const cpassword = document.getElementById('newpin-cpw').value;
     setErr('newpin-err','');
-    if (pin.length!==4) { setErr('newpin-err','Enter a 4-digit PIN.'); return; }
-    if (pin !== cpin)   { setErr('newpin-err','PINs do not match.'); return; }
+    if (password.length < 6) { setErr('newpin-err','Password must be at least 6 characters.'); return; }
+    if (password !== cpassword) { setErr('newpin-err','Passwords do not match.'); return; }
     setLoading('newpin-btn','newpin-btn-text',true,'Saving…');
     try {
-      await window._updatePw(authedUser, pin);
-      // ensure hasPIN = true and lastLogin updated
+      await window._updatePw(authedUser, password);
       const uid = authedUser.uid;
       try {
-        await window._updateDoc('customers', uid, {
-          hasPIN: true, lastLogin: window._serverTs()
-        });
+        await window._updateDoc('customers', uid, { hasPIN: true, lastLogin: window._serverTs() });
       } catch {
-        // doc may not exist yet for migration edge case
-        await window._setDoc('customers', uid, {
+        try { await window._setDoc('customers', uid, {
           mobile: phone, hasPIN: true,
           createdAt: window._serverTs(), lastLogin: window._serverTs()
-        });
+        }); } catch {}
       }
       window._setSession(uid);
       redirect();
     } catch(e) {
-      setErr('newpin-err', e.message || 'Could not update PIN.');
+      setErr('newpin-err', e.message || 'Could not update password.');
     } finally {
-      setLoading('newpin-btn','newpin-btn-text',false,'Save PIN & Continue');
+      setLoading('newpin-btn','newpin-btn-text',false,'Save Password & Continue');
     }
   }
 
