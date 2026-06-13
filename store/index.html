@@ -1016,17 +1016,23 @@ select.finp{cursor:pointer;}
 .pp-sticky-price .sp-mrp{font-size:.7rem;color:var(--pp-sub);text-decoration:line-through;}
 .pp-sticky-add{flex:1;background:var(--pp-ink);color:#fff;border:none;border-radius:10px;padding:.85rem;font-weight:600;font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;}
 .pp-sticky-buy{flex:1;background:var(--pp-gold);color:#fff;border:none;border-radius:10px;padding:.85rem;font-weight:600;font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;}
+/* Hide the global floating WhatsApp while a product page is open (PDP has its own WA CTA) */
+body.pdp-open .wa-float{display:none;}
 @media(max-width:860px){
-  .pp-crumb{padding:1rem 1.1rem .7rem;}
-  .pp-card{padding:1.2rem;border-radius:16px;margin-bottom:1.5rem;}
-  .pp-body{grid-template-columns:1fr;gap:1.4rem;}
-  .pp-gallery{position:static;top:auto;}
-  .pp-name{font-size:1.65rem;}
-  .pp-price{font-size:1.85rem;}
+  /* Sticky bar appears only after the primary CTA scrolls out of view */
+  .pp-sticky.show{display:flex;}
+  .pp-crumb{padding:.8rem 1.1rem .5rem;}
+  .pp-card{padding:1rem;border-radius:16px;margin-bottom:1.2rem;}
+  .pp-body{grid-template-columns:1fr;gap:1rem;}
+  .pp-gallery{position:static;top:auto;flex-direction:column;gap:.7rem;}
+  .pp-main-img{aspect-ratio:1/1;}
+  .pp-main-img img{padding:.8rem;}
+  .pp-info{gap:.7rem;}
+  .pp-name{font-size:1.55rem;}
+  .pp-price{font-size:1.8rem;}
   .pp-related-grid{grid-template-columns:repeat(2,1fr);}
   .pp-spec-grid{grid-template-columns:1fr;}
-  .pp-sticky{display:flex;}
-  .prod-page{padding-bottom:76px;}
+  .prod-page{padding-bottom:80px;}
 }
 
 /* ══ TRUST BAR NUMBERS ══ */
@@ -1330,7 +1336,7 @@ select.finp{cursor:pointer;}
         <p class="pp-short" id="ppShort"></p>
         <div class="pp-price-box" id="ppPriceRow"></div>
         <div class="pp-stock in" id="ppStock"></div>
-        <div class="pp-actions">
+        <div class="pp-actions" id="ppActions">
           <button class="btn-pp-add" id="ppAddBtn">🛒 Add to Cart</button>
           <button class="btn-pp-buy" id="ppBuyBtn">⚡ Buy Now</button>
         </div>
@@ -3333,6 +3339,19 @@ const ProductPage = {
     page.classList.add('open');
     page.scrollTop = 0;
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('pdp-open');
+
+    // ── Sticky CTA: reveal only after the primary buttons scroll out of view ──
+    const stickyEl  = document.getElementById('ppSticky');
+    const actionsEl = document.getElementById('ppActions');
+    if (stickyEl) stickyEl.classList.remove('show');
+    if (this._io) { this._io.disconnect(); this._io = null; }
+    if (stickyEl && actionsEl && 'IntersectionObserver' in window) {
+      this._io = new IntersectionObserver((entries) => {
+        entries.forEach(e => stickyEl.classList.toggle('show', !e.isIntersecting));
+      }, { root: page, threshold: 0 });
+      this._io.observe(actionsEl);
+    }
   },
 
   _renderGallery(fallbackIcon) {
@@ -3369,6 +3388,9 @@ const ProductPage = {
   close() {
     document.getElementById('prodPage').classList.remove('open');
     document.body.style.overflow = '';
+    document.body.classList.remove('pdp-open');
+    if (this._io) { this._io.disconnect(); this._io = null; }
+    document.getElementById('ppSticky')?.classList.remove('show');
     // clean URL without pushing another history entry
     if (location.search.includes('product=')) {
       history.replaceState(null, '', location.pathname);
