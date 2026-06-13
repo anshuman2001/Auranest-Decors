@@ -545,12 +545,13 @@ const AuthCard = ({ children, onGuest }) => (
 );
 
 function OTPModal({ onVerified, onGuest }) {
-  // phases: 'phone' | 'password' | 'otp' | 'setpw' | 'resetpw'
+  // phases: 'phone' | 'password' | 'register' | 'otp' | 'resetpw'
   const [phase, setPhase]     = useState('phone');
   const [phone, setPhone]     = useState('');
-  const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
+  const [pw, setPw]           = useState('');
+  const [pw2, setPw2]         = useState('');
   const [name, setName]       = useState('');
+  const [email, setEmail]     = useState('');
   const [otp, setOtp]         = useState(['','','','','','']);
   const [timer, setTimer]     = useState(0);
   const [loading, setLoading] = useState(false);
@@ -558,6 +559,7 @@ function OTPModal({ onVerified, onGuest }) {
   const [isForgot, setIsForgot] = useState(false);
   const confirmRef  = useRef(null);
   const authedUser  = useRef(null);
+  const regData     = useRef({});
   const otpRefs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
 
   useEffect(() => {
@@ -570,14 +572,25 @@ function OTPModal({ onVerified, onGuest }) {
 
   useEffect(() => { if (window._initRecaptcha) window._initRecaptcha(); }, []);
 
-  const errMsg = e =>
-    e.code === 'auth/invalid-phone-number'      ? 'Invalid phone number.' :
-    e.code === 'auth/too-many-requests'         ? 'Too many attempts. Try later.' :
-    e.code === 'auth/wrong-password'            ? 'Incorrect password. Try again.' :
-    e.code === 'auth/invalid-credential'        ? 'Incorrect password. Try again.' :
-    e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
-    e.code === 'auth/code-expired'              ? 'OTP expired. Resend.' :
+  const mapErr = e =>
+    e.code==='auth/invalid-phone-number'      ? 'Invalid phone number.' :
+    e.code==='auth/too-many-requests'         ? 'Too many attempts. Try later.' :
+    e.code==='auth/wrong-password'            ? 'Incorrect password. Try again.' :
+    e.code==='auth/invalid-credential'        ? 'Incorrect password. Try again.' :
+    e.code==='auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
+    e.code==='auth/code-expired'              ? 'OTP expired. Resend.' :
     e.message || 'Something went wrong. Try again.';
+
+  const sendOTP = async () => {
+    setErr(''); setLoading(true);
+    try {
+      const v = window._initRecaptcha ? window._initRecaptcha() : null;
+      if (!v) throw new Error('reCAPTCHA not ready. Refresh.');
+      confirmRef.current = await window._fbSignInPhone('+91' + phone, v);
+      setOtp(['','','','','','']); setPhase('otp');
+    } catch(e) { setErr(mapErr(e)); }
+    finally { setLoading(false); }
+  };
 
   const checkPhone = async () => {
     if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
@@ -585,31 +598,29 @@ function OTPModal({ onVerified, onGuest }) {
     try {
       const existing = await window._fbQueryMobile(phone).catch(() => null);
       if (existing) { setPhase('password'); }
-      else { setIsForgot(false); await sendOTP(); }
-    } catch(e) { setErr(errMsg(e)); }
+      else { setIsForgot(false); setName(''); setEmail(''); setPw(''); setPw2(''); setPhase('register'); }
+    } catch(e) { setErr(mapErr(e)); }
     finally { setLoading(false); }
   };
 
   const loginWithPass = async () => {
-    if (password.length < 6) { setErr('Enter your password (min 6 characters)'); return; }
+    if (pw.length < 6) { setErr('Enter your password (min 6 characters)'); return; }
     setErr(''); setLoading(true);
     try {
-      const cred = await window._fbSignInPass(phone, password);
+      const cred    = await window._fbSignInPass(phone, pw);
       const profile = await window._checkOrCreateCustomer(cred.user.uid, phone);
       onVerified(phone, cred.user, profile);
-    } catch(e) { setErr(errMsg(e)); setPassword(''); }
+    } catch(e) { setErr(mapErr(e)); setPw(''); }
     finally { setLoading(false); }
   };
 
-  const sendOTP = async () => {
-    setErr(''); setLoading(true);
-    try {
-      const verifier = window._initRecaptcha ? window._initRecaptcha() : null;
-      if (!verifier) throw new Error('reCAPTCHA not ready. Refresh the page.');
-      confirmRef.current = await window._fbSignInPhone('+91' + phone, verifier);
-      setPhase('otp');
-    } catch(e) { setErr(errMsg(e)); }
-    finally { setLoading(false); }
+  const startRegisterOTP = async () => {
+    if (!name.trim()) { setErr('Please enter your full name'); return; }
+    if (pw.length < 6) { setErr('Password must be at least 6 characters'); return; }
+    if (pw !== pw2)    { setErr('Passwords do not match'); return; }
+    regData.current = { name: name.trim(), email: email.trim(), pw };
+    setIsForgot(false);
+    await sendOTP();
   };
 
   const verifyOTP = async () => {
@@ -619,62 +630,56 @@ function OTPModal({ onVerified, onGuest }) {
     try {
       const cred = await confirmRef.current.confirm(code);
       authedUser.current = cred.user;
-      // Existing user whose Firestore doc was missing — they already have a password
-      const hasPassword = cred.user.providerData.some(p => p.providerId === 'password');
-      if (hasPassword && !isForgot) {
-        const profile = await window._checkOrCreateCustomer(cred.user.uid, phone);
-        onVerified(phone, cred.user, profile);
-        return;
-      }
-      setPhase(isForgot ? 'resetpw' : 'setpw');
-    } catch(e) { setErr(errMsg(e)); }
+      if (isForgot) { setPw(''); setPw2(''); setPhase('resetpw'); }
+      else { await completeRegistration(cred.user); }
+    } catch(e) { setErr(mapErr(e)); }
     finally { setLoading(false); }
   };
 
-  const saveNewAccount = async () => {
-    if (!name.trim()) { setErr('Please enter your name'); return; }
-    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (password !== password2) { setErr('Passwords do not match'); return; }
-    const user = authedUser.current;
-    if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
-    setErr(''); setLoading(true);
+  const completeRegistration = async (user) => {
+    const { name: n, email: em, pw: p } = regData.current;
     try {
-      try { await window._fbLinkPass(user, phone, password); }
-      catch(linkErr) {
-        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
-          await window._fbUpdatePw(user, password);
-        } else { throw linkErr; }
+      try { await window._fbLinkPass(user, phone, p); }
+      catch(le) {
+        if (le.code==='auth/provider-already-linked'||le.code==='auth/email-already-in-use')
+          await window._fbUpdatePw(user, p);
+        else throw le;
       }
-      localStorage.setItem('auranest_name', name.trim());
+      localStorage.setItem('auranest_name', n);
       const profile = await window._checkOrCreateCustomer(user.uid, phone);
-      onVerified(phone, user, { ...profile, name: name.trim() });
-    } catch(e) { setErr(errMsg(e)); }
-    finally { setLoading(false); }
+      onVerified(phone, user, { ...profile, name: n, email: em });
+    } catch(e) { setErr(mapErr(e)); }
   };
 
   const resetPassword = async () => {
-    if (password.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (password !== password2) { setErr('Passwords do not match'); return; }
+    if (pw.length < 6) { setErr('Password must be at least 6 characters'); return; }
+    if (pw !== pw2) { setErr('Passwords do not match'); return; }
     const user = authedUser.current;
-    if (!user) { setErr('Session expired. Please start again.'); setPhase('phone'); return; }
+    if (!user) { setErr('Session expired. Start again.'); setPhase('phone'); return; }
     setErr(''); setLoading(true);
     try {
-      await window._fbUpdatePw(user, password);
+      await window._fbUpdatePw(user, pw);
       const profile = await window._checkOrCreateCustomer(user.uid, phone);
       onVerified(phone, user, profile);
-    } catch(e) { setErr(errMsg(e)); }
+    } catch(e) { setErr(mapErr(e)); }
     finally { setLoading(false); }
   };
 
-  const inputStyle = { marginBottom:10, paddingTop:12, paddingBottom:12 };
+  const IS = { marginBottom:10, paddingTop:12, paddingBottom:12 };
+  const BackBtn = ({ to }) => (
+    <button onClick={()=>{ setPhase(to); setErr(''); setPw(''); }}
+      style={{ display:'flex',alignItems:'center',gap:4,fontSize:'.75rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',marginBottom:12,padding:0 }}>
+      ← Back
+    </button>
+  );
 
   if (phase === 'phone') return (
     <AuthCard onGuest={onGuest}>
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Sign in to continue</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile number</p>
       <div style={{ display:'flex',marginBottom:4 }}>
-        <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>🇮🇳 +91</span>
-        <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',paddingTop:12,paddingBottom:12 }}
+        <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>\U0001F1EE\U0001F1F3 +91</span>
+        <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',...IS }}
           type="tel" placeholder="10-digit mobile number" value={phone}
           onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
           onKeyDown={e => e.key==='Enter' && checkPhone()} inputMode="numeric" autoComplete="tel" autoFocus />
@@ -686,34 +691,51 @@ function OTPModal({ onVerified, onGuest }) {
 
   if (phase === 'password') return (
     <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome back!</p>
+      <BackBtn to="phone" />
+      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome Back</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone}</p>
-      <input className="fl-input" type="password" placeholder="Your password" value={password}
-        onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key==='Enter' && loginWithPass()}
-        style={inputStyle} autoFocus />
+      <input className="fl-input" type="password" placeholder="Enter your password"
+        value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&loginWithPass()}
+        style={IS} autoFocus autoComplete="current-password"/>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={loginWithPass} loading={loading} style={{ width:'100%',marginBottom:8 }}>Sign In →</Btn>
-      <button onClick={() => { setIsForgot(true); setErr(''); sendOTP(); }}
+      <button onClick={()=>{ setIsForgot(true); setErr(''); sendOTP(); }}
         style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>
-        Forgot password? Get OTP →
+        Forgot password? →
       </button>
-      <button onClick={() => { setPhase('phone'); setErr(''); }}
-        style={{ display:'block',width:'100%',marginTop:4,fontSize:'.75rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>
-        ← Change number
-      </button>
+    </AuthCard>
+  );
+
+  if (phase === 'register') return (
+    <AuthCard onGuest={onGuest}>
+      <BackBtn to="phone" />
+      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create Account</p>
+      <p style={{ fontSize:'.78rem',color:'#92400e',background:'#fef3c7',padding:'6px 10px',borderRadius:6,textAlign:'center',marginBottom:12 }}>No account found. Please register.</p>
+      <input className="fl-input" placeholder="Full Name" value={name}
+        onChange={e=>setName(e.target.value)} style={IS} autoFocus autoComplete="name"/>
+      <input className="fl-input" placeholder="Email (optional)" type="email" value={email}
+        onChange={e=>setEmail(e.target.value)} style={IS} autoComplete="email"/>
+      <input className="fl-input" type="password" placeholder="Password (min 6 chars)" value={pw}
+        onChange={e=>setPw(e.target.value)} style={IS} autoComplete="new-password"/>
+      <input className="fl-input" type="password" placeholder="Confirm password" value={pw2}
+        onChange={e=>setPw2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&startRegisterOTP()}
+        style={{ ...IS,marginBottom:12 }} autoComplete="new-password"/>
+      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
+      <Btn onClick={startRegisterOTP} loading={loading} style={{ width:'100%' }}>Send OTP & Register →</Btn>
     </AuthCard>
   );
 
   if (phase === 'otp') return (
     <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Verify your number</p>
+      <BackBtn to={isForgot ? 'password' : 'register'} />
+      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Verify Number</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>OTP sent to +91 {phone}</p>
       <div style={{ display:'flex',justifyContent:'center',gap:'clamp(4px,1.5vw,8px)',marginBottom:8 }}>
-        {otp.map((d,i) => (
+        {otp.map((d,i)=>(
           <input key={i} ref={otpRefs[i]} className="otp-box" type="text" inputMode="numeric" maxLength={1} value={d}
             style={{ width:'clamp(36px,10vw,46px)',height:'clamp(44px,12vw,54px)',fontSize:'clamp(.95rem,3.5vw,1.3rem)' }}
-            onChange={e => handleBox(otp, setOtp, otpRefs, i, e.target.value, 6)}
-            onKeyDown={e => handleBoxBs(otp, otpRefs, i, e)} />
+            onChange={e=>handleBox(otp,setOtp,otpRefs,i,e.target.value,6)}
+            onKeyDown={e=>handleBoxBs(otp,otpRefs,i,e)} />
         ))}
       </div>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
@@ -721,39 +743,27 @@ function OTPModal({ onVerified, onGuest }) {
       <div style={{ textAlign:'center' }}>
         {timer > 0
           ? <p style={{ fontSize:'.78rem',color:'var(--muted)' }}>Resend in {timer}s</p>
-          : <button onClick={() => { setOtp(['','','','','','']); setErr(''); sendOTP(); }}
+          : <button onClick={()=>{ setOtp(['','','','','','']); sendOTP(); }}
               style={{ fontSize:'.78rem',color:'var(--gold)',fontWeight:700,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>Resend OTP</button>}
       </div>
     </AuthCard>
   );
 
-  if (phase === 'setpw') return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create your account</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Set a password for future logins</p>
-      <input className="fl-input" placeholder="Full Name" value={name} onChange={e=>setName(e.target.value)} style={inputStyle} autoFocus />
-      <input className="fl-input" type="password" placeholder="Password (min 6 chars)" value={password}
-        onChange={e=>setPassword(e.target.value)} style={inputStyle} />
-      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
-        onChange={e=>setPassword2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveNewAccount()} style={{ ...inputStyle,marginBottom:12 }} />
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={saveNewAccount} loading={loading} style={{ width:'100%' }}>Create Account & Continue →</Btn>
-    </AuthCard>
-  );
-
   return (
     <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Set new password</p>
+      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>New Password</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Choose a new password for your account</p>
-      <input className="fl-input" type="password" placeholder="New password (min 6 chars)" value={password}
-        onChange={e=>setPassword(e.target.value)} style={inputStyle} autoFocus />
-      <input className="fl-input" type="password" placeholder="Confirm password" value={password2}
-        onChange={e=>setPassword2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&resetPassword()} style={{ ...inputStyle,marginBottom:12 }} />
+      <input className="fl-input" type="password" placeholder="New password (min 6 chars)" value={pw}
+        onChange={e=>setPw(e.target.value)} style={IS} autoFocus autoComplete="new-password"/>
+      <input className="fl-input" type="password" placeholder="Confirm password" value={pw2}
+        onChange={e=>setPw2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&resetPassword()}
+        style={{ ...IS,marginBottom:12 }} autoComplete="new-password"/>
       {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
       <Btn onClick={resetPassword} loading={loading} style={{ width:'100%' }}>Save Password & Continue →</Btn>
     </AuthCard>
   );
 }
+
 
 /* ─── STEP 2: PERSONAL DETAILS ──────────────────────────── */
 function PersonalPage({ data, setData, cart, onNext, onBack }) {

@@ -9,12 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber,
          signInWithEmailAndPassword, EmailAuthProvider, linkWithCredential,
-         updatePassword, onAuthStateChanged, signOut,
+         updatePassword, onAuthStateChanged,
          browserLocalPersistence, setPersistence }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc,
@@ -34,38 +33,35 @@ const db   = getFirestore(app);
 
 setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-const params = new URLSearchParams(location.search);
-const NEXT   = params.get('next') || 'account.html';
-
-function buildEmail(phone) { return phone + '@au.auranest-usr'; }
+const NEXT = new URLSearchParams(location.search).get('next') || 'account.html';
+function vEmail(phone) { return phone + '@au.auranest-usr'; }
 
 window._auth      = auth;
 window._RV        = RecaptchaVerifier;
 window._NEXT      = NEXT;
 window._onAuth    = cb => onAuthStateChanged(auth, cb);
-window._signPhone = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
-window._signPass  = (phone, pass)     => signInWithEmailAndPassword(auth, buildEmail(phone), pass);
-window._linkPass  = (user, phone, pass) =>
-  linkWithCredential(user, EmailAuthProvider.credential(buildEmail(phone), pass));
-window._updatePw  = (user, pass) => updatePassword(user, pass);
+window._signPhone = (p, v) => signInWithPhoneNumber(auth, '+91' + p, v);
+window._signPass  = (p, pw) => signInWithEmailAndPassword(auth, vEmail(p), pw);
+window._linkPass  = (u, p, pw) => linkWithCredential(u, EmailAuthProvider.credential(vEmail(p), pw));
+window._updatePw  = (u, pw) => updatePassword(u, pw);
 
-window._queryMobile = async (mobile) => {
-  const q    = query(collection(db, 'customers'), where('mobile', '==', mobile));
-  const snap = await getDocs(q);
-  if (snap.empty) return null;
-  return { id: snap.docs[0].id, ...snap.docs[0].data() };
+window._lookupPhone = async (mobile) => {
+  const q = query(collection(db,'customers'), where('mobile','==', mobile));
+  const s = await getDocs(q);
+  return s.empty ? null : { id: s.docs[0].id, ...s.docs[0].data() };
 };
 
-window._saveCustomer = async (uid, phone, name) => {
-  const ref = doc(db, 'customers', uid);
+window._upsertCustomer = async (uid, phone, name, email) => {
+  const ref  = doc(db,'customers', uid);
   const snap = await getDoc(ref);
   if (snap.exists()) {
-    try { await updateDoc(ref, { lastLogin: serverTimestamp() }); } catch {}
     const d = snap.data();
     if (d.name) localStorage.setItem('auranest_name', d.name);
+    try { await updateDoc(ref, { lastLogin: serverTimestamp() }); } catch {}
     return { uid, ...d };
   }
-  const data = { mobile: phone, name: name || '', createdAt: serverTimestamp(), lastLogin: serverTimestamp() };
+  const data = { mobile: phone, name: name||'', email: email||'',
+    createdAt: serverTimestamp(), lastLogin: serverTimestamp() };
   try { await setDoc(ref, data); } catch {}
   if (name) localStorage.setItem('auranest_name', name);
   return { uid, ...data };
@@ -74,11 +70,8 @@ window._saveCustomer = async (uid, phone, name) => {
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{overflow-x:hidden;min-height:100%}
-:root{
-  --bg:#faf8f5;--white:#fff;--charcoal:#1c1a18;--mid:#5a5550;--light:#aca89f;
-  --gold:#b8934a;--gold-lt:#d4a85c;--gold-pale:#f5ecd8;--border:#ece8e1
-}
+:root{--bg:#faf8f5;--white:#fff;--charcoal:#1c1a18;--mid:#5a5550;--light:#aca89f;
+  --gold:#b8934a;--gold-lt:#d4a85c;--gold-pale:#f5ecd8;--border:#ece8e1}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--charcoal);min-height:100vh;display:flex;flex-direction:column}
 
 nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.96);backdrop-filter:blur(10px);
@@ -90,33 +83,32 @@ nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.96);backdrop-
 @media(max-width:640px){.nav-links{display:none}}
 
 .page-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2.5rem 1rem}
-
 .auth-card{background:var(--white);border:1px solid var(--border);width:100%;max-width:420px;
   padding:2.8rem 2.4rem 2.4rem;box-shadow:0 12px 48px rgba(28,26,24,.07)}
+.card-logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold-pale);margin:0 auto 1.4rem;display:block}
+.card-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .card-logo-fallback{width:52px;height:52px;border-radius:50%;
   background:linear-gradient(135deg,var(--gold),var(--gold-lt));
   display:flex;align-items:center;justify-content:center;
   font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#fff;margin:0 auto 1.4rem}
 .card-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;
   text-align:center;color:var(--charcoal);margin-bottom:.35rem;letter-spacing:.02em}
-.card-sub{font-size:.82rem;color:var(--mid);text-align:center;margin-bottom:2rem;line-height:1.55}
+.card-sub{font-size:.82rem;color:var(--mid);text-align:center;margin-bottom:1.6rem;line-height:1.55}
 
 .phase{display:none}.phase.active{display:block}
 
-.input-group{margin-bottom:1.1rem}
-.input-label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.45rem;font-weight:500}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.4rem;font-weight:500}
 .input-row{display:flex}
-.input-prefix{display:flex;align-items:center;padding:0 .9rem;
+.prefix{display:flex;align-items:center;padding:0 .9rem;
   background:var(--gold-pale);border:1.5px solid var(--border);border-right:none;
   font-size:.85rem;font-weight:600;color:var(--charcoal);white-space:nowrap;flex-shrink:0}
-input[type=text],input[type=tel],input[type=password]{
+input[type=tel],input[type=text],input[type=email],input[type=password]{
   width:100%;padding:.78rem .95rem;border:1.5px solid var(--border);background:var(--white);
   font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--charcoal);
   outline:none;transition:border-color .2s,box-shadow .2s}
-input[type=text]:focus,input[type=tel]:focus,input[type=password]:focus{
-  border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.12)}
-.input-row input{flex:1;border-radius:0}
-.input-solo{width:100%}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.12)}
+.input-row input{flex:1}
 
 .otp-row{display:flex;gap:.65rem;justify-content:center;margin-bottom:.4rem}
 .otp-box{width:46px;height:52px;border:2px solid var(--border);text-align:center;
@@ -127,7 +119,7 @@ input[type=text]:focus,input[type=tel]:focus,input[type=password]:focus{
 .btn{width:100%;padding:.85rem 1rem;border:none;cursor:pointer;
   font-family:'Outfit',sans-serif;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
-.btn-gold{background:var(--gold);color:#fff}
+.btn-gold{background:var(--gold);color:#fff;margin-top:.4rem}
 .btn-gold:hover{background:#a5823e}
 .btn-gold:disabled{opacity:.5;cursor:not-allowed}
 
@@ -135,29 +127,26 @@ input[type=text]:focus,input[type=tel]:focus,input[type=password]:focus{
 .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
   border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0}
 
-.err{font-size:.78rem;color:#c0392b;margin-top:.5rem;line-height:1.5;padding:.5rem .7rem;background:#fff5f5;border-left:3px solid #c0392b}
-.lnk{color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;text-decoration:underline;padding:0}
+.err{font-size:.78rem;color:#c0392b;margin:.4rem 0;line-height:1.5;padding:.5rem .7rem;background:#fff5f5;border-left:3px solid #c0392b;display:none}
+.notice{font-size:.8rem;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;padding:.6rem .8rem;margin-bottom:1rem;line-height:1.5}
+.lnk{color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;padding:0;text-decoration:underline}
 .lnk:hover{color:#a5823e}
-.divider{display:flex;align-items:center;gap:.9rem;margin:1.4rem 0}
+.divider{display:flex;align-items:center;gap:.9rem;margin:1.2rem 0}
 .divider span{font-size:.73rem;color:var(--light)}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.guest-link{display:block;text-align:center;font-size:.8rem;color:var(--mid);margin-top:1rem;
-  cursor:pointer;background:none;border:none;width:100%;font-family:inherit;padding:.4rem;transition:color .2s}
-.guest-link:hover{color:var(--gold)}
+.back-btn{display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;color:var(--mid);
+  background:none;border:none;cursor:pointer;font-family:inherit;margin-bottom:1.1rem;padding:0}
+.back-btn:hover{color:var(--gold)}
 .timer{font-size:.78rem;color:var(--light);text-align:center;margin-top:.6rem}
-.back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--mid);
-  background:none;border:none;cursor:pointer;font-family:inherit;margin-bottom:1.2rem;padding:0;transition:color .2s}
-.back-link:hover{color:var(--gold)}
-.info-text{font-size:.78rem;color:var(--mid);text-align:center;margin-top:.7rem}
+.guest-link{display:block;text-align:center;font-size:.8rem;color:var(--mid);margin-top:1rem;
+  cursor:pointer;background:none;border:none;width:100%;font-family:inherit;padding:.3rem}
+.guest-link:hover{color:var(--gold)}
+.opt-label{font-size:.7rem;color:var(--light);margin-left:.3rem}
 
 footer{background:var(--charcoal);color:rgba(255,255,255,.45);text-align:center;padding:1.5rem;font-size:.75rem;margin-top:auto}
-footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 .6rem;transition:color .2s}
+footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 .6rem}
 footer a:hover{color:var(--gold)}
-
-@media(max-width:460px){
-  .auth-card{padding:2rem 1.3rem 2rem}
-  .otp-box{width:40px;height:48px;font-size:1.25rem}
-}
+@media(max-width:460px){.auth-card{padding:2rem 1.3rem 2rem}.otp-box{width:40px;height:48px;font-size:1.25rem}}
 </style>
 </head>
 <body>
@@ -179,95 +168,110 @@ footer a:hover{color:var(--gold)}
       <div class="card-logo-fallback" id="logo-fallback">A</div>
     </div>
 
-    <!-- PHASE: phone -->
+    <!-- ── PHASE: phone ── -->
     <div class="phase active" id="phase-phone">
       <h1 class="card-title">Welcome</h1>
       <p class="card-sub">Enter your mobile number to continue</p>
-      <div class="input-group">
-        <label class="input-label">Mobile Number</label>
+      <div class="field">
+        <label>Mobile Number</label>
         <div class="input-row">
-          <span class="input-prefix">🇮🇳 +91</span>
-          <input type="tel" id="phone-input" placeholder="10-digit number" inputmode="numeric" autocomplete="tel" maxlength="10"/>
+          <span class="prefix">🇮🇳 +91</span>
+          <input type="tel" id="inp-phone" placeholder="10-digit mobile number"
+            inputmode="numeric" autocomplete="tel" maxlength="10"/>
         </div>
       </div>
-      <div id="phone-err" class="err" style="display:none"></div>
-      <button class="btn btn-gold" id="phone-btn"><span id="phone-btn-text">Continue</span></button>
+      <div id="err-phone" class="err"></div>
+      <button class="btn btn-gold" id="btn-phone"><span id="txt-phone">Continue</span></button>
       <div class="divider"><span>or</span></div>
-      <button class="guest-link" id="phone-guest">Continue as Guest →</button>
+      <button class="guest-link" id="btn-guest">Continue as Guest →</button>
     </div>
 
-    <!-- PHASE: password (returning user) -->
+    <!-- ── PHASE: password (existing user) ── -->
     <div class="phase" id="phase-password">
-      <button class="back-link" id="pw-back">← Change number</button>
+      <button class="back-btn" id="btn-pw-back">← Change number</button>
       <h1 class="card-title">Welcome Back</h1>
-      <p class="card-sub" id="pw-sub">Sign in with your password</p>
-      <div class="input-group">
-        <label class="input-label">Password</label>
-        <input type="password" id="pw-input" class="input-solo" placeholder="Your password" autocomplete="current-password"/>
+      <p class="card-sub" id="sub-pw">Sign in with your password</p>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="inp-pw" placeholder="Enter your password"
+          autocomplete="current-password"/>
       </div>
-      <div id="pw-err" class="err" style="display:none"></div>
-      <button class="btn btn-gold" id="pw-btn" style="margin-top:.4rem"><span id="pw-btn-text">Sign In</span></button>
-      <p class="info-text"><button class="lnk" id="forgot-link">Forgot password? Get OTP →</button></p>
+      <div id="err-pw" class="err"></div>
+      <button class="btn btn-gold" id="btn-pw"><span id="txt-pw">Sign In</span></button>
+      <p style="text-align:center;margin-top:.8rem;font-size:.8rem">
+        <button class="lnk" id="btn-forgot">Forgot password?</button>
+      </p>
     </div>
 
-    <!-- PHASE: otp -->
+    <!-- ── PHASE: register (new user) ── -->
+    <div class="phase" id="phase-register">
+      <button class="back-btn" id="btn-reg-back">← Change number</button>
+      <h1 class="card-title">Create Account</h1>
+      <div class="notice" id="reg-notice">No account found for this number. Please register.</div>
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="inp-name" placeholder="Enter your full name"
+          autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label>Email <span class="opt-label">(optional)</span></label>
+        <input type="email" id="inp-email" placeholder="Enter your email address"
+          autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="inp-reg-pw" placeholder="Choose a password (min 6 chars)"
+          autocomplete="new-password"/>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="inp-reg-cpw" placeholder="Repeat your password"
+          autocomplete="new-password"/>
+      </div>
+      <div id="err-reg" class="err"></div>
+      <button class="btn btn-gold" id="btn-reg"><span id="txt-reg">Send OTP & Register</span></button>
+    </div>
+
+    <!-- ── PHASE: otp ── -->
     <div class="phase" id="phase-otp">
-      <button class="back-link" id="otp-back">← Back</button>
+      <button class="back-btn" id="btn-otp-back">← Back</button>
       <h1 class="card-title">Verify Number</h1>
-      <p class="card-sub" id="otp-sub">OTP sent to your mobile</p>
+      <p class="card-sub" id="sub-otp">Enter the OTP sent to your mobile</p>
       <div class="otp-row" id="otp-boxes">
-        <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
+        <input type="text" class="otp-box" inputmode="numeric" maxlength="1" autocomplete="one-time-code"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
       </div>
-      <div id="otp-err" class="err" style="display:none"></div>
-      <button class="btn btn-gold" id="otp-btn" style="margin-top:1.2rem"><span id="otp-btn-text">Verify OTP</span></button>
+      <div id="err-otp" class="err"></div>
+      <button class="btn btn-gold" id="btn-otp" style="margin-top:1rem"><span id="txt-otp">Verify OTP</span></button>
       <div class="timer" id="otp-timer"></div>
     </div>
 
-    <!-- PHASE: set-password (new user) -->
-    <div class="phase" id="phase-setpw">
-      <h1 class="card-title">Create Account</h1>
-      <p class="card-sub">Set a password for future logins</p>
-      <div class="input-group">
-        <label class="input-label">Full Name</label>
-        <input type="text" id="setpw-name" class="input-solo" placeholder="Your full name"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Password (min 6 characters)</label>
-        <input type="password" id="setpw-pw" class="input-solo" placeholder="Choose a password" autocomplete="new-password"/>
-      </div>
-      <div class="input-group">
-        <label class="input-label">Confirm Password</label>
-        <input type="password" id="setpw-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
-      </div>
-      <div id="setpw-err" class="err" style="display:none"></div>
-      <button class="btn btn-gold" id="setpw-btn"><span id="setpw-btn-text">Create Account</span></button>
-    </div>
-
-    <!-- PHASE: reset-password (forgot) -->
+    <!-- ── PHASE: reset password (after forgot OTP) ── -->
     <div class="phase" id="phase-resetpw">
       <h1 class="card-title">New Password</h1>
       <p class="card-sub">Choose a new password for your account</p>
-      <div class="input-group">
-        <label class="input-label">New Password (min 6 characters)</label>
-        <input type="password" id="resetpw-pw" class="input-solo" placeholder="New password" autocomplete="new-password"/>
+      <div class="field">
+        <label>New Password</label>
+        <input type="password" id="inp-newpw" placeholder="Enter new password (min 6 chars)"
+          autocomplete="new-password"/>
       </div>
-      <div class="input-group">
-        <label class="input-label">Confirm Password</label>
-        <input type="password" id="resetpw-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="inp-newcpw" placeholder="Repeat new password"
+          autocomplete="new-password"/>
       </div>
-      <div id="resetpw-err" class="err" style="display:none"></div>
-      <button class="btn btn-gold" id="resetpw-btn"><span id="resetpw-btn-text">Save Password</span></button>
+      <div id="err-resetpw" class="err"></div>
+      <button class="btn btn-gold" id="btn-resetpw"><span id="txt-resetpw">Save Password</span></button>
     </div>
 
   </div>
 </div>
 
-<div id="recaptcha-container" style="position:fixed;bottom:0;left:0;pointer-events:none;opacity:0"></div>
+<div id="recaptcha-container" style="position:fixed;bottom:0;left:0;pointer-events:none;opacity:0;z-index:1"></div>
 
 <footer>
   <a href="../store/">Home</a>
@@ -277,309 +281,302 @@ footer a:hover{color:var(--gold)}
 </footer>
 
 <script>
-function waitFor(key, cb, tries) {
-  tries = tries || 0;
-  if (window[key]) { cb(); return; }
-  if (tries > 40) { console.error('Firebase not loaded'); return; }
-  setTimeout(() => waitFor(key, cb, tries + 1), 150);
+/* Wait for Firebase module to expose globals */
+function waitFor(key, cb, n) {
+  n = n||0; if (window[key]) { cb(); return; }
+  if (n>40) return; setTimeout(()=>waitFor(key,cb,n+1), 150);
 }
 waitFor('_auth', init);
 
 function init() {
-  // Logo
-  const lf = document.getElementById('logo-fallback');
+  /* logo */
   const img = new Image();
   img.src = '../assets/logo.jpg';
   img.onload = () => {
     const wrap = document.createElement('div');
-    wrap.style.cssText = 'width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold-pale);margin:0 auto 1.4rem';
+    wrap.className = 'card-logo';
     const i = new Image(); i.src = img.src;
     i.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-    wrap.appendChild(i); lf.replaceWith(wrap);
+    wrap.appendChild(i);
+    document.getElementById('logo-fallback').replaceWith(wrap);
   };
 
-  // Already logged in → redirect
+  /* already signed in → redirect */
   window._onAuth(user => { if (user) redirect(); });
 
-  setupOtpBoxes();
+  setupOtp();
 
+  /* ─── state ─── */
   let phone         = '';
-  let isNewUser     = false;
   let isForgot      = false;
   let confirmResult = null;
   let authedUser    = null;
   let recapVerifier = null;
   let timerInterval = null;
+  /* stored during registration to use after OTP */
+  let regName = '', regEmail = '', regPw = '';
 
-  function showPhase(p) {
-    document.querySelectorAll('.phase').forEach(el => el.classList.remove('active'));
-    document.getElementById('phase-' + p).classList.add('active');
+  /* ─── helpers ─── */
+  function go(p) {
+    document.querySelectorAll('.phase').forEach(e => e.classList.remove('active'));
+    document.getElementById('phase-'+p).classList.add('active');
   }
-  function setErr(id, msg) {
+  function showErr(id, msg) {
     const el = document.getElementById(id);
-    if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
-    el.textContent = msg; el.style.display = 'block';
+    el.textContent = msg; el.style.display = msg ? 'block' : 'none';
   }
-  function setLoading(btnId, txtId, on, label) {
-    const btn = document.getElementById(btnId);
-    const txt = document.getElementById(txtId);
-    btn.disabled = on;
-    txt.innerHTML = on ? '<span class="spinner"></span>' + (label || 'Please wait…') : (label || txt.textContent);
+  function setBtn(btnId, txtId, busy, label) {
+    const b = document.getElementById(btnId), t = document.getElementById(txtId);
+    b.disabled = busy;
+    t.innerHTML = busy ? '<span class="spinner"></span>'+(label||'Please wait…') : (label||t.textContent);
   }
   function redirect() { window.location.href = window._NEXT; }
-  function getOtp() {
-    return [...document.querySelectorAll('#otp-boxes .otp-box')].map(b => b.value).join('');
+  function getOtpVal() {
+    return [...document.querySelectorAll('#otp-boxes .otp-box')].map(b=>b.value).join('');
   }
   function clearOtp() {
-    document.querySelectorAll('#otp-boxes .otp-box').forEach(b => { b.value = ''; });
+    document.querySelectorAll('#otp-boxes .otp-box').forEach(b=>{b.value='';});
   }
-  function buildErrMsg(e) {
-    return e.code === 'auth/invalid-phone-number'      ? 'Invalid phone number.' :
-           e.code === 'auth/too-many-requests'         ? 'Too many attempts. Try later.' :
-           e.code === 'auth/wrong-password'            ? 'Incorrect password. Try again.' :
-           e.code === 'auth/invalid-credential'        ? 'Incorrect password. Try again.' :
-           e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
-           e.code === 'auth/code-expired'              ? 'OTP expired. Request a new one.' :
+  function mapErr(e) {
+    return e.code==='auth/invalid-phone-number'      ? 'Invalid phone number.' :
+           e.code==='auth/too-many-requests'         ? 'Too many attempts. Please try later.' :
+           e.code==='auth/wrong-password'            ? 'Incorrect password. Try again.' :
+           e.code==='auth/invalid-credential'        ? 'Incorrect password. Try again.' :
+           e.code==='auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
+           e.code==='auth/code-expired'              ? 'OTP expired. Request a new one.' :
+           e.code==='auth/user-not-found'            ? 'No account found for this number.' :
            e.message || 'Something went wrong. Try again.';
   }
 
-  // Recaptcha
-  function ensureRecaptcha() {
-    if (!recapVerifier) {
-      recapVerifier = new window._RV(window._auth, 'recaptcha-container', { size: 'invisible' });
-    }
+  /* ─── reCAPTCHA ─── */
+  function ensureRc() {
+    if (!recapVerifier)
+      recapVerifier = new window._RV(window._auth, 'recaptcha-container', {size:'invisible'});
     return recapVerifier;
   }
-  function resetRecaptcha() {
-    if (recapVerifier) { try { recapVerifier.clear(); } catch {} recapVerifier = null; }
+  function resetRc() {
+    if (recapVerifier) { try{recapVerifier.clear();}catch{} recapVerifier=null; }
     confirmResult = null;
   }
 
-  // Timer
+  /* ─── timer ─── */
   function startTimer() {
     clearInterval(timerInterval);
     const el = document.getElementById('otp-timer');
     let t = 60;
-    el.textContent = 'Resend in ' + t + 's';
-    timerInterval = setInterval(() => {
+    el.textContent = 'Resend in '+t+'s';
+    timerInterval = setInterval(()=>{
       t--;
-      if (t <= 0) {
+      if (t<=0) {
         clearInterval(timerInterval);
-        el.innerHTML = '<button class="lnk" id="resend-link">Resend OTP</button>';
-        document.getElementById('resend-link').addEventListener('click', () => { resetRecaptcha(); sendOTP(); });
-      } else {
-        el.textContent = 'Resend in ' + t + 's';
-      }
-    }, 1000);
+        el.innerHTML = '<button class="lnk" id="resend-btn">Resend OTP</button>';
+        document.getElementById('resend-btn').onclick = ()=>{ resetRc(); sendOTP(); };
+      } else { el.textContent='Resend in '+t+'s'; }
+    },1000);
   }
 
-  // ── PHASE: phone ──
-  document.getElementById('phone-btn').addEventListener('click', handlePhone);
-  document.getElementById('phone-input').addEventListener('keydown', e => { if (e.key === 'Enter') handlePhone(); });
+  /* ─── PHASE: phone ─── */
+  document.getElementById('btn-phone').onclick = handlePhone;
+  document.getElementById('inp-phone').onkeydown = e=>{ if(e.key==='Enter') handlePhone(); };
 
   async function handlePhone() {
-    const raw = document.getElementById('phone-input').value.replace(/\D/g, '').slice(0, 10);
-    setErr('phone-err', '');
-    if (raw.length !== 10) { setErr('phone-err', 'Enter a valid 10-digit mobile number'); return; }
+    const raw = document.getElementById('inp-phone').value.replace(/\D/g,'').slice(0,10);
+    showErr('err-phone','');
+    if (raw.length!==10) { showErr('err-phone','Enter a valid 10-digit mobile number'); return; }
     phone = raw;
-    setLoading('phone-btn', 'phone-btn-text', true, 'Checking…');
+    setBtn('btn-phone','txt-phone',true,'Checking…');
     try {
-      const existing = await window._queryMobile(phone).catch(() => null);
+      const existing = await window._lookupPhone(phone).catch(()=>null);
       if (existing) {
-        isNewUser = false;
-        document.getElementById('pw-sub').textContent = '+91 ' + phone;
-        showPhase('password');
-        document.getElementById('pw-input').focus();
+        /* existing customer → password login */
+        document.getElementById('sub-pw').textContent = '+91 '+phone;
+        document.getElementById('inp-pw').value = '';
+        go('password');
+        document.getElementById('inp-pw').focus();
       } else {
-        isNewUser = true;
-        isForgot  = false;
-        await sendOTP();
+        /* no customer record → registration */
+        document.getElementById('inp-name').value  = '';
+        document.getElementById('inp-email').value = '';
+        document.getElementById('inp-reg-pw').value  = '';
+        document.getElementById('inp-reg-cpw').value = '';
+        showErr('err-reg','');
+        go('register');
+        document.getElementById('inp-name').focus();
       }
-    } catch (e) {
-      setErr('phone-err', buildErrMsg(e));
-    } finally {
-      setLoading('phone-btn', 'phone-btn-text', false, 'Continue');
-    }
+    } catch(e) { showErr('err-phone', mapErr(e)); }
+    finally { setBtn('btn-phone','txt-phone',false,'Continue'); }
   }
 
-  // ── PHASE: password ──
-  document.getElementById('pw-btn').addEventListener('click', handlePassword);
-  document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') handlePassword(); });
+  /* ─── PHASE: password ─── */
+  document.getElementById('btn-pw').onclick = handlePassword;
+  document.getElementById('inp-pw').onkeydown = e=>{ if(e.key==='Enter') handlePassword(); };
+  document.getElementById('btn-pw-back').onclick = ()=>{ go('phone'); showErr('err-pw',''); };
 
   async function handlePassword() {
-    const pass = document.getElementById('pw-input').value;
-    setErr('pw-err', '');
-    if (pass.length < 6) { setErr('pw-err', 'Password must be at least 6 characters'); return; }
-    setLoading('pw-btn', 'pw-btn-text', true, 'Signing in…');
+    const pw = document.getElementById('inp-pw').value;
+    showErr('err-pw','');
+    if (pw.length<6) { showErr('err-pw','Password must be at least 6 characters'); return; }
+    setBtn('btn-pw','txt-pw',true,'Signing in…');
     try {
-      const cred = await window._signPass(phone, pass);
+      const cred = await window._signPass(phone, pw);
       authedUser = cred.user;
-      await window._saveCustomer(authedUser.uid, phone, '');
+      await window._upsertCustomer(authedUser.uid, phone, '', '');
       redirect();
-    } catch (e) {
-      setErr('pw-err', buildErrMsg(e));
-      document.getElementById('pw-input').value = '';
-      document.getElementById('pw-input').focus();
-    } finally {
-      setLoading('pw-btn', 'pw-btn-text', false, 'Sign In');
-    }
+    } catch(e) {
+      showErr('err-pw', mapErr(e));
+      document.getElementById('inp-pw').value='';
+      document.getElementById('inp-pw').focus();
+    } finally { setBtn('btn-pw','txt-pw',false,'Sign In'); }
   }
 
-  document.getElementById('forgot-link').addEventListener('click', () => {
-    isForgot = true; isNewUser = false;
-    setErr('pw-err', '');
-    sendOTP();
-  });
-
-  document.getElementById('pw-back').addEventListener('click', () => showPhase('phone'));
-
-  // ── SEND OTP ──
-  async function sendOTP() {
-    setLoading('phone-btn', 'phone-btn-text', true, 'Sending OTP…');
+  /* ─── Forgot password ─── */
+  document.getElementById('btn-forgot').onclick = async () => {
+    isForgot = true;
+    showErr('err-pw','');
+    document.getElementById('inp-pw').value='';
+    setBtn('btn-pw','txt-pw',true,'Sending OTP…');
+    document.getElementById('btn-forgot').disabled = true;
     try {
-      const verifier = ensureRecaptcha();
-      confirmResult = await window._signPhone('+91' + phone, verifier);
-      document.getElementById('otp-sub').textContent = 'OTP sent to +91 ' + phone;
-      showPhase('otp');
-      clearOtp();
-      setErr('otp-err', '');
-      startTimer();
-      setTimeout(() => document.querySelector('#otp-boxes .otp-box')?.focus(), 100);
-    } catch (e) {
-      resetRecaptcha();
-      const errId = isForgot ? 'pw-err' : 'phone-err';
-      setErr(errId, buildErrMsg(e));
-      showPhase(isForgot ? 'password' : 'phone');
+      await sendOTP();
     } finally {
-      setLoading('phone-btn', 'phone-btn-text', false, 'Continue');
+      setBtn('btn-pw','txt-pw',false,'Sign In');
+      document.getElementById('btn-forgot').disabled = false;
+    }
+  };
+
+  /* ─── PHASE: register ─── */
+  document.getElementById('btn-reg').onclick = handleRegister;
+  document.getElementById('btn-reg-back').onclick = ()=>{ go('phone'); showErr('err-reg',''); };
+  document.getElementById('inp-reg-cpw').onkeydown = e=>{ if(e.key==='Enter') handleRegister(); };
+
+  async function handleRegister() {
+    const name  = document.getElementById('inp-name').value.trim();
+    const email = document.getElementById('inp-email').value.trim();
+    const pw    = document.getElementById('inp-reg-pw').value;
+    const cpw   = document.getElementById('inp-reg-cpw').value;
+    showErr('err-reg','');
+    if (!name)        { showErr('err-reg','Please enter your full name'); return; }
+    if (pw.length<6)  { showErr('err-reg','Password must be at least 6 characters'); return; }
+    if (pw!==cpw)     { showErr('err-reg','Passwords do not match'); return; }
+    /* store for after OTP */
+    regName=name; regEmail=email; regPw=pw;
+    isForgot=false;
+    setBtn('btn-reg','txt-reg',true,'Sending OTP…');
+    try { await sendOTP(); }
+    finally { setBtn('btn-reg','txt-reg',false,'Send OTP & Register'); }
+  }
+
+  /* ─── SEND OTP ─── */
+  async function sendOTP() {
+    try {
+      const verifier = ensureRc();
+      confirmResult  = await window._signPhone(phone, verifier);
+      document.getElementById('sub-otp').textContent = 'OTP sent to +91 '+phone;
+      go('otp'); clearOtp(); showErr('err-otp',''); startTimer();
+      setTimeout(()=>document.querySelector('#otp-boxes .otp-box')?.focus(), 80);
+    } catch(e) {
+      resetRc();
+      const errId = isForgot ? 'err-pw' : 'err-reg';
+      showErr(errId, mapErr(e));
     }
   }
 
-  // ── PHASE: otp ──
-  document.getElementById('otp-btn').addEventListener('click', handleOtp);
-  document.getElementById('otp-back').addEventListener('click', () => {
-    resetRecaptcha(); clearInterval(timerInterval);
-    showPhase(isForgot ? 'password' : 'phone');
-  });
+  /* ─── PHASE: otp ─── */
+  document.getElementById('btn-otp').onclick = handleOtp;
+  document.getElementById('btn-otp-back').onclick = ()=>{
+    resetRc(); clearInterval(timerInterval);
+    go(isForgot ? 'password' : 'register');
+  };
 
   async function handleOtp() {
-    const code = getOtp();
-    setErr('otp-err', '');
-    if (code.length !== 6) { setErr('otp-err', 'Enter the 6-digit OTP'); return; }
-    if (!confirmResult) { setErr('otp-err', 'Session expired. Request a new OTP.'); return; }
-    setLoading('otp-btn', 'otp-btn-text', true, 'Verifying…');
+    const code = getOtpVal();
+    showErr('err-otp','');
+    if (code.length!==6) { showErr('err-otp','Enter the 6-digit OTP'); return; }
+    if (!confirmResult)  { showErr('err-otp','Session expired. Request a new OTP.'); return; }
+    setBtn('btn-otp','txt-otp',true,'Verifying…');
     try {
       const cred = await confirmResult.confirm(code);
       authedUser = cred.user;
       clearInterval(timerInterval);
-      // If user already has a password linked, they're an existing user
-      // (their Firestore doc may be missing due to old permissions, but they registered before)
-      const hasPassword = authedUser.providerData.some(p => p.providerId === 'password');
-      if (hasPassword && !isForgot) {
-        await window._saveCustomer(authedUser.uid, phone, '');
-        redirect();
-        return;
-      }
       if (isForgot) {
-        showPhase('resetpw');
-        document.getElementById('resetpw-pw').focus();
+        /* forgot password flow → set new password */
+        document.getElementById('inp-newpw').value  = '';
+        document.getElementById('inp-newcpw').value = '';
+        go('resetpw');
+        document.getElementById('inp-newpw').focus();
       } else {
-        showPhase('setpw');
-        document.getElementById('setpw-name').focus();
+        /* new user registration → link password + save Firestore doc */
+        await completeRegistration();
       }
-    } catch (e) {
-      setErr('otp-err', buildErrMsg(e));
-    } finally {
-      setLoading('otp-btn', 'otp-btn-text', false, 'Verify OTP');
-    }
+    } catch(e) { showErr('err-otp', mapErr(e)); }
+    finally { setBtn('btn-otp','txt-otp',false,'Verify OTP'); }
   }
 
-  // ── PHASE: set-password (new user) ──
-  document.getElementById('setpw-btn').addEventListener('click', handleSetPw);
-  document.getElementById('setpw-cpw').addEventListener('keydown', e => { if (e.key === 'Enter') handleSetPw(); });
-
-  async function handleSetPw() {
-    const name  = document.getElementById('setpw-name').value.trim();
-    const pass  = document.getElementById('setpw-pw').value;
-    const cpass = document.getElementById('setpw-cpw').value;
-    setErr('setpw-err', '');
-    if (!name) { setErr('setpw-err', 'Please enter your name'); return; }
-    if (pass.length < 6) { setErr('setpw-err', 'Password must be at least 6 characters'); return; }
-    if (pass !== cpass) { setErr('setpw-err', 'Passwords do not match'); return; }
-    if (!authedUser) { setErr('setpw-err', 'Session expired. Start again.'); showPhase('phone'); return; }
-    setLoading('setpw-btn', 'setpw-btn-text', true, 'Creating…');
+  async function completeRegistration() {
     try {
-      try {
-        await window._linkPass(authedUser, phone, pass);
-      } catch (linkErr) {
-        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
-          await window._updatePw(authedUser, pass);
-        } else { throw linkErr; }
+      try { await window._linkPass(authedUser, phone, regPw); }
+      catch(le) {
+        if (le.code==='auth/provider-already-linked'||le.code==='auth/email-already-in-use') {
+          await window._updatePw(authedUser, regPw);
+        } else throw le;
       }
-      await window._saveCustomer(authedUser.uid, phone, name);
+      await window._upsertCustomer(authedUser.uid, phone, regName, regEmail);
       redirect();
-    } catch (e) {
-      setErr('setpw-err', buildErrMsg(e));
-    } finally {
-      setLoading('setpw-btn', 'setpw-btn-text', false, 'Create Account');
-    }
+    } catch(e) { showErr('err-otp', mapErr(e)); }
   }
 
-  // ── PHASE: reset-password (forgot) ──
-  document.getElementById('resetpw-btn').addEventListener('click', handleResetPw);
-  document.getElementById('resetpw-cpw').addEventListener('keydown', e => { if (e.key === 'Enter') handleResetPw(); });
+  /* ─── PHASE: reset password ─── */
+  document.getElementById('btn-resetpw').onclick = handleResetPw;
+  document.getElementById('inp-newcpw').onkeydown = e=>{ if(e.key==='Enter') handleResetPw(); };
 
   async function handleResetPw() {
-    const pass  = document.getElementById('resetpw-pw').value;
-    const cpass = document.getElementById('resetpw-cpw').value;
-    setErr('resetpw-err', '');
-    if (pass.length < 6) { setErr('resetpw-err', 'Password must be at least 6 characters'); return; }
-    if (pass !== cpass) { setErr('resetpw-err', 'Passwords do not match'); return; }
-    if (!authedUser) { setErr('resetpw-err', 'Session expired. Start again.'); showPhase('phone'); return; }
-    setLoading('resetpw-btn', 'resetpw-btn-text', true, 'Saving…');
+    const pw  = document.getElementById('inp-newpw').value;
+    const cpw = document.getElementById('inp-newcpw').value;
+    showErr('err-resetpw','');
+    if (pw.length<6) { showErr('err-resetpw','Password must be at least 6 characters'); return; }
+    if (pw!==cpw)    { showErr('err-resetpw','Passwords do not match'); return; }
+    if (!authedUser) { showErr('err-resetpw','Session expired. Start over.'); go('phone'); return; }
+    setBtn('btn-resetpw','txt-resetpw',true,'Saving…');
     try {
-      await window._updatePw(authedUser, pass);
-      await window._saveCustomer(authedUser.uid, phone, '');
+      await window._updatePw(authedUser, pw);
+      await window._upsertCustomer(authedUser.uid, phone, '', '');
       redirect();
-    } catch (e) {
-      setErr('resetpw-err', buildErrMsg(e));
-    } finally {
-      setLoading('resetpw-btn', 'resetpw-btn-text', false, 'Save Password');
-    }
+    } catch(e) { showErr('err-resetpw', mapErr(e)); }
+    finally { setBtn('btn-resetpw','txt-resetpw',false,'Save Password'); }
   }
 
-  // ── GUEST ──
-  document.getElementById('phone-guest').addEventListener('click', () => {
-    const url = new URL(window._NEXT, window.location.href);
-    url.searchParams.set('guest', '1');
-    window.location.href = url.toString();
-  });
+  /* ─── Guest ─── */
+  document.getElementById('btn-guest').onclick = ()=>{
+    const url = new URL(window._NEXT, location.href);
+    url.searchParams.set('guest','1');
+    location.href = url.toString();
+  };
 }
 
-function setupOtpBoxes() {
-  const run = () => {
+/* ─── OTP box keyboard nav ─── */
+function setupOtp() {
+  const run = ()=>{
     const boxes = [...document.querySelectorAll('#otp-boxes .otp-box')];
-    boxes.forEach((box, i) => {
-      box.addEventListener('input', () => {
-        box.value = box.value.replace(/\D/g, '').slice(-1);
-        if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+    boxes.forEach((b,i)=>{
+      b.addEventListener('input', ()=>{
+        b.value = b.value.replace(/\D/g,'').slice(-1);
+        if (b.value && i<boxes.length-1) boxes[i+1].focus();
       });
-      box.addEventListener('keydown', e => {
-        if (e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus();
-        if (e.key === 'ArrowLeft'  && i > 0)              boxes[i - 1].focus();
-        if (e.key === 'ArrowRight' && i < boxes.length-1) boxes[i + 1].focus();
-        if (e.key === 'Enter') document.getElementById('otp-btn').click();
+      b.addEventListener('keydown', e=>{
+        if (e.key==='Backspace'&&!b.value&&i>0) boxes[i-1].focus();
+        if (e.key==='ArrowLeft'&&i>0)           boxes[i-1].focus();
+        if (e.key==='ArrowRight'&&i<boxes.length-1) boxes[i+1].focus();
+        if (e.key==='Enter') document.getElementById('btn-otp').click();
       });
-      box.addEventListener('paste', e => {
+      b.addEventListener('paste', e=>{
         e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-        text.slice(0, boxes.length).split('').forEach((ch, j) => { if (boxes[i + j]) boxes[i + j].value = ch; });
-        boxes[Math.min(i + text.length, boxes.length - 1)].focus();
+        const t=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+        t.slice(0,boxes.length).split('').forEach((ch,j)=>{ if(boxes[i+j]) boxes[i+j].value=ch; });
+        boxes[Math.min(i+t.length,boxes.length-1)].focus();
       });
     });
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-  else run();
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
 }
 </script>
 </body>
