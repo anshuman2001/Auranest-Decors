@@ -1723,48 +1723,6 @@ select.finp{cursor:pointer;}
   </div>
 </div>
 
-<!-- AUTH MODAL -->
-<div class="modal-bg" id="authModal" onclick="if(event.target===this)closeModal('authModal')">
-  <div class="modal-box auth-box">
-    <!-- Left dark panel -->
-    <div class="auth-left">
-      <div class="auth-orn">
-        <div class="auth-orn-line"></div>
-        <div class="auth-orn-dot"></div>
-        <div class="auth-orn-line r"></div>
-      </div>
-      <div class="auth-logo-ring">
-        <img id="authLogoImg" src="" alt="Auranest" style="display:none;"/>
-        <span id="authLogoEmoji" style="font-size:2rem;display:none;">🏺</span>
-      </div>
-      <div class="auth-left-brand">Auranest Decors</div>
-      <div class="auth-left-div"></div>
-      <div class="auth-left-tag">Feel the Beauty<br/>of Home</div>
-    </div>
-    <!-- Right form panel -->
-    <div class="auth-right">
-      <button class="modal-close" onclick="closeModal('authModal')" style="position:absolute;top:1rem;right:1rem;">✕</button>
-      <h2 class="lm-title">Welcome Back</h2>
-      <p class="lm-sub">Sign in to track orders and save favourites.</p>
-      <div class="tabs">
-        <button class="tab on" onclick="switchTab('signin')">Sign In</button>
-        <button class="tab" onclick="switchTab('register')">Register</button>
-      </div>
-      <div class="fpanel on" id="signinPanel">
-        <div class="fgrp"><label class="flbl">Email</label><input class="finp" id="siEmail" type="email" placeholder="you@example.com"/></div>
-        <div class="fgrp"><label class="flbl">Password</label><input class="finp" id="siPass" type="password" placeholder="••••••••"/></div>
-        <button class="btn-form" onclick="doLogin()">Sign In</button>
-      </div>
-      <div class="fpanel" id="registerPanel">
-        <div class="fgrp"><label class="flbl">Full Name</label><input class="finp" id="regName" placeholder="Your Name"/></div>
-        <div class="fgrp"><label class="flbl">Email</label><input class="finp" id="regEmail" type="email" placeholder="you@example.com"/></div>
-        <div class="fgrp"><label class="flbl">Phone</label><input class="finp" id="regPhone" placeholder="+91 XXXXXXXXXX"/></div>
-        <div class="fgrp"><label class="flbl">Password</label><input class="finp" id="regPass" type="password" placeholder="Min 6 characters"/></div>
-        <button class="btn-form" onclick="doRegister()">Create Account</button>
-      </div>
-    </div><!-- /auth-right -->
-  </div><!-- /auth-box -->
-</div><!-- /authModal -->
 
 <!-- ══════════════════════════════════════════════════
      PREMIUM CHECKOUT MODAL — Nike / Apple / Luxury
@@ -2493,38 +2451,6 @@ window.placeOrder = async function() {
   resetBtn();
 };
 
-// ── FIREBASE AUTH ──
-window.doLogin = async function() {
-  const email = document.getElementById('siEmail').value.trim();
-  const pass  = document.getElementById('siPass').value;
-  if (!email || !pass) { showToast('⚠️ Enter email and password'); return; }
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    closeModal('authModal');
-    showToast('✅ Welcome back!');
-  } catch (err) {
-    showToast('❌ ' + (err.code === 'auth/invalid-credential' ? 'Invalid email or password' : err.message));
-  }
-};
-
-window.doRegister = async function() {
-  const name  = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  const pass  = document.getElementById('regPass').value;
-  if (!name || !email || !pass) { showToast('⚠️ Please fill all fields'); return; }
-  if (pass.length < 6) { showToast('⚠️ Password must be at least 6 characters'); return; }
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    await updateProfile(cred.user, { displayName: name });
-    // Save user to Firestore
-    await addDoc(collection(db, 'users'), { uid: cred.user.uid, name, email, phone, role: 'customer', createdAt: serverTimestamp() });
-    closeModal('authModal');
-    showToast(`🎉 Welcome to Auranest Decors, ${name}!`);
-  } catch (err) {
-    showToast('❌ ' + (err.code === 'auth/email-already-in-use' ? 'Email already registered' : err.message));
-  }
-};
 
 window.doLogout = async function() {
   await signOut(auth);
@@ -2999,7 +2925,7 @@ function toggleWishlist() {
 // ── UI HELPERS ──
 function toggleCart()  { document.getElementById('cartPanel').classList.toggle('on'); document.getElementById('cartOverlay').classList.toggle('on'); }
 function openCheckout(){ if(!Cart.count()){showToast('Your cart is empty!');return;} toggleCart(); window.location.href='/store/checkout.html'; }
-function openAuth()    { document.getElementById('authModal').classList.add('on'); }
+function openAuth()    { window.location.href = 'login.html'; }
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
 function switchTab(t)  {
   document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('on',(i===0)===(t==='signin')));
@@ -3750,8 +3676,8 @@ function _wishToggle(id, btn) {
         <button class="mob-auth-btn primary" onclick="doLogout();closeMobNav()">Sign Out</button>`;
     } else {
       row.innerHTML = `
-        <button class="mob-auth-btn" onclick="openAuth();closeMobNav()">Sign In</button>
-        <button class="mob-auth-btn primary" onclick="switchTab('register');openAuth();closeMobNav()">Register</button>`;
+        <button class="mob-auth-btn" onclick="openAuth()">Sign In</button>
+        <button class="mob-auth-btn primary" onclick="openAuth()">Register</button>`;
     }
   };
   setInterval(checkMobAuth, 1500);
