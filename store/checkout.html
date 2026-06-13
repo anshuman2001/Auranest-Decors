@@ -619,6 +619,13 @@ function OTPModal({ onVerified, onGuest }) {
     try {
       const cred = await confirmRef.current.confirm(code);
       authedUser.current = cred.user;
+      // Existing user whose Firestore doc was missing — they already have a password
+      const hasPassword = cred.user.providerData.some(p => p.providerId === 'password');
+      if (hasPassword && !isForgot) {
+        const profile = await window._checkOrCreateCustomer(cred.user.uid, phone);
+        onVerified(phone, cred.user, profile);
+        return;
+      }
       setPhase(isForgot ? 'resetpw' : 'setpw');
     } catch(e) { setErr(errMsg(e)); }
     finally { setLoading(false); }

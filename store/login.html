@@ -472,6 +472,14 @@ function init() {
       const cred = await confirmResult.confirm(code);
       authedUser = cred.user;
       clearInterval(timerInterval);
+      // If user already has a password linked, they're an existing user
+      // (their Firestore doc may be missing due to old permissions, but they registered before)
+      const hasPassword = authedUser.providerData.some(p => p.providerId === 'password');
+      if (hasPassword && !isForgot) {
+        await window._saveCustomer(authedUser.uid, phone, '');
+        redirect();
+        return;
+      }
       if (isForgot) {
         showPhase('resetpw');
         document.getElementById('resetpw-pw').focus();
