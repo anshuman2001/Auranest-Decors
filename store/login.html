@@ -11,12 +11,14 @@
 
 <!-- Firebase -->
 <script type="module">
-import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber,
-         onAuthStateChanged, signOut,
+         signInWithEmailAndPassword, EmailAuthProvider, linkWithCredential,
+         updatePassword, onAuthStateChanged, signOut,
          browserLocalPersistence, setPersistence }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
+import { getFirestore, doc, getDoc, setDoc, updateDoc,
+         collection, query, where, getDocs, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const app  = initializeApp({
@@ -35,25 +37,38 @@ setPersistence(auth, browserLocalPersistence).catch(() => {});
 const params = new URLSearchParams(location.search);
 const NEXT   = params.get('next') || 'account.html';
 
+function buildEmail(phone) { return phone + '@au.auranest-usr'; }
+
 window._auth      = auth;
 window._RV        = RecaptchaVerifier;
-window._signPhone = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
-window._onAuth    = (cb) => onAuthStateChanged(auth, cb);
 window._NEXT      = NEXT;
+window._onAuth    = cb => onAuthStateChanged(auth, cb);
+window._signPhone = (phone, verifier) => signInWithPhoneNumber(auth, phone, verifier);
+window._signPass  = (phone, pass)     => signInWithEmailAndPassword(auth, buildEmail(phone), pass);
+window._linkPass  = (user, phone, pass) =>
+  linkWithCredential(user, EmailAuthProvider.credential(buildEmail(phone), pass));
+window._updatePw  = (user, pass) => updatePassword(user, pass);
 
-window._checkOrCreateCustomer = async (uid, phone) => {
+window._queryMobile = async (mobile) => {
+  const q    = query(collection(db, 'customers'), where('mobile', '==', mobile));
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  return { id: snap.docs[0].id, ...snap.docs[0].data() };
+};
+
+window._saveCustomer = async (uid, phone, name) => {
   const ref = doc(db, 'customers', uid);
   const snap = await getDoc(ref);
   if (snap.exists()) {
     try { await updateDoc(ref, { lastLogin: serverTimestamp() }); } catch {}
-    const data = snap.data();
-    if (data.name) localStorage.setItem('auranest_name', data.name);
-    return { uid, ...data };
+    const d = snap.data();
+    if (d.name) localStorage.setItem('auranest_name', d.name);
+    return { uid, ...d };
   }
-  const savedName = localStorage.getItem('auranest_name') || '';
-  const newDoc = { mobile: phone, name: savedName, createdAt: serverTimestamp(), lastLogin: serverTimestamp() };
-  try { await setDoc(ref, newDoc); } catch {}
-  return { uid, ...newDoc };
+  const data = { mobile: phone, name: name || '', createdAt: serverTimestamp(), lastLogin: serverTimestamp() };
+  try { await setDoc(ref, data); } catch {}
+  if (name) localStorage.setItem('auranest_name', name);
+  return { uid, ...data };
 };
 </script>
 
@@ -66,111 +81,75 @@ html{overflow-x:hidden;min-height:100%}
 }
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--charcoal);min-height:100vh;display:flex;flex-direction:column}
 
-/* ── NAV ── */
-nav{
-  position:sticky;top:0;z-index:100;
-  background:rgba(250,248,245,.96);backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--border);
-  padding:0 5%;height:62px;
-  display:flex;align-items:center;justify-content:space-between
-}
+nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);padding:0 5%;height:62px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--charcoal);text-decoration:none}
 .nav-links{display:flex;gap:2rem;list-style:none}
 .nav-links a{text-decoration:none;color:var(--mid);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--gold)}
 @media(max-width:640px){.nav-links{display:none}}
 
-/* ── MAIN WRAPPER ── */
 .page-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2.5rem 1rem}
 
-/* ── CARD ── */
-.auth-card{
-  background:var(--white);border:1px solid var(--border);
-  width:100%;max-width:420px;
-  padding:2.8rem 2.4rem 2.4rem;
-  box-shadow:0 12px 48px rgba(28,26,24,.07)
-}
-.card-logo-fallback{
-  width:52px;height:52px;border-radius:50%;
+.auth-card{background:var(--white);border:1px solid var(--border);width:100%;max-width:420px;
+  padding:2.8rem 2.4rem 2.4rem;box-shadow:0 12px 48px rgba(28,26,24,.07)}
+.card-logo-fallback{width:52px;height:52px;border-radius:50%;
   background:linear-gradient(135deg,var(--gold),var(--gold-lt));
   display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#fff;
-  margin:0 auto 1.4rem
-}
-.card-title{
-  font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;
-  text-align:center;color:var(--charcoal);margin-bottom:.35rem;letter-spacing:.02em
-}
+  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#fff;margin:0 auto 1.4rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;
+  text-align:center;color:var(--charcoal);margin-bottom:.35rem;letter-spacing:.02em}
 .card-sub{font-size:.82rem;color:var(--mid);text-align:center;margin-bottom:2rem;line-height:1.55}
 
-/* ── PHASE PANELS ── */
 .phase{display:none}.phase.active{display:block}
 
-/* ── INPUTS ── */
 .input-group{margin-bottom:1.1rem}
 .input-label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:.45rem;font-weight:500}
 .input-row{display:flex}
-.input-prefix{
-  display:flex;align-items:center;padding:0 .9rem;
+.input-prefix{display:flex;align-items:center;padding:0 .9rem;
   background:var(--gold-pale);border:1.5px solid var(--border);border-right:none;
-  font-size:.85rem;font-weight:600;color:var(--charcoal);white-space:nowrap;flex-shrink:0
-}
-input[type=text],input[type=tel]{
-  width:100%;padding:.78rem .95rem;
-  border:1.5px solid var(--border);background:var(--white);
+  font-size:.85rem;font-weight:600;color:var(--charcoal);white-space:nowrap;flex-shrink:0}
+input[type=text],input[type=tel],input[type=password]{
+  width:100%;padding:.78rem .95rem;border:1.5px solid var(--border);background:var(--white);
   font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--charcoal);
-  outline:none;transition:border-color .2s,box-shadow .2s
-}
-input[type=text]:focus,input[type=tel]:focus{
-  border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.12)
-}
+  outline:none;transition:border-color .2s,box-shadow .2s}
+input[type=text]:focus,input[type=tel]:focus,input[type=password]:focus{
+  border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.12)}
 .input-row input{flex:1;border-radius:0}
+.input-solo{width:100%}
 
-/* ── OTP BOXES ── */
 .otp-row{display:flex;gap:.65rem;justify-content:center;margin-bottom:.4rem}
-.otp-box{
-  width:46px;height:52px;border:2px solid var(--border);
-  text-align:center;font-size:1.4rem;font-weight:700;font-family:'Outfit',sans-serif;
-  background:var(--white);color:var(--charcoal);outline:none;
-  transition:border-color .2s,box-shadow .2s
-}
+.otp-box{width:46px;height:52px;border:2px solid var(--border);text-align:center;
+  font-size:1.4rem;font-weight:700;font-family:'Outfit',sans-serif;
+  background:var(--white);color:var(--charcoal);outline:none;transition:border-color .2s,box-shadow .2s}
 .otp-box:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.15)}
 
-/* ── BUTTON ── */
-.btn{
-  width:100%;padding:.85rem 1rem;border:none;cursor:pointer;
+.btn{width:100%;padding:.85rem 1rem;border:none;cursor:pointer;
   font-family:'Outfit',sans-serif;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
-  font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem
-}
+  font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
 .btn-gold{background:var(--gold);color:#fff}
 .btn-gold:hover{background:#a5823e}
 .btn-gold:disabled{opacity:.5;cursor:not-allowed}
 
-/* ── SPINNER ── */
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{
-  width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
-  border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0
-}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0}
 
-/* ── ERROR / INFO ── */
 .err{font-size:.78rem;color:#c0392b;margin-top:.5rem;line-height:1.5;padding:.5rem .7rem;background:#fff5f5;border-left:3px solid #c0392b}
-.info{font-size:.78rem;color:var(--mid);text-align:center;margin-top:.8rem;line-height:1.5}
 .lnk{color:var(--gold);background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;text-decoration:underline;padding:0}
 .lnk:hover{color:#a5823e}
 .divider{display:flex;align-items:center;gap:.9rem;margin:1.4rem 0}
 .divider span{font-size:.73rem;color:var(--light)}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.guest-link{display:block;text-align:center;font-size:.8rem;color:var(--mid);margin-top:1rem;cursor:pointer;background:none;border:none;width:100%;font-family:inherit;padding:.4rem;transition:color .2s}
+.guest-link{display:block;text-align:center;font-size:.8rem;color:var(--mid);margin-top:1rem;
+  cursor:pointer;background:none;border:none;width:100%;font-family:inherit;padding:.4rem;transition:color .2s}
 .guest-link:hover{color:var(--gold)}
 .timer{font-size:.78rem;color:var(--light);text-align:center;margin-top:.6rem}
-.back-link{
-  display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--mid);
-  background:none;border:none;cursor:pointer;font-family:inherit;margin-bottom:1.2rem;padding:0;transition:color .2s
-}
+.back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--mid);
+  background:none;border:none;cursor:pointer;font-family:inherit;margin-bottom:1.2rem;padding:0;transition:color .2s}
 .back-link:hover{color:var(--gold)}
+.info-text{font-size:.78rem;color:var(--mid);text-align:center;margin-top:.7rem}
 
-/* ── FOOTER ── */
 footer{background:var(--charcoal);color:rgba(255,255,255,.45);text-align:center;padding:1.5rem;font-size:.75rem;margin-top:auto}
 footer a{color:rgba(255,255,255,.35);text-decoration:none;margin:0 .6rem;transition:color .2s}
 footer a:hover{color:var(--gold)}
@@ -183,7 +162,6 @@ footer a:hover{color:var(--gold)}
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="../store/" class="nav-brand">Auranest Decors</a>
   <ul class="nav-links">
@@ -195,44 +173,48 @@ footer a:hover{color:var(--gold)}
   </ul>
 </nav>
 
-<!-- MAIN -->
 <div class="page-body">
-  <div class="auth-card" id="auth-card">
-
-    <!-- Logo -->
+  <div class="auth-card">
     <div id="logo-wrap">
       <div class="card-logo-fallback" id="logo-fallback">A</div>
     </div>
 
-    <!-- ─── PHASE: phone ─────────────────────────── -->
+    <!-- PHASE: phone -->
     <div class="phase active" id="phase-phone">
-      <h1 class="card-title">Welcome Back</h1>
-      <p class="card-sub">Enter your mobile number to receive an OTP</p>
-
+      <h1 class="card-title">Welcome</h1>
+      <p class="card-sub">Enter your mobile number to continue</p>
       <div class="input-group">
         <label class="input-label">Mobile Number</label>
         <div class="input-row">
           <span class="input-prefix">🇮🇳 +91</span>
-          <input type="tel" id="phone-input" placeholder="10-digit number"
-            inputmode="numeric" autocomplete="tel" maxlength="10"/>
+          <input type="tel" id="phone-input" placeholder="10-digit number" inputmode="numeric" autocomplete="tel" maxlength="10"/>
         </div>
       </div>
       <div id="phone-err" class="err" style="display:none"></div>
-
-      <button class="btn btn-gold" id="phone-btn">
-        <span id="phone-btn-text">Send OTP</span>
-      </button>
-
+      <button class="btn btn-gold" id="phone-btn"><span id="phone-btn-text">Continue</span></button>
       <div class="divider"><span>or</span></div>
       <button class="guest-link" id="phone-guest">Continue as Guest →</button>
     </div>
 
-    <!-- ─── PHASE: otp ───────────────────────────── -->
+    <!-- PHASE: password (returning user) -->
+    <div class="phase" id="phase-password">
+      <button class="back-link" id="pw-back">← Change number</button>
+      <h1 class="card-title">Welcome Back</h1>
+      <p class="card-sub" id="pw-sub">Sign in with your password</p>
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <input type="password" id="pw-input" class="input-solo" placeholder="Your password" autocomplete="current-password"/>
+      </div>
+      <div id="pw-err" class="err" style="display:none"></div>
+      <button class="btn btn-gold" id="pw-btn" style="margin-top:.4rem"><span id="pw-btn-text">Sign In</span></button>
+      <p class="info-text"><button class="lnk" id="forgot-link">Forgot password? Get OTP →</button></p>
+    </div>
+
+    <!-- PHASE: otp -->
     <div class="phase" id="phase-otp">
-      <button class="back-link" id="otp-back">← Change number</button>
+      <button class="back-link" id="otp-back">← Back</button>
       <h1 class="card-title">Verify Number</h1>
       <p class="card-sub" id="otp-sub">OTP sent to your mobile</p>
-
       <div class="otp-row" id="otp-boxes">
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
@@ -242,17 +224,49 @@ footer a:hover{color:var(--gold)}
         <input type="text" class="otp-box" inputmode="numeric" maxlength="1"/>
       </div>
       <div id="otp-err" class="err" style="display:none"></div>
-
-      <button class="btn btn-gold" id="otp-btn" style="margin-top:1.2rem">
-        <span id="otp-btn-text">Verify OTP</span>
-      </button>
+      <button class="btn btn-gold" id="otp-btn" style="margin-top:1.2rem"><span id="otp-btn-text">Verify OTP</span></button>
       <div class="timer" id="otp-timer"></div>
     </div>
 
-  </div><!-- /auth-card -->
-</div><!-- /page-body -->
+    <!-- PHASE: set-password (new user) -->
+    <div class="phase" id="phase-setpw">
+      <h1 class="card-title">Create Account</h1>
+      <p class="card-sub">Set a password for future logins</p>
+      <div class="input-group">
+        <label class="input-label">Full Name</label>
+        <input type="text" id="setpw-name" class="input-solo" placeholder="Your full name"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Password (min 6 characters)</label>
+        <input type="password" id="setpw-pw" class="input-solo" placeholder="Choose a password" autocomplete="new-password"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Confirm Password</label>
+        <input type="password" id="setpw-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
+      </div>
+      <div id="setpw-err" class="err" style="display:none"></div>
+      <button class="btn btn-gold" id="setpw-btn"><span id="setpw-btn-text">Create Account</span></button>
+    </div>
 
-<!-- recaptcha anchor (invisible) -->
+    <!-- PHASE: reset-password (forgot) -->
+    <div class="phase" id="phase-resetpw">
+      <h1 class="card-title">New Password</h1>
+      <p class="card-sub">Choose a new password for your account</p>
+      <div class="input-group">
+        <label class="input-label">New Password (min 6 characters)</label>
+        <input type="password" id="resetpw-pw" class="input-solo" placeholder="New password" autocomplete="new-password"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Confirm Password</label>
+        <input type="password" id="resetpw-cpw" class="input-solo" placeholder="Repeat password" autocomplete="new-password"/>
+      </div>
+      <div id="resetpw-err" class="err" style="display:none"></div>
+      <button class="btn btn-gold" id="resetpw-btn"><span id="resetpw-btn-text">Save Password</span></button>
+    </div>
+
+  </div>
+</div>
+
 <div id="recaptcha-container" style="position:fixed;bottom:0;left:0;pointer-events:none;opacity:0"></div>
 
 <footer>
@@ -269,99 +283,97 @@ function waitFor(key, cb, tries) {
   if (tries > 40) { console.error('Firebase not loaded'); return; }
   setTimeout(() => waitFor(key, cb, tries + 1), 150);
 }
-
 waitFor('_auth', init);
 
 function init() {
-  /* ── attempt logo image ── */
+  // Logo
   const lf = document.getElementById('logo-fallback');
   const img = new Image();
   img.src = '../assets/logo.jpg';
   img.onload = () => {
     const wrap = document.createElement('div');
     wrap.style.cssText = 'width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--gold-pale);margin:0 auto 1.4rem';
-    const imgEl = new Image();
-    imgEl.src = '../assets/logo.jpg';
-    imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-    wrap.appendChild(imgEl);
-    lf.replaceWith(wrap);
+    const i = new Image(); i.src = img.src;
+    i.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+    wrap.appendChild(i); lf.replaceWith(wrap);
   };
 
-  /* ── already logged in? ── */
-  window._onAuth(user => {
-    if (user) redirect();
-  });
+  // Already logged in → redirect
+  window._onAuth(user => { if (user) redirect(); });
 
-  setupBoxNav();
+  setupOtpBoxes();
 
-  let phone          = '';
-  let confirmResult  = null;
-  let recapVerifier  = null;
-  let timerInterval  = null;
+  let phone         = '';
+  let isNewUser     = false;
+  let isForgot      = false;
+  let confirmResult = null;
+  let authedUser    = null;
+  let recapVerifier = null;
+  let timerInterval = null;
 
-  /* ─── HELPERS ─── */
   function showPhase(p) {
     document.querySelectorAll('.phase').forEach(el => el.classList.remove('active'));
     document.getElementById('phase-' + p).classList.add('active');
   }
-
   function setErr(id, msg) {
     const el = document.getElementById(id);
     if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
     el.textContent = msg; el.style.display = 'block';
   }
-
-  function setLoading(btnId, textId, loading, label) {
-    const btn  = document.getElementById(btnId);
-    const span = document.getElementById(textId);
-    btn.disabled = loading;
-    span.innerHTML = loading ? '<span class="spinner"></span>' + (label || 'Please wait…') : (label || span.textContent);
+  function setLoading(btnId, txtId, on, label) {
+    const btn = document.getElementById(btnId);
+    const txt = document.getElementById(txtId);
+    btn.disabled = on;
+    txt.innerHTML = on ? '<span class="spinner"></span>' + (label || 'Please wait…') : (label || txt.textContent);
   }
-
-  function redirect() {
-    window.location.href = window._NEXT;
-  }
-
-  function getBoxVal() {
+  function redirect() { window.location.href = window._NEXT; }
+  function getOtp() {
     return [...document.querySelectorAll('#otp-boxes .otp-box')].map(b => b.value).join('');
   }
-
-  function clearBoxes() {
+  function clearOtp() {
     document.querySelectorAll('#otp-boxes .otp-box').forEach(b => { b.value = ''; });
   }
+  function buildErrMsg(e) {
+    return e.code === 'auth/invalid-phone-number'      ? 'Invalid phone number.' :
+           e.code === 'auth/too-many-requests'         ? 'Too many attempts. Try later.' :
+           e.code === 'auth/wrong-password'            ? 'Incorrect password. Try again.' :
+           e.code === 'auth/invalid-credential'        ? 'Incorrect password. Try again.' :
+           e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
+           e.code === 'auth/code-expired'              ? 'OTP expired. Request a new one.' :
+           e.message || 'Something went wrong. Try again.';
+  }
 
-  /* ─── RECAPTCHA ─── */
+  // Recaptcha
   function ensureRecaptcha() {
     if (!recapVerifier) {
       recapVerifier = new window._RV(window._auth, 'recaptcha-container', { size: 'invisible' });
     }
     return recapVerifier;
   }
-
   function resetRecaptcha() {
     if (recapVerifier) { try { recapVerifier.clear(); } catch {} recapVerifier = null; }
     confirmResult = null;
   }
 
-  /* ─── TIMER ─── */
-  function startTimer(secs) {
+  // Timer
+  function startTimer() {
     clearInterval(timerInterval);
     const el = document.getElementById('otp-timer');
-    let t = secs;
-    el.textContent = 'Resend OTP in ' + t + 's';
+    let t = 60;
+    el.textContent = 'Resend in ' + t + 's';
     timerInterval = setInterval(() => {
       t--;
       if (t <= 0) {
         clearInterval(timerInterval);
         el.innerHTML = '<button class="lnk" id="resend-link">Resend OTP</button>';
-        document.getElementById('resend-link').addEventListener('click', handleResend);
+        document.getElementById('resend-link').addEventListener('click', () => { resetRecaptcha(); sendOTP(); });
       } else {
-        el.textContent = 'Resend OTP in ' + t + 's';
+        el.textContent = 'Resend in ' + t + 's';
       }
     }, 1000);
   }
 
-  /* ─── PHONE SUBMIT ─── */
+  // ── PHASE: phone ──
   document.getElementById('phone-btn').addEventListener('click', handlePhone);
   document.getElementById('phone-input').addEventListener('keydown', e => { if (e.key === 'Enter') handlePhone(); });
 
@@ -370,78 +382,165 @@ function init() {
     setErr('phone-err', '');
     if (raw.length !== 10) { setErr('phone-err', 'Enter a valid 10-digit mobile number'); return; }
     phone = raw;
-    setLoading('phone-btn', 'phone-btn-text', true, 'Sending…');
+    setLoading('phone-btn', 'phone-btn-text', true, 'Checking…');
     try {
-      await sendOTP();
+      const existing = await window._queryMobile(phone).catch(() => null);
+      if (existing) {
+        isNewUser = false;
+        document.getElementById('pw-sub').textContent = '+91 ' + phone;
+        showPhase('password');
+        document.getElementById('pw-input').focus();
+      } else {
+        isNewUser = true;
+        isForgot  = false;
+        await sendOTP();
+      }
     } catch (e) {
-      setErr('phone-err', e.message || 'Something went wrong. Please try again.');
+      setErr('phone-err', buildErrMsg(e));
     } finally {
-      setLoading('phone-btn', 'phone-btn-text', false, 'Send OTP');
+      setLoading('phone-btn', 'phone-btn-text', false, 'Continue');
     }
   }
 
-  /* ─── SEND OTP ─── */
-  async function sendOTP() {
-    const verifier = ensureRecaptcha();
+  // ── PHASE: password ──
+  document.getElementById('pw-btn').addEventListener('click', handlePassword);
+  document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') handlePassword(); });
+
+  async function handlePassword() {
+    const pass = document.getElementById('pw-input').value;
+    setErr('pw-err', '');
+    if (pass.length < 6) { setErr('pw-err', 'Password must be at least 6 characters'); return; }
+    setLoading('pw-btn', 'pw-btn-text', true, 'Signing in…');
     try {
+      const cred = await window._signPass(phone, pass);
+      authedUser = cred.user;
+      await window._saveCustomer(authedUser.uid, phone, '');
+      redirect();
+    } catch (e) {
+      setErr('pw-err', buildErrMsg(e));
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    } finally {
+      setLoading('pw-btn', 'pw-btn-text', false, 'Sign In');
+    }
+  }
+
+  document.getElementById('forgot-link').addEventListener('click', () => {
+    isForgot = true; isNewUser = false;
+    setErr('pw-err', '');
+    sendOTP();
+  });
+
+  document.getElementById('pw-back').addEventListener('click', () => showPhase('phone'));
+
+  // ── SEND OTP ──
+  async function sendOTP() {
+    setLoading('phone-btn', 'phone-btn-text', true, 'Sending OTP…');
+    try {
+      const verifier = ensureRecaptcha();
       confirmResult = await window._signPhone('+91' + phone, verifier);
+      document.getElementById('otp-sub').textContent = 'OTP sent to +91 ' + phone;
+      showPhase('otp');
+      clearOtp();
+      setErr('otp-err', '');
+      startTimer();
+      setTimeout(() => document.querySelector('#otp-boxes .otp-box')?.focus(), 100);
     } catch (e) {
       resetRecaptcha();
-      const msg = e.code === 'auth/invalid-phone-number' ? 'Invalid phone number.' :
-                  e.code === 'auth/too-many-requests'    ? 'Too many attempts. Try later.' :
-                  e.code === 'auth/captcha-check-failed' ? 'Verification failed. Refresh and retry.' :
-                  e.message || 'Could not send OTP.';
-      throw new Error(msg);
+      const errId = isForgot ? 'pw-err' : 'phone-err';
+      setErr(errId, buildErrMsg(e));
+      showPhase(isForgot ? 'password' : 'phone');
+    } finally {
+      setLoading('phone-btn', 'phone-btn-text', false, 'Continue');
     }
-    document.getElementById('otp-sub').textContent = '6-digit OTP sent to +91 ' + phone;
-    showPhase('otp');
-    clearBoxes();
-    setErr('otp-err', '');
-    startTimer(60);
-    setTimeout(() => {
-      const first = document.querySelector('#otp-boxes .otp-box');
-      if (first) first.focus();
-    }, 100);
   }
 
-  /* ─── RESEND ─── */
-  function handleResend() {
-    resetRecaptcha();
-    sendOTP().catch(e => setErr('otp-err', e.message));
-  }
-
-  /* ─── OTP VERIFY ─── */
+  // ── PHASE: otp ──
   document.getElementById('otp-btn').addEventListener('click', handleOtp);
+  document.getElementById('otp-back').addEventListener('click', () => {
+    resetRecaptcha(); clearInterval(timerInterval);
+    showPhase(isForgot ? 'password' : 'phone');
+  });
 
   async function handleOtp() {
-    const code = getBoxVal();
+    const code = getOtp();
     setErr('otp-err', '');
     if (code.length !== 6) { setErr('otp-err', 'Enter the 6-digit OTP'); return; }
     if (!confirmResult) { setErr('otp-err', 'Session expired. Request a new OTP.'); return; }
     setLoading('otp-btn', 'otp-btn-text', true, 'Verifying…');
     try {
       const cred = await confirmResult.confirm(code);
+      authedUser = cred.user;
       clearInterval(timerInterval);
-      await window._checkOrCreateCustomer(cred.user.uid, phone);
-      redirect();
+      if (isForgot) {
+        showPhase('resetpw');
+        document.getElementById('resetpw-pw').focus();
+      } else {
+        showPhase('setpw');
+        document.getElementById('setpw-name').focus();
+      }
     } catch (e) {
-      const msg = e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
-                  e.code === 'auth/code-expired'              ? 'OTP expired. Request a new one.' :
-                  'Verification failed.';
-      setErr('otp-err', msg);
+      setErr('otp-err', buildErrMsg(e));
     } finally {
       setLoading('otp-btn', 'otp-btn-text', false, 'Verify OTP');
     }
   }
 
-  /* ─── BACK BUTTON ─── */
-  document.getElementById('otp-back').addEventListener('click', () => {
-    resetRecaptcha();
-    clearInterval(timerInterval);
-    showPhase('phone');
-  });
+  // ── PHASE: set-password (new user) ──
+  document.getElementById('setpw-btn').addEventListener('click', handleSetPw);
+  document.getElementById('setpw-cpw').addEventListener('keydown', e => { if (e.key === 'Enter') handleSetPw(); });
 
-  /* ─── GUEST LINK ─── */
+  async function handleSetPw() {
+    const name  = document.getElementById('setpw-name').value.trim();
+    const pass  = document.getElementById('setpw-pw').value;
+    const cpass = document.getElementById('setpw-cpw').value;
+    setErr('setpw-err', '');
+    if (!name) { setErr('setpw-err', 'Please enter your name'); return; }
+    if (pass.length < 6) { setErr('setpw-err', 'Password must be at least 6 characters'); return; }
+    if (pass !== cpass) { setErr('setpw-err', 'Passwords do not match'); return; }
+    if (!authedUser) { setErr('setpw-err', 'Session expired. Start again.'); showPhase('phone'); return; }
+    setLoading('setpw-btn', 'setpw-btn-text', true, 'Creating…');
+    try {
+      try {
+        await window._linkPass(authedUser, phone, pass);
+      } catch (linkErr) {
+        if (linkErr.code === 'auth/provider-already-linked' || linkErr.code === 'auth/email-already-in-use') {
+          await window._updatePw(authedUser, pass);
+        } else { throw linkErr; }
+      }
+      await window._saveCustomer(authedUser.uid, phone, name);
+      redirect();
+    } catch (e) {
+      setErr('setpw-err', buildErrMsg(e));
+    } finally {
+      setLoading('setpw-btn', 'setpw-btn-text', false, 'Create Account');
+    }
+  }
+
+  // ── PHASE: reset-password (forgot) ──
+  document.getElementById('resetpw-btn').addEventListener('click', handleResetPw);
+  document.getElementById('resetpw-cpw').addEventListener('keydown', e => { if (e.key === 'Enter') handleResetPw(); });
+
+  async function handleResetPw() {
+    const pass  = document.getElementById('resetpw-pw').value;
+    const cpass = document.getElementById('resetpw-cpw').value;
+    setErr('resetpw-err', '');
+    if (pass.length < 6) { setErr('resetpw-err', 'Password must be at least 6 characters'); return; }
+    if (pass !== cpass) { setErr('resetpw-err', 'Passwords do not match'); return; }
+    if (!authedUser) { setErr('resetpw-err', 'Session expired. Start again.'); showPhase('phone'); return; }
+    setLoading('resetpw-btn', 'resetpw-btn-text', true, 'Saving…');
+    try {
+      await window._updatePw(authedUser, pass);
+      await window._saveCustomer(authedUser.uid, phone, '');
+      redirect();
+    } catch (e) {
+      setErr('resetpw-err', buildErrMsg(e));
+    } finally {
+      setLoading('resetpw-btn', 'resetpw-btn-text', false, 'Save Password');
+    }
+  }
+
+  // ── GUEST ──
   document.getElementById('phone-guest').addEventListener('click', () => {
     const url = new URL(window._NEXT, window.location.href);
     url.searchParams.set('guest', '1');
@@ -449,9 +548,8 @@ function init() {
   });
 }
 
-/* ─── OTP box keyboard navigation ─── */
-function setupBoxNav() {
-  const setup = () => {
+function setupOtpBoxes() {
+  const run = () => {
     const boxes = [...document.querySelectorAll('#otp-boxes .otp-box')];
     boxes.forEach((box, i) => {
       box.addEventListener('input', () => {
@@ -467,16 +565,13 @@ function setupBoxNav() {
       box.addEventListener('paste', e => {
         e.preventDefault();
         const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-        text.slice(0, boxes.length).split('').forEach((ch, j) => {
-          if (boxes[i + j]) boxes[i + j].value = ch;
-        });
-        const last = Math.min(i + text.length, boxes.length - 1);
-        boxes[last].focus();
+        text.slice(0, boxes.length).split('').forEach((ch, j) => { if (boxes[i + j]) boxes[i + j].value = ch; });
+        boxes[Math.min(i + text.length, boxes.length - 1)].focus();
       });
     });
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
-  else setup();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
 }
 </script>
 </body>
