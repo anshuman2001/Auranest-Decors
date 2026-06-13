@@ -678,7 +678,7 @@ function OTPModal({ onVerified, onGuest }) {
       <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Sign in to continue</p>
       <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile number</p>
       <div style={{ display:'flex',marginBottom:4 }}>
-        <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>\U0001F1EE\U0001F1F3 +91</span>
+        <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>🇮🇳 +91</span>
         <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',...IS }}
           type="tel" placeholder="10-digit mobile number" value={phone}
           onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
