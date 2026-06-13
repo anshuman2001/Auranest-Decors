@@ -168,8 +168,14 @@ footer a:hover{color:var(--gold)}
       <div class="card-logo-fallback" id="logo-fallback">A</div>
     </div>
 
+    <!-- ── Loading spinner shown while Firebase checks auth state ── -->
+    <div id="phase-loading" style="text-align:center;padding:2.5rem 0">
+      <div class="spinner" style="width:28px;height:28px;border-width:3px;margin:0 auto 12px"></div>
+      <p style="font-size:.82rem;color:#888">Please wait…</p>
+    </div>
+
     <!-- ── PHASE: phone ── -->
-    <div class="phase active" id="phase-phone">
+    <div class="phase" id="phase-phone">
       <h1 class="card-title">Welcome</h1>
       <p class="card-sub">Enter your mobile number to continue</p>
       <div class="field">
@@ -301,8 +307,12 @@ function init() {
     document.getElementById('logo-fallback').replaceWith(wrap);
   };
 
-  /* already signed in → redirect */
-  window._onAuth(user => { if (user) redirect(); });
+  /* already signed in → redirect; otherwise reveal the phone phase */
+  window._onAuth(user => {
+    if (user) { redirect(); return; }
+    document.getElementById('phase-loading').style.display = 'none';
+    go('phone');
+  });
 
   setupOtp();
 
