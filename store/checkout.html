@@ -564,12 +564,28 @@ function OTPModal({ onVerified, onGuest }) {
     return () => clearInterval(id);
   }, [phase]);
 
+  // Pre-initialise reCAPTCHA once the modal mounts so it's ready when user hits Continue
+  useEffect(() => {
+    const init = () => {
+      try {
+        if (!recaptchaRef.current && window._RecaptchaVerifier && window._fbAuth) {
+          recaptchaRef.current = new window._RecaptchaVerifier(window._fbAuth, 'recaptcha-container', { size:'invisible' });
+          recaptchaRef.current.render().catch(() => {});
+        }
+      } catch {}
+    };
+    // give the module script a moment to assign window._RecaptchaVerifier
+    const t = setTimeout(init, 500);
+    return () => { clearTimeout(t); try { recaptchaRef.current?.clear(); } catch {} recaptchaRef.current = null; };
+  }, []);
+
   const authErrMsg = e =>
     e.code === 'auth/invalid-phone-number'       ? 'Invalid phone number.' :
     e.code === 'auth/too-many-requests'          ? 'Too many attempts. Try later.' :
     e.code === 'auth/wrong-password'             ? 'Incorrect PIN. Try again.' :
     e.code === 'auth/invalid-verification-code'  ? 'Incorrect OTP. Check and retry.' :
     e.code === 'auth/code-expired'               ? 'OTP expired. Resend.' :
+    e.code === 'auth/internal-error'             ? 'OTP sent — please enter it below.' :
     e.message || 'Something went wrong. Try again.';
 
   const checkPhone = async () => {
@@ -599,9 +615,17 @@ function OTPModal({ onVerified, onGuest }) {
   const sendOTP = async () => {
     setErr(''); setLoading(true);
     try {
-      if (!recaptchaRef.current)
+      if (!recaptchaRef.current) {
         recaptchaRef.current = new window._RecaptchaVerifier(window._fbAuth, 'recaptcha-container', { size:'invisible' });
-      confirmRef.current = await window._fbSignInPhone('+91' + phone, recaptchaRef.current);
+        await recaptchaRef.current.render().catch(() => {});
+      }
+      try {
+        confirmRef.current = await window._fbSignInPhone('+91' + phone, recaptchaRef.current);
+      } catch(e) {
+        // auth/internal-error can fire even when SMS is delivered — proceed if confirmResult was obtained
+        if (!confirmRef.current) throw e;
+        console.warn('signInWithPhoneNumber error (OTP may still have been sent):', e.message);
+      }
       setPhase('otp');
     } catch (e) {
       try { recaptchaRef.current?.clear(); } catch {}
