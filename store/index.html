@@ -2561,8 +2561,24 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// ── LOAD PRODUCTS (real-time from Firebase) ──
+// ── LOAD PRODUCTS (real-time from Firebase, with localStorage cache fallback) ──
 async function loadProducts() {
+  // Show cached products instantly so images appear even before Firebase responds
+  try {
+    const cached = localStorage.getItem('auranest_products');
+    if (cached) {
+      const cachedList = JSON.parse(cached);
+      if (cachedList && cachedList.length) {
+        window.$products = cachedList;
+        renderProducts(cachedList);
+        loadTrending();
+        renderCollectionCounts();
+        filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
+        document.getElementById('prodCountBadge').textContent = cachedList.length + '+';
+      }
+    }
+  } catch(e) {}
+
   try {
     setFbStatus('⚡ Loading products...');
     const snap = await getDocs(collection(db, 'products'));
@@ -2582,10 +2598,14 @@ async function loadProducts() {
       openDeepLinkProduct();
     }
   } catch (err) {
-    setFbStatus('⚠️ Using offline data — add Firebase config!');
-    window.$products = PRODUCTS;
-    renderProducts(PRODUCTS);
-    loadTrending();
+    // If Firebase fails but we already rendered from cache, keep those images
+    const hasCached = window.$products && window.$products.length && window.$products[0].images;
+    if (!hasCached) {
+      window.$products = PRODUCTS;
+      renderProducts(PRODUCTS);
+      loadTrending();
+    }
+    setFbStatus('⚠️ Showing cached products — offline mode');
   }
 }
 
