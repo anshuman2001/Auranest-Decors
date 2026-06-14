@@ -1839,7 +1839,10 @@ body.pdp-open .wa-float{display:none;}
   <!-- LEFT: Brand -->
   <div>
     <div class="pf-logo-wrap">
-      <div class="pf-logo-ring"><img src="../assets/logo.jpg" alt="Auranest Decors" loading="lazy" onerror="this.style.display='none'"/></div>
+      <div class="pf-logo-ring">
+        <img id="footerLogoImg" src="" alt="Auranest Decors" style="display:none;width:100%;height:100%;border-radius:50%;object-fit:cover;"/>
+        <script>(function(){var u=localStorage.getItem('auranest_logo');var i=document.getElementById('footerLogoImg');if(u&&i){i.onload=function(){i.style.display='block';};i.onerror=function(){i.style.display='none';};i.src=u;}})();</script>
+      </div>
       <div class="pf-logo-text">
         <span class="pf-brand-name">Auranest Decors</span>
         <span class="pf-brand-tagline">Feel the beauty of home</span>
