@@ -2561,11 +2561,15 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// ── LOAD PRODUCTS (real-time from Firebase, with localStorage cache fallback) ──
+// ── LOAD PRODUCTS (cache-first, Firebase refresh max once per 30 min) ──
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 async function loadProducts() {
-  // Show cached products instantly so images appear even before Firebase responds
+  // Always show cached products instantly
+  let cacheHit = false;
   try {
-    const cached = localStorage.getItem('auranest_products');
+    const cached    = localStorage.getItem('auranest_products');
+    const cachedAt  = parseInt(localStorage.getItem('auranest_products_ts') || '0', 10);
+    const age       = Date.now() - cachedAt;
     if (cached) {
       const cachedList = JSON.parse(cached);
       if (cachedList && cachedList.length) {
@@ -2575,12 +2579,19 @@ async function loadProducts() {
         renderCollectionCounts();
         filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
         document.getElementById('prodCountBadge').textContent = cachedList.length + '+';
+        cacheHit = true;
+        // Skip Firebase read if cache is fresh (under 30 min) — saves Firestore quota
+        if (age < CACHE_TTL) {
+          setFbStatus('🟢 Products loaded', true);
+          openDeepLinkProduct();
+          return;
+        }
       }
     }
   } catch(e) {}
 
   try {
-    setFbStatus('⚡ Loading products...');
+    if (!cacheHit) setFbStatus('⚡ Loading products...');
     const snap = await getDocs(collection(db, 'products'));
     if (snap.empty) {
       setFbStatus('🟡 No products yet — check back soon!');
@@ -2588,7 +2599,10 @@ async function loadProducts() {
       renderProducts([]);
     } else {
       window.$products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      try { localStorage.setItem('auranest_products', JSON.stringify(window.$products)); } catch(e) {}
+      try {
+        localStorage.setItem('auranest_products', JSON.stringify(window.$products));
+        localStorage.setItem('auranest_products_ts', String(Date.now()));
+      } catch(e) {}
       renderProducts(window.$products);
       loadTrending();
       renderCollectionCounts();
@@ -2598,7 +2612,6 @@ async function loadProducts() {
       openDeepLinkProduct();
     }
   } catch (err) {
-    // If Firebase fails but we already rendered from cache, keep those images
     const hasCached = window.$products && window.$products.length && window.$products[0].images;
     if (!hasCached) {
       window.$products = PRODUCTS;
