@@ -484,23 +484,69 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .faq-item.open .faq-icon{transform:rotate(45deg);}
 .faq-a{font-size:.84rem;line-height:1.8;color:var(--mid);max-height:0;overflow:hidden;transition:max-height .35s,padding .35s;}
 .faq-item.open .faq-a{max-height:200px;padding-bottom:1.2rem;}
-footer{background:linear-gradient(180deg,#120c06 0%,#0d0804 100%);padding:5rem 5rem 2rem;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;border-top:1px solid rgba(196,149,53,.12);}
-.foot-logo{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;}
-.foot-logo img{width:52px;height:52px;border-radius:50%;object-fit:cover;}
-.foot-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--cream);}
-.foot-tagline{font-size:.65rem;color:var(--gold-lt);letter-spacing:.12em;text-transform:uppercase;}
-.foot-desc{font-size:.8rem;color:var(--sand);line-height:1.8;margin-bottom:1.5rem;}
-.foot-contact{font-size:.78rem;color:var(--sand);line-height:1.9;}
-.foot-contact a{color:var(--gold-lt);text-decoration:none;}
-.foot-h{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:1.2rem;}
-.foot-ul{list-style:none;}
-.foot-ul li{margin-bottom:.65rem;}
-.foot-ul a{font-size:.8rem;color:var(--sand);text-decoration:none;transition:color .2s;}
-.foot-ul a:hover{color:var(--cream);}
-.pay-row{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem;}
-.pay-pill{border:1px solid rgba(255,255,255,.12);padding:.3rem .9rem;font-size:.65rem;color:var(--sand);text-transform:uppercase;}
-.foot-bottom{border-top:1px solid rgba(255,255,255,.07);margin-top:3rem;padding-top:1.4rem;grid-column:1/-1;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
-.foot-copy{font-size:.73rem;color:var(--muted);}
+/* ═══ PREMIUM FOOTER ═══ */
+footer{display:block;padding:0;background:#F7F3EC;margin-top:0;}
+.pf-main{background:#F7F3EC;padding:4.5rem 6% 3rem;display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1.3fr;gap:3rem;border-bottom:1px solid rgba(200,155,60,.18);}
+.pf-logo-wrap{display:flex;align-items:center;gap:1.1rem;margin-bottom:.9rem;}
+.pf-logo-ring{width:72px;height:72px;border-radius:50%;border:2px solid #C89B3C;padding:3px;flex-shrink:0;box-shadow:0 0 0 4px rgba(200,155,60,.1);}
+.pf-logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;}
+.pf-logo-text{display:flex;flex-direction:column;line-height:1.2;}
+.pf-brand-name{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#2B2118;}
+.pf-brand-tagline{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:#C89B3C;margin-top:.2rem;}
+.pf-gold-div{height:1px;background:linear-gradient(90deg,#C89B3C 40%,rgba(200,155,60,.05));margin:1rem 0 1rem;width:85%;}
+.pf-desc{font-size:.8rem;color:#6b5c4a;line-height:1.85;margin-bottom:1.4rem;max-width:280px;}
+.pf-social-label{font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:#C89B3C;margin-bottom:.8rem;font-weight:600;}
+.pf-socials{display:flex;gap:.65rem;}
+.pf-social-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(200,155,60,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;text-decoration:none;background:transparent;}
+.pf-social-btn svg{width:15px;height:15px;stroke:#2B2118;stroke-width:1.6;fill:none;}
+.pf-social-btn:hover{border-color:#C89B3C;background:rgba(200,155,60,.1);}
+.pf-col-head{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#C89B3C;margin-bottom:.45rem;}
+.pf-col-orn{display:flex;align-items:center;gap:.4rem;margin-bottom:1.3rem;}
+.pf-col-orn-line{height:1px;flex:1;background:rgba(200,155,60,.25);}
+.pf-col-orn-dot{width:4px;height:4px;border-radius:50%;border:1px solid rgba(200,155,60,.5);flex-shrink:0;}
+.pf-ul{list-style:none;padding:0;margin:0;}
+.pf-ul li{margin-bottom:.7rem;}
+.pf-ul a{font-size:.8rem;color:#2B2118;text-decoration:none;transition:color .2s;letter-spacing:.01em;}
+.pf-ul a:hover{color:#C89B3C;}
+.pf-contact-item{display:flex;align-items:flex-start;gap:.8rem;margin-bottom:1rem;}
+.pf-contact-icon{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(200,155,60,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(200,155,60,.05);}
+.pf-contact-icon svg{width:14px;height:14px;stroke:#C89B3C;stroke-width:1.6;fill:none;}
+.pf-contact-text{font-size:.78rem;color:#2B2118;line-height:1.55;padding-top:.1rem;}
+.pf-contact-text a{color:#2B2118;text-decoration:none;transition:color .2s;}
+.pf-contact-text a:hover{color:#C89B3C;}
+.pf-trust{background:#EDE6D9;border-top:1px solid rgba(200,155,60,.18);border-bottom:1px solid rgba(200,155,60,.18);padding:1.5rem 6%;display:grid;grid-template-columns:repeat(4,1fr);}
+.pf-trust-item{display:flex;align-items:center;gap:.9rem;padding:0 1.8rem;position:relative;}
+.pf-trust-item:not(:last-child)::after{content:'';position:absolute;right:0;top:15%;bottom:15%;width:1px;background:rgba(200,155,60,.22);}
+.pf-trust-icon{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(200,155,60,.3);background:rgba(200,155,60,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;}
+.pf-trust-label{font-size:.7rem;font-weight:700;color:#2B2118;letter-spacing:.04em;text-transform:uppercase;line-height:1.2;}
+.pf-trust-sub{font-size:.65rem;color:#8a7060;margin-top:.18rem;}
+.pf-payment{background:#F7F3EC;padding:1.8rem 6%;text-align:center;position:relative;overflow:hidden;}
+.pf-payment-botanical-l,.pf-payment-botanical-r{position:absolute;bottom:0;width:180px;height:180px;opacity:.15;pointer-events:none;}
+.pf-payment-botanical-l{left:0;}
+.pf-payment-botanical-r{right:0;transform:scaleX(-1);}
+.pf-payment-head{display:flex;align-items:center;justify-content:center;gap:.9rem;margin-bottom:1.3rem;}
+.pf-payment-head-line{height:1px;width:55px;background:linear-gradient(90deg,transparent,rgba(200,155,60,.55));}
+.pf-payment-head-line.r{background:linear-gradient(90deg,rgba(200,155,60,.55),transparent);}
+.pf-payment-head-text{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#C89B3C;font-weight:600;}
+.pf-pay-logos{display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap;position:relative;z-index:1;}
+.pf-pay-logo{display:flex;align-items:center;height:28px;opacity:.82;transition:opacity .2s;cursor:default;}
+.pf-pay-logo:hover{opacity:1;}
+.pf-bottom{background:#F7F3EC;border-top:1px solid rgba(200,155,60,.15);padding:1rem 6%;display:flex;justify-content:center;align-items:center;gap:2rem;flex-wrap:wrap;}
+.pf-bottom span{font-size:.7rem;color:#8a7060;letter-spacing:.03em;}
+.pf-bottom-sep{color:rgba(200,155,60,.4);font-size:.8rem;}
+@media(max-width:900px){
+  .pf-main{grid-template-columns:1fr 1fr;gap:2rem;padding:3rem 5%;}
+  .pf-trust{grid-template-columns:repeat(2,1fr);gap:1.2rem;padding:1.2rem 5%;}
+  .pf-trust-item::after{display:none;}
+  .pf-trust-item{padding:.6rem 0;}
+}
+@media(max-width:600px){
+  .pf-main{grid-template-columns:1fr;gap:1.8rem;padding:2.5rem 1.2rem;}
+  .pf-trust{grid-template-columns:1fr;padding:1rem 1.2rem;}
+  .pf-payment{padding:1.4rem 1.2rem;}
+  .pf-pay-logos{gap:1.2rem;}
+  .pf-bottom{padding:.9rem 1.2rem;gap:1rem;}
+}
 /* WISHLIST */
 .wish-badge{position:absolute;top:-7px;right:-7px;background:var(--gold);color:#fff;font-size:.6rem;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;}
 .wish-panel{position:fixed;top:0;right:0;bottom:0;width:400px;background:var(--white);z-index:601;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);}
@@ -825,8 +871,8 @@ select.finp{cursor:pointer;}
   .about-blocks{grid-template-columns:1fr;}
   /* FAQ */
   .faq-grid{max-width:100%;}
-  /* FOOTER */
-  footer{grid-template-columns:1fr;padding:2.5rem 1.2rem;gap:2rem;}
+  /* FOOTER — handled by pf-* responsive rules */
+  footer{}
   /* PANELS */
   .cart-panel,.wish-panel{width:100%;}
   /* MODALS */
@@ -890,7 +936,7 @@ select.finp{cursor:pointer;}
   .trust-bar{padding:2rem 1rem;gap:1rem;}
   .trust-title{font-size:.88rem;}
   .trust-desc{font-size:.68rem;}
-  footer{padding:2rem 1rem;}
+  footer{padding:0;}
   .cd-num{font-size:1.5rem;}
   .cd-unit{padding:0 .5rem;}
   .cd-lbl{font-size:.58rem;}
@@ -1786,32 +1832,170 @@ body.pdp-open .wa-float{display:none;}
 
 </main>
 <footer>
+
+<!-- MAIN FOOTER GRID -->
+<div class="pf-main">
+
+  <!-- LEFT: Brand -->
   <div>
-    <div class="foot-logo"><img src="../assets/logo.jpg" alt="Auranest Decors logo" loading="lazy" width="48" height="48" onerror="this.style.display='none'"/><div><div class="foot-brand">Auranest Decors</div><div class="foot-tagline">Feel the beauty of home</div></div></div>
-    <p class="foot-desc">Bringing India's artisanal heritage into modern homes. Every piece is handcrafted with love, tradition, and purpose.</p>
-    <div class="foot-contact">📧 <a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a><br>💬 <a href="https://wa.me/918679212984" target="_blank" rel="noopener">WhatsApp: +91 86792 12984</a></div>
-    <div class="pay-row"><div class="pay-pill">Stripe</div><div class="pay-pill">Razorpay</div><div class="pay-pill">COD</div><div class="pay-pill">PayPal</div></div>
+    <div class="pf-logo-wrap">
+      <div class="pf-logo-ring"><img src="../assets/logo.jpg" alt="Auranest Decors" loading="lazy" onerror="this.style.display='none'"/></div>
+      <div class="pf-logo-text">
+        <span class="pf-brand-name">Auranest Decors</span>
+        <span class="pf-brand-tagline">Feel the beauty of home</span>
+      </div>
+    </div>
+    <div class="pf-gold-div"></div>
+    <p class="pf-desc">Bringing India's artisanal heritage into modern homes. Every piece is handcrafted with love, tradition, and purpose.</p>
+    <p class="pf-social-label">Follow Us</p>
+    <div class="pf-socials">
+      <a class="pf-social-btn" href="https://www.instagram.com/auranestdecors" target="_blank" rel="noopener" title="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="#2B2118" stroke="none"/></svg>
+      </a>
+      <a class="pf-social-btn" href="https://www.facebook.com/auranestdecors" target="_blank" rel="noopener" title="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      </a>
+      <a class="pf-social-btn" href="https://www.pinterest.com/auranestdecors" target="_blank" rel="noopener" title="Pinterest">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.23-5.22 1.23-5.22s-.31-.63-.31-1.56c0-1.46.85-2.55 1.9-2.55.9 0 1.34.67 1.34 1.48 0 .9-.57 2.25-.87 3.5-.25 1.04.52 1.89 1.54 1.89 1.84 0 3.08-2.37 3.08-5.18 0-2.14-1.45-3.64-3.52-3.64-2.4 0-3.8 1.8-3.8 3.66 0 .72.28 1.5.62 1.92.07.08.08.15.06.23-.06.26-.21.82-.23.93-.04.15-.13.18-.3.11-1.12-.52-1.82-2.16-1.82-3.48 0-2.83 2.06-5.43 5.93-5.43 3.11 0 5.53 2.22 5.53 5.18 0 3.09-1.95 5.57-4.65 5.57-.91 0-1.76-.47-2.05-1.03l-.56 2.09c-.2.78-.75 1.76-1.12 2.36.84.26 1.74.4 2.67.4 5.52 0 10-4.48 10-10S17.52 2 12 2z" stroke="none" fill="#2B2118"/></svg>
+      </a>
+      <a class="pf-social-btn" href="https://wa.me/918679212984" target="_blank" rel="noopener" title="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#2B2118" stroke="none"/></svg>
+      </a>
+    </div>
   </div>
-  <div><p class="foot-h">Shop</p><ul class="foot-ul">
-    <li><a href="artisan.html">🎨 Artisan</a></li>
-    <li><a href="woodcraft.html">🪵 Woodcraft</a></li>
-    <li><a href="minimal.html">🏺 Minimal</a></li>
-    <li><a href="giftings.html">🎁 Gifting</a></li>
-    <li><a href="../catalog/">📖 Catalogue</a></li>
-  </ul></div>
-  <div><p class="foot-h">Help</p><ul class="foot-ul">
-    <li><a href="contact.html">Contact Us</a></li>
-    <li><a href="#faqs" onclick="goToSection('faqs');return false;">Shipping Policy</a></li>
-    <li><a href="#faqs" onclick="goToSection('faqs');return false;">Returns &amp; Exchanges</a></li>
-    <li><a href="#faqs" onclick="goToSection('faqs');return false;">FAQs</a></li>
-  </ul></div>
-  <div><p class="foot-h">Company</p><ul class="foot-ul">
-    <li><a href="#about" onclick="goToSection('about');return false;">About Us</a></li>
-    <li><a href="#about" onclick="goToSection('about');return false;">Our Artisans</a></li>
-    <li><a href="contact.html">Get in Touch</a></li>
-    <li><a href="mailto:info@auranestsdecor.com">info@auranestsdecor.com</a></li>
-  </ul></div>
-  <div class="foot-bottom"><span class="foot-copy">© 2026 Auranest Decors. All rights reserved.</span><span class="foot-copy">Made with ❤️ for Indian Artisans</span></div>
+
+  <!-- SHOP -->
+  <div>
+    <p class="pf-col-head">Shop</p>
+    <div class="pf-col-orn"><div class="pf-col-orn-line"></div><div class="pf-col-orn-dot"></div><div class="pf-col-orn-line"></div></div>
+    <ul class="pf-ul">
+      <li><a href="artisan.html">Artisan</a></li>
+      <li><a href="woodcraft.html">Woodcraft</a></li>
+      <li><a href="minimal.html">Minimal</a></li>
+      <li><a href="giftings.html">Gifting</a></li>
+      <li><a href="../catalog/">Catalogue</a></li>
+    </ul>
+  </div>
+
+  <!-- COMPANY -->
+  <div>
+    <p class="pf-col-head">Company</p>
+    <div class="pf-col-orn"><div class="pf-col-orn-line"></div><div class="pf-col-orn-dot"></div><div class="pf-col-orn-line"></div></div>
+    <ul class="pf-ul">
+      <li><a href="#about" onclick="goToSection('about');return false;">About Us</a></li>
+      <li><a href="#about" onclick="goToSection('about');return false;">Our Artisans</a></li>
+      <li><a href="../blog/">Blog</a></li>
+      <li><a href="account.html">Track Order</a></li>
+    </ul>
+  </div>
+
+  <!-- SUPPORT -->
+  <div>
+    <p class="pf-col-head">Support</p>
+    <div class="pf-col-orn"><div class="pf-col-orn-line"></div><div class="pf-col-orn-dot"></div><div class="pf-col-orn-line"></div></div>
+    <ul class="pf-ul">
+      <li><a href="#faqs" onclick="goToSection('faqs');return false;">Shipping Policy</a></li>
+      <li><a href="#faqs" onclick="goToSection('faqs');return false;">Returns &amp; Exchanges</a></li>
+      <li><a href="#faqs" onclick="goToSection('faqs');return false;">FAQs</a></li>
+      <li><a href="terms.html">Privacy Policy</a></li>
+    </ul>
+  </div>
+
+  <!-- CONTACT -->
+  <div>
+    <p class="pf-col-head">Contact</p>
+    <div class="pf-col-orn"><div class="pf-col-orn-line"></div><div class="pf-col-orn-dot"></div><div class="pf-col-orn-line"></div></div>
+    <div class="pf-contact-item">
+      <div class="pf-contact-icon"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+      <div class="pf-contact-text"><a href="mailto:info@auranestdecor.com">info@auranestdecor.com</a></div>
+    </div>
+    <div class="pf-contact-item">
+      <div class="pf-contact-icon"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 3.75h-16.5A2.25 2.25 0 001.5 6v12a2.25 2.25 0 002.25 2.25h16.5A2.25 2.25 0 0022.5 18V6a2.25 2.25 0 00-2.25-2.25zM12 12.75a3 3 0 100-6 3 3 0 000 6zm-6.75 5.25a6.75 6.75 0 0113.5 0"/></svg></div>
+      <div class="pf-contact-text"><a href="https://wa.me/918679212984" target="_blank" rel="noopener">+91 86792 12984</a></div>
+    </div>
+    <div class="pf-contact-item">
+      <div class="pf-contact-icon"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg></div>
+      <div class="pf-contact-text">Proudly Made in India</div>
+    </div>
+  </div>
+
+</div><!-- /pf-main -->
+
+<!-- TRUST STRIP -->
+<div class="pf-trust">
+  <div class="pf-trust-item">
+    <div class="pf-trust-icon">🚚</div>
+    <div><div class="pf-trust-label">Free Shipping</div><div class="pf-trust-sub">Above ₹999</div></div>
+  </div>
+  <div class="pf-trust-item">
+    <div class="pf-trust-icon">🔒</div>
+    <div><div class="pf-trust-label">Secure Payments</div><div class="pf-trust-sub">100% Safe &amp; Trusted</div></div>
+  </div>
+  <div class="pf-trust-item">
+    <div class="pf-trust-icon">🎁</div>
+    <div><div class="pf-trust-label">Premium Gift Packaging</div><div class="pf-trust-sub">Perfect for Gifting</div></div>
+  </div>
+  <div class="pf-trust-item">
+    <div class="pf-trust-icon">↩</div>
+    <div><div class="pf-trust-label">Easy Returns</div><div class="pf-trust-sub">Hassle-Free Returns</div></div>
+  </div>
+</div>
+
+<!-- PAYMENT SECTION -->
+<div class="pf-payment">
+  <!-- Botanical SVG left -->
+  <svg class="pf-payment-botanical-l" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C89B3C" stroke-width="1">
+    <path d="M20,190 Q40,150 60,130 Q80,110 100,80 Q120,50 130,20"/>
+    <path d="M30,180 Q50,155 65,140 Q85,120 95,95 Q105,70 110,45"/>
+    <path d="M60,130 Q45,120 35,105 Q25,90 30,70"/>
+    <path d="M80,110 Q65,100 55,85 Q45,70 50,50"/>
+    <path d="M100,80 Q85,72 75,58 Q65,44 68,28"/>
+    <ellipse cx="55" cy="128" rx="18" ry="10" transform="rotate(-30 55 128)"/>
+    <ellipse cx="78" cy="108" rx="16" ry="9" transform="rotate(-45 78 108)"/>
+    <ellipse cx="98" cy="82" rx="14" ry="8" transform="rotate(-55 98 82)"/>
+  </svg>
+  <!-- Botanical SVG right -->
+  <svg class="pf-payment-botanical-r" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C89B3C" stroke-width="1">
+    <path d="M20,190 Q40,150 60,130 Q80,110 100,80 Q120,50 130,20"/>
+    <path d="M30,180 Q50,155 65,140 Q85,120 95,95 Q105,70 110,45"/>
+    <path d="M60,130 Q45,120 35,105 Q25,90 30,70"/>
+    <path d="M80,110 Q65,100 55,85 Q45,70 50,50"/>
+    <path d="M100,80 Q85,72 75,58 Q65,44 68,28"/>
+    <ellipse cx="55" cy="128" rx="18" ry="10" transform="rotate(-30 55 128)"/>
+    <ellipse cx="78" cy="108" rx="16" ry="9" transform="rotate(-45 78 108)"/>
+    <ellipse cx="98" cy="82" rx="14" ry="8" transform="rotate(-55 98 82)"/>
+  </svg>
+
+  <div class="pf-payment-head">
+    <div class="pf-payment-head-line"></div>
+    <span class="pf-payment-head-text">We Accept</span>
+    <div class="pf-payment-head-line r"></div>
+  </div>
+  <div class="pf-pay-logos">
+    <!-- VISA -->
+    <div class="pf-pay-logo"><svg width="58" height="20" viewBox="0 0 58 20"><text x="0" y="16" font-family="Arial,sans-serif" font-size="18" font-weight="900" font-style="italic" fill="#1a1f71" letter-spacing="1">VISA</text></svg></div>
+    <!-- Mastercard -->
+    <div class="pf-pay-logo"><svg width="44" height="28" viewBox="0 0 44 28"><circle cx="16" cy="14" r="13" fill="#EB001B"/><circle cx="28" cy="14" r="13" fill="#F79E1B"/><path d="M22 5.8a13 13 0 010 16.4A13 13 0 0122 5.8z" fill="#FF5F00"/></svg></div>
+    <!-- UPI -->
+    <div class="pf-pay-logo"><svg width="52" height="24" viewBox="0 0 52 24"><text x="0" y="18" font-family="Arial,sans-serif" font-size="14" font-weight="800" fill="#097939">UPI</text><text x="26" y="18" font-family="Arial,sans-serif" font-size="9" fill="#6B28A8" font-weight="700">▶▶</text></svg></div>
+    <!-- PhonePe -->
+    <div class="pf-pay-logo"><svg width="80" height="22" viewBox="0 0 80 22"><rect width="80" height="22" rx="4" fill="#5f259f"/><text x="6" y="15" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#fff">Ph</text><text x="20" y="15" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#fff">one</text><text x="48" y="15" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#00b9f1">Pe</text></svg></div>
+    <!-- Google Pay -->
+    <div class="pf-pay-logo"><svg width="70" height="24" viewBox="0 0 70 24"><text x="0" y="17" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#4285F4">G</text><text x="11" y="17" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#333">Pay</text></svg></div>
+    <!-- PayPal -->
+    <div class="pf-pay-logo"><svg width="72" height="22" viewBox="0 0 72 22"><text x="0" y="16" font-family="Arial,sans-serif" font-size="13" font-weight="800" fill="#003087">Pay</text><text x="28" y="16" font-family="Arial,sans-serif" font-size="13" font-weight="800" fill="#009cde">Pal</text></svg></div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="pf-bottom">
+  <span>© 2026 Auranest Decors. All rights reserved.</span>
+  <span class="pf-bottom-sep">|</span>
+  <span>Made with ♥ for Indian Artisans</span>
+  <span class="pf-bottom-sep">|</span>
+  <span>🇮🇳 Made in India</span>
+</div>
+
 </footer>
 
 <!-- WISHLIST PANEL -->
