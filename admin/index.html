@@ -340,10 +340,29 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
       <div class="sg"><label class="sl">Price (₹)</label><input class="si" id="mPrice" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">MRP (₹)</label><input class="si" id="mMrp" type="number" placeholder="0"/></div>
       <div class="sg"><label class="sl">Category</label>
-        <select class="si" id="mCat"><option>Home & Kitchen</option><option>Aura décor</option><option>Aesthetic Furniture</option><option>Giftings</option></select>
+        <select class="si" id="mCat">
+          <option value="Aura décor">Aura Décor</option>
+          <option value="Home & Kitchen">Home & Kitchen</option>
+          <option value="Artisan">Artisan</option>
+          <option value="Woodcraft">Woodcraft</option>
+          <option value="Minimal">Minimal</option>
+          <option value="Gifting">Gifting</option>
+        </select>
       </div>
       <div class="sg"><label class="sl">Sub-Category</label>
-        <select class="si" id="mSub"><option>Serveware</option><option>Decorative Pots</option><option>Kitchen Tools</option><option>Wall Décor</option><option>Tableware</option></select>
+        <select class="si" id="mSub">
+          <option value="Decorative Pots">Decorative Pots</option>
+          <option value="Serveware">Serveware</option>
+          <option value="Trays & Platters">Trays &amp; Platters</option>
+          <option value="Kitchen Tools">Kitchen Tools</option>
+          <option value="Wall Décor">Wall Décor</option>
+          <option value="Tableware">Tableware</option>
+          <option value="Folk Art Trays">Folk Art Trays</option>
+          <option value="Painted Wooden Decor">Painted Wooden Decor</option>
+          <option value="Natural Terracotta">Natural Terracotta</option>
+          <option value="Modern Decor">Modern Decor</option>
+          <option value="Gift Sets">Gift Sets</option>
+        </select>
       </div>
       <div class="sg"><label class="sl">Material</label><input class="si" id="mMat" placeholder="e.g. Ceramic, Wood"/></div>
       <div class="sg"><label class="sl">Color</label><input class="si" id="mColor" placeholder="e.g. Multicolors"/></div>
@@ -486,8 +505,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
         <input class="psearch" placeholder="Search products…" oninput="searchProducts(this.value)" id="prodSearch"/>
         <select class="pfilter" onchange="filterProdCat(this.value)">
           <option value="all">All Categories</option>
-          <option value="Home & Kitchen">Home & Kitchen</option>
           <option value="Aura décor">Aura Décor</option>
+          <option value="Home & Kitchen">Home &amp; Kitchen</option>
+          <option value="Artisan">Artisan</option>
+          <option value="Woodcraft">Woodcraft</option>
+          <option value="Minimal">Minimal</option>
+          <option value="Gifting">Gifting</option>
         </select>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
         <button class="btn-add" style="background:var(--terra)" onclick="openBulkModal()">📥 Bulk Upload CSV</button>
