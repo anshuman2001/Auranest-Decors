@@ -789,10 +789,27 @@ async function loadProducts() {
   }
 }
 
+function showOrdersRulesError() {
+  const msg = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#e8a838">
+    ⚠️ <strong>Firestore rules are blocking orders.</strong><br><br>
+    Go to <a href="https://console.firebase.google.com/project/auranest-decors/firestore/rules" target="_blank" style="color:#e8a838;text-decoration:underline">Firebase Console → Firestore → Rules</a>
+    and add:<br><br>
+    <code style="background:#1a1a1a;padding:.4rem .8rem;border-radius:4px;font-size:.8rem;color:#90ee90">
+    match /orders/{id} &#123; allow read, write: if request.auth != null; &#125;
+    </code>
+  </td></tr>`;
+  document.getElementById('ordersTableBody').innerHTML = msg;
+  document.getElementById('recentOrdersBody').innerHTML = msg.replace('colspan="8"','colspan="6"');
+}
+
 async function loadOrders() {
+  let resolved = false;
+  // Show rules error if onSnapshot doesn't respond within 6 seconds
+  const timeout = setTimeout(() => { if (!resolved) showOrdersRulesError(); }, 6000);
   try {
-    // Real-time listener for orders
     onSnapshot(collection(db, 'orders'), (snap) => {
+      resolved = true;
+      clearTimeout(timeout);
       window.$orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const count = window.$orders.length;
       document.getElementById('statOrders').textContent   = count;
@@ -808,10 +825,17 @@ async function loadOrders() {
       renderOrdersTable(window.$orders);
       renderAnalyticsChart(window.$orders);
     }, (err) => {
-      console.error('Orders listener error:', err);
-      showToast('⚠️ Orders blocked — update Firestore rules to allow admin reads on orders collection');
+      resolved = true;
+      clearTimeout(timeout);
+      console.error('Orders listener error:', err.code, err.message);
+      showOrdersRulesError();
     });
-  } catch (err) { console.error('Orders error:', err); }
+  } catch (err) {
+    resolved = true;
+    clearTimeout(timeout);
+    console.error('Orders error:', err);
+    showOrdersRulesError();
+  }
 }
 
 function loadCustomers() {
