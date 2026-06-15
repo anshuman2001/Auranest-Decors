@@ -2682,17 +2682,34 @@ function openDeepLinkProduct() {
   const params = new URLSearchParams(location.search);
   const key = params.get('product');
   if (!key) return;
-  const imgKey = params.get('v'); // image basename — disambiguates products that share a slug
+  const imgKey = params.get('v'); // image basename or folder name from catalogue
   const all = window.$products || PRODUCTS;
   const baseOf = u => (u || '').split('/').pop().split('?')[0];
-  // 1) all products matching the slug/id
+  // Extract Cloudinary folder from a product's image URL
+  const folderOf = u => {
+    const parts = (u || '').split('/');
+    const up = parts.findIndex(p => p === 'upload');
+    if (up < 0) return '';
+    const segs = parts.slice(up + 1).filter(p => p && !p.includes(','));
+    return segs.length >= 2 ? segs[segs.length - 2] : '';
+  };
+  // 1) match by Firestore id, slug, or index
   let matches = all.filter((x, i) => x.id === key || x.slug === key || String(i) === key);
-  // 2) if several share the slug, pick the one whose image matches
+  // 2) if multiple share the same slug, narrow by image basename
   if (matches.length > 1 && imgKey) {
     const exact = matches.find(x => baseOf(x.images?.[0] || x.image) === imgKey);
     if (exact) matches = [exact];
   }
-  // 3) if slug found nothing, fall back to matching purely by image
+  // 3) match by Cloudinary folder name in image URL (catalogue deep link)
+  if (!matches.length) {
+    matches = all.filter(x => folderOf(x.images?.[0] || x.image || '') === key);
+    // narrow by image basename if still multiple
+    if (matches.length > 1 && imgKey) {
+      const exact = matches.find(x => baseOf(x.images?.[0] || x.image) === imgKey);
+      if (exact) matches = [exact];
+    }
+  }
+  // 4) last resort: match purely by image basename
   if (!matches.length && imgKey) {
     matches = all.filter(x => baseOf(x.images?.[0] || x.image) === imgKey);
   }

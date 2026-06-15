@@ -876,9 +876,26 @@ const products = [
 
 const grid = document.getElementById('products-grid');
 
+// Extract Cloudinary folder and filename from image URL for deep linking
+function imgFolder(url) {
+  const parts = url.split('/');
+  const up = parts.findIndex(p => p === 'upload');
+  if (up < 0) return '';
+  // skip transform segments (contain commas or dots), take path segments
+  const segs = parts.slice(up + 1).filter(p => p && !p.includes(','));
+  // segs: ['auranest', 'product-folder-name', 'img1.jpg'] → return folder name
+  return segs.length >= 2 ? segs[segs.length - 2] : '';
+}
+function imgBase(url) { return url.split('/').pop().split('?')[0]; }
+
 function renderCards(filtered) {
   grid.innerHTML = '';
   filtered.forEach(p => {
+    const folder = imgFolder(p.img);
+    const base   = imgBase(p.img);
+    const storeUrl = folder
+      ? `../store/?product=${encodeURIComponent(folder)}&v=${encodeURIComponent(base)}`
+      : `../store/`;
     const card = document.createElement('div');
     card.className = 'p-card';
     card.innerHTML = `
@@ -890,7 +907,7 @@ function renderCards(filtered) {
         <div class="p-name">${p.name}</div>
         <div class="p-desc">${p.desc}</div>
         <div class="p-footer">
-          <a href="../store/" class="p-cta" target="_blank">Explore</a>
+          <a href="${storeUrl}" class="p-cta" target="_blank">Explore</a>
           <div class="p-dot"></div>
         </div>
       </div>`;
