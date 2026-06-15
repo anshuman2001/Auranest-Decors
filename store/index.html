@@ -1619,22 +1619,23 @@ body.pdp-open .wa-float{display:none;}
   </div>
 </div>
 
-<!-- PRODUCTS / BEST SELLERS -->
+<!-- PRODUCTS / SHOP OUR COLLECTIONS -->
 <section class="section section-alt" id="collection">
-  <div class="sec-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
+  <div class="sec-hdr" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
     <div>
-      <p class="sec-eye">Our Collection</p>
-      <h2 class="sec-title" id="collectionTitle" style="margin-bottom:0">Best Sellers</h2>
+      <p class="sec-eye">Explore</p>
+      <h2 class="sec-title" id="collectionTitle" style="margin-bottom:.3rem">Shop Our Collections</h2>
+      <p class="sec-sub" id="collectionSub" style="margin-bottom:0">Handcrafted Indian décor — curated across four distinct collections.</p>
     </div>
-    <a href="#" onclick="filterProds('all',document.querySelector('.fbtn[data-key=all]'));return false;" style="font-size:.76rem;color:var(--gold);letter-spacing:.06em;text-decoration:none;display:flex;align-items:center;gap:.3rem;border:1px solid rgba(196,149,53,.35);padding:.45rem 1rem;">View All →</a>
+    <a href="#" onclick="filterProds('all',document.querySelector('.fbtn[data-key=all]'));return false;" style="font-size:.76rem;color:var(--gold);letter-spacing:.06em;text-decoration:none;display:flex;align-items:center;gap:.3rem;border:1px solid rgba(196,149,53,.35);padding:.45rem 1rem;margin-top:.4rem;flex-shrink:0;">View All →</a>
   </div>
   <div class="filter-row">
-    <button class="fbtn on"  data-key="all"       onclick="filterProds('all',this)">✦ All</button>
-    <button class="fbtn"     data-key="artisan"   onclick="filterProds('artisan',this)">🎨 Artisan</button>
-    <button class="fbtn"     data-key="woodcraft" onclick="filterProds('woodcraft',this)">🪵 Woodcraft</button>
-    <button class="fbtn"     data-key="minimal"   onclick="filterProds('minimal',this)">🏺 Minimal</button>
-    <button class="fbtn"     data-key="gifting"   onclick="filterProds('gifting',this)">🎁 Gifting</button>
-    <button class="fbtn"     data-key="under999"  onclick="filterProds('under999',this)">₹ Under ₹999</button>
+    <button class="fbtn on"  data-key="all"       onclick="filterProds('all',this)">All</button>
+    <button class="fbtn"     data-key="artisan"   onclick="filterProds('artisan',this)">Artisan</button>
+    <button class="fbtn"     data-key="woodcraft" onclick="filterProds('woodcraft',this)">Woodcraft</button>
+    <button class="fbtn"     data-key="minimal"   onclick="filterProds('minimal',this)">Minimal</button>
+    <button class="fbtn"     data-key="gifting"   onclick="filterProds('gifting',this)">Gifting</button>
+    <button class="fbtn"     data-key="under999"  onclick="filterProds('under999',this)">Under ₹999</button>
   </div>
   <div class="prod-grid" id="prodGrid">
     <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:1.2rem;">Loading products...</div>
@@ -3196,7 +3197,7 @@ function getCollection(p) {
 }
 
 const COLL_META = {
-  all:       { title:'All Products',          sub:'Handcrafted Indian décor — curated across four distinct collections.' },
+  all:       { title:'Shop Our Collections',  sub:'Handcrafted Indian décor — curated across four distinct collections.' },
   artisan:   { title:'Artisan Collection',    sub:'Hand-painted folk art, Madhubani, Warli & tribal ceramics.' },
   woodcraft: { title:'Woodcraft Collection',  sub:'Natural wood trays, Jharokha mirrors, kitchen tools & stools.' },
   minimal:   { title:'Minimal Collection',    sub:'Plain ceramic sculptures, terracotta & contemporary forms.' },
