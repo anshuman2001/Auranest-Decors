@@ -797,29 +797,35 @@ async function loadOrders() {
       const count = window.$orders.length;
       document.getElementById('statOrders').textContent   = count;
       document.getElementById('sbOrderCount').textContent = count;
-      const revenue = window.$orders.filter(o => o.paymentStatus === 'paid').reduce((a,o) => a+o.totalAmount, 0);
+      const revenue = window.$orders.filter(o => o.paymentStatus === 'paid').reduce((a,o) => a+(o.totalAmount||0), 0);
       document.getElementById('statRevenue').textContent  = '₹' + revenue.toLocaleString('en-IN');
-      // Analytics
       document.getElementById('pendingCount').textContent   = window.$orders.filter(o=>o.orderStatus==='pending').length;
       document.getElementById('deliveredCount').textContent = window.$orders.filter(o=>o.orderStatus==='delivered').length;
       document.getElementById('cancelledCount').textContent = window.$orders.filter(o=>o.orderStatus==='cancelled').length;
-      const avgVal = count > 0 ? Math.round(window.$orders.reduce((a,o)=>a+o.totalAmount,0)/count) : 0;
+      const avgVal = count > 0 ? Math.round(window.$orders.reduce((a,o)=>a+(o.totalAmount||0),0)/count) : 0;
       document.getElementById('avgOrder').textContent = '₹' + avgVal.toLocaleString('en-IN');
       renderRecentOrders(window.$orders.slice(0,8));
       renderOrdersTable(window.$orders);
       renderAnalyticsChart(window.$orders);
+    }, (err) => {
+      console.error('Orders listener error:', err);
+      showToast('⚠️ Orders blocked — update Firestore rules to allow admin reads on orders collection');
     });
   } catch (err) { console.error('Orders error:', err); }
 }
 
-async function loadCustomers() {
-  try {
-    const snap = await getDocs(collection(db, 'users'));
+function loadCustomers() {
+  // Store saves customers to 'customers' collection (mobile field for phone)
+  onSnapshot(collection(db, 'customers'), (snap) => {
     window.$customers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    document.getElementById('statCusts').textContent   = window.$customers.length;
-    document.getElementById('sbCustCount').textContent = window.$customers.length;
+    const count = window.$customers.length;
+    document.getElementById('statCusts').textContent   = count;
+    document.getElementById('sbCustCount').textContent = count;
     renderCustomers(window.$customers);
-  } catch (err) { console.error('Customers error:', err); }
+  }, (err) => {
+    console.error('Customers error:', err);
+    showToast('⚠️ Cannot load customers — check Firestore rules for customers collection');
+  });
 }
 
 // ── SAVE / DELETE PRODUCT TO FIREBASE ──
@@ -953,7 +959,7 @@ function renderCustomers(custs) {
       <div class="cc">
         <div class="cc-top"><div class="cc-av">👤</div><div><div class="cc-name">${c.name||'Unknown'}</div><div class="cc-email">${c.email||''}</div></div></div>
         <div class="cc-stats">
-          <div class="cc-stat"><div class="cc-stat-lbl">Phone</div><div class="cc-stat-val" style="font-size:.85rem">${c.phone||'—'}</div></div>
+          <div class="cc-stat"><div class="cc-stat-lbl">Phone</div><div class="cc-stat-val" style="font-size:.85rem">${c.mobile||c.phone||'—'}</div></div>
           <div class="cc-stat"><div class="cc-stat-lbl">Joined</div><div class="cc-stat-val" style="font-size:.85rem">${c.createdAt?.seconds ? new Date(c.createdAt.seconds*1000).toLocaleDateString('en-IN') : 'Recent'}</div></div>
         </div>
       </div>`).join('');
