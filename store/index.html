@@ -278,8 +278,10 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .hero-ti-icon{font-size:.85rem;flex-shrink:0;}
 .hero-ti-sep{width:1px;height:22px;background:var(--border);flex-shrink:0;}
 .hero-right{position:relative;overflow:hidden;background:#f0e8de;align-self:stretch;}
-.hero-right img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;transition:transform .7s cubic-bezier(.23,1,.32,1);}
-.hero-new:hover .hero-right img{transform:scale(1.04);}
+.hero-right{position:relative;}
+.hero-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;opacity:0;transition:opacity .9s ease,transform .9s cubic-bezier(.23,1,.32,1);}
+.hero-slide.active{opacity:1;position:relative;}
+.hero-new:hover .hero-slide.active{transform:scale(1.04);}
 .hero-arr{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,.82);border:1px solid rgba(196,149,53,.25);color:var(--dark);width:32px;height:32px;border-radius:50%;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;line-height:1;}
 .hero-arr:hover{background:#fff;border-color:var(--gold);}
 .hero-prev{right:calc(55% + 8px);left:auto;}
@@ -1567,7 +1569,9 @@ body.pdp-open .wa-float{display:none;}
     </div>
   </div>
   <div class="hero-right">
-    <img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_900/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg" alt="Handcrafted Indian decor — terracotta planter, wicker, brass figurine" loading="eager" fetchpriority="high" onerror="this.src='../assets/banner1.jpg'"/>
+    <img class="hero-slide active" src="../assets/banner1.jpg" alt="Auranest Decors — handcrafted Indian home décor banner 1" loading="eager" fetchpriority="high" onerror="this.src='https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_900/auranest/auranest-dcor-madhubani-folk-regal-peacock-dancing-duo-ceramic-planter/img2.jpg'"/>
+    <img class="hero-slide" src="../assets/banner2.jpg" alt="Auranest Decors — handcrafted Indian home décor banner 2" loading="lazy" onerror="this.src='https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_900/auranest/auranest-dcors-the-cultural-keepsake-twirling-flora-vessel-leaping-garland-ceramic-planter/img1.jpg'"/>
+    <img class="hero-slide" src="../assets/banner3.jpg" alt="Auranest Decors — handcrafted Indian home décor banner 3" loading="lazy" onerror="this.src='https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_900/auranest/round-wooden-tray-cow/img1.jpg'"/>
   </div>
   <button class="hero-arr hero-prev" onclick="cycleHero(-1)" aria-label="Previous">&#8592;</button>
   <button class="hero-arr hero-next" onclick="cycleHero(1)" aria-label="Next">&#8594;</button>
@@ -3453,11 +3457,14 @@ function showToast(msg){ const t=document.getElementById('toast'); t.textContent
 
 // Split hero cycle + auto-rotate
 function cycleHero(dir){
-  const dots = document.querySelectorAll('.hero-dot');
+  const dots   = document.querySelectorAll('.hero-dot');
+  const slides = document.querySelectorAll('.hero-slide');
   let ci = [...dots].findIndex(d=>d.classList.contains('active'));
   dots[ci].classList.remove('active');
+  slides[ci].classList.remove('active');
   ci = (ci + dir + dots.length) % dots.length;
   dots[ci].classList.add('active');
+  slides[ci].classList.add('active');
 }
 (function(){
   let heroTimer = setInterval(()=>cycleHero(1), 5000);
