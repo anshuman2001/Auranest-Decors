@@ -9,11 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
 
-<!-- React UMD + Babel for in-browser JSX transpilation -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
 <!-- Firebase Auth + Firestore -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -35,7 +30,6 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// 30-day persistence — users stay logged in across visits
 setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
 onAuthStateChanged(auth, async user => {
@@ -68,8 +62,6 @@ window._fbQueryMobile = async (mobile) => {
   const snap = await getDocs(q);
   return snap.empty ? null : {id:snap.docs[0].id,...snap.docs[0].data()};
 };
-
-// After OTP verify: load existing profile OR create new customer record
 window._checkOrCreateCustomer = async (uid, phone) => {
   try {
     const snap = await getDoc(doc(db,'customers',uid));
@@ -81,31 +73,22 @@ window._checkOrCreateCustomer = async (uid, phone) => {
     window._fbAddresses   = addrs;
     window._fbDefaultAddr = addrs.find(a=>a.isDefault)||addrs[0]||null;
     if (snap.exists()) return {uid,...snap.data()};
-    // New customer — create minimal record
     const data = {mobile:phone, createdAt:serverTimestamp(), lastLogin:serverTimestamp()};
     await setDoc(doc(db,'customers',uid), data).catch(()=>{});
     return {uid, mobile:phone};
-  } catch(e) {
-    console.warn('checkOrCreateCustomer:', e.message);
-    return {uid, mobile:phone};
-  }
+  } catch(e) { return {uid, mobile:phone}; }
 };
-
-window._saveAddress = async (uid, addr) => {
-  await addDoc(collection(db,'customers',uid,'addresses'),addr);
-};
+window._saveAddress = async (uid, addr) => { await addDoc(collection(db,'customers',uid,'addresses'),addr); };
 window._saveOrder = async (data) => {
   const ref = await addDoc(collection(db,'orders'),{...data,createdAt:serverTimestamp()});
   return ref.id;
 };
-
-// Pre-init reCAPTCHA at body level so it's never inside a transformed parent
 window._initRecaptcha = () => {
   if (window._rcVerifier) return window._rcVerifier;
   try {
     window._rcVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size:'invisible' });
     window._rcVerifier.render().catch(()=>{});
-  } catch(e) { console.warn('reCAPTCHA init failed:', e.message); }
+  } catch(e) {}
   return window._rcVerifier;
 };
 setTimeout(window._initRecaptcha, 300);
@@ -118,8 +101,7 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 :root{--gold:#c49330;--gold-lt:#f6d070;--ink:#1a1208;--muted:#7a6a4e;--border:#e8dfc8}
 
 @keyframes fadeIn  {from{opacity:0}to{opacity:1}}
-@keyframes slideUp {from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn {from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp {from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin    {to{transform:rotate(360deg)}}
 @keyframes checkDraw  {to{stroke-dashoffset:0}}
 @keyframes circleDraw {to{stroke-dashoffset:0}}
@@ -127,13 +109,12 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 
 .a-fade {animation:fadeIn .35s ease both}
 .a-slide{animation:slideUp .4s cubic-bezier(.22,1,.36,1) both}
-.a-scale{animation:scaleIn .35s cubic-bezier(.22,1,.36,1) both}
 
-/* Spinner */
 .spinner{width:17px;height:17px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+.spinner-dark{width:17px;height:17px;border:2px solid rgba(0,0,0,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
 
 /* Floating labels */
-.fl-wrap{position:relative;margin-bottom:1.05rem}
+.fl-wrap{position:relative;margin-bottom:1rem}
 .fl-input,.fl-select{
   width:100%;padding:18px 14px 6px;border:1.5px solid var(--border);border-radius:10px;
   font-size:.93rem;font-family:'Inter',sans-serif;background:#fff;color:var(--ink);
@@ -148,10 +129,11 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 .fl-input:focus~.fl-label,
 .fl-input:not(:placeholder-shown)~.fl-label,
 .fl-select:focus~.fl-label,
-.fl-has-val~.fl-label{top:8px;transform:translateY(0);font-size:.73rem;color:var(--gold);font-weight:600}
+.fl-select.has-val~.fl-label{top:8px;transform:translateY(0);font-size:.73rem;color:var(--gold);font-weight:600}
 .fl-arrow{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:.8rem}
 
 /* Progress */
+.prog-wrap{position:relative;display:flex;justify-content:space-between;align-items:flex-start;padding:0 16px;margin-bottom:36px}
 .prog-line{position:absolute;top:13px;left:8%;right:8%;height:2px;background:var(--border);z-index:0}
 .prog-fill{height:2px;background:var(--gold);transition:width .55s ease;position:absolute;top:13px;left:8%;z-index:1}
 .step-dot{
@@ -159,8 +141,8 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
   background:#fff;display:flex;align-items:center;justify-content:center;
   font-size:.7rem;font-weight:700;color:var(--muted);z-index:2;flex-shrink:0
 }
-.step-dot.active{border-color:var(--gold);background:var(--gold);color:#fff;box-shadow:0 0 0 4px rgba(196,147,48,.18)}
 .step-dot.done{border-color:var(--gold);background:var(--gold);color:#fff}
+.step-dot.active{border-color:var(--gold);background:var(--gold);color:#fff;box-shadow:0 0 0 4px rgba(196,147,48,.18)}
 
 /* Cart item */
 .ci-img{width:68px;height:68px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#f0e8d8;display:flex;align-items:center;justify-content:center;font-size:1.7rem}
@@ -176,18 +158,9 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 .pay-tab{padding:9px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;background:#fff;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .pay-tab.active{border-color:var(--gold);background:#fffbf0;color:var(--gold)}
 
-/* Card preview */
-.card-preview{
-  background:linear-gradient(135deg,#1a1208 0%,#3d2f12 50%,#1a1208 100%);
-  border-radius:16px;padding:22px 20px;color:#fff;position:relative;overflow:hidden;min-height:155px;
-  box-shadow:0 14px 36px rgba(0,0,0,.32)
-}
-.card-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(196,147,48,.22),transparent 60%)}
-.card-chip{width:34px;height:24px;border-radius:5px;background:linear-gradient(135deg,#f6d070,#c49330);margin-bottom:18px}
-
 /* OTP boxes */
 .otp-box{
-  width:52px;height:58px;border:2px solid var(--border);border-radius:12px;
+  width:46px;height:54px;border:2px solid var(--border);border-radius:12px;
   text-align:center;font-size:1.5rem;font-weight:700;font-family:'Inter',sans-serif;
   outline:none;transition:border-color .2s,box-shadow .2s;background:#fff;color:var(--ink)
 }
@@ -196,1195 +169,718 @@ body{font-family:'Inter',sans-serif;background:#f7f4ef;color:#1a1208;min-height:
 /* Success SVG */
 .check-circle{stroke-dasharray:170;stroke-dashoffset:170;animation:circleDraw .8s .2s cubic-bezier(.22,1,.36,1) forwards}
 .check-mark{stroke-dasharray:60;stroke-dashoffset:60;animation:checkDraw .5s 1s cubic-bezier(.22,1,.36,1) forwards}
-
-/* Confetti */
 .confetti-piece{position:fixed;border-radius:2px;animation:confettiFall linear forwards;pointer-events:none;z-index:9999}
-
-/* Pill */
-.pill{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;background:#fff;font-family:'Inter',sans-serif}
-.pill.active{border-color:var(--gold);background:#fffbf0;color:var(--gold)}
 
 /* Promo */
 .promo-input{flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
 .promo-input:focus{border-color:var(--gold)}
 
-/* Scrollbar */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:10px}
 
 /* Nav */
 .co-nav{position:sticky;top:0;z-index:100;background:rgba(247,244,239,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:13px 24px;display:flex;align-items:center;gap:14px}
 
-/* Btn base */
-.btn-base{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:11px;font-weight:600;font-size:.88rem;font-family:'Inter',sans-serif;transition:all .2s;cursor:pointer;border:none;padding:12px 20px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:11px;font-weight:600;font-size:.88rem;font-family:'Inter',sans-serif;transition:all .2s;cursor:pointer;border:none;padding:12px 20px}
 .btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#a87e28}.btn-gold:disabled{opacity:.55;cursor:not-allowed}
 .btn-outline{background:#fff;color:var(--gold);border:2px solid var(--gold)}.btn-outline:hover{background:#fffbf0}
 .btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{background:#f0e8d8;color:var(--ink)}
 .btn-dark{background:var(--ink);color:#fff}.btn-dark:hover{background:#3d2f12}.btn-dark:disabled{opacity:.55}
 
-/* OS */
+/* Order sidebar */
 .os-row{display:flex;justify-content:space-between;align-items:center;font-size:.88rem;padding:3px 0}
 .os-label{color:var(--muted)}.os-val{font-weight:600;color:var(--ink)}
 
-/* Loading skeleton */
-#root:empty::after{content:'Loading checkout…';display:flex;align-items:center;justify-content:center;height:100vh;font-size:1rem;color:var(--muted)}
+/* Card */
+.co-card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.06);border:1px solid #f0e4c8}
+
+/* Modal overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-box{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:slideUp .3s cubic-bezier(.22,1,.36,1) both}
+
+.err-msg{color:#dc2626;font-size:.78rem;margin-top:-6px;margin-bottom:10px}
+.success-msg{color:#16a34a;font-size:.78rem;margin-top:-6px;margin-bottom:10px}
 
 @media(max-width:768px){
   .co-layout{flex-direction:column!important}
   .co-sidebar{width:100%!important;position:static!important}
-  .otp-box{width:44px;height:52px;font-size:1.3rem}
+  .otp-box{width:38px;height:46px;font-size:1.2rem}
   .co-nav{padding:10px 14px!important}
+  .grid-2{grid-template-columns:1fr!important}
 }
 @media(max-width:480px){
   .co-nav{padding:8px 12px!important}
+  .otp-box{width:34px;height:42px;font-size:1.1rem}
 }
 </style>
 </head>
 <body>
 <div id="recaptcha-container" style="position:fixed;bottom:0;left:0;z-index:9999"></div>
-<div id="root"></div>
+<nav class="co-nav">
+  <a href="/store/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)">
+    <div style="width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#fff;font-family:serif;font-weight:700;font-size:1.1rem">A</div>
+    <span style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700">Auranest Decors</span>
+  </a>
+  <div style="flex:1"></div>
+  <p style="font-size:.78rem;color:var(--muted);font-weight:600">🔒 Secure Checkout</p>
+</nav>
 
-<script type="text/babel">
-const { useState, useEffect, useRef } = React;
+<div id="app" style="max-width:960px;margin:0 auto;padding:clamp(16px,4vw,32px) clamp(10px,3vw,16px)"></div>
 
-/* ─── LOGO — reads from localStorage (set by store page) ── */
-const LOGO_URL = localStorage.getItem('auranest_logo') || '';
+<script>
+// ── State ────────────────────────────────────────────────
+const S = {
+  step: 1,        // 1=cart, 2=personal, 3=address, 4=payment, 5=success
+  cart: [],
+  discount: false,
+  personal: { firstName:'', lastName:'', email:'', phone:'' },
+  address:  { line1:'', line2:'', city:'', state:'', country:'IN', pincode:'' },
+  customerId: null,
+  result: null,
+  showAuth: false,
+  authPhase: 'phone', // phone | otp | guest
+  authPhone: '',
+  authOtp: ['','','','','',''],
+  authErr: '',
+  authLoading: false,
+  authConfirm: null,
+  authTimer: 0,
+};
 
-/* ─── Trim Amazon-length product names ── */
+// ── Helpers ──────────────────────────────────────────────
+const rupee = n => '₹' + Number(n).toLocaleString('en-IN');
+const $ = id => document.getElementById(id);
+const app = () => document.getElementById('app');
+
 function trimName(n) {
   if (!n) return n;
   let s = n.split('|')[0].trim();
-  const SPEC = /\b(bpa|eco.friendly|multipurpose|anti.microbial|food.grade|pack of|non.stick|non.slip)\b/i;
-  if (SPEC.test(s)) { const c = s.indexOf(',', 15); if (c > 0) s = s.slice(0, c).trim(); }
-  else if (s.length > 55) { const c = s.indexOf(',', 25); if (c > 0) s = s.slice(0, c).trim(); }
+  if (s.length > 55) { const c = s.indexOf(',', 25); if (c > 0) s = s.slice(0, c).trim(); }
   return s || n;
 }
 
-function BrandLogo({ size = 36 }) {
-  const [broken, setBroken] = useState(!LOGO_URL);
-  if (!broken && LOGO_URL) {
-    return (
-      <img
-        src={LOGO_URL}
-        alt="Auranest"
-        onError={() => setBroken(true)}
-        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-      />
-    );
-  }
-  /* Elegant text fallback — always visible even without a logo file */
-  return (
-    <div style={{
-      width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: 'linear-gradient(135deg,#c49330,#f6d070)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Playfair Display',serif", fontWeight: 700,
-      fontSize: size * 0.4, color: '#fff', letterSpacing: '-.02em'
-    }}>A</div>
-  );
-}
-
-/* ─── DATA ─────────────────────────────────────────────── */
-const IN_STATES = [
-  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
-  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
-  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
-  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
-  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
-  'Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'
-];
-const US_STATES = [
-  'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware',
-  'Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky',
-  'Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi',
-  'Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico',
-  'New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania',
-  'Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont',
-  'Virginia','Washington','West Virginia','Wisconsin','Wyoming'
-];
-
-/* ─── HELPERS ───────────────────────────────────────────── */
 function cdnImg(url, w) {
   if (!url) return '';
   try { return `https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_${w}/${encodeURIComponent(url)}`; }
   catch { return url; }
 }
-const rupee = n => '₹' + Number(n).toLocaleString('en-IN');
 
+// ── Cart Store ───────────────────────────────────────────
 const CartStore = {
-  get:        ()  => { try { return JSON.parse(localStorage.getItem('auranest_cart') || '[]'); } catch { return []; } },
-  save:       (c) => localStorage.setItem('auranest_cart', JSON.stringify(c)),
-  clear:      ()  => localStorage.removeItem('auranest_cart'),
+  get:    () => { try { return JSON.parse(localStorage.getItem('auranest_cart') || '[]'); } catch { return []; } },
+  save:   c  => localStorage.setItem('auranest_cart', JSON.stringify(c)),
+  clear:  () => localStorage.removeItem('auranest_cart'),
   changeQty(id, delta) {
-    const c = this.get(), i = c.find(x => x.id === id);
-    if (!i) return;
-    i.qty += delta;
-    this.save(i.qty < 1 ? c.filter(x => x.id !== id) : c);
+    const c = this.get(), item = c.find(x => x.id === id);
+    if (!item) return;
+    item.qty += delta;
+    this.save(item.qty < 1 ? c.filter(x => x.id !== id) : c);
   },
-  remove: (id) => CartStore.save(CartStore.get().filter(x => x.id !== id))
+  remove: id => CartStore.save(CartStore.get().filter(x => x.id !== id))
 };
 
-/* ─── SHARED UI ─────────────────────────────────────────── */
-function Btn({ children, onClick, disabled, loading, variant = 'gold', style = {} }) {
-  const cls = `btn-base btn-${variant}`;
-  return (
-    <button className={cls} onClick={onClick} disabled={disabled || loading} style={style}>
-      {loading && <span className="spinner" />}
-      {children}
-    </button>
-  );
+// ── Totals ───────────────────────────────────────────────
+function calcTotals() {
+  const sub  = S.cart.reduce((a, x) => a + x.price * x.qty, 0);
+  const disc = S.discount ? Math.round(sub * 0.1) : 0;
+  const ship = sub >= 999 ? 0 : 79;
+  return { sub, disc, ship, total: sub - disc + ship };
 }
 
-function FloatInput({ label, id, type = 'text', value, onChange, required, maxLength, inputMode }) {
-  return (
-    <div className="fl-wrap">
-      <input id={id} type={type} className="fl-input" placeholder=" "
-        value={value} onChange={e => onChange(e.target.value)}
-        required={required} maxLength={maxLength} inputMode={inputMode} />
-      <label htmlFor={id} className="fl-label">{label}{required ? ' *' : ''}</label>
-    </div>
-  );
-}
-
-function FloatSelect({ label, id, value, onChange, options, required }) {
-  return (
-    <div className="fl-wrap" style={{ position: 'relative' }}>
-      <select id={id} className={`fl-select${value ? ' fl-has-val' : ''}`}
-        value={value} onChange={e => onChange(e.target.value)} required={required}>
-        <option value=""> </option>
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-      <label htmlFor={id} className="fl-label">{label}{required ? ' *' : ''}</label>
-      <span className="fl-arrow">▾</span>
-    </div>
-  );
-}
-
-function OrderSidebar({ cart, isFreeShipping, discount }) {
-  const sub   = cart.reduce((a, x) => a + x.price * x.qty, 0);
-  const disc  = discount ? Math.round(sub * 0.1) : 0;
-  const ship  = isFreeShipping ? 0 : 79;
-  const total = sub - disc + ship;
-  return (
-    <aside className="co-sidebar" style={{
-      background: '#fff', borderRadius: 18, padding: 20,
-      boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8',
-      width: 300, flexShrink: 0
-    }}>
-      <p style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, fontSize: '1rem', marginBottom: 14 }}>
-        Order Summary
-      </p>
-      <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 14 }}>
-        {cart.map(it => (
-          <div key={it.id} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid #faf5ea' }}>
-            <div className="ci-img" style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, fontSize: '1.2rem' }}>
-              {it.image
-                ? <img src={cdnImg(it.image, 120)} alt={it.name} onError={e => e.target.style.display = 'none'} />
-                : it.icon || '🏺'}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: '.8rem', fontWeight: 600, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.3 }}>{trimName(it.name)}</p>
-              <p style={{ fontSize: '.75rem', color: 'var(--muted)', marginTop: 2 }}>Qty {it.qty}</p>
-            </div>
-            <p style={{ fontSize: '.8rem', fontWeight: 700, flexShrink: 0 }}>{rupee(it.price * it.qty)}</p>
-          </div>
-        ))}
-      </div>
-      <div style={{ borderTop: '1px solid #f0e4c8', paddingTop: 10 }}>
-        <div className="os-row"><span className="os-label">Subtotal</span><span className="os-val">{rupee(sub)}</span></div>
-        {disc > 0 && <div className="os-row"><span className="os-label">Discount (10%)</span><span style={{ color: '#16a34a', fontWeight: 600, fontSize: '.88rem' }}>−{rupee(disc)}</span></div>}
-        <div className="os-row"><span className="os-label">Shipping</span><span style={{ color: '#16a34a', fontWeight: 600, fontSize: '.88rem' }}>{ship === 0 ? 'FREE' : rupee(ship)}</span></div>
-        <div className="os-row" style={{ borderTop: '1px solid #f0e4c8', marginTop: 6, paddingTop: 8 }}>
-          <span style={{ fontWeight: 700, color: 'var(--ink)' }}>Total</span>
-          <span style={{ fontWeight: 700, color: 'var(--gold)', fontSize: '1rem' }}>{rupee(total)}</span>
-        </div>
-      </div>
-      <p style={{ fontSize: '.73rem', color: 'var(--muted)', textAlign: 'center', marginTop: 12 }}>
-        🔒 Secured by 256-bit SSL
-      </p>
-    </aside>
-  );
-}
-
-function Stepper({ step }) {
+// ── Stepper ──────────────────────────────────────────────
+function stepper() {
+  if (S.step > 4) return '';
   const labels = ['Cart', 'Details', 'Address', 'Payment'];
-  const pct    = ((step - 1) / (labels.length - 1)) * 84;
-  return (
-    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '0 16px', marginBottom: 36 }}>
-      <div className="prog-line" />
-      <div className="prog-fill" style={{ width: `${pct}%` }} />
-      {labels.map((l, i) => (
-        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, zIndex: 2 }}>
-          <div className={`step-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}>
-            {i + 1 < step ? '✓' : i + 1}
-          </div>
-          <span style={{ fontSize: '.72rem', fontWeight: 600, color: i + 1 === step ? 'var(--gold)' : 'var(--muted)', display: 'none' }}
-            className="sm-show">{l}</span>
-        </div>
-      ))}
-    </div>
-  );
+  const pct = ((S.step - 1) / 3) * 84;
+  const dots = labels.map((l, i) => {
+    const n = i + 1;
+    const cls = n < S.step ? 'done' : n === S.step ? 'active' : '';
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2">
+      <div class="step-dot ${cls}">${n < S.step ? '✓' : n}</div>
+      <span style="font-size:.7rem;font-weight:600;color:${n===S.step?'var(--gold)':'var(--muted)'}">${l}</span>
+    </div>`;
+  }).join('');
+  return `<div class="prog-wrap">
+    <div class="prog-line"></div>
+    <div class="prog-fill" style="width:${pct}%"></div>
+    ${dots}
+  </div>`;
 }
 
-/* ─── STEP 1: CART ──────────────────────────────────────── */
-function CartPage({ cart, setCart, onNext }) {
-  const [promo, setPromo]       = useState('');
-  const [promoMsg, setPromoMsg] = useState(null);
-  const [discount, setDiscount] = useState(false);
-
-  const updateQty = (id, d) => { CartStore.changeQty(id, d); setCart(CartStore.get()); };
-  const removeIt  = (id)    => { CartStore.remove(id); setCart(CartStore.get()); };
-
-  const applyPromo = () => {
-    if (promo.trim().toUpperCase() === 'AURA10') {
-      setDiscount(true);
-      setPromoMsg({ ok: true, text: '10% discount applied! 🎉' });
-    } else {
-      setDiscount(false);
-      setPromoMsg({ ok: false, text: 'Invalid promo code' });
-    }
-  };
-
-  const sub  = cart.reduce((a, x) => a + x.price * x.qty, 0);
-  const free = sub >= 999;
-
-  if (cart.length === 0) return (
-    <div className="a-fade" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', textAlign: 'center' }}>
-      <div style={{ fontSize: '4rem', marginBottom: 20 }}>🛒</div>
-      <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 8 }}>Your cart is empty</p>
-      <p style={{ color: 'var(--muted)', fontSize: '.9rem', marginBottom: 24 }}>Discover our handcrafted collection</p>
-      <a href="/store/"><Btn>Shop Now</Btn></a>
-    </div>
-  );
-
-  return (
-    <div className="a-slide">
-      <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 24 }}>
-        Shopping Cart <span style={{ color: 'var(--muted)', fontSize: '1rem', fontWeight: 400 }}>({cart.length} item{cart.length !== 1 ? 's' : ''})</span>
-      </h2>
-      <div className="co-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-        {/* Items */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: 20, boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8', marginBottom: 16 }}>
-            {cart.map(it => (
-              <div key={it.id} className="a-fade" style={{ display: 'flex', gap: 14, padding: '14px 0', borderBottom: '1px solid #f5efe0' }}>
-                <div className="ci-img">
-                  {it.image ? <img src={cdnImg(it.image, 200)} alt={it.name} onError={e => e.target.style.display = 'none'} /> : (it.icon || '🏺')}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontWeight: 600, fontSize: '.9rem', marginBottom: 2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.35 }}>{trimName(it.name)}</p>
-                  <p style={{ color: 'var(--gold)', fontWeight: 700, fontSize: '.9rem', marginBottom: 10 }}>{rupee(it.price)}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div className="qty-wrap">
-                      <button className="qty-btn" onClick={() => updateQty(it.id, -1)}>−</button>
-                      <span className="qty-val">{it.qty}</span>
-                      <button className="qty-btn" onClick={() => updateQty(it.id, 1)}>+</button>
-                    </div>
-                    <button onClick={() => removeIt(it.id)} style={{ fontSize: '.78rem', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Remove</button>
-                  </div>
-                </div>
-                <p style={{ fontWeight: 700, fontSize: '.9rem', flexShrink: 0 }}>{rupee(it.price * it.qty)}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Promo */}
-          <div style={{ background: '#fff', borderRadius: 18, padding: 20, boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8' }}>
-            <p style={{ fontSize: '.88rem', fontWeight: 700, marginBottom: 12 }}>🏷 Promo Code</p>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <input className="promo-input" placeholder="Try AURA10" value={promo}
-                onChange={e => setPromo(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && applyPromo()} />
-              <Btn variant="outline" onClick={applyPromo}>Apply</Btn>
-            </div>
-            {promoMsg && (
-              <p style={{ fontSize: '.78rem', marginTop: 8, fontWeight: 600, color: promoMsg.ok ? '#16a34a' : '#dc2626' }}>
-                {promoMsg.text}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <OrderSidebar cart={cart} isFreeShipping={free} discount={discount} />
+// ── Order Sidebar ────────────────────────────────────────
+function sidebar() {
+  const { sub, disc, ship, total } = calcTotals();
+  const items = S.cart.map(it => `
+    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #faf5ea">
+      <div class="ci-img" style="width:44px;height:44px;border-radius:8px;font-size:1.2rem">
+        ${it.image ? `<img src="${cdnImg(it.image,120)}" alt="${trimName(it.name)}" onerror="this.style.display='none'" loading="lazy"/>` : '🏺'}
       </div>
-
-      <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <a href="/store/" style={{ fontSize: '.85rem', color: 'var(--muted)', textDecoration: 'none' }}>← Continue Shopping</a>
-        <Btn onClick={() => onNext(discount)} style={{ padding: '12px 32px', fontSize: '.95rem' }}>
-          Proceed to Checkout →
-        </Btn>
+      <div style="flex:1;min-width:0">
+        <p style="font-size:.8rem;font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3">${trimName(it.name)}</p>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:2px">Qty ${it.qty}</p>
+      </div>
+      <p style="font-size:.8rem;font-weight:700;flex-shrink:0">${rupee(it.price * it.qty)}</p>
+    </div>`).join('');
+  return `<aside class="co-sidebar" style="background:#fff;border-radius:18px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,.06);border:1px solid #f0e4c8;width:300px;flex-shrink:0">
+    <p style="font-family:'Playfair Display',serif;font-weight:600;font-size:1rem;margin-bottom:14px">Order Summary</p>
+    <div style="max-height:200px;overflow-y:auto;margin-bottom:14px">${items}</div>
+    <div style="border-top:1px solid #f0e4c8;padding-top:10px">
+      <div class="os-row"><span class="os-label">Subtotal</span><span class="os-val">${rupee(sub)}</span></div>
+      ${disc > 0 ? `<div class="os-row"><span class="os-label">Discount (10%)</span><span style="color:#16a34a;font-weight:600;font-size:.88rem">−${rupee(disc)}</span></div>` : ''}
+      <div class="os-row"><span class="os-label">Shipping</span><span style="color:#16a34a;font-weight:600;font-size:.88rem">${ship === 0 ? 'FREE' : rupee(ship)}</span></div>
+      <div class="os-row" style="border-top:1px solid #f0e4c8;margin-top:6px;padding-top:8px">
+        <span style="font-weight:700;color:var(--ink)">Total</span>
+        <span style="font-weight:700;color:var(--gold);font-size:1rem">${rupee(total)}</span>
       </div>
     </div>
-  );
+    <p style="font-size:.73rem;color:var(--muted);text-align:center;margin-top:12px">🔒 Secured by 256-bit SSL</p>
+  </aside>`;
 }
 
-/* ─── OTP MODAL — Firebase Phone Auth (free, no API key needed) ─── */
-/* ─── helpers defined outside OTPModal so React never unmounts them on re-render ─── */
-const handleBox = (arr, setArr, refs, i, val, maxLen) => {
-  if (!/^\d?$/.test(val)) return;
-  const next = [...arr]; next[i] = val; setArr(next);
-  if (val && i < maxLen-1) refs[i+1].current?.focus();
-};
-const handleBoxBs = (arr, refs, i, e) => {
-  if (e.key === 'Backspace' && !arr[i] && i > 0) refs[i-1].current?.focus();
-};
+// ── Step 1: Cart ─────────────────────────────────────────
+function renderCart() {
+  if (S.cart.length === 0) {
+    app().innerHTML = `<div class="a-fade" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center">
+      <div style="font-size:4rem;margin-bottom:20px">🛒</div>
+      <p style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:8px">Your cart is empty</p>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:24px">Discover our handcrafted collection</p>
+      <a href="/store/" class="btn btn-gold">Shop Now</a>
+    </div>`;
+    return;
+  }
+  const { sub, disc, ship, total } = calcTotals();
+  const items = S.cart.map(it => `
+    <div style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #faf5ea;align-items:flex-start">
+      <div class="ci-img">
+        ${it.image ? `<img src="${cdnImg(it.image,200)}" alt="${trimName(it.name)}" onerror="this.style.display='none'" loading="lazy"/>` : (it.icon || '🏺')}
+      </div>
+      <div style="flex:1;min-width:0">
+        <p style="font-size:.9rem;font-weight:600;margin-bottom:4px">${trimName(it.name)}</p>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">${rupee(it.price)} each</p>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="qty-wrap">
+            <button class="qty-btn" onclick="cartQty('${it.id}',-1)">−</button>
+            <span class="qty-val">${it.qty}</span>
+            <button class="qty-btn" onclick="cartQty('${it.id}',1)">+</button>
+          </div>
+          <button onclick="cartRemove('${it.id}')" style="font-size:.75rem;color:#dc2626;background:none;border:none;cursor:pointer;font-family:inherit">Remove</button>
+        </div>
+      </div>
+      <p style="font-size:.9rem;font-weight:700;flex-shrink:0">${rupee(it.price * it.qty)}</p>
+    </div>`).join('');
 
-const AuthCard = ({ children, onGuest }) => (
-  <div style={{ position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16,background:'rgba(0,0,0,.55)',backdropFilter:'blur(6px)' }}>
-    <div className="a-scale" style={{ background:'#fff',borderRadius:24,padding:'clamp(20px,5vw,36px) clamp(16px,5vw,32px)',width:'100%',maxWidth:380,boxShadow:'0 24px 60px rgba(0,0,0,.18)' }}>
-      <div style={{ textAlign:'center',marginBottom:20 }}>
-        <div style={{ display:'flex',justifyContent:'center',marginBottom:8 }}><BrandLogo size={40} /></div>
+  app().innerHTML = `${stepper()}
+  <h2 class="a-slide" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:24px">
+    Shopping Cart <span style="color:var(--muted);font-size:1rem;font-weight:400">(${S.cart.length} item${S.cart.length!==1?'s':''})</span>
+  </h2>
+  <div class="co-layout a-slide" style="display:flex;gap:24px;align-items:flex-start">
+    <div style="flex:1;min-width:0">
+      <div class="co-card" style="margin-bottom:16px">${items}</div>
+      <!-- Promo -->
+      <div class="co-card" style="margin-bottom:16px">
+        <p style="font-size:.82rem;font-weight:600;margin-bottom:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Promo Code</p>
+        <div style="display:flex;gap:8px">
+          <input id="promoInput" class="promo-input" placeholder="Enter code (e.g. AURA10)" value="" oninput="this.value=this.value.toUpperCase()"/>
+          <button class="btn btn-outline" onclick="applyPromo()" style="flex-shrink:0;padding:11px 18px">Apply</button>
+        </div>
+        <p id="promoMsg" style="font-size:.78rem;margin-top:6px"></p>
       </div>
-      {children}
-      <div style={{ display:'flex',alignItems:'center',gap:12,margin:'16px 0' }}>
-        <div style={{ flex:1,height:1,background:'#f0e4c8' }} /><span style={{ fontSize:'.75rem',color:'var(--muted)' }}>or</span><div style={{ flex:1,height:1,background:'#f0e4c8' }} />
+      <!-- Mobile totals -->
+      <div class="co-card" style="margin-bottom:24px;display:none" id="mobileTotals">
+        <div class="os-row"><span class="os-label">Subtotal</span><span class="os-val">${rupee(sub)}</span></div>
+        ${disc>0?`<div class="os-row"><span class="os-label">Discount (10%)</span><span style="color:#16a34a;font-weight:600">−${rupee(disc)}</span></div>`:''}
+        <div class="os-row"><span class="os-label">Shipping</span><span style="color:#16a34a;font-weight:600">${ship===0?'FREE':rupee(ship)}</span></div>
+        <div class="os-row" style="border-top:1px solid #f0e4c8;margin-top:6px;padding-top:8px">
+          <span style="font-weight:700">Total</span><span style="font-weight:700;color:var(--gold)">${rupee(total)}</span>
+        </div>
       </div>
-      <button onClick={onGuest} style={{ width:'100%',fontSize:'.83rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:8,fontFamily:'inherit' }}>Continue as Guest →</button>
+      <button class="btn btn-gold" onclick="cartProceed()" style="width:100%;padding:14px">Proceed to Checkout →</button>
     </div>
-  </div>
-);
+    ${sidebar()}
+  </div>`;
 
-function OTPModal({ onVerified, onGuest }) {
-  // phases: 'phone' | 'password' | 'register' | 'otp' | 'resetpw'
-  const [phase, setPhase]     = useState('phone');
-  const [phone, setPhone]     = useState('');
-  const [pw, setPw]           = useState('');
-  const [pw2, setPw2]         = useState('');
-  const [name, setName]       = useState('');
-  const [email, setEmail]     = useState('');
-  const [otp, setOtp]         = useState(['','','','','','']);
-  const [timer, setTimer]     = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr]         = useState('');
-  const [isForgot, setIsForgot] = useState(false);
-  const confirmRef  = useRef(null);
-  const authedUser  = useRef(null);
-  const regData     = useRef({});
-  const otpRefs = [useRef(),useRef(),useRef(),useRef(),useRef(),useRef()];
+  // show mobile totals on small screens
+  if (window.innerWidth <= 768) { const m=$('mobileTotals'); if(m) m.style.display='block'; }
+}
 
-  useEffect(() => {
-    if (phase !== 'otp') return;
-    setTimer(60);
-    otpRefs[0].current?.focus();
-    const id = setInterval(() => setTimer(t => t > 1 ? t-1 : (clearInterval(id), 0)), 1000);
-    return () => clearInterval(id);
-  }, [phase]);
+function cartQty(id, d) { CartStore.changeQty(id, d); S.cart = CartStore.get(); renderCart(); }
+function cartRemove(id) { CartStore.remove(id); S.cart = CartStore.get(); renderCart(); }
+function applyPromo() {
+  const code = ($('promoInput')?.value || '').trim().toUpperCase();
+  const msg = $('promoMsg');
+  if (code === 'AURA10') {
+    S.discount = true;
+    if (msg) { msg.textContent = '10% discount applied! 🎉'; msg.style.color = '#16a34a'; }
+  } else {
+    S.discount = false;
+    if (msg) { msg.textContent = 'Invalid promo code'; msg.style.color = '#dc2626'; }
+  }
+  renderCart();
+}
+function cartProceed() {
+  if (window._fbAuth?.currentUser) { S.step = 2; render(); }
+  else { S.showAuth = true; render(); }
+}
 
-  useEffect(() => { if (window._initRecaptcha) window._initRecaptcha(); }, []);
+// ── Auth Modal ───────────────────────────────────────────
+let authTimerInterval = null;
 
-  const mapErr = e =>
-    e.code==='auth/invalid-phone-number'      ? 'Invalid phone number.' :
-    e.code==='auth/too-many-requests'         ? 'Too many attempts. Try later.' :
-    e.code==='auth/wrong-password'            ? 'Incorrect password. Try again.' :
-    e.code==='auth/invalid-credential'        ? 'Incorrect password. Try again.' :
-    e.code==='auth/invalid-verification-code' ? 'Incorrect OTP. Check and retry.' :
-    e.code==='auth/code-expired'              ? 'OTP expired. Resend.' :
-    e.message || 'Something went wrong. Try again.';
+function startAuthTimer() {
+  clearInterval(authTimerInterval);
+  S.authTimer = 30;
+  authTimerInterval = setInterval(() => {
+    S.authTimer--;
+    const el = $('authTimer');
+    if (el) el.textContent = S.authTimer > 0 ? `Resend in ${S.authTimer}s` : '';
+    const rb = $('resendBtn');
+    if (rb) rb.style.display = S.authTimer <= 0 ? 'inline' : 'none';
+    if (S.authTimer <= 0) clearInterval(authTimerInterval);
+  }, 1000);
+}
 
-  const sendOTP = async () => {
-    setErr(''); setLoading(true);
-    try {
-      const v = window._initRecaptcha ? window._initRecaptcha() : null;
-      if (!v) throw new Error('reCAPTCHA not ready. Refresh.');
-      confirmRef.current = await window._fbSignInPhone('+91' + phone, v);
-      setOtp(['','','','','','']); setPhase('otp');
-    } catch(e) { setErr(mapErr(e)); }
-    finally { setLoading(false); }
-  };
+async function authSendOTP() {
+  const ph = ($('authPhone')?.value || '').replace(/\D/g,'').slice(-10);
+  if (ph.length < 10) { setAuthErr('Enter a valid 10-digit mobile number'); return; }
+  S.authPhone = ph;
+  setAuthLoading(true); setAuthErr('');
+  try {
+    const verifier = window._initRecaptcha();
+    const confirm = await window._fbSignInPhone('+91' + ph, verifier);
+    S.authConfirm = confirm;
+    S.authPhase = 'otp';
+    S.authOtp = ['','','','','',''];
+    render();
+    startAuthTimer();
+    setTimeout(() => { $('otp0')?.focus(); }, 100);
+  } catch(e) {
+    const msg = e.code === 'auth/invalid-phone-number' ? 'Invalid phone number' :
+                e.code === 'auth/too-many-requests'    ? 'Too many attempts. Try later.' :
+                'Failed to send OTP. Try again.';
+    setAuthErr(msg);
+    window._rcVerifier = null;
+    window._initRecaptcha();
+  } finally { setAuthLoading(false); }
+}
 
-  const checkPhone = async () => {
-    if (phone.length < 10) { setErr('Enter a valid 10-digit number'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const existing = await window._fbQueryMobile(phone).catch(() => null);
-      if (existing) { setPhase('password'); }
-      else { setIsForgot(false); setName(''); setEmail(''); setPw(''); setPw2(''); setPhase('register'); }
-    } catch(e) { setErr(mapErr(e)); }
-    finally { setLoading(false); }
-  };
+async function authVerifyOTP() {
+  const code = S.authOtp.join('');
+  if (code.length < 6) { setAuthErr('Enter the 6-digit OTP'); return; }
+  setAuthLoading(true); setAuthErr('');
+  try {
+    const cred = await S.authConfirm.confirm(code);
+    const user = cred.user;
+    const profile = await window._checkOrCreateCustomer(user.uid, S.authPhone);
+    applyProfileToPersonal(profile, S.authPhone);
+    S.customerId = user.uid;
+    S.showAuth = false;
+    S.step = 2;
+    render();
+  } catch(e) {
+    const msg = e.code === 'auth/invalid-verification-code' ? 'Incorrect OTP. Try again.' :
+                e.code === 'auth/code-expired'              ? 'OTP expired. Resend.' :
+                'Verification failed. Try again.';
+    setAuthErr(msg);
+  } finally { setAuthLoading(false); }
+}
 
-  const loginWithPass = async () => {
-    if (pw.length < 6) { setErr('Enter your password (min 6 characters)'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const cred    = await window._fbSignInPass(phone, pw);
-      const profile = await window._checkOrCreateCustomer(cred.user.uid, phone);
-      onVerified(phone, cred.user, profile);
-    } catch(e) { setErr(mapErr(e)); setPw(''); }
-    finally { setLoading(false); }
-  };
+function authGuest() {
+  clearInterval(authTimerInterval);
+  S.showAuth = false;
+  S.step = 2;
+  render();
+}
 
-  const startRegisterOTP = async () => {
-    if (!name.trim()) { setErr('Please enter your full name'); return; }
-    if (pw.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (pw !== pw2)    { setErr('Passwords do not match'); return; }
-    regData.current = { name: name.trim(), email: email.trim(), pw };
-    setIsForgot(false);
-    await sendOTP();
-  };
+function applyProfileToPersonal(profile, phone) {
+  if (!profile) return;
+  const parts = (profile.name || '').trim().split(' ');
+  S.personal.firstName = parts[0] || S.personal.firstName;
+  S.personal.lastName  = parts.slice(1).join(' ') || S.personal.lastName;
+  S.personal.email     = profile.email || S.personal.email;
+  S.personal.phone     = phone || profile.mobile || S.personal.phone;
+  const def = window._fbDefaultAddr;
+  if (def) {
+    S.address.line1   = def.line1 || '';
+    S.address.line2   = def.line2 || '';
+    S.address.city    = def.city  || '';
+    S.address.state   = def.state || '';
+    S.address.pincode = def.pincode || '';
+  }
+}
 
-  const verifyOTP = async () => {
-    const code = otp.join('');
-    if (code.length < 6) { setErr('Enter the 6-digit OTP'); return; }
-    setErr(''); setLoading(true);
-    try {
-      const cred = await confirmRef.current.confirm(code);
-      authedUser.current = cred.user;
-      if (isForgot) { setPw(''); setPw2(''); setPhase('resetpw'); }
-      else { await completeRegistration(cred.user); }
-    } catch(e) { setErr(mapErr(e)); }
-    finally { setLoading(false); }
-  };
+function setAuthErr(msg) { S.authErr = msg; const el=$('authErr'); if(el) el.textContent=msg; }
+function setAuthLoading(v) { S.authLoading = v; const el=$('authSubmit'); if(el){el.disabled=v; el.innerHTML=v?'<span class="spinner"></span> Sending…':el.dataset.label||el.textContent;} }
 
-  const completeRegistration = async (user) => {
-    const { name: n, email: em, pw: p } = regData.current;
-    try {
-      try { await window._fbLinkPass(user, phone, p); }
-      catch(le) {
-        if (le.code==='auth/provider-already-linked'||le.code==='auth/email-already-in-use')
-          await window._fbUpdatePw(user, p);
-        else throw le;
+function renderAuthModal() {
+  if (!S.showAuth) return '';
+  const isOtp = S.authPhase === 'otp';
+  const otpBoxes = S.authOtp.map((d,i) =>
+    `<input id="otp${i}" class="otp-box" type="text" inputmode="numeric" maxlength="1" value="${d}"
+      onInput="otpInput(${i},this.value)" onKeyDown="otpKeydown(event,${i})" autocomplete="one-time-code"/>`
+  ).join('');
+
+  return `<div class="modal-overlay" onclick="if(event.target===this)authGuest()">
+    <div class="modal-box">
+      <p style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:6px">
+        ${isOtp ? 'Verify OTP' : 'Login / Sign Up'}
+      </p>
+      ${isOtp
+        ? `<p style="font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:20px">OTP sent to +91 ${S.authPhone}</p>
+           <div style="display:flex;justify-content:center;gap:8px;margin-bottom:12px">${otpBoxes}</div>
+           <p id="authErr" style="color:#dc2626;font-size:.78rem;text-align:center;margin-bottom:8px;min-height:18px">${S.authErr}</p>
+           <button id="authSubmit" data-label="Verify OTP →" class="btn btn-gold" onclick="authVerifyOTP()" style="width:100%;margin-bottom:10px">Verify OTP →</button>
+           <div style="text-align:center;font-size:.78rem">
+             <span id="authTimer" style="color:var(--muted)">${S.authTimer > 0 ? `Resend in ${S.authTimer}s` : ''}</span>
+             <button id="resendBtn" onclick="authResend()" style="display:${S.authTimer<=0?'inline':'none'};color:var(--gold);font-weight:700;background:none;border:none;cursor:pointer;font-size:.78rem;font-family:inherit">Resend OTP</button>
+           </div>`
+        : `<p style="font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:20px">Enter your mobile number to track orders</p>
+           <div class="fl-wrap">
+             <div style="display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff">
+               <span style="padding:14px 10px;font-size:.88rem;color:var(--muted);border-right:1px solid var(--border);white-space:nowrap">🇮🇳 +91</span>
+               <input id="authPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="Mobile number"
+                 style="flex:1;border:none;padding:14px 12px;font-size:.93rem;font-family:inherit;outline:none;background:transparent"
+                 onkeydown="if(event.key==='Enter')authSendOTP()" autofocus/>
+             </div>
+           </div>
+           <p id="authErr" style="color:#dc2626;font-size:.78rem;margin-bottom:8px;min-height:18px">${S.authErr}</p>
+           <button id="authSubmit" data-label="Send OTP →" class="btn btn-gold" onclick="authSendOTP()" style="width:100%;margin-bottom:10px">Send OTP →</button>`
       }
-      localStorage.setItem('auranest_name', n);
-      const profile = await window._checkOrCreateCustomer(user.uid, phone);
-      onVerified(phone, user, { ...profile, name: n, email: em });
-    } catch(e) { setErr(mapErr(e)); }
-  };
-
-  const resetPassword = async () => {
-    if (pw.length < 6) { setErr('Password must be at least 6 characters'); return; }
-    if (pw !== pw2) { setErr('Passwords do not match'); return; }
-    const user = authedUser.current;
-    if (!user) { setErr('Session expired. Start again.'); setPhase('phone'); return; }
-    setErr(''); setLoading(true);
-    try {
-      await window._fbUpdatePw(user, pw);
-      const profile = await window._checkOrCreateCustomer(user.uid, phone);
-      onVerified(phone, user, profile);
-    } catch(e) { setErr(mapErr(e)); }
-    finally { setLoading(false); }
-  };
-
-  const IS = { marginBottom:10, paddingTop:12, paddingBottom:12 };
-  const BackBtn = ({ to }) => (
-    <button onClick={()=>{ setPhase(to); setErr(''); setPw(''); }}
-      style={{ display:'flex',alignItems:'center',gap:4,fontSize:'.75rem',color:'var(--muted)',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',marginBottom:12,padding:0 }}>
-      ← Back
-    </button>
-  );
-
-  if (phase === 'phone') return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Sign in to continue</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Enter your mobile number</p>
-      <div style={{ display:'flex',marginBottom:4 }}>
-        <span style={{ display:'flex',alignItems:'center',padding:'0 12px',background:'#fdf8ed',border:'1.5px solid var(--border)',borderRight:'none',borderRadius:'10px 0 0 10px',fontSize:'.85rem',fontWeight:700 }}>🇮🇳 +91</span>
-        <input className="fl-input" style={{ borderRadius:'0 10px 10px 0',...IS }}
-          type="tel" placeholder="10-digit mobile number" value={phone}
-          onChange={e => setPhone(e.target.value.replace(/\D/g,'').slice(0,10))}
-          onKeyDown={e => e.key==='Enter' && checkPhone()} inputMode="numeric" name="phone" autoComplete="tel-national" pattern="[0-9]*" autoFocus />
-      </div>
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={checkPhone} loading={loading} style={{ width:'100%',marginBottom:12 }}>Continue →</Btn>
-    </AuthCard>
-  );
-
-  if (phase === 'password') return (
-    <AuthCard onGuest={onGuest}>
-      <BackBtn to="phone" />
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Welcome Back</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>+91 {phone}</p>
-      <input className="fl-input" type="password" placeholder="Enter your password"
-        value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&loginWithPass()}
-        style={IS} autoFocus autoComplete="current-password"/>
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={loginWithPass} loading={loading} style={{ width:'100%',marginBottom:8 }}>Sign In →</Btn>
-      <button onClick={()=>{ setIsForgot(true); setErr(''); sendOTP(); }}
-        style={{ width:'100%',fontSize:'.78rem',color:'var(--gold)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:'6px 0',fontFamily:'inherit' }}>
-        Forgot password? →
+      <button onclick="authGuest()" style="width:100%;font-size:.82rem;color:var(--muted);font-weight:600;background:none;border:none;cursor:pointer;padding:8px;font-family:inherit">
+        Continue as Guest →
       </button>
-    </AuthCard>
-  );
-
-  if (phase === 'register') return (
-    <AuthCard onGuest={onGuest}>
-      <BackBtn to="phone" />
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Create Account</p>
-      <p style={{ fontSize:'.78rem',color:'#92400e',background:'#fef3c7',padding:'6px 10px',borderRadius:6,textAlign:'center',marginBottom:12 }}>No account found. Please register.</p>
-      <input className="fl-input" placeholder="Full Name" value={name}
-        onChange={e=>setName(e.target.value)} style={IS} autoFocus autoComplete="name"/>
-      <input className="fl-input" placeholder="Email (optional)" type="email" value={email}
-        onChange={e=>setEmail(e.target.value)} style={IS} autoComplete="email"/>
-      <input className="fl-input" type="password" placeholder="Password (min 6 chars)" value={pw}
-        onChange={e=>setPw(e.target.value)} style={IS} autoComplete="new-password"/>
-      <input className="fl-input" type="password" placeholder="Confirm password" value={pw2}
-        onChange={e=>setPw2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&startRegisterOTP()}
-        style={{ ...IS,marginBottom:12 }} autoComplete="new-password"/>
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={startRegisterOTP} loading={loading} style={{ width:'100%' }}>Send OTP & Register →</Btn>
-    </AuthCard>
-  );
-
-  if (phase === 'otp') return (
-    <AuthCard onGuest={onGuest}>
-      <BackBtn to={isForgot ? 'password' : 'register'} />
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>Verify Number</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>OTP sent to +91 {phone}</p>
-      <div style={{ display:'flex',justifyContent:'center',gap:'clamp(4px,1.5vw,8px)',marginBottom:8 }}>
-        {otp.map((d,i)=>(
-          <input key={i} ref={otpRefs[i]} className="otp-box" type="text" inputMode="numeric" maxLength={1} value={d}
-            style={{ width:'clamp(36px,10vw,46px)',height:'clamp(44px,12vw,54px)',fontSize:'clamp(.95rem,3.5vw,1.3rem)' }}
-            onChange={e=>handleBox(otp,setOtp,otpRefs,i,e.target.value,6)}
-            onKeyDown={e=>handleBoxBs(otp,otpRefs,i,e)} />
-        ))}
-      </div>
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',textAlign:'center',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={verifyOTP} loading={loading} style={{ width:'100%',marginBottom:8 }}>Verify OTP →</Btn>
-      <div style={{ textAlign:'center' }}>
-        {timer > 0
-          ? <p style={{ fontSize:'.78rem',color:'var(--muted)' }}>Resend in {timer}s</p>
-          : <button onClick={()=>{ setOtp(['','','','','','']); sendOTP(); }}
-              style={{ fontSize:'.78rem',color:'var(--gold)',fontWeight:700,background:'none',border:'none',cursor:'pointer',fontFamily:'inherit' }}>Resend OTP</button>}
-      </div>
-    </AuthCard>
-  );
-
-  return (
-    <AuthCard onGuest={onGuest}>
-      <p style={{ fontFamily:"'Playfair Display',serif",fontSize:'1.2rem',fontWeight:700,textAlign:'center',marginBottom:4 }}>New Password</p>
-      <p style={{ fontSize:'.82rem',color:'var(--muted)',textAlign:'center',marginBottom:16 }}>Choose a new password for your account</p>
-      <input className="fl-input" type="password" placeholder="New password (min 6 chars)" value={pw}
-        onChange={e=>setPw(e.target.value)} style={IS} autoFocus autoComplete="new-password"/>
-      <input className="fl-input" type="password" placeholder="Confirm password" value={pw2}
-        onChange={e=>setPw2(e.target.value)} onKeyDown={e=>e.key==='Enter'&&resetPassword()}
-        style={{ ...IS,marginBottom:12 }} autoComplete="new-password"/>
-      {err && <p style={{ color:'#dc2626',fontSize:'.78rem',marginBottom:8 }}>{err}</p>}
-      <Btn onClick={resetPassword} loading={loading} style={{ width:'100%' }}>Save Password & Continue →</Btn>
-    </AuthCard>
-  );
+    </div>
+  </div>`;
 }
 
+function otpInput(i, val) {
+  S.authOtp[i] = val.replace(/\D/g,'').slice(-1);
+  const el = $(`otp${i}`); if(el) el.value = S.authOtp[i];
+  if (S.authOtp[i] && i < 5) { $(`otp${i+1}`)?.focus(); }
+  if (S.authOtp.join('').length === 6) authVerifyOTP();
+}
+function otpKeydown(e, i) {
+  if (e.key === 'Backspace' && !S.authOtp[i] && i > 0) { $(`otp${i-1}`)?.focus(); }
+}
+function authResend() {
+  S.authPhase = 'phone';
+  S.authErr = '';
+  render();
+  setTimeout(() => authSendOTP(), 100);
+}
 
-/* ─── STEP 2: PERSONAL DETAILS ──────────────────────────── */
-function PersonalPage({ data, setData, cart, onNext, onBack }) {
-  const [errors, setErrors] = useState({});
-  const validate = () => {
-    const e = {};
-    if (!data.firstName.trim()) e.firstName = 'Required';
-    if (!data.lastName.trim())  e.lastName  = 'Required';
-    if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Valid email required';
-    setErrors(e);
-    return !Object.keys(e).length;
-  };
-  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
-  const sub = cart.reduce((a, x) => a + x.price * x.qty, 0);
-
-  return (
-    <div className="a-slide">
-      <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 6 }}>Personal Details</h2>
-      <p style={{ color: 'var(--muted)', fontSize: '.88rem', marginBottom: 24 }}>Tell us a little about yourself</p>
-      <div className="co-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, minWidth: 0, background: '#fff', borderRadius: 18, padding: 24, boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <FloatInput label="First Name" id="fn" value={data.firstName} onChange={v => upd('firstName', v)} required />
-              {errors.firstName && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.firstName}</p>}
-            </div>
-            <div>
-              <FloatInput label="Last Name" id="ln" value={data.lastName} onChange={v => upd('lastName', v)} required />
-              {errors.lastName && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.lastName}</p>}
-            </div>
+// ── Step 2: Personal Details ─────────────────────────────
+function renderPersonal() {
+  const p = S.personal;
+  app().innerHTML = `${stepper()}
+  <h2 class="a-slide" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:6px">Personal Details</h2>
+  <p class="a-slide" style="color:var(--muted);font-size:.88rem;margin-bottom:24px">Tell us a little about yourself</p>
+  <div class="co-layout a-slide" style="display:flex;gap:24px;align-items:flex-start">
+    <div style="flex:1;min-width:0">
+      <div class="co-card">
+        <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0">
+          <div>
+            <div class="fl-wrap"><input id="fFirst" class="fl-input" placeholder=" " type="text" value="${p.firstName}" oninput="S.personal.firstName=this.value"/><label class="fl-label" for="fFirst">First Name *</label></div>
+            <p id="errFirst" class="err-msg" style="display:none">Required</p>
           </div>
-          <FloatInput label="Email Address" id="em" type="email" value={data.email} onChange={v => upd('email', v)} required />
-          {errors.email && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.email}</p>}
-          <FloatInput label="Mobile Number" id="ph" type="tel" value={data.phone} onChange={v => upd('phone', v.replace(/\D/g,'').slice(0,10))} inputMode="numeric" />
+          <div>
+            <div class="fl-wrap"><input id="fLast" class="fl-input" placeholder=" " type="text" value="${p.lastName}" oninput="S.personal.lastName=this.value"/><label class="fl-label" for="fLast">Last Name *</label></div>
+            <p id="errLast" class="err-msg" style="display:none">Required</p>
+          </div>
+        </div>
+        <div class="fl-wrap"><input id="fEmail" class="fl-input" placeholder=" " type="email" value="${p.email}" oninput="S.personal.email=this.value"/><label class="fl-label" for="fEmail">Email Address *</label></div>
+        <p id="errEmail" class="err-msg" style="display:none">Valid email required</p>
+        <div class="fl-wrap">
+          <div style="display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff">
+            <span style="padding:14px 10px;font-size:.88rem;color:var(--muted);border-right:1px solid var(--border);white-space:nowrap">+91</span>
+            <input id="fPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="Mobile number"
+              style="flex:1;border:none;padding:14px 12px;font-size:.93rem;font-family:inherit;outline:none;background:transparent"
+              value="${p.phone}" oninput="S.personal.phone=this.value.replace(/\\D/g,'').slice(0,10);this.value=S.personal.phone"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn btn-ghost" onclick="S.step=1;render()" style="flex:1">← Back</button>
+          <button class="btn btn-gold" onclick="personalNext()" style="flex:2">Continue →</button>
+        </div>
+      </div>
+    </div>
+    ${sidebar()}
+  </div>`;
+}
 
-<div style={{ background: '#fdf8ed', borderRadius: 12, padding: 14, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '1.2rem' }}>🎁</span>
-            <div>
-              <p style={{ fontSize: '.8rem', fontWeight: 700 }}>Birthday treat</p>
-              <p style={{ fontSize: '.75rem', color: 'var(--muted)' }}>Add your birthday and get an exclusive gift on your special day!</p>
+function personalNext() {
+  let ok = true;
+  const show = (id, cond) => { const el=$(id); if(el) el.style.display = cond ? 'block' : 'none'; if(cond) ok=false; };
+  show('errFirst', !S.personal.firstName.trim());
+  show('errLast',  !S.personal.lastName.trim());
+  show('errEmail', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.personal.email));
+  if (ok) { S.step = 3; render(); }
+}
+
+// ── Step 3: Address ──────────────────────────────────────
+const IN_STATES = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'];
+
+function renderAddress() {
+  const a = S.address;
+  const stateOpts = IN_STATES.map(s => `<option value="${s}" ${s===a.state?'selected':''}>${s}</option>`).join('');
+  app().innerHTML = `${stepper()}
+  <h2 class="a-slide" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:6px">Delivery Address</h2>
+  <p class="a-slide" style="color:var(--muted);font-size:.88rem;margin-bottom:24px">Where should we deliver your order?</p>
+  <div class="co-layout a-slide" style="display:flex;gap:24px;align-items:flex-start">
+    <div style="flex:1;min-width:0">
+      <div class="co-card">
+        <div class="fl-wrap"><input id="aLine1" class="fl-input" placeholder=" " value="${a.line1}" oninput="S.address.line1=this.value"/><label class="fl-label">House / Flat / Building *</label></div>
+        <p id="errLine1" class="err-msg" style="display:none">Required</p>
+        <div class="fl-wrap"><input id="aLine2" class="fl-input" placeholder=" " value="${a.line2}" oninput="S.address.line2=this.value"/><label class="fl-label">Area / Colony / Street</label></div>
+        <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div class="fl-wrap"><input id="aCity" class="fl-input" placeholder=" " value="${a.city}" oninput="S.address.city=this.value"/><label class="fl-label">City *</label></div>
+            <p id="errCity" class="err-msg" style="display:none">Required</p>
+          </div>
+          <div>
+            <div class="fl-wrap" style="position:relative">
+              <select id="aState" class="fl-select ${a.state?'has-val':''}" onchange="S.address.state=this.value;this.classList.toggle('has-val',!!this.value)">
+                <option value=""> </option>${stateOpts}
+              </select>
+              <label class="fl-label">State *</label>
+              <span class="fl-arrow">▾</span>
+            </div>
+            <p id="errState" class="err-msg" style="display:none">Required</p>
+          </div>
+        </div>
+        <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div class="fl-wrap"><input id="aPincode" class="fl-input" placeholder=" " inputmode="numeric" maxlength="6" value="${a.pincode}" oninput="S.address.pincode=this.value.replace(/\\D/g,'').slice(0,6);this.value=S.address.pincode"/><label class="fl-label">Pincode *</label></div>
+            <p id="errPincode" class="err-msg" style="display:none">Required</p>
+          </div>
+          <div>
+            <div class="fl-wrap" style="position:relative">
+              <select id="aCountry" class="fl-select has-val" onchange="S.address.country=this.value">
+                <option value="IN" ${a.country==='IN'?'selected':''}>India</option>
+                <option value="US" ${a.country==='US'?'selected':''}>United States</option>
+                <option value="GB" ${a.country==='GB'?'selected':''}>United Kingdom</option>
+                <option value="AE" ${a.country==='AE'?'selected':''}>UAE</option>
+                <option value="CA" ${a.country==='CA'?'selected':''}>Canada</option>
+                <option value="AU" ${a.country==='AU'?'selected':''}>Australia</option>
+                <option value="SG" ${a.country==='SG'?'selected':''}>Singapore</option>
+              </select>
+              <label class="fl-label" style="top:8px;transform:translateY(0);font-size:.73rem;color:var(--gold);font-weight:600">Country</label>
+              <span class="fl-arrow">▾</span>
             </div>
           </div>
         </div>
-        <OrderSidebar cart={cart} isFreeShipping={sub >= 999} discount={false} />
-      </div>
-      <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
-        <Btn onClick={() => validate() && onNext()} style={{ padding: '12px 32px' }}>Save & Continue →</Btn>
-      </div>
-    </div>
-  );
-}
-
-/* ─── STEP 3: ADDRESS ───────────────────────────────────── */
-function AddressPage({ data, setData, cart, savedAddrs, onNext, onBack }) {
-  const [errors, setErrors] = useState({});
-  const [useNew, setUseNew] = useState(!savedAddrs?.length);
-  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
-
-  const pickAddr = (a) => {
-    setData({ line1:a.line1||'', line2:a.line2||'', city:a.city||'', state:a.state||'', country:'IN', pincode:a.pincode||'' });
-    setUseNew(false);
-  };
-  const states = data.country === 'US' ? US_STATES : IN_STATES;
-  const sub = cart.reduce((a, x) => a + x.price * x.qty, 0);
-
-  const validate = () => {
-    const e = {};
-    if (!data.line1.trim())   e.line1   = 'Required';
-    if (!data.city.trim())    e.city    = 'Required';
-    if (!data.state)          e.state   = 'Required';
-    if (!data.pincode.trim()) e.pincode = 'Required';
-    setErrors(e);
-    return !Object.keys(e).length;
-  };
-
-  return (
-    <div className="a-slide">
-      <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 6 }}>Delivery Address</h2>
-      <p style={{ color: 'var(--muted)', fontSize: '.88rem', marginBottom: 24 }}>Where should we deliver your order?</p>
-      <div className="co-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, minWidth: 0, background: '#fff', borderRadius: 18, padding: 24, boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8' }}>
-          {/* Saved addresses */}
-          {savedAddrs?.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10 }}>Saved Addresses</p>
-              {savedAddrs.map(a => (
-                <div key={a.id} onClick={() => pickAddr(a)} style={{ border: `1.5px solid ${!useNew && data.line1 === a.line1 ? 'var(--gold)' : '#f0e4c8'}`, borderRadius: 12, padding: '10px 14px', marginBottom: 8, cursor: 'pointer', background: !useNew && data.line1 === a.line1 ? '#fffbf0' : '#fff', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '1rem', marginTop: 2 }}>{a.label === 'Office' ? '🏢' : '🏠'}</span>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 700, fontSize: '.83rem' }}>{a.label || 'Address'}{a.isDefault && <span style={{ marginLeft: 8, fontSize: '.68rem', background: 'var(--gold)', color: '#fff', padding: '1px 7px', borderRadius: 99 }}>Default</span>}</p>
-                    <p style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{a.line1}{a.line2 ? ', ' + a.line2 : ''}, {a.city} - {a.pincode}</p>
-                  </div>
-                </div>
-              ))}
-              <button onClick={() => setUseNew(true)} style={{ fontSize: '.8rem', color: 'var(--gold)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0' }}>+ Add new address</button>
-              {!useNew && <hr style={{ margin: '16px 0', borderColor: '#f0e4c8' }} />}
-            </div>
-          )}
-          {(useNew || !savedAddrs?.length) && (<>
-          {/* Country */}
-          <div style={{ marginBottom: 20 }}>
-            <p style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 10 }}>Country</p>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button className={`pill${data.country !== 'US' ? ' active' : ''}`}
-                onClick={() => { upd('country', 'IN'); upd('state', ''); }}>🇮🇳 India</button>
-              <button className={`pill${data.country === 'US' ? ' active' : ''}`}
-                onClick={() => { upd('country', 'US'); upd('state', ''); }}>🇺🇸 United States</button>
-            </div>
-          </div>
-
-          <FloatInput label="Address Line 1" id="l1" value={data.line1} onChange={v => upd('line1', v)} required />
-          {errors.line1 && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.line1}</p>}
-          <FloatInput label="Address Line 2 (Apt, Suite, etc.)" id="l2" value={data.line2} onChange={v => upd('line2', v)} />
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <FloatInput label="City / Town" id="ct" value={data.city} onChange={v => upd('city', v)} required />
-              {errors.city && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.city}</p>}
-            </div>
-            <div>
-              <FloatInput label={data.country === 'US' ? 'ZIP Code' : 'Pincode'} id="pc"
-                value={data.pincode} onChange={v => upd('pincode', v.replace(/\D/g,'').slice(0,6))} inputMode="numeric" required />
-              {errors.pincode && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.pincode}</p>}
-            </div>
-          </div>
-
-          <FloatSelect label="State / Province" id="st" value={data.state}
-            onChange={v => upd('state', v)} options={states} required />
-          {errors.state && <p style={{ color: '#dc2626', fontSize: '.75rem', marginTop: -10, marginBottom: 8 }}>{errors.state}</p>}
-
-          <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '12px 14px', display: 'flex', gap: 10, alignItems: 'center', marginTop: 8 }}>
-            <span style={{ fontSize: '1.2rem' }}>🚚</span>
-            <div>
-              <p style={{ fontSize: '.8rem', fontWeight: 700, color: '#166534' }}>Estimated Delivery</p>
-              <p style={{ fontSize: '.75rem', color: '#15803d' }}>
-                {data.country === 'US' ? '7–12 business days' : '2–4 business days'}
-              </p>
-            </div>
-          </div>
-          </>)}
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <button class="btn btn-ghost" onclick="S.step=2;render()" style="flex:1">← Back</button>
+          <button class="btn btn-gold" onclick="addressNext()" style="flex:2">Continue →</button>
         </div>
-        <OrderSidebar cart={cart} isFreeShipping={sub >= 999} discount={false} />
-      </div>
-      <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
-        <Btn onClick={() => validate() && onNext()} style={{ padding: '12px 32px' }}>Continue to Payment →</Btn>
       </div>
     </div>
-  );
+    ${sidebar()}
+  </div>`;
 }
 
-/* ─── STEP 4: PAYMENT ───────────────────────────────────── */
-function PaymentPage({ cart, address, personal, discount, customerId, onSuccess, onBack }) {
-  const [method, setMethod] = useState('upi');
-  const [upiId, setUpiId]   = useState('');
-  const [card, setCard]     = useState({ num: '', name: '', exp: '', cvv: '' });
-  const [bank, setBank]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError]   = useState('');
+function addressNext() {
+  let ok = true;
+  const show = (id, cond) => { const el=$(id); if(el) el.style.display=cond?'block':'none'; if(cond) ok=false; };
+  show('errLine1',   !S.address.line1.trim());
+  show('errCity',    !S.address.city.trim());
+  show('errState',   !S.address.state);
+  show('errPincode', !S.address.pincode.trim());
+  if (ok) { S.step = 4; render(); }
+}
 
-  const sub   = cart.reduce((a, x) => a + x.price * x.qty, 0);
-  const disc  = discount ? Math.round(sub * 0.1) : 0;
-  const free  = sub >= 999;
-  const total = sub - disc + (free ? 0 : 79);
+// ── Step 4: Payment ──────────────────────────────────────
+let payMethod = 'online';
 
-  const fmtCard = v => v.replace(/\D/g,'').slice(0,16).replace(/(\d{4})(?=\d)/g,'$1 ').trim();
-  const fmtExp  = v => { const d = v.replace(/\D/g,'').slice(0,4); return d.length > 2 ? d.slice(0,2)+'/'+d.slice(2) : d; };
+function renderPayment() {
+  const { sub, disc, ship, total } = calcTotals();
+  app().innerHTML = `${stepper()}
+  <h2 class="a-slide" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:6px">Payment</h2>
+  <p class="a-slide" style="color:var(--muted);font-size:.88rem;margin-bottom:24px">Choose your payment method</p>
+  <div class="co-layout a-slide" style="display:flex;gap:24px;align-items:flex-start">
+    <div style="flex:1;min-width:0">
+      <div class="co-card" style="margin-bottom:16px">
+        <!-- Delivery summary -->
+        <p style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Delivering to</p>
+        <p style="font-size:.88rem;font-weight:600">${S.personal.firstName} ${S.personal.lastName}</p>
+        <p style="font-size:.82rem;color:var(--muted)">${S.address.line1}${S.address.line2?', '+S.address.line2:''}, ${S.address.city} – ${S.address.pincode}</p>
+      </div>
+      <div class="co-card" style="margin-bottom:16px">
+        <p style="font-size:.82rem;font-weight:600;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Payment Method</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+          <button id="tabOnline" class="pay-tab active" onclick="setPayMethod('online')">💳 Online (UPI / Card)</button>
+          <button id="tabCod"    class="pay-tab"        onclick="setPayMethod('cod')">📦 Cash on Delivery</button>
+        </div>
+        <div id="payDetails">
+          <p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">
+            Pay securely via Razorpay — supports UPI, debit/credit cards, net banking & wallets.
+          </p>
+        </div>
+      </div>
+      <p id="payErr" style="color:#dc2626;font-size:.82rem;margin-bottom:10px;min-height:18px"></p>
+      <div style="display:flex;gap:12px">
+        <button class="btn btn-ghost" onclick="S.step=3;render()" style="flex:1">← Back</button>
+        <button id="payBtn" class="btn btn-gold" onclick="placeOrder()" style="flex:2">Pay ${rupee(total)} →</button>
+      </div>
+    </div>
+    ${sidebar()}
+  </div>`;
+}
 
-  const TABS = [
-    { id:'upi',  icon:'📲', label:'UPI' },
-    { id:'card', icon:'💳', label:'Card' },
-    { id:'net',  icon:'🏦', label:'Net Banking' },
-    { id:'cod',  icon:'📦', label:'COD' },
-  ];
-
-  const buildCustomer = () => ({
-    name:    `${personal.firstName} ${personal.lastName}`.trim(),
-    email:   personal.email,
-    phone:   personal.phone,
-    address: address.line1,
-    address2: address.line2,
-    city:    address.city,
-    state:   address.state,
-    country: address.country,
-    pincode: address.pincode,
+function setPayMethod(m) {
+  payMethod = m;
+  ['Online','Cod'].forEach(x => {
+    const el = $('tab'+x); if(el) el.classList.toggle('active', x.toLowerCase()===m||(m==='online'&&x==='Online'));
   });
+  const details = $('payDetails');
+  if (!details) return;
+  const { total } = calcTotals();
+  if (m === 'cod') {
+    details.innerHTML = `<p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">Pay cash when your order arrives. COD fee ₹40 may apply on orders below ₹500.</p>`;
+    const payBtn = $('payBtn'); if(payBtn) payBtn.textContent = `Place Order (COD) →`;
+  } else {
+    details.innerHTML = `<p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">Pay securely via Razorpay — supports UPI, debit/credit cards, net banking & wallets.</p>`;
+    const payBtn = $('payBtn'); if(payBtn) payBtn.textContent = `Pay ${rupee(total)} →`;
+  }
+}
 
-  const buildItems = () => cart.map(i => ({
-    id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image || ''
-  }));
-
-  const placeOrder = async () => {
-    setError(''); setLoading(true);
-    try {
-      if (method === 'cod') {
-        await new Promise(r => setTimeout(r, 1100));
-        const orderId = 'COD-' + Date.now().toString(36).toUpperCase();
-        await window._saveOrder({
-          orderId,
-          customerId:    customerId || null,
-          customer:      buildCustomer(),
-          items:         buildItems(),
-          subtotal:      sub,
-          discount:      disc,
-          shipping:      free ? 0 : 79,
-          totalAmount:   total,
-          paymentMethod: 'Cash on Delivery',
-          paymentStatus: 'pending',
-          orderStatus:   'pending',
-        });
-        CartStore.clear();
-        onSuccess({ orderId, method: 'Cash on Delivery', total });
-        return;
-      }
-
-      const res = await fetch('/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: total, currency: 'INR' })
-      });
-      if (!res.ok) throw new Error('Order creation failed');
-      const { razorpayOrderId, amount, currency, keyId } = await res.json();
-
-      await new Promise((resolve, reject) => {
-        const rzp = new window.Razorpay({
-          key: keyId, amount, currency, order_id: razorpayOrderId,
-          name: 'Auranest Decors',
-          description: `${cart.length} item${cart.length > 1 ? 's' : ''}`,
-          image: LOGO_URL || undefined,
-          prefill: {
-            name:    `${personal.firstName} ${personal.lastName}`.trim(),
-            email:   personal.email,
-            contact: personal.phone ? `+91${personal.phone}` : ''
-          },
-          theme: { color: '#c49330' },
-          handler: async (response) => {
-            try {
-              const customer = buildCustomer();
-              const v = await fetch('/api/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  razorpay_order_id:   response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature:  response.razorpay_signature,
-                  orderData: {
-                    orderId:     response.razorpay_payment_id,
-                    customer,
-                    items:       buildItems(),
-                    subtotal:    sub,
-                    totalAmount: total,
-                  },
-                })
-              });
-              if (!v.ok) throw new Error('Verification failed');
-              const vData = await v.json();
-              await window._saveOrder({
-                orderId:             response.razorpay_payment_id,
-                customerId:          customerId || null,
-                customer,
-                items:               buildItems(),
-                subtotal:            sub,
-                discount:            disc,
-                shipping:            free ? 0 : 79,
-                totalAmount:         total,
-                paymentMethod:       method.toUpperCase(),
-                paymentStatus:       'paid',
-                orderStatus:         'confirmed',
-                razorpayPaymentId:   response.razorpay_payment_id,
-                razorpayOrderId:     response.razorpay_order_id,
-                shiprocketOrderId:   vData.shiprocketOrderId   || null,
-                shiprocketShipmentId: vData.shiprocketShipmentId || null,
-              });
-              CartStore.clear();
-              resolve(response.razorpay_payment_id);
-            } catch (e) { reject(e); }
-          },
-          modal: { ondismiss: () => reject(new Error('dismissed')) }
-        });
-        rzp.open();
-      }).then(pid => onSuccess({ orderId: pid, method: method.toUpperCase(), total }));
-
-    } catch (e) {
-      if (e.message !== 'dismissed') setError(e.message || 'Payment failed. Please try again.');
-    } finally { setLoading(false); }
+async function placeOrder() {
+  const btn = $('payBtn'); const errEl = $('payErr');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Processing…'; }
+  if (errEl) errEl.textContent = '';
+  const { sub, disc, ship, total } = calcTotals();
+  const customer = {
+    name:  `${S.personal.firstName} ${S.personal.lastName}`.trim(),
+    email: S.personal.email,
+    phone: S.personal.phone,
+    address: S.address.line1, address2: S.address.line2,
+    city:  S.address.city, state: S.address.state,
+    country: S.address.country, pincode: S.address.pincode,
   };
+  const items = S.cart.map(i => ({id:i.id, name:i.name, price:i.price, qty:i.qty, image:i.image||''}));
 
-  return (
-    <div className="a-slide">
-      <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.6rem', fontWeight: 700, marginBottom: 6 }}>Payment</h2>
-      <p style={{ color: 'var(--muted)', fontSize: '.88rem', marginBottom: 24 }}>Choose your preferred payment method</p>
-      <div className="co-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid #f0e4c8' }}>
-            {TABS.map(t => (
-              <button key={t.id} className={`pay-tab${method === t.id ? ' active' : ''}`} onClick={() => setMethod(t.id)}>
-                <span>{t.icon}</span>{t.label}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ background: '#fff', borderRadius: 18, padding: 24, boxShadow: '0 2px 16px rgba(0,0,0,.06)', border: '1px solid #f0e4c8' }}>
-            {/* UPI */}
-            {method === 'upi' && (
-              <div>
-                <p style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: 16 }}>Pay via UPI ID</p>
-                <FloatInput label="UPI ID (eg. name@paytm)" id="upi" value={upiId} onChange={setUpiId} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-                  <div style={{ flex: 1, height: 1, background: '#f0e4c8' }} />
-                  <span style={{ fontSize: '.75rem', color: 'var(--muted)' }}>or choose app</span>
-                  <div style={{ flex: 1, height: 1, background: '#f0e4c8' }} />
-                </div>
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  {['GPay', 'PhonePe', 'Paytm', 'BHIM'].map(app => (
-                    <button key={app} className={`pay-tab${upiId === app ? ' active' : ''}`}
-                      style={{ fontSize: '.78rem' }} onClick={() => setUpiId(app)}>{app}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Card */}
-            {method === 'card' && (
-              <div>
-                <div className="card-preview" style={{ marginBottom: 20 }}>
-                  <div className="card-chip" />
-                  <p style={{ fontFamily: 'monospace', fontSize: '1.05rem', letterSpacing: '.15em', marginBottom: 16, color: 'rgba(255,255,255,.85)', minHeight: 28 }}>
-                    {card.num || '•••• •••• •••• ••••'}
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div>
-                      <p style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.5)', textTransform: 'uppercase', letterSpacing: '.08em' }}>Card Holder</p>
-                      <p style={{ fontSize: '.88rem', fontWeight: 600 }}>{card.name || 'YOUR NAME'}</p>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.5)', textTransform: 'uppercase', letterSpacing: '.08em' }}>Expires</p>
-                      <p style={{ fontSize: '.88rem', fontWeight: 600 }}>{card.exp || 'MM/YY'}</p>
-                    </div>
-                  </div>
-                </div>
-                <FloatInput label="Card Number" id="cnum" value={card.num}
-                  onChange={v => setCard(c => ({...c, num: fmtCard(v)}))} inputMode="numeric" />
-                <FloatInput label="Card Holder Name" id="cname" value={card.name}
-                  onChange={v => setCard(c => ({...c, name: v}))} />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <FloatInput label="MM/YY" id="cexp" value={card.exp}
-                    onChange={v => setCard(c => ({...c, exp: fmtExp(v)}))} inputMode="numeric" />
-                  <FloatInput label="CVV" id="ccvv" type="password" value={card.cvv}
-                    onChange={v => setCard(c => ({...c, cvv: v.replace(/\D/g,'').slice(0,4)}))} inputMode="numeric" />
-                </div>
-                <p style={{ fontSize: '.75rem', color: 'var(--muted)' }}>🔒 Your card details are encrypted and secure</p>
-              </div>
-            )}
-
-            {/* Net Banking */}
-            {method === 'net' && (
-              <div>
-                <p style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: 16 }}>Select your bank</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 16 }}>
-                  {['SBI', 'HDFC', 'ICICI', 'Axis', 'Kotak', 'Yes Bank'].map(b => (
-                    <button key={b} onClick={() => setBank(b)}
-                      style={{
-                        padding: '12px 8px', borderRadius: 12, border: `2px solid ${bank === b ? 'var(--gold)' : '#f0e4c8'}`,
-                        background: bank === b ? '#fffbf0' : '#fff', color: bank === b ? 'var(--gold)' : 'var(--ink)',
-                        fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'inherit'
-                      }}>{b}</button>
-                  ))}
-                </div>
-                <FloatSelect label="Other banks" id="obank" value={bank}
-                  onChange={setBank}
-                  options={['Punjab National Bank','Union Bank','Bank of Baroda','Canara Bank','IndusInd Bank','Federal Bank']} />
-              </div>
-            )}
-
-            {/* COD */}
-            {method === 'cod' && (
-              <div>
-                <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 16 }}>
-                  <span style={{ fontSize: '2.5rem' }}>📦</span>
-                  <div>
-                    <p style={{ fontWeight: 700, fontSize: '.95rem' }}>Cash on Delivery</p>
-                    <p style={{ fontSize: '.83rem', color: 'var(--muted)', marginTop: 4 }}>
-                      Pay when your order arrives. COD fee ₹40 may apply on orders below ₹500.
-                    </p>
-                  </div>
-                </div>
-                <div style={{ background: '#fdf8ed', borderRadius: 12, padding: '10px 14px' }}>
-                  <p style={{ fontSize: '.78rem', color: 'var(--muted)' }}>
-                    ✅ No advance payment &nbsp;·&nbsp; ✅ Pay in cash at delivery
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {error && (
-            <div style={{ marginTop: 14, background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: '12px 16px', fontSize: '.85rem', color: '#dc2626' }}>
-              ⚠️ {error}
-            </div>
-          )}
-        </div>
-        <OrderSidebar cart={cart} isFreeShipping={free} discount={discount} />
-      </div>
-
-      <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Btn variant="ghost" onClick={onBack}>← Back</Btn>
-        <Btn onClick={placeOrder} loading={loading} style={{ padding: '14px 36px', fontSize: '1rem' }}>
-          {loading ? 'Processing…' : `Pay ${rupee(total)}`}
-        </Btn>
-      </div>
-    </div>
-  );
-}
-
-/* ─── STEP 5: SUCCESS ───────────────────────────────────── */
-function SuccessPage({ orderId, method, total }) {
-  useEffect(() => {
-    const colors = ['#c49330','#f6d070','#fce9a8','#1a1208','#fff8e7'];
-    const pieces = Array.from({ length: 55 }, (_, i) => {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      const size = 6 + Math.random() * 7;
-      el.style.cssText = `
-        left:${Math.random()*100}vw;top:${-10-Math.random()*20}px;
-        background:${colors[i % colors.length]};
-        width:${size}px;height:${size}px;
-        border-radius:${Math.random()>.5?'50%':'3px'};
-        animation-duration:${2.2+Math.random()*2.8}s;
-        animation-delay:${Math.random()*.7}s;
-        transform:rotate(${Math.random()*360}deg);
-      `;
-      document.body.appendChild(el);
-      return el;
+  try {
+    if (payMethod === 'cod') {
+      await new Promise(r => setTimeout(r, 800));
+      const orderId = 'COD-' + Date.now().toString(36).toUpperCase();
+      await window._saveOrder({ orderId, customerId:S.customerId||null, customer, items, subtotal:sub, discount:disc, shipping:ship, totalAmount:total, paymentMethod:'Cash on Delivery', paymentStatus:'pending', orderStatus:'pending' });
+      CartStore.clear();
+      S.result = { orderId, method:'Cash on Delivery', total };
+      S.step = 5; render(); return;
+    }
+    // Razorpay
+    const res = await fetch('/api/create-order', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ amount: total, currency: 'INR' })
     });
-    const t = setTimeout(() => pieces.forEach(p => p.remove()), 6000);
-    return () => { clearTimeout(t); pieces.forEach(p => p.remove()); };
-  }, []);
+    if (!res.ok) throw new Error('Order creation failed');
+    const { razorpayOrderId, amount, currency, keyId } = await res.json();
 
-  return (
-    <div className="a-scale" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center', maxWidth: 440, margin: '0 auto' }}>
-      <svg width="110" height="110" viewBox="0 0 110 110" style={{ marginBottom: 24 }}>
-        <circle cx="55" cy="55" r="50" fill="none" stroke="#f0e8d8" strokeWidth="4.5" />
-        <circle cx="55" cy="55" r="50" fill="none" stroke="#c49330" strokeWidth="4.5"
-          strokeDasharray="314" strokeDashoffset="314" className="check-circle"
-          strokeLinecap="round" transform="rotate(-90 55 55)" />
-        <polyline points="35,57 50,72 78,42" fill="none" stroke="#c49330" strokeWidth="5"
-          strokeDasharray="60" strokeDashoffset="60" className="check-mark"
-          strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-
-      <div style={{ background: '#fdf8ed', border: '1px solid #f0e4c8', borderRadius: 20, padding: '4px 18px', marginBottom: 14, display: 'inline-block' }}>
-        <p style={{ fontSize: '.72rem', fontWeight: 800, color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '.1em' }}>Order Confirmed</p>
-      </div>
-      <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '2rem', fontWeight: 700, marginBottom: 10 }}>Thank You! 🙏</h2>
-      <p style={{ color: 'var(--muted)', fontSize: '.88rem', lineHeight: 1.7, marginBottom: 28 }}>
-        Your order has been placed successfully. You'll receive a confirmation on WhatsApp & email shortly.
-      </p>
-
-      <div style={{ width: '100%', background: '#fff', borderRadius: 18, border: '1px solid #f0e4c8', padding: 20, marginBottom: 24, boxShadow: '0 2px 16px rgba(0,0,0,.06)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, textAlign: 'left' }}>
-          {[
-            ['Order ID', orderId.slice(0, 20) + (orderId.length > 20 ? '…' : '')],
-            ['Amount Paid', rupee(total)],
-            ['Payment', method],
-            ['Delivery', '2–4 business days']
-          ].map(([k, v]) => (
-            <div key={k}>
-              <p style={{ fontSize: '.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 2 }}>{k}</p>
-              <p style={{ fontWeight: 700, fontSize: '.88rem', color: k === 'Amount Paid' ? 'var(--gold)' : k === 'Delivery' ? '#16a34a' : 'var(--ink)' }}>{v}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 12, width: '100%', flexWrap: 'wrap' }}>
-        <a href="/store/account.html" style={{ flex: 1 }}><Btn variant="gold" style={{ width: '100%' }}>View My Orders</Btn></a>
-        <a href="/store/" style={{ flex: 1 }}><Btn variant="outline" style={{ width: '100%' }}>Shop More</Btn></a>
-        <a href="/store/contact.html" style={{ flex: 1 }}><Btn variant="ghost" style={{ width: '100%' }}>Need Help?</Btn></a>
-      </div>
-      <p style={{ fontSize: '.75rem', color: 'var(--muted)', marginTop: 20 }}>
-        Questions? <a href="mailto:info@auranestsdecor.com" style={{ color: 'var(--gold)' }}>info@auranestsdecor.com</a>
-      </p>
-    </div>
-  );
+    await new Promise((resolve, reject) => {
+      const rzp = new window.Razorpay({
+        key: keyId, amount, currency, order_id: razorpayOrderId,
+        name: 'Auranest Decors',
+        description: `${S.cart.length} item${S.cart.length>1?'s':''}`,
+        prefill: { name: customer.name, email: customer.email, contact: customer.phone ? '+91'+customer.phone : '' },
+        theme: { color: '#c49330' },
+        handler: async (resp) => {
+          try {
+            const v = await fetch('/api/verify-payment', {
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ razorpay_order_id:resp.razorpay_order_id, razorpay_payment_id:resp.razorpay_payment_id, razorpay_signature:resp.razorpay_signature, orderData:{ orderId:resp.razorpay_payment_id, customer, items, subtotal:sub, totalAmount:total } })
+            });
+            if (!v.ok) throw new Error('Payment verification failed');
+            const vData = await v.json();
+            await window._saveOrder({ orderId:resp.razorpay_payment_id, customerId:S.customerId||null, customer, items, subtotal:sub, discount:disc, shipping:ship, totalAmount:total, paymentMethod:'Online', paymentStatus:'paid', orderStatus:'confirmed', razorpayPaymentId:resp.razorpay_payment_id, razorpayOrderId:resp.razorpay_order_id });
+            CartStore.clear();
+            S.result = { orderId:resp.razorpay_payment_id, method:'Online Payment', total };
+            S.step = 5; render(); resolve();
+          } catch(e) { reject(e); }
+        },
+        modal: { ondismiss: () => reject(new Error('Payment cancelled')) }
+      });
+      rzp.open();
+    });
+  } catch(e) {
+    if (errEl) errEl.textContent = e.message === 'Payment cancelled' ? 'Payment was cancelled.' : (e.message || 'Payment failed. Try again.');
+    if (btn) { btn.disabled = false; btn.textContent = payMethod==='cod' ? 'Place Order (COD) →' : `Pay ${rupee(total)} →`; }
+  }
 }
 
-/* ─── Auth helpers ───────────────────────────────────────── */
-const authReady = () => new Promise(res => {
-  if (window._fbAuth !== undefined) { res(); return; }
-  const t = setInterval(() => { if (window._fbAuth !== undefined) { clearInterval(t); res(); } }, 50);
-});
+// ── Step 5: Success ──────────────────────────────────────
+function renderSuccess() {
+  const r = S.result || {};
+  app().innerHTML = `<div class="a-fade" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">
+    <svg width="90" height="90" viewBox="0 0 90 90" fill="none" style="margin-bottom:24px">
+      <circle class="check-circle" cx="45" cy="45" r="40" stroke="#c49330" stroke-width="4" fill="none"/>
+      <polyline class="check-mark" points="28,46 40,58 62,34" stroke="#c49330" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:8px">Order Confirmed!</h2>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:6px">Thank you for shopping with Auranest Decors</p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:4px">Order ID: <strong>${r.orderId||''}</strong></p>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:32px">Method: ${r.method||''} · Total: ${rupee(r.total||0)}</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <a href="/store/" class="btn btn-gold">Continue Shopping</a>
+      <a href="/store/login.html" class="btn btn-outline">View My Orders</a>
+    </div>
+  </div>`;
+  confetti();
+}
 
-/* ─── MAIN APP ──────────────────────────────────────────── */
-function App() {
-  const [step, setStep]         = useState(1);
-  const [cart, setCart]         = useState(() => CartStore.get());
-  const [showOTP, setShowOTP]   = useState(false);
-  const [discount, setDiscount] = useState(false);
-  const [result, setResult]     = useState(null);
-  const [customer, setCustomer] = useState(null);
-  const [savedAddrs, setSavedAddrs] = useState([]);
-  const [personal, setPersonal] = useState({ firstName:'', lastName:'', email:'', phone:'' });
-  const [address,  setAddress]  = useState({ line1:'', line2:'', city:'', state:'', country:'IN', pincode:'' });
+function confetti() {
+  const colors = ['#c49330','#f6d070','#e8dfc8','#a87e28','#fdf8f3'];
+  for (let i = 0; i < 55; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}vw;top:-12px;width:${6+Math.random()*8}px;height:${10+Math.random()*8}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*1.5}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4500);
+  }
+}
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
+// ── Main Render ──────────────────────────────────────────
+function render() {
+  // Inject auth modal above app
+  const existing = document.getElementById('authModalWrap');
+  if (existing) existing.remove();
+  if (S.showAuth) {
+    const div = document.createElement('div');
+    div.id = 'authModalWrap';
+    div.innerHTML = renderAuthModal();
+    document.body.appendChild(div);
+    // Focus phone input
+    setTimeout(() => { $('authPhone')?.focus(); }, 80);
+    return;
+  }
+  switch (S.step) {
+    case 1: renderCart();    break;
+    case 2: renderPersonal(); break;
+    case 3: renderAddress();  break;
+    case 4: renderPayment();  break;
+    case 5: renderSuccess();  break;
+  }
+}
 
+// ── Boot ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
   // Load Razorpay script
-  useEffect(() => {
-    if (document.getElementById('rzp-script')) return;
-    const s  = document.createElement('script');
+  if (!document.getElementById('rzp-script')) {
+    const s = document.createElement('script');
     s.id  = 'rzp-script';
     s.src = 'https://checkout.razorpay.com/v1/checkout.js';
     document.head.appendChild(s);
-  }, []);
+  }
 
-  // Listen for Firebase auth ready + auto-fill from customer profile
-  useEffect(() => {
-    const applyProfile = (profile) => {
-      if (!profile) return;
-      const nameParts = (profile.name || '').trim().split(' ');
-      setCustomer(profile);
-      setPersonal(p => ({
-        ...p,
-        firstName: nameParts[0] || p.firstName || '',
-        lastName:  nameParts.slice(1).join(' ') || p.lastName || '',
-        email:     profile.email || p.email || '',
-        phone:     profile.mobile || p.phone || '',
-      }));
-      const addrs = window._fbAddresses || [];
-      setSavedAddrs(addrs);
-      const def = window._fbDefaultAddr;
-      if (def) setAddress({ line1:def.line1||'', line2:def.line2||'', city:def.city||'', state:def.state||'', country:'IN', pincode:def.pincode||'' });
-    };
-    window._onAuthReady = (user, profile) => {
-      // Fall back to localStorage name if Firestore doc missing
-      const savedName = localStorage.getItem('auranest_name');
-      const effective = profile || (savedName ? {name:savedName} : null);
-      applyProfile(effective);
-    };
-    if (window._fbCustomer) window._onAuthReady(window._fbUser, window._fbCustomer);
-    return () => { window._onAuthReady = null; };
-  }, []);
+  S.cart = CartStore.get();
 
-  const goNext = () => setStep(s => s + 1);
-  const goBack = () => setStep(s => s - 1);
-
-  const handleCartNext = (d) => {
-    setDiscount(d);
-    if (window._fbAuth?.currentUser) { goNext(); return; }
-    setShowOTP(true);
+  // If Firebase user already logged in, pre-fill profile
+  window._onAuthReady = (user, profile) => {
+    if (profile) applyProfileToPersonal(profile, profile.mobile || '');
+    if (user) S.customerId = user.uid;
   };
+  if (window._fbCustomer) window._onAuthReady(window._fbUser, window._fbCustomer);
 
-  const handleOtpVerified = (phone, user, profile) => {
-    const savedName = localStorage.getItem('auranest_name');
-    const effectiveProfile = profile || (savedName ? {name:savedName} : null);
-    const nameParts = (effectiveProfile?.name || '').trim().split(' ');
-    setPersonal(p => ({
-      ...p, phone,
-      firstName: nameParts[0] || p.firstName,
-      lastName:  nameParts.slice(1).join(' ') || p.lastName,
-      email:     effectiveProfile?.email || p.email,
-    }));
-    if (effectiveProfile) setCustomer({ uid: user?.uid, ...effectiveProfile });
-    const addrs = window._fbAddresses || [];
-    setSavedAddrs(addrs);
-    const def = window._fbDefaultAddr;
-    if (def) setAddress({ line1:def.line1||'', line2:def.line2||'', city:def.city||'', state:def.state||'', country:'IN', pincode:def.pincode||'' });
-    setShowOTP(false);
-    goNext();
-  };
-
-  return (
-    <div>
-      {/* Navbar */}
-      <nav className="co-nav">
-        <a href="/store/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)' }}>
-          <BrandLogo size={30} />
-          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.05rem', fontWeight: 700 }}>Auranest Decors</span>
-        </a>
-        <div style={{ flex: 1 }} />
-        <p style={{ fontSize: '.78rem', color: 'var(--muted)', fontWeight: 600 }}>🔒 Secure Checkout</p>
-      </nav>
-
-      <main style={{ maxWidth: 960, margin: '0 auto', padding: 'clamp(16px,4vw,32px) clamp(10px,3vw,16px)' }}>
-        {/* Progress — hide on success */}
-        {step <= 4 && <Stepper step={step} />}
-
-        {/* Auth Modal */}
-        {showOTP && (
-          <OTPModal
-            onVerified={handleOtpVerified}
-            onGuest={() => { setShowOTP(false); goNext(); }}
-          />
-        )}
-
-        {step === 1 && (
-          <CartPage cart={cart} setCart={setCart}
-            onNext={handleCartNext} />
-        )}
-        {step === 2 && !showOTP && (
-          <PersonalPage data={personal} setData={setPersonal} cart={cart} onNext={goNext} onBack={() => setStep(1)} />
-        )}
-        {step === 3 && (
-          <AddressPage data={address} setData={setAddress} cart={cart} savedAddrs={savedAddrs} onNext={goNext} onBack={() => setStep(2)} />
-        )}
-        {step === 4 && (
-          <PaymentPage cart={cart} address={address} personal={personal} discount={discount}
-            customerId={customer?.uid || null}
-            onSuccess={r => { setResult(r); setStep(5); }} onBack={() => setStep(3)} />
-        )}
-        {step === 5 && result && (
-          <SuccessPage orderId={result.orderId} method={result.method} total={result.total} />
-        )}
-      </main>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  render();
+});
 </script>
 </body>
 </html>
