@@ -171,16 +171,83 @@ body{font-family:'Outfit',sans-serif;background:#ddd;color:var(--ink)}
 /* ── Print ──────────────────────────────────────────── */
 @media print{
   @page{size:A4 portrait;margin:0}
-  html,body{background:#fff!important}
-  .screen-ui{display:none!important}
-  #pages{padding:0;gap:0;align-items:stretch}
-  .page{
-    width:100%;min-height:100vh;page-break-after:always;
-    box-shadow:none!important;break-after:page
+
+  /* Force ALL backgrounds and colors to print */
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    color-adjust:exact!important;
   }
-  .page:last-child{page-break-after:avoid;break-after:avoid}
-  .prod-page{padding:28px 32px}
-  .prod-img-wrap{height:200px}
+
+  html,body{background:#fff!important;margin:0;padding:0}
+  .screen-ui{display:none!important}
+
+  /* Switch pages container to block — flex + page-break creates phantom blank pages */
+  #pages{
+    display:block!important;
+    padding:0!important;gap:0!important;
+  }
+
+  /* Each .page = exactly one A4 sheet */
+  .page{
+    display:block!important;
+    width:210mm!important;
+    height:297mm!important;
+    min-height:unset!important;
+    max-height:297mm!important;
+    overflow:hidden!important;
+    box-shadow:none!important;
+    page-break-after:always!important;
+    break-after:page!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .page:last-child{
+    page-break-after:avoid!important;
+    break-after:avoid!important;
+  }
+
+  /* Dark pages must explicitly carry their background */
+  .cover,.cat-divider,.back-cover{
+    background:#1a1208!important;
+    color:#fff!important;
+  }
+  .cover-bg-pattern{
+    background-image:
+      radial-gradient(circle at 20% 80%,rgba(196,147,48,.12) 0%,transparent 50%),
+      radial-gradient(circle at 80% 20%,rgba(196,147,48,.08) 0%,transparent 50%)!important;
+  }
+  .cover-corner{border-color:rgba(196,147,48,.3)!important}
+  .cat-divider-num{color:rgba(196,147,48,.2)!important}
+  .cat-divider-count{border-color:rgba(196,147,48,.5)!important;color:#f6d070!important}
+  .cover-badge{border-color:rgba(196,147,48,.45)!important;color:#f6d070!important}
+  .cover-divider-line{background:linear-gradient(90deg,transparent,rgba(196,147,48,.6),transparent)!important}
+  .cover-divider-dot{background:#c49330!important}
+  .cover-brand em{color:#f6d070!important}
+  .cover-year{color:rgba(255,255,255,.4)!important}
+  .cover-tagline{color:rgba(255,255,255,.55)!important}
+
+  /* Product pages */
+  .prod-page{
+    background:#f7f2eb!important;
+    padding:28px 32px!important;
+  }
+  .prod-card{
+    background:#fff!important;
+    border:1px solid #e0d4b8!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .prod-img-wrap{
+    height:190px!important;
+    background:linear-gradient(135deg,#f7f2eb 0%,#ede4d4 100%)!important;
+  }
+  .prod-img-placeholder{
+    background:linear-gradient(135deg,#f0e8d8 0%,#e8d8c0 100%)!important;
+  }
+  .prod-badge{background:rgba(196,147,48,.12)!important}
+  .prod-divider{background:linear-gradient(90deg,#c49330,transparent)!important}
+  .page-header{border-bottom:1px solid #e0d4b8!important}
 }
 </style>
 </head>
