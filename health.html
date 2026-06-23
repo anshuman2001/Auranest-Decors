@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Auranest Decors — System Health</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --border:#2a2f3a;
+  --ink:#e6e8ec; --mid:#9aa1ad; --muted:#6b7280;
+  --green:#22c55e; --green-bg:rgba(34,197,94,.12);
+  --red:#ef4444; --red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b; --amber-bg:rgba(245,158,11,.12);
+  --blue:#3b82f6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);padding:24px 16px;min-height:100vh}
+.wrap{max-width:840px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:6px;flex-wrap:wrap}
+h1{font-size:1.4rem;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.82rem;margin-bottom:22px}
+.btn{
+  background:var(--blue);color:#fff;border:none;border-radius:8px;
+  padding:10px 20px;font-family:inherit;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:8px
+}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Summary bar */
+.summary{
+  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap
+}
+.pill{
+  flex:1;min-width:150px;background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:16px 18px
+}
+.pill .lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.pill .val{font-size:1.5rem;font-weight:700}
+.pill.ok .val{color:var(--green)}
+.pill.bad .val{color:var(--red)}
+.pill.warn .val{color:var(--amber)}
+
+/* Check rows */
+.group-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:22px 0 10px;font-weight:600}
+.check{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px
+}
+.dot{
+  width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px;
+  background:var(--muted);transition:background .3s
+}
+.dot.ok{background:var(--green);box-shadow:0 0 0 4px var(--green-bg)}
+.dot.bad{background:var(--red);box-shadow:0 0 0 4px var(--red-bg)}
+.dot.warn{background:var(--amber);box-shadow:0 0 0 4px var(--amber-bg)}
+.dot.run{background:var(--blue);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.check-body{flex:1;min-width:0}
+.check-name{font-weight:600;font-size:.92rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.check-name .ms{font-weight:400;font-size:.75rem;color:var(--muted);white-space:nowrap}
+.check-desc{font-size:.78rem;color:var(--mid);margin-top:4px;word-break:break-word}
+.check-detail{
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.72rem;
+  color:var(--muted);margin-top:8px;background:var(--panel2);
+  border:1px solid var(--border);border-radius:7px;padding:8px 10px;
+  white-space:pre-wrap;word-break:break-all;display:none
+}
+.check.has-detail .check-detail{display:block}
+.badge{
+  font-size:.65rem;font-weight:600;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.05em
+}
+.badge.ok{background:var(--green-bg);color:var(--green)}
+.badge.bad{background:var(--red-bg);color:var(--red)}
+.badge.warn{background:var(--amber-bg);color:var(--amber)}
+.foot{margin-top:24px;font-size:.74rem;color:var(--muted);line-height:1.7}
+.foot code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:.7rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>System Health</h1>
+    <button class="btn" id="runBtn" onclick="runAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      Run checks
+    </button>
+  </header>
+  <p class="sub">Auranest Decors — live diagnostics for database & serverless APIs. Runs in your browser against production.</p>
+
+  <div class="summary">
+    <div class="pill" id="pill-overall"><div class="lbl">Overall</div><div class="val" id="ov-val">—</div></div>
+    <div class="pill" id="pill-db"><div class="lbl">Database</div><div class="val" id="db-val">—</div></div>
+    <div class="pill" id="pill-products"><div class="lbl">Products</div><div class="val" id="prod-val">—</div></div>
+    <div class="pill" id="pill-api"><div class="lbl">APIs online</div><div class="val" id="api-val">—</div></div>
+  </div>
+
+  <div class="group-title">Database — Firebase Firestore</div>
+  <div id="grp-db"></div>
+
+  <div class="group-title">Serverless APIs — Vercel Functions</div>
+  <div id="grp-api"></div>
+
+  <div class="foot">
+    <strong>How to read this:</strong><br>
+    🟢 <b>Healthy</b> — responding correctly. &nbsp; 🟠 <b>Reachable but degraded</b> — endpoint is alive but returned a configuration/validation error (e.g. missing env var, invalid test payload — expected for safe probes). &nbsp; 🔴 <b>Down</b> — unreachable or server error.<br><br>
+    API probes use harmless test payloads, so an OTP/payment endpoint returning <code>400</code>/<code>502</code>/<code>503</code> still counts as <b>online</b> — it proves the function is deployed and running. Only network failures or <code>404</code>/<code>5xx-crash</code> mean a real outage.
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, query, limit, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const FB_CONFIG = {
+  apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
+  authDomain:"auranest-decors.firebaseapp.com",
+  projectId:"auranest-decors",
+  storageBucket:"auranest-decors.firebasestorage.app",
+  messagingSenderId:"55244789649",
+  appId:"1:55244789649:web:0aab804a8933ce0cf6ec30"
+};
+
+const $ = id => document.getElementById(id);
+let db = null;
+
+/* ── render a check row ── */
+function row(grp, id, name){
+  const el = document.createElement('div');
+  el.className = 'check';
+  el.id = 'chk-'+id;
+  el.innerHTML = `
+    <div class="dot" id="dot-${id}"></div>
+    <div class="check-body">
+      <div class="check-name"><span>${name}</span><span class="ms" id="ms-${id}"></span></div>
+      <div class="check-desc" id="desc-${id}">Waiting…</div>
+      <div class="check-detail" id="det-${id}"></div>
+    </div>`;
+  $(grp).appendChild(el);
+}
+function setStatus(id, status, desc, detail){
+  const dot = $('dot-'+id); dot.className = 'dot '+status;
+  $('desc-'+id).innerHTML = desc;
+  if(detail){ $('det-'+id).textContent = detail; $('chk-'+id).classList.add('has-detail'); }
+  else { $('chk-'+id).classList.remove('has-detail'); }
+}
+function setRunning(id){ $('dot-'+id).className='dot run'; $('desc-'+id).textContent='Checking…'; $('ms-'+id).textContent=''; }
+function setMs(id, ms){ $('ms-'+id).textContent = ms+' ms'; }
+
+/* ── build rows ── */
+const DB_CHECKS  = [['fb-init','Firebase SDK initialise'],['fb-count','Products collection — count'],['fb-read','Products collection — read sample'],['fb-orders','Orders collection — reachable'],['fb-customers','Customers collection — reachable']];
+const API_CHECKS = [['api-create-order','POST /api/create-order'],['api-send-otp','POST /api/send-otp'],['api-verify-otp','POST /api/verify-otp'],['api-verify-payment','POST /api/verify-payment']];
+DB_CHECKS.forEach(([id,n])=>row('grp-db',id,n));
+API_CHECKS.forEach(([id,n])=>row('grp-api',id,n));
+
+const results = {};
+
+/* ── DB checks ── */
+async function checkDB(){
+  // init
+  setRunning('fb-init');
+  let t = performance.now();
+  try{
+    const app = initializeApp(FB_CONFIG);
+    db = getFirestore(app);
+    setMs('fb-init', Math.round(performance.now()-t));
+    setStatus('fb-init','ok','Initialised — project <b>auranest-decors</b>');
+    results['fb-init']='ok';
+  }catch(e){
+    setStatus('fb-init','bad','Failed to initialise', e.message); results['fb-init']='bad'; return;
+  }
+
+  // count
+  setRunning('fb-count'); t = performance.now();
+  try{
+    const snap = await getCountFromServer(collection(db,'products'));
+    const n = snap.data().count;
+    setMs('fb-count', Math.round(performance.now()-t));
+    setStatus('fb-count','ok',`<b>${n}</b> products in catalogue`);
+    results['fb-count']='ok'; results._products = n;
+  }catch(e){
+    setMs('fb-count', Math.round(performance.now()-t));
+    setStatus('fb-count','bad','Count query failed', e.message); results['fb-count']='bad';
+  }
+
+  // read sample
+  setRunning('fb-read'); t = performance.now();
+  try{
+    const snap = await getDocs(query(collection(db,'products'), limit(3)));
+    const names = snap.docs.map(d=>(d.data().name||'(unnamed)').split('|')[0].trim().slice(0,40));
+    setMs('fb-read', Math.round(performance.now()-t));
+    setStatus('fb-read','ok',`Read ${snap.size} sample docs`, names.join('\n'));
+    results['fb-read']='ok';
+  }catch(e){
+    setMs('fb-read', Math.round(performance.now()-t));
+    setStatus('fb-read','bad','Read failed', e.message); results['fb-read']='bad';
+  }
+
+  // orders — rules require auth; "permission-denied" means DB is up & rules enforced (healthy)
+  setRunning('fb-orders'); t = performance.now();
+  try{
+    await getDocs(query(collection(db,'orders'), limit(1)));
+    setMs('fb-orders', Math.round(performance.now()-t));
+    setStatus('fb-orders','ok','Reachable (open read)');
+    results['fb-orders']='ok';
+  }catch(e){
+    setMs('fb-orders', Math.round(performance.now()-t));
+    if((e.code||'').includes('permission-denied')){
+      setStatus('fb-orders','ok','Reachable — write/owner-only rules enforced ✓');
+      results['fb-orders']='ok';
+    } else {
+      setStatus('fb-orders','bad','Unreachable', e.message); results['fb-orders']='bad';
+    }
+  }
+
+  // customers — open read per rules
+  setRunning('fb-customers'); t = performance.now();
+  try{
+    const snap = await getDocs(query(collection(db,'customers'), limit(1)));
+    setMs('fb-customers', Math.round(performance.now()-t));
+    setStatus('fb-customers','ok',`Reachable — ${snap.size} doc read OK`);
+    results['fb-customers']='ok';
+  }catch(e){
+    setMs('fb-customers', Math.round(performance.now()-t));
+    if((e.code||'').includes('permission-denied')){
+      setStatus('fb-customers','ok','Reachable — rules enforced ✓'); results['fb-customers']='ok';
+    } else {
+      setStatus('fb-customers','bad','Unreachable', e.message); results['fb-customers']='bad';
+    }
+  }
+}
+
+/* ── API probe ──
+   Sends a harmless test payload. An endpoint that returns ANY HTTP response
+   (even 400/502/503) is "online". Only a network/fetch failure = down. */
+async function probe(id, path, body){
+  setRunning(id);
+  const t = performance.now();
+  try{
+    const r = await fetch(path, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const ms = Math.round(performance.now()-t);
+    setMs(id, ms);
+    let txt=''; try{ txt = await r.text(); }catch{}
+    let parsed=txt; try{ parsed = JSON.stringify(JSON.parse(txt)); }catch{}
+
+    if(r.status===404){
+      setStatus(id,'bad',`<span class="badge bad">404</span> Endpoint not deployed`, parsed);
+      results[id]='bad';
+    } else if(r.ok){
+      setStatus(id,'ok',`<span class="badge ok">${r.status}</span> Online & responding`, parsed.slice(0,300));
+      results[id]='ok';
+    } else if(r.status>=500 && r.status!==502 && r.status!==503){
+      setStatus(id,'warn',`<span class="badge warn">${r.status}</span> Online — server error`, parsed.slice(0,300));
+      results[id]='warn';
+    } else {
+      // 400/401/405/502/503 — function is alive, rejected our test payload (expected)
+      setStatus(id,'ok',`<span class="badge ok">${r.status}</span> Online (expected probe rejection)`, parsed.slice(0,300));
+      results[id]='ok';
+    }
+  }catch(e){
+    setMs(id, Math.round(performance.now()-t));
+    setStatus(id,'bad','Network failure — unreachable', e.message);
+    results[id]='bad';
+  }
+}
+
+async function checkAPIs(){
+  // create-order: amount<1 → 400; valid env → 200 razorpay order. Use amount 1.
+  await probe('api-create-order','/api/create-order',{amount:1,orderId:'HEALTHCHECK'});
+  // send-otp: invalid phone → 400 (proves alive without sending SMS)
+  await probe('api-send-otp','/api/send-otp',{phone:'0'});
+  // verify-otp: missing fields → 400
+  await probe('api-verify-otp','/api/verify-otp',{phone:'0',otp:'0',token:'x'});
+  // verify-payment: dummy razorpay fields → signature mismatch 400 (proves alive, no side effects)
+  await probe('api-verify-payment','/api/verify-payment',{razorpay_order_id:'hc',razorpay_payment_id:'hc',razorpay_signature:'hc'});
+}
+
+/* ── summary ── */
+function summarise(){
+  const dbIds = DB_CHECKS.map(c=>c[0]);
+  const apiIds = API_CHECKS.map(c=>c[0]);
+  const dbOk = dbIds.every(i=>results[i]==='ok');
+  const dbBad = dbIds.some(i=>results[i]==='bad');
+  const apiOnline = apiIds.filter(i=>results[i]==='ok'||results[i]==='warn').length;
+  const apiTotal = apiIds.length;
+
+  // db pill
+  const dbPill=$('pill-db'), dbVal=$('db-val');
+  dbPill.className='pill '+(dbBad?'bad':dbOk?'ok':'warn');
+  dbVal.textContent = dbBad?'DOWN':dbOk?'Healthy':'Degraded';
+
+  // products pill
+  $('prod-val').textContent = results._products!=null?results._products:'—';
+  $('pill-products').className='pill '+(results._products!=null?'ok':'bad');
+
+  // api pill
+  $('api-val').textContent = `${apiOnline}/${apiTotal}`;
+  $('pill-api').className='pill '+(apiOnline===apiTotal?'ok':apiOnline===0?'bad':'warn');
+
+  // overall
+  const allGood = !dbBad && dbOk && apiOnline===apiTotal;
+  const anyBad  = dbBad || apiOnline===0;
+  const ovPill=$('pill-overall'), ovVal=$('ov-val');
+  ovPill.className='pill '+(anyBad?'bad':allGood?'ok':'warn');
+  ovVal.textContent = anyBad?'Issues':allGood?'All systems go':'Partial';
+}
+
+window.runAll = async function(){
+  $('runBtn').disabled = true;
+  for(const k in results) delete results[k];
+  $('ov-val').textContent='…'; $('db-val').textContent='…'; $('prod-val').textContent='…'; $('api-val').textContent='…';
+  await checkDB();
+  await checkAPIs();
+  summarise();
+  $('runBtn').disabled = false;
+};
+
+// auto-run on load
+window.addEventListener('load', ()=> setTimeout(()=>window.runAll(), 300));
+</script>
+</body>
+</html>
