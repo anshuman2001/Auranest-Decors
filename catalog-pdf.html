@@ -89,67 +89,129 @@ body{font-family:'Inter',sans-serif;background:#C8BDB0;color:var(--ink)}
 }
 
 /* ══════════════════════════════════════════════════════
-   COVER PAGE
+   COVER PAGE — Premium Ivory Theme
 ══════════════════════════════════════════════════════ */
 .pg-cover{
   display:flex;flex-direction:column;
-  padding:0;background:var(--ivory);
+  background:var(--ivory);padding:0;
 }
-/* Top band */
+
+/* TOP BAND — 20% of page */
 .cov-top{
-  background:var(--ink);
-  padding:36px 52px 32px;
-  position:relative;overflow:hidden;
+  flex:0 0 auto;
+  padding:40px 64px 32px;
+  text-align:center;
+  background:var(--ivory);
+  border-bottom:1.5px solid var(--border);
+  position:relative;
 }
-.cov-top::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent)
+.cov-top::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,transparent,var(--gold) 40%,var(--gold-lt) 60%,transparent)
 }
 .cov-eyebrow{
-  font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;
-  color:rgba(255,255,255,.4);margin-bottom:14px;font-weight:400
+  font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;font-weight:500
 }
 .cov-brand{
-  font-family:'Cormorant Garamond',serif;font-size:3.6rem;font-weight:300;
-  color:#fff;letter-spacing:.03em;line-height:1;margin-bottom:6px
+  font-family:'Cormorant Garamond',serif;font-size:3.8rem;font-weight:300;
+  color:var(--ink);letter-spacing:.04em;line-height:1;margin-bottom:0
 }
-.cov-brand em{font-style:italic;color:var(--gold-lt)}
+.cov-brand em{font-style:italic;color:var(--gold)}
+.cov-ornament{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin:14px auto 12px;max-width:280px
+}
+.cov-ornament-line{flex:1;height:1px;background:var(--border)}
+.cov-ornament-diamond{
+  width:7px;height:7px;border:1.5px solid var(--gold);
+  transform:rotate(45deg);flex-shrink:0
+}
 .cov-tagline{
-  font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:300;
-  color:rgba(255,255,255,.55);letter-spacing:.1em;margin-top:10px
+  font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;
+  color:var(--mid);letter-spacing:.14em;font-style:italic;margin-bottom:8px
 }
-.cov-divider{
-  display:flex;align-items:center;gap:12px;
-  margin:16px 0 0;max-width:320px
+.cov-sub{
+  font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--muted)
 }
-.cov-divider-line{flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
-.cov-divider-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-/* Collage grid */
+/* MIDDLE COLLAGE — 60% of page */
+.cov-middle{
+  flex:1;
+  padding:24px 36px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--ivory);
+}
 .cov-collage{
   display:grid;
-  grid-template-columns:2fr 1fr 1fr;
-  grid-template-rows:220px 180px;
-  gap:3px;flex:1;
-  background:var(--ink)
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:12px;
+  width:100%;height:100%;
 }
-.cov-cell{overflow:hidden;position:relative}
-.cov-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
-.cov-cell-placeholder{width:100%;height:100%;background:var(--ivory2);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--border)}
-.cov-cell:first-child{grid-row:1/3}
+.cov-cell{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:5px;
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.cov-cell img{
+  max-width:100%;max-height:100%;
+  width:100%;height:100%;
+  object-fit:contain;
+  padding:14px;display:block;
+}
+.cov-cell-placeholder{
+  width:100%;height:100%;
+  background:var(--ivory2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;color:var(--border)
+}
 
-/* Bottom band */
+/* BOTTOM BAND — 20% of page */
 .cov-bot{
-  background:var(--ink);
-  padding:18px 52px;
+  flex:0 0 auto;
+  padding:22px 52px;
+  background:var(--ivory);
+  border-top:1.5px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
+  gap:20px;
+  position:relative;
 }
+.cov-bot::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,transparent,var(--gold) 40%,var(--gold-lt) 60%,transparent)
+}
+.cov-bot-left{display:flex;flex-direction:column;gap:7px}
 .cov-url{
-  font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;
-  letter-spacing:.08em;color:var(--gold-lt)
+  font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;
+  letter-spacing:.08em;color:var(--gold)
 }
-.cov-year{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.cov-count{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.cov-count{
+  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted)
+}
+.cov-qr-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:7px
+}
+.cov-qr{
+  width:88px;height:88px;
+  border:1px solid var(--border);
+  border-radius:4px;padding:5px;
+  background:#fff;
+}
+.cov-qr img{width:100%;height:100%;display:block}
+.cov-qr-label{
+  font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);text-align:center
+}
+.cov-bot-right{
+  font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);text-align:right;line-height:1.9
+}
 
 /* ══════════════════════════════════════════════════════
    PRODUCT PAGES
@@ -283,11 +345,18 @@ body{font-family:'Inter',sans-serif;background:#C8BDB0;color:var(--ink)}
   }
   .pg:last-child{page-break-after:avoid!important;break-after:avoid!important}
 
-  /* Cover */
-  .pg-cover{display:flex!important;flex-direction:column!important}
-  .cov-top{background:#2B2B2B!important;color:#fff!important}
-  .cov-bot{background:#2B2B2B!important}
-  .cov-collage{background:#2B2B2B!important}
+  /* Cover — ivory throughout, no dark backgrounds */
+  .pg-cover{display:flex!important;flex-direction:column!important;background:#F8F5EF!important}
+  .cov-top{background:#F8F5EF!important;color:#2B2B2B!important}
+  .cov-middle{background:#F8F5EF!important}
+  .cov-bot{background:#F8F5EF!important}
+  .cov-cell{background:#fff!important;border:1px solid rgba(184,138,59,.22)!important}
+  .cov-eyebrow{color:#B88A3B!important}
+  .cov-brand{color:#2B2B2B!important}
+  .cov-brand em{color:#B88A3B!important}
+  .cov-tagline{color:#6B5E4A!important}
+  .cov-url{color:#B88A3B!important}
+  .cov-qr{background:#fff!important;border:1px solid rgba(184,138,59,.22)!important}
 
   /* Product pages */
   .pg-products{background:#F8F5EF!important}
@@ -368,41 +437,77 @@ const CAT_ICON = {Artisan:'🎨',Woodcraft:'🪵',Minimal:'🏺',Gifting:'🎁',
 
 /* ── Cover page ── */
 function buildCover(products, total) {
-  // Pick up to 5 products with images for collage
+  // Pick 6 visually diverse products (skip consecutive duplicates from same category)
   const withImg = products.filter(p => getImage(p));
-  const collageProds = withImg.slice(0, 5);
+  const seen = new Set();
+  const collageProds = [];
+  for (const p of withImg) {
+    if (collageProds.length >= 6) break;
+    const cat = getCategory(p);
+    if (!seen.has(cat) || collageProds.length < 4) {
+      collageProds.push(p);
+      seen.add(cat);
+    }
+  }
+  // pad to 6 if needed
+  for (let i = 0; collageProds.length < 6 && i < withImg.length; i++) {
+    if (!collageProds.includes(withImg[i])) collageProds.push(withImg[i]);
+  }
 
-  const cells = collageProds.map((p, i) => {
-    const img = catImg(getImage(p), 800);
+  const cells = collageProds.slice(0, 6).map(p => {
+    const img = catImg(getImage(p), 600);
     return `<div class="cov-cell">
-      ${img ? `<img src="${img}" alt="${trimName(p.name)}" loading="eager" onerror="this.parentElement.innerHTML='<div class=cov-cell-placeholder>❋</div>'"/>` : '<div class="cov-cell-placeholder">❋</div>'}
+      ${img
+        ? `<img src="${img}" alt="${trimName(p.name)}" loading="eager"
+             onerror="this.parentElement.innerHTML='<div class=cov-cell-placeholder>❋</div>'"/>`
+        : '<div class="cov-cell-placeholder">❋</div>'}
     </div>`;
   }).join('');
 
-  // fill to 5 cells if fewer
-  const placeholders = Array(Math.max(0, 5 - collageProds.length)).fill('<div class="cov-cell"><div class="cov-cell-placeholder">❋</div></div>').join('');
+  const placeholders = Array(Math.max(0, 6 - collageProds.length))
+    .fill('<div class="cov-cell"><div class="cov-cell-placeholder">❋</div></div>')
+    .join('');
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&data=https%3A%2F%2Fwww.auranestdecors.com%2Fcatalog-pdf.html&bgcolor=FFFFFF&color=2B2B2B&margin=3`;
 
   const pg = document.createElement('div');
   pg.className = 'pg pg-cover';
   pg.innerHTML = `
-    <!-- Top branding band -->
+    <!-- Top branding — 20% -->
     <div class="cov-top">
       <p class="cov-eyebrow">Exclusive Product Catalogue · 2025</p>
       <h1 class="cov-brand">Auranest <em>Decors</em></h1>
-      <div class="cov-divider"><div class="cov-divider-line"></div><div class="cov-divider-dot"></div><div class="cov-divider-line"></div></div>
+      <div class="cov-ornament">
+        <div class="cov-ornament-line"></div>
+        <div class="cov-ornament-diamond"></div>
+        <div class="cov-ornament-line"></div>
+      </div>
       <p class="cov-tagline">Handcrafted Indian Home Décor</p>
+      <p class="cov-sub">Product Catalogue 2025</p>
     </div>
 
-    <!-- Product collage -->
-    <div class="cov-collage">
-      ${cells}${placeholders}
+    <!-- Product collage — 60% -->
+    <div class="cov-middle">
+      <div class="cov-collage">
+        ${cells}${placeholders}
+      </div>
     </div>
 
-    <!-- Bottom info band -->
+    <!-- Bottom info — 20% -->
     <div class="cov-bot">
-      <span class="cov-url">www.auranestdecors.com</span>
-      <span class="cov-count">${total} Handcrafted Pieces</span>
-      <span class="cov-year">© 2025</span>
+      <div class="cov-bot-left">
+        <span class="cov-url">www.auranestdecors.com</span>
+        <span class="cov-count">${total}+ Handcrafted Products</span>
+      </div>
+      <div class="cov-qr-wrap">
+        <div class="cov-qr">
+          <img src="${qrUrl}" alt="Scan to view catalogue" loading="eager"/>
+        </div>
+        <span class="cov-qr-label">Scan to shop</span>
+      </div>
+      <div class="cov-bot-right">
+        Artisan crafted<br>with love from India<br>© 2025
+      </div>
     </div>`;
   return pg;
 }
