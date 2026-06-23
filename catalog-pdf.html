@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Product Catalogue – Auranest Decors</title>
+<title>Auranest Decors — Product Catalogue 2025</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const app = initializeApp({
   apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
   authDomain:"auranest-decors.firebaseapp.com",
@@ -18,178 +20,255 @@ const app = initializeApp({
   appId:"1:55244789649:web:0aab804a8933ce0cf6ec30"
 });
 const db = getFirestore(app);
-window._fetchProducts = async () => {
-  const snap = await getDocs(collection(db,'products'));
-  return snap.docs.map(d => ({id:d.id,...d.data()}));
+window._fetchAllProducts = async () => {
+  try {
+    const snap = await getDocs(query(collection(db,'products'), orderBy('createdAt','asc')));
+    return snap.docs.map(d => ({id:d.id,...d.data()}));
+  } catch {
+    const snap = await getDocs(collection(db,'products'));
+    return snap.docs.map(d => ({id:d.id,...d.data()}));
+  }
 };
 </script>
+
 <style>
+/* ══════════════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════════════ */
 :root{
-  --gold:#c49330;--gold-lt:#f6d070;--gold-dk:#8a6820;
-  --ink:#1a1208;--cream:#fdf8f3;--ivory:#f7f2eb;--dark:#1a1208;
-  --mid:#5c4a2a;--muted:#8a7660;--border:#e0d4b8;
+  --ivory:   #F8F5EF;
+  --ivory2:  #F2EDE4;
+  --gold:    #B88A3B;
+  --gold-lt: #D4A84B;
+  --gold-bg: rgba(184,138,59,.08);
+  --ink:     #2B2B2B;
+  --mid:     #6B5E4A;
+  --muted:   #9A8870;
+  --border:  rgba(184,138,59,.22);
+  --card:    #FFFFFF;
+  --shadow:  0 1px 8px rgba(43,35,20,.07);
 }
+
+/* ══════════════════════════════════════════════════════
+   SCREEN CHROME
+══════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{background:#ddd}
-body{font-family:'Outfit',sans-serif;background:#ddd;color:var(--ink)}
+html{background:#C8BDB0;font-size:10px}
+body{font-family:'Inter',sans-serif;background:#C8BDB0;color:var(--ink)}
 
-/* ── Screen UI ─────────────────────────────────────── */
-.screen-ui{
-  background:var(--cream);border-bottom:1px solid var(--border);
-  padding:18px 32px;display:flex;align-items:center;gap:20px;
-  position:sticky;top:0;z-index:1000;box-shadow:0 2px 16px rgba(0,0,0,.12);
+.toolbar{
+  position:sticky;top:0;z-index:999;
+  background:var(--ink);color:#fff;
+  padding:12px 28px;display:flex;align-items:center;gap:16px;
 }
-.screen-ui h1{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--gold);flex:1}
-.btn-dl{
-  display:inline-flex;align-items:center;gap:8px;
+.toolbar-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;letter-spacing:.05em;flex:1}
+.toolbar-info{font-size:.82rem;color:rgba(255,255,255,.5)}
+.btn-pdf{
   background:var(--gold);color:#fff;border:none;
-  padding:11px 24px;border-radius:8px;font-family:'Outfit',sans-serif;
-  font-size:.85rem;font-weight:600;letter-spacing:.05em;cursor:pointer;
-  transition:background .2s;text-transform:uppercase
+  padding:9px 22px;font-family:'Inter',sans-serif;font-size:.8rem;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;transition:background .2s;border-radius:4px;display:flex;align-items:center;gap:7px
 }
-.btn-dl:hover{background:var(--gold-dk)}
-.btn-dl:disabled{opacity:.6;cursor:not-allowed}
-#status{font-size:.8rem;color:var(--muted)}
+.btn-pdf:hover{background:var(--gold-lt)}
+.btn-pdf:disabled{opacity:.5;cursor:not-allowed}
+.btn-pdf svg{width:14px;height:14px;flex-shrink:0}
 
-/* ── Page shell ─────────────────────────────────────── */
-#pages{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0 48px}
-.page{
-  width:794px;min-height:1123px;background:#fff;
-  box-shadow:0 4px 24px rgba(0,0,0,.18);position:relative;overflow:hidden;
+#catalogue{
+  display:flex;flex-direction:column;align-items:center;
+  gap:10px;padding:20px 0 40px
 }
 
-/* ── Cover page ─────────────────────────────────────── */
-.cover{
-  background:var(--dark);color:#fff;
+/* ══════════════════════════════════════════════════════
+   PAGE SHELL  (794px × 1123px = A4 at 96dpi)
+══════════════════════════════════════════════════════ */
+.pg{
+  width:794px;height:1123px;
+  background:var(--ivory);
+  box-shadow:0 4px 28px rgba(0,0,0,.22);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+
+/* ══════════════════════════════════════════════════════
+   COVER PAGE
+══════════════════════════════════════════════════════ */
+.pg-cover{
   display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:60px 64px;
+  padding:0;background:var(--ivory);
 }
-.cover-badge{
-  border:1px solid rgba(196,147,48,.4);color:var(--gold-lt);
-  font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
-  padding:6px 20px;margin-bottom:48px;font-family:'Outfit',sans-serif
+/* Top band */
+.cov-top{
+  background:var(--ink);
+  padding:36px 52px 32px;
+  position:relative;overflow:hidden;
 }
-.cover-lotus{color:var(--gold);font-size:4.5rem;margin-bottom:16px;line-height:1}
-.cover-divider{
-  display:flex;align-items:center;gap:14px;margin:20px 0;width:100%;max-width:380px
+.cov-top::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)
 }
-.cover-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(196,147,48,.5),transparent)}
-.cover-divider-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
-.cover-brand{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:300;letter-spacing:.04em;line-height:1.1;margin-bottom:4px}
-.cover-brand em{font-style:italic;color:var(--gold-lt)}
-.cover-tagline{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:64px}
-.cover-year{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:64px}
-.cover-bg-pattern{
-  position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(circle at 20% 80%,rgba(196,147,48,.08) 0%,transparent 50%),
-                   radial-gradient(circle at 80% 20%,rgba(196,147,48,.06) 0%,transparent 50%);
+.cov-eyebrow{
+  font-size:.62rem;letter-spacing:.32em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-bottom:14px;font-weight:400
 }
-.cover-corner{position:absolute;width:80px;height:80px;border-color:rgba(196,147,48,.25);border-style:solid}
-.cover-tl{top:28px;left:28px;border-width:1px 0 0 1px}
-.cover-tr{top:28px;right:28px;border-width:1px 1px 0 0}
-.cover-bl{bottom:28px;left:28px;border-width:0 0 1px 1px}
-.cover-br{bottom:28px;right:28px;border-width:0 1px 1px 0}
+.cov-brand{
+  font-family:'Cormorant Garamond',serif;font-size:3.6rem;font-weight:300;
+  color:#fff;letter-spacing:.03em;line-height:1;margin-bottom:6px
+}
+.cov-brand em{font-style:italic;color:var(--gold-lt)}
+.cov-tagline{
+  font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:300;
+  color:rgba(255,255,255,.55);letter-spacing:.1em;margin-top:10px
+}
+.cov-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:16px 0 0;max-width:320px
+}
+.cov-divider-line{flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.cov-divider-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-/* ── Category divider page ──────────────────────────── */
-.cat-divider{
-  background:var(--dark);color:#fff;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:60px;
+/* Collage grid */
+.cov-collage{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  grid-template-rows:220px 180px;
+  gap:3px;flex:1;
+  background:var(--ink)
 }
-.cat-divider-num{
-  font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;
-  color:rgba(196,147,48,.15);line-height:1;margin-bottom:-20px
-}
-.cat-divider-name{
-  font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:400;
-  letter-spacing:.06em;color:#fff;margin-bottom:10px
-}
-.cat-divider-sub{
-  font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(255,255,255,.45);margin-bottom:32px;font-family:'Outfit',sans-serif
-}
-.cat-divider-count{
-  border:1px solid rgba(196,147,48,.4);color:var(--gold-lt);
-  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
-  padding:6px 20px;font-family:'Outfit',sans-serif
-}
-.cat-icon{font-size:3.2rem;margin-bottom:28px;opacity:.8}
+.cov-cell{overflow:hidden;position:relative}
+.cov-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.cov-cell-placeholder{width:100%;height:100%;background:var(--ivory2);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--border)}
+.cov-cell:first-child{grid-row:1/3}
 
-/* ── Product grid page ──────────────────────────────── */
-.prod-page{padding:40px 44px;background:var(--ivory)}
-.page-header{
+/* Bottom band */
+.cov-bot{
+  background:var(--ink);
+  padding:18px 52px;
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:28px;padding-bottom:12px;border-bottom:1px solid var(--border)
 }
-.page-header-brand{
-  font-family:'Cormorant Garamond',serif;font-size:.88rem;
-  font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)
+.cov-url{
+  font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;
+  letter-spacing:.08em;color:var(--gold-lt)
 }
-.page-header-cat{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.page-num{font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.cov-year{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.cov-count{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)}
 
-/* ── Product card ───────────────────────────────────── */
-.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.prod-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.prod-img-wrap{
-  width:100%;height:240px;overflow:hidden;position:relative;
-  background:linear-gradient(135deg,#f7f2eb 0%,#ede4d4 100%)
+/* ══════════════════════════════════════════════════════
+   PRODUCT PAGES
+══════════════════════════════════════════════════════ */
+.pg-products{
+  padding:28px 30px 24px;
+  background:var(--ivory);
+  display:flex;flex-direction:column;
 }
-.prod-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;padding:12px}
-.prod-img-placeholder{
+
+/* Page header */
+.pg-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:18px;flex-shrink:0;
+}
+.pg-header-brand{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold)
+}
+.pg-header-cat{
+  font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:400
+}
+.pg-num{
+  font-size:.65rem;letter-spacing:.1em;color:var(--muted)
+}
+
+/* Product grid — 4 across */
+.prod-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  flex:1;
+  align-content:start;
+}
+
+/* Individual card */
+.pc{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.pc-img{
+  width:100%;height:148px;
+  background:var(--ivory2);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
+}
+.pc-img img{
+  max-width:100%;max-height:100%;
+  width:100%;height:100%;
+  object-fit:contain;display:block;padding:8px;
+}
+.pc-img-ph{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:8px;
-  background:linear-gradient(135deg,#f0e8d8 0%,#e8d8c0 100%)
+  flex-direction:column;gap:6px;background:var(--ivory2);
 }
-.prod-img-placeholder span{font-size:2.8rem}
-.prod-img-placeholder p{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-.prod-info{padding:14px 16px 16px}
-.prod-badge{
-  display:inline-block;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
-  background:rgba(196,147,48,.1);color:var(--gold-dk);
-  padding:3px 8px;border-radius:20px;margin-bottom:8px;font-weight:600
+.pc-img-ph span{font-size:1.8rem}
+.pc-img-ph p{font-size:.55rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.pc-body{
+  padding:9px 10px 10px;flex:1;display:flex;flex-direction:column;gap:4px;
 }
-.prod-name{
-  font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;
-  line-height:1.3;color:var(--ink);margin-bottom:8px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+.pc-badge{
+  font-size:.55rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);background:var(--gold-bg);
+  padding:2px 7px;border-radius:2px;align-self:flex-start;
+  border:1px solid rgba(184,138,59,.18);
 }
-.prod-meta{font-size:.72rem;color:var(--muted);line-height:1.7}
-.prod-meta span{color:var(--ink);font-weight:500}
-.prod-divider{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:10px 0}
+.pc-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.88rem;font-weight:600;line-height:1.3;
+  color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:2px;
+}
+.pc-sep{height:1px;background:var(--border);margin:4px 0;flex-shrink:0}
+.pc-meta{font-size:.6rem;color:var(--muted);line-height:1.7}
+.pc-meta strong{color:var(--ink);font-weight:500}
 
-/* ── Back cover ─────────────────────────────────────── */
-.back-cover{
-  background:var(--dark);color:#fff;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:60px 64px
+/* Page footer */
+.pg-footer{
+  margin-top:auto;padding-top:10px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
 }
-.back-tag{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:40px}
+.pg-footer-brand{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.pg-footer-url{font-size:.6rem;color:var(--muted)}
 
-/* ── Print ──────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════
+   PRINT  — the critical section
+══════════════════════════════════════════════════════ */
 @media print{
   @page{size:A4 portrait;margin:0}
 
-  /* Force ALL backgrounds and colors to print */
+  /* Force every bg and color to print exactly */
   *{
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important;
     color-adjust:exact!important;
   }
 
-  html,body{background:#fff!important;margin:0;padding:0}
-  .screen-ui{display:none!important}
+  html{background:#fff!important;font-size:10px}
+  body{background:#fff!important}
+  .toolbar{display:none!important}
 
-  /* Switch pages container to block — flex + page-break creates phantom blank pages */
-  #pages{
+  /* Block layout — flex container + page-break = phantom blank pages */
+  #catalogue{
     display:block!important;
     padding:0!important;gap:0!important;
+    background:#fff!important;
   }
 
-  /* Each .page = exactly one A4 sheet */
-  .page{
+  .pg{
     display:block!important;
     width:210mm!important;
     height:297mm!important;
@@ -202,296 +281,266 @@ body{font-family:'Outfit',sans-serif;background:#ddd;color:var(--ink)}
     page-break-inside:avoid!important;
     break-inside:avoid!important;
   }
-  .page:last-child{
-    page-break-after:avoid!important;
-    break-after:avoid!important;
-  }
+  .pg:last-child{page-break-after:avoid!important;break-after:avoid!important}
 
-  /* Dark pages must explicitly carry their background */
-  .cover,.cat-divider,.back-cover{
-    background:#1a1208!important;
-    color:#fff!important;
-  }
-  .cover-bg-pattern{
-    background-image:
-      radial-gradient(circle at 20% 80%,rgba(196,147,48,.12) 0%,transparent 50%),
-      radial-gradient(circle at 80% 20%,rgba(196,147,48,.08) 0%,transparent 50%)!important;
-  }
-  .cover-corner{border-color:rgba(196,147,48,.3)!important}
-  .cat-divider-num{color:rgba(196,147,48,.2)!important}
-  .cat-divider-count{border-color:rgba(196,147,48,.5)!important;color:#f6d070!important}
-  .cover-badge{border-color:rgba(196,147,48,.45)!important;color:#f6d070!important}
-  .cover-divider-line{background:linear-gradient(90deg,transparent,rgba(196,147,48,.6),transparent)!important}
-  .cover-divider-dot{background:#c49330!important}
-  .cover-brand em{color:#f6d070!important}
-  .cover-year{color:rgba(255,255,255,.4)!important}
-  .cover-tagline{color:rgba(255,255,255,.55)!important}
+  /* Cover */
+  .pg-cover{display:flex!important;flex-direction:column!important}
+  .cov-top{background:#2B2B2B!important;color:#fff!important}
+  .cov-bot{background:#2B2B2B!important}
+  .cov-collage{background:#2B2B2B!important}
 
   /* Product pages */
-  .prod-page{
-    background:#f7f2eb!important;
-    padding:28px 32px!important;
-  }
-  .prod-card{
-    background:#fff!important;
-    border:1px solid #e0d4b8!important;
-    break-inside:avoid!important;
-    page-break-inside:avoid!important;
-  }
-  .prod-img-wrap{
-    height:190px!important;
-    background:linear-gradient(135deg,#f7f2eb 0%,#ede4d4 100%)!important;
-  }
-  .prod-img-placeholder{
-    background:linear-gradient(135deg,#f0e8d8 0%,#e8d8c0 100%)!important;
-  }
-  .prod-badge{background:rgba(196,147,48,.12)!important}
-  .prod-divider{background:linear-gradient(90deg,#c49330,transparent)!important}
-  .page-header{border-bottom:1px solid #e0d4b8!important}
+  .pg-products{background:#F8F5EF!important}
+  .pc{background:#fff!important;border:1px solid rgba(184,138,59,.22)!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .pc-img{background:#F2EDE4!important;height:148px!important}
+  .pc-img-ph{background:#F2EDE4!important}
+  .pc-badge{background:rgba(184,138,59,.08)!important;border:1px solid rgba(184,138,59,.18)!important}
+  .pg-header{border-bottom:1px solid rgba(184,138,59,.22)!important}
+  .pg-footer{border-top:1px solid rgba(184,138,59,.22)!important}
+  .pc-sep{background:rgba(184,138,59,.22)!important}
+
+  /* Keep prod-grid layout in print */
+  .prod-grid{grid-template-columns:repeat(4,1fr)!important;gap:10px!important}
 }
 </style>
 </head>
 <body>
 
-<div class="screen-ui">
-  <h1>✦ Auranest Decors — Product Catalogue</h1>
-  <span id="status">Loading products…</span>
-  <button class="btn-dl" id="dlBtn" onclick="downloadPDF()" disabled>⬇ Download PDF</button>
+<div class="toolbar">
+  <span class="toolbar-title">Auranest Decors — Product Catalogue</span>
+  <span class="toolbar-info" id="toolbarInfo">Loading products…</span>
+  <button class="btn-pdf" id="dlBtn" onclick="window.print()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M20 18H4v-2h16v2z"/></svg>
+    Download PDF
+  </button>
 </div>
 
-<div id="pages">
-  <div class="page cover">
-    <div class="cover-bg-pattern"></div>
-    <div class="cover-corner cover-tl"></div>
-    <div class="cover-corner cover-tr"></div>
-    <div class="cover-corner cover-bl"></div>
-    <div class="cover-corner cover-br"></div>
-    <div class="cover-badge">Product Catalogue · 2025</div>
-    <div class="cover-lotus">❋</div>
-    <div class="cover-divider"><div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div></div>
-    <h1 class="cover-brand">Auranest<br><em>Decors</em></h1>
-    <p class="cover-tagline">Handcrafted Indian Home Décor</p>
-    <div class="cover-divider"><div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div></div>
-    <p style="color:rgba(255,255,255,.5);font-size:.82rem;letter-spacing:.08em;margin-top:28px;max-width:340px;line-height:1.8">Folk art planters · Wooden trays · Artisan ceramics · Gifting</p>
-    <p class="cover-year">auranestdecors.com</p>
-  </div>
+<div id="catalogue">
+  <!-- Cover inserted by JS -->
 </div>
 
 <script>
-const CAT_META = {
-  artisan:   { label:'Artisan',          icon:'🎨', desc:'Hand-painted folk art ceramics, Madhubani & Warli inspired pieces' },
-  woodcraft: { label:'Woodcraft',        icon:'🪵', desc:'Natural wood trays, Jharokha mirrors, kitchen tools & home accents' },
-  minimal:   { label:'Minimal',          icon:'🏺', desc:'Contemporary ceramic sculptures, terracotta & refined forms' },
-  gifting:   { label:'Gifting',          icon:'🎁', desc:'Curated gifts for housewarming, weddings & festive occasions' },
-  'home & kitchen': { label:'Home & Kitchen', icon:'🏠', desc:'Functional beauty for your kitchen and dining table' },
-  'aura décor': { label:'Aura Décor',    icon:'✨', desc:'Statement pieces that transform every corner of your home' },
-};
-
-function getCategory(p) {
-  const cat = (p.category || '').toLowerCase().trim();
-  if (CAT_META[cat]) return cat;
-  const name = (p.name || '').toLowerCase();
-  if (/madhubani|warli|folk|tribal|painted|mithila|gond|pichwai/.test(name)) return 'artisan';
-  if (/wood|tray|jharokha|kitchen|spatula|stool|bench|platter/.test(name)) return 'woodcraft';
-  if (/ceramic|terracotta|buddha|yoga|sculpture|pot|planter/.test(name)) return 'minimal';
-  if (/gift|set|combo|hamper/.test(name)) return 'gifting';
-  return 'artisan';
-}
+/* ── helpers ── */
+const $ = id => document.getElementById(id);
+const rupee = n => '₹' + Number(n).toLocaleString('en-IN');
 
 function getImage(p) {
-  const imgs = p.images || [];
-  return imgs.find(u => u && u.trim()) || p.image || '';
+  const arr = (p.images||[]).filter(u=>u&&u.trim());
+  return arr[0] || p.image || '';
 }
 
-function catalogImg(rawUrl) {
-  if (!rawUrl || !rawUrl.trim()) return '';
+function catImg(raw, w=500) {
+  if (!raw || !raw.trim()) return '';
   try {
-    // For Cloudinary upload URLs, inject transformations
-    if (rawUrl.includes('res.cloudinary.com') && rawUrl.includes('/upload/')) {
-      const parts = rawUrl.split('/upload/');
-      const rest  = parts[1].replace(/^[^/]*\//, ''); // strip existing transforms
-      return `${parts[0]}/upload/f_auto,q_auto,w_600,h_600,c_pad,b_white/${rest}`;
+    if (raw.includes('res.cloudinary.com') && raw.includes('/upload/')) {
+      const parts = raw.split('/upload/');
+      // strip existing transforms (version, quality etc.) then add ours
+      let rest = parts[1];
+      // remove leading transform segment if present (starts with f_, q_, w_, v, or c_)
+      rest = rest.replace(/^((?:[a-z_]+[^\/]*,?)+\/)(?=[a-z])/,'');
+      return `${parts[0]}/upload/f_auto,q_auto,w_${w},c_pad,b_white/${rest}`;
     }
-    return rawUrl;
-  } catch { return rawUrl; }
+    return raw;
+  } catch { return raw; }
 }
 
 function trimName(n) {
   if (!n) return '';
   let s = n.split('|')[0].trim();
-  if (s.length > 60) { const c = s.indexOf(',', 28); if (c > 0) s = s.slice(0, c).trim(); }
+  // remove overly long suffix after comma
+  if (s.length > 62) { const c = s.indexOf(',', 30); if (c > 0) s = s.slice(0, c).trim(); }
   return s;
 }
 
-function makeCatDivider(catKey, count, num) {
-  const m = CAT_META[catKey] || { label: catKey, icon: '✦', desc: '' };
-  const page = document.createElement('div');
-  page.className = 'page cat-divider';
-  page.innerHTML = `
-    <div class="cover-bg-pattern"></div>
-    <div class="cover-corner cover-tl"></div><div class="cover-corner cover-tr"></div>
-    <div class="cover-corner cover-bl"></div><div class="cover-corner cover-br"></div>
-    <p class="cat-divider-num">0${num}</p>
-    <div class="cat-icon">${m.icon}</div>
-    <h2 class="cat-divider-name">${m.label}</h2>
-    <p class="cat-divider-sub">Collection</p>
-    <div class="cover-divider" style="max-width:280px;margin:0 auto 28px">
-      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
-    </div>
-    <p style="color:rgba(255,255,255,.5);font-size:.82rem;letter-spacing:.06em;max-width:320px;line-height:1.8;margin-bottom:28px">${m.desc}</p>
-    <div class="cat-divider-count">${count} Piece${count!==1?'s':''}</div>`;
-  return page;
+function getCategory(p) {
+  const c = (p.category||'').toLowerCase().trim();
+  const MAP = {artisan:'Artisan',woodcraft:'Woodcraft',minimal:'Minimal',gifting:'Gifting','home & kitchen':'Home & Kitchen','aura décor':'Aura Décor','aura decor':'Aura Décor'};
+  if (MAP[c]) return MAP[c];
+  const n = (p.name||'').toLowerCase();
+  if (/madhubani|warli|folk|tribal|painted|mithila|gond|pichwai/.test(n)) return 'Artisan';
+  if (/wood|tray|jharokha|kitchen|spatula|stool|bench|platter/.test(n)) return 'Woodcraft';
+  if (/ceramic|terracotta|buddha|yoga|pot|planter/.test(n)) return 'Minimal';
+  if (/gift|set|combo|hamper/.test(n)) return 'Gifting';
+  return 'Artisan';
 }
 
-function makeProductPage(products, catLabel, pageNum) {
-  const page = document.createElement('div');
-  page.className = 'page prod-page';
-  const cards = products.map(p => {
-    const img = catalogImg(getImage(p));
-    const imgHTML = img
-      ? `<img src="${img}" alt="${trimName(p.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'prod-img-placeholder\\'><span>${(CAT_META[getCategory(p)]||{icon:'✦'}).icon}</span><p>${catLabel}</p></div>'"/>`
-      : `<div class="prod-img-placeholder"><span>${(CAT_META[getCategory(p)]||{icon:'✦'}).icon}</span><p>${catLabel}</p></div>`;
-    const material = p.material ? `<div class="prod-meta">Material <span>${p.material}</span></div>` : '';
-    const size     = p.size     ? `<div class="prod-meta">Size <span>${p.size}</span></div>`     : '';
-    const sub      = p.subCategory ? `<div class="prod-meta">Style <span>${p.subCategory}</span></div>` : '';
-    const badge    = p.tag || catLabel;
-    return `<div class="prod-card">
-      <div class="prod-img-wrap">${imgHTML}</div>
-      <div class="prod-info">
-        <div class="prod-badge">${badge}</div>
-        <h3 class="prod-name">${trimName(p.name)}</h3>
-        <div class="prod-divider"></div>
-        ${material}${size}${sub}
-      </div>
+const CAT_ICON = {Artisan:'🎨',Woodcraft:'🪵',Minimal:'🏺',Gifting:'🎁','Home & Kitchen':'🏠','Aura Décor':'✨'};
+
+/* ── Cover page ── */
+function buildCover(products, total) {
+  // Pick up to 5 products with images for collage
+  const withImg = products.filter(p => getImage(p));
+  const collageProds = withImg.slice(0, 5);
+
+  const cells = collageProds.map((p, i) => {
+    const img = catImg(getImage(p), 800);
+    return `<div class="cov-cell">
+      ${img ? `<img src="${img}" alt="${trimName(p.name)}" loading="eager" onerror="this.parentElement.innerHTML='<div class=cov-cell-placeholder>❋</div>'"/>` : '<div class="cov-cell-placeholder">❋</div>'}
     </div>`;
   }).join('');
 
-  page.innerHTML = `
-    <div class="page-header">
-      <span class="page-header-brand">Auranest Decors</span>
-      <span class="page-header-cat">${catLabel} Collection</span>
-      <span class="page-num">${pageNum}</span>
+  // fill to 5 cells if fewer
+  const placeholders = Array(Math.max(0, 5 - collageProds.length)).fill('<div class="cov-cell"><div class="cov-cell-placeholder">❋</div></div>').join('');
+
+  const pg = document.createElement('div');
+  pg.className = 'pg pg-cover';
+  pg.innerHTML = `
+    <!-- Top branding band -->
+    <div class="cov-top">
+      <p class="cov-eyebrow">Exclusive Product Catalogue · 2025</p>
+      <h1 class="cov-brand">Auranest <em>Decors</em></h1>
+      <div class="cov-divider"><div class="cov-divider-line"></div><div class="cov-divider-dot"></div><div class="cov-divider-line"></div></div>
+      <p class="cov-tagline">Handcrafted Indian Home Décor</p>
     </div>
-    <div class="prod-grid">${cards}</div>`;
-  return page;
+
+    <!-- Product collage -->
+    <div class="cov-collage">
+      ${cells}${placeholders}
+    </div>
+
+    <!-- Bottom info band -->
+    <div class="cov-bot">
+      <span class="cov-url">www.auranestdecors.com</span>
+      <span class="cov-count">${total} Handcrafted Pieces</span>
+      <span class="cov-year">© 2025</span>
+    </div>`;
+  return pg;
 }
 
-function makeBackCover(total) {
-  const page = document.createElement('div');
-  page.className = 'page back-cover';
-  page.innerHTML = `
-    <div class="cover-bg-pattern"></div>
-    <div class="cover-corner cover-tl"></div><div class="cover-corner cover-tr"></div>
-    <div class="cover-corner cover-bl"></div><div class="cover-corner cover-br"></div>
-    <div class="cover-lotus" style="font-size:3.5rem;margin-bottom:20px">❋</div>
-    <div class="cover-divider" style="max-width:300px;margin:0 auto 28px">
-      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
+/* ── Product card HTML ── */
+function productCard(p) {
+  const img  = catImg(getImage(p), 400);
+  const cat  = getCategory(p);
+  const icon = CAT_ICON[cat] || '✦';
+  const name = trimName(p.name);
+  const mat  = p.material || '';
+  const sz   = p.size || '';
+  const tag  = p.tag || cat;
+
+  const imgHTML = img
+    ? `<img src="${img}" alt="${name}" loading="lazy"
+         onerror="this.parentElement.innerHTML='<div class=pc-img-ph><span>${icon}</span><p>${cat}</p></div>'"/>`
+    : `<div class="pc-img-ph"><span>${icon}</span><p>${cat}</p></div>`;
+
+  return `<div class="pc">
+    <div class="pc-img">${imgHTML}</div>
+    <div class="pc-body">
+      <span class="pc-badge">${tag}</span>
+      <p class="pc-name">${name}</p>
+      <div class="pc-sep"></div>
+      ${mat ? `<p class="pc-meta"><strong>Material</strong> ${mat}</p>` : ''}
+      ${sz  ? `<p class="pc-meta"><strong>Size</strong> ${sz}</p>`      : ''}
+      <p class="pc-meta"><strong>Category</strong> ${cat}</p>
     </div>
-    <h2 class="cover-brand" style="font-size:2.2rem;margin-bottom:12px">Thank You</h2>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.6);max-width:380px;line-height:1.8;margin-bottom:40px">
-      Every piece in this catalogue is handcrafted by skilled artisans across India — made with love, care and tradition.
-    </p>
-    <div class="cover-divider" style="max-width:300px;margin:0 auto 40px">
-      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
-    </div>
-    <p style="font-size:.88rem;color:var(--gold-lt);letter-spacing:.06em;margin-bottom:8px">🌐 auranestdecors.com</p>
-    <p style="font-size:.82rem;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:4px">📧 hello@auranestdecors.com</p>
-    <p style="font-size:.8rem;color:rgba(255,255,255,.3);margin-top:8px">${total} handcrafted pieces</p>
-    <p class="back-tag">© 2025 Auranest Decors · All Rights Reserved</p>`;
-  return page;
+  </div>`;
 }
 
-async function buildCatalogue() {
-  const statusEl = document.getElementById('status');
-  const dlBtn    = document.getElementById('dlBtn');
-  const pagesEl  = document.getElementById('pages');
+/* ── Build product pages ── */
+const PER_PAGE = 12; // 4 columns × 3 rows
+
+function buildProductPages(products) {
+  const pages = [];
+  let pageIdx = 1; // cover = page 1
+
+  for (let i = 0; i < products.length; i += PER_PAGE) {
+    pageIdx++;
+    const batch = products.slice(i, i + PER_PAGE);
+    const cards = batch.map(productCard).join('');
+
+    // Determine which categories appear on this page
+    const cats = [...new Set(batch.map(getCategory))];
+    const catLabel = cats.length === 1 ? cats[0] + ' Collection' : 'All Collections';
+
+    const pg = document.createElement('div');
+    pg.className = 'pg pg-products';
+    pg.innerHTML = `
+      <div class="pg-header">
+        <span class="pg-header-brand">Auranest Decors</span>
+        <span class="pg-header-cat">${catLabel}</span>
+        <span class="pg-num">— ${pageIdx} —</span>
+      </div>
+      <div class="prod-grid">${cards}</div>
+      <div class="pg-footer">
+        <span class="pg-footer-brand">Auranest Decors · Handcrafted Indian Décor</span>
+        <span class="pg-footer-url">www.auranestdecors.com</span>
+      </div>`;
+    pages.push(pg);
+  }
+  return pages;
+}
+
+/* ── Deduplicate ── */
+function dedupe(products) {
+  const seenImgs = new Set();
+  const seenNames = new Set();
+  return products.filter(p => {
+    const img  = getImage(p);
+    const imgKey  = img ? img.replace(/\?.*$/, '').split('/').slice(-2).join('/') : null;
+    const nameKey = (p.name || '').toLowerCase().trim().slice(0, 40);
+    if (imgKey && seenImgs.has(imgKey))    return false;
+    if (!imgKey && seenNames.has(nameKey)) return false;
+    if (imgKey) seenImgs.add(imgKey);
+    else seenNames.add(nameKey);
+    return true;
+  });
+}
+
+/* ── Main builder ── */
+async function build() {
+  const info  = $('toolbarInfo');
+  const dlBtn = $('dlBtn');
+  const cat   = $('catalogue');
 
   try {
-    statusEl.textContent = 'Connecting to database…';
-    let products = [];
+    info.textContent = 'Connecting to Firebase…';
+    let raw = [];
 
-    // Try Firestore first
     try {
-      products = await window._fetchProducts();
+      raw = await window._fetchAllProducts();
     } catch(e) {
-      // Fallback: localStorage cache
-      statusEl.textContent = 'Using cached products…';
-      try {
-        const cached = JSON.parse(localStorage.getItem('auranest_products') || '[]');
-        products = cached.filter(p => p && p.name);
-      } catch {}
+      // Fallback: localStorage cache (populated when store page loads)
+      info.textContent = 'Using cached data…';
+      const cached = localStorage.getItem('auranest_products');
+      if (cached) raw = JSON.parse(cached).filter(p => p && p.name);
     }
 
-    if (!products.length) {
-      statusEl.textContent = '⚠ No products found. Open the store page first to cache products, then reload.';
+    if (!raw.length) {
+      info.textContent = '⚠ No products found. Visit auranestdecors.com/store/ first to cache data, then reload.';
       return;
     }
 
-    statusEl.textContent = `Processing ${products.length} products…`;
+    info.textContent = `Deduplicating ${raw.length} products…`;
+    const products = dedupe(raw);
+    info.textContent = `Building catalogue: ${products.length} products…`;
 
-    // Deduplicate by image
-    const seenImgs = new Set();
-    const unique = products.filter(p => {
-      const img = getImage(p);
-      const key = img ? img.split('?')[0].split('/').slice(-2).join('/') : ('noimg_' + p.name);
-      if (seenImgs.has(key)) return false;
-      seenImgs.add(key);
-      return true;
-    });
+    // Render cover
+    cat.appendChild(buildCover(products, products.length));
 
-    statusEl.textContent = `Rendering ${unique.length} unique products…`;
+    // Render product pages in batches to avoid blocking the main thread
+    const CHUNK = 12;
+    for (let i = 0; i < products.length; i += CHUNK * PER_PAGE) {
+      const slice = products.slice(i, i + CHUNK * PER_PAGE);
+      const pages = buildProductPages(slice.slice(0, CHUNK * PER_PAGE));
+      // correct page numbers
+      pages.forEach(pg => cat.appendChild(pg));
+      await new Promise(r => setTimeout(r, 0)); // yield to browser
+    }
 
-    // Group by category
-    const catOrder = ['artisan','woodcraft','minimal','gifting','home & kitchen','aura décor'];
-    const grouped = {};
-    catOrder.forEach(k => grouped[k] = []);
-    unique.forEach(p => {
-      const k = getCategory(p);
-      if (!grouped[k]) grouped[k] = [];
-      grouped[k].push(p);
-    });
+    // Fix page numbers sequentially
+    const allPages = cat.querySelectorAll('.pg-num');
+    allPages.forEach((el, i) => { el.textContent = `— ${i + 2} —`; });
 
-    let pageNum = 2; // cover = 1
-    let catNum  = 0;
-
-    catOrder.forEach(catKey => {
-      const prods = grouped[catKey];
-      if (!prods || !prods.length) return;
-      catNum++;
-      const meta  = CAT_META[catKey] || { label: catKey };
-
-      // Category divider
-      pagesEl.appendChild(makeCatDivider(catKey, prods.length, catNum));
-      pageNum++;
-
-      // Product pages (4 per page)
-      for (let i = 0; i < prods.length; i += 4) {
-        const batch = prods.slice(i, i + 4);
-        pagesEl.appendChild(makeProductPage(batch, meta.label, pageNum));
-        pageNum++;
-      }
-    });
-
-    // Back cover
-    pagesEl.appendChild(makeBackCover(unique.length));
-
-    statusEl.textContent = `✓ ${unique.length} products · ${pageNum} pages ready`;
+    const totalPages = products.length > 0 ? Math.ceil(products.length / PER_PAGE) + 1 : 1;
+    info.textContent = `✓ ${products.length} products · ${totalPages} pages · Ready to download`;
     dlBtn.disabled = false;
 
   } catch(e) {
-    statusEl.textContent = '⚠ Error: ' + e.message;
+    info.textContent = '⚠ Error: ' + e.message;
     console.error(e);
   }
 }
 
-function downloadPDF() {
-  window.print();
-}
-
-// Wait for Firebase module to init then build
-window.addEventListener('load', () => {
-  setTimeout(buildCatalogue, 600);
-});
+window.addEventListener('load', () => setTimeout(build, 500));
 </script>
 </body>
 </html>
