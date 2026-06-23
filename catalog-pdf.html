@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Product Catalogue – Auranest Decors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const app = initializeApp({
+  apiKey:"AIzaSyAMkNFmL_amzlWMBxyzlVbn06GhZJGnadk",
+  authDomain:"auranest-decors.firebaseapp.com",
+  projectId:"auranest-decors",
+  storageBucket:"auranest-decors.firebasestorage.app",
+  messagingSenderId:"55244789649",
+  appId:"1:55244789649:web:0aab804a8933ce0cf6ec30"
+});
+const db = getFirestore(app);
+window._fetchProducts = async () => {
+  const snap = await getDocs(collection(db,'products'));
+  return snap.docs.map(d => ({id:d.id,...d.data()}));
+};
+</script>
+<style>
+:root{
+  --gold:#c49330;--gold-lt:#f6d070;--gold-dk:#8a6820;
+  --ink:#1a1208;--cream:#fdf8f3;--ivory:#f7f2eb;--dark:#1a1208;
+  --mid:#5c4a2a;--muted:#8a7660;--border:#e0d4b8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:#ddd}
+body{font-family:'Outfit',sans-serif;background:#ddd;color:var(--ink)}
+
+/* ── Screen UI ─────────────────────────────────────── */
+.screen-ui{
+  background:var(--cream);border-bottom:1px solid var(--border);
+  padding:18px 32px;display:flex;align-items:center;gap:20px;
+  position:sticky;top:0;z-index:1000;box-shadow:0 2px 16px rgba(0,0,0,.12);
+}
+.screen-ui h1{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--gold);flex:1}
+.btn-dl{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gold);color:#fff;border:none;
+  padding:11px 24px;border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.85rem;font-weight:600;letter-spacing:.05em;cursor:pointer;
+  transition:background .2s;text-transform:uppercase
+}
+.btn-dl:hover{background:var(--gold-dk)}
+.btn-dl:disabled{opacity:.6;cursor:not-allowed}
+#status{font-size:.8rem;color:var(--muted)}
+
+/* ── Page shell ─────────────────────────────────────── */
+#pages{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0 48px}
+.page{
+  width:794px;min-height:1123px;background:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,.18);position:relative;overflow:hidden;
+}
+
+/* ── Cover page ─────────────────────────────────────── */
+.cover{
+  background:var(--dark);color:#fff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:60px 64px;
+}
+.cover-badge{
+  border:1px solid rgba(196,147,48,.4);color:var(--gold-lt);
+  font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+  padding:6px 20px;margin-bottom:48px;font-family:'Outfit',sans-serif
+}
+.cover-lotus{color:var(--gold);font-size:4.5rem;margin-bottom:16px;line-height:1}
+.cover-divider{
+  display:flex;align-items:center;gap:14px;margin:20px 0;width:100%;max-width:380px
+}
+.cover-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(196,147,48,.5),transparent)}
+.cover-divider-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.cover-brand{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:300;letter-spacing:.04em;line-height:1.1;margin-bottom:4px}
+.cover-brand em{font-style:italic;color:var(--gold-lt)}
+.cover-tagline{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:64px}
+.cover-year{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:64px}
+.cover-bg-pattern{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle at 20% 80%,rgba(196,147,48,.08) 0%,transparent 50%),
+                   radial-gradient(circle at 80% 20%,rgba(196,147,48,.06) 0%,transparent 50%);
+}
+.cover-corner{position:absolute;width:80px;height:80px;border-color:rgba(196,147,48,.25);border-style:solid}
+.cover-tl{top:28px;left:28px;border-width:1px 0 0 1px}
+.cover-tr{top:28px;right:28px;border-width:1px 1px 0 0}
+.cover-bl{bottom:28px;left:28px;border-width:0 0 1px 1px}
+.cover-br{bottom:28px;right:28px;border-width:0 1px 1px 0}
+
+/* ── Category divider page ──────────────────────────── */
+.cat-divider{
+  background:var(--dark);color:#fff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:60px;
+}
+.cat-divider-num{
+  font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;
+  color:rgba(196,147,48,.15);line-height:1;margin-bottom:-20px
+}
+.cat-divider-name{
+  font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:400;
+  letter-spacing:.06em;color:#fff;margin-bottom:10px
+}
+.cat-divider-sub{
+  font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);margin-bottom:32px;font-family:'Outfit',sans-serif
+}
+.cat-divider-count{
+  border:1px solid rgba(196,147,48,.4);color:var(--gold-lt);
+  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:6px 20px;font-family:'Outfit',sans-serif
+}
+.cat-icon{font-size:3.2rem;margin-bottom:28px;opacity:.8}
+
+/* ── Product grid page ──────────────────────────────── */
+.prod-page{padding:40px 44px;background:var(--ivory)}
+.page-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;padding-bottom:12px;border-bottom:1px solid var(--border)
+}
+.page-header-brand{
+  font-family:'Cormorant Garamond',serif;font-size:.88rem;
+  font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)
+}
+.page-header-cat{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.page-num{font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+
+/* ── Product card ───────────────────────────────────── */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.prod-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.prod-img-wrap{
+  width:100%;height:240px;overflow:hidden;position:relative;
+  background:linear-gradient(135deg,#f7f2eb 0%,#ede4d4 100%)
+}
+.prod-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;padding:12px}
+.prod-img-placeholder{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+  background:linear-gradient(135deg,#f0e8d8 0%,#e8d8c0 100%)
+}
+.prod-img-placeholder span{font-size:2.8rem}
+.prod-img-placeholder p{font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.prod-info{padding:14px 16px 16px}
+.prod-badge{
+  display:inline-block;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(196,147,48,.1);color:var(--gold-dk);
+  padding:3px 8px;border-radius:20px;margin-bottom:8px;font-weight:600
+}
+.prod-name{
+  font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;
+  line-height:1.3;color:var(--ink);margin-bottom:8px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+}
+.prod-meta{font-size:.72rem;color:var(--muted);line-height:1.7}
+.prod-meta span{color:var(--ink);font-weight:500}
+.prod-divider{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:10px 0}
+
+/* ── Back cover ─────────────────────────────────────── */
+.back-cover{
+  background:var(--dark);color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 64px
+}
+.back-tag{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:40px}
+
+/* ── Print ──────────────────────────────────────────── */
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{background:#fff!important}
+  .screen-ui{display:none!important}
+  #pages{padding:0;gap:0;align-items:stretch}
+  .page{
+    width:100%;min-height:100vh;page-break-after:always;
+    box-shadow:none!important;break-after:page
+  }
+  .page:last-child{page-break-after:avoid;break-after:avoid}
+  .prod-page{padding:28px 32px}
+  .prod-img-wrap{height:200px}
+}
+</style>
+</head>
+<body>
+
+<div class="screen-ui">
+  <h1>✦ Auranest Decors — Product Catalogue</h1>
+  <span id="status">Loading products…</span>
+  <button class="btn-dl" id="dlBtn" onclick="downloadPDF()" disabled>⬇ Download PDF</button>
+</div>
+
+<div id="pages">
+  <div class="page cover">
+    <div class="cover-bg-pattern"></div>
+    <div class="cover-corner cover-tl"></div>
+    <div class="cover-corner cover-tr"></div>
+    <div class="cover-corner cover-bl"></div>
+    <div class="cover-corner cover-br"></div>
+    <div class="cover-badge">Product Catalogue · 2025</div>
+    <div class="cover-lotus">❋</div>
+    <div class="cover-divider"><div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div></div>
+    <h1 class="cover-brand">Auranest<br><em>Decors</em></h1>
+    <p class="cover-tagline">Handcrafted Indian Home Décor</p>
+    <div class="cover-divider"><div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div></div>
+    <p style="color:rgba(255,255,255,.5);font-size:.82rem;letter-spacing:.08em;margin-top:28px;max-width:340px;line-height:1.8">Folk art planters · Wooden trays · Artisan ceramics · Gifting</p>
+    <p class="cover-year">auranestdecors.com</p>
+  </div>
+</div>
+
+<script>
+const CAT_META = {
+  artisan:   { label:'Artisan',          icon:'🎨', desc:'Hand-painted folk art ceramics, Madhubani & Warli inspired pieces' },
+  woodcraft: { label:'Woodcraft',        icon:'🪵', desc:'Natural wood trays, Jharokha mirrors, kitchen tools & home accents' },
+  minimal:   { label:'Minimal',          icon:'🏺', desc:'Contemporary ceramic sculptures, terracotta & refined forms' },
+  gifting:   { label:'Gifting',          icon:'🎁', desc:'Curated gifts for housewarming, weddings & festive occasions' },
+  'home & kitchen': { label:'Home & Kitchen', icon:'🏠', desc:'Functional beauty for your kitchen and dining table' },
+  'aura décor': { label:'Aura Décor',    icon:'✨', desc:'Statement pieces that transform every corner of your home' },
+};
+
+function getCategory(p) {
+  const cat = (p.category || '').toLowerCase().trim();
+  if (CAT_META[cat]) return cat;
+  const name = (p.name || '').toLowerCase();
+  if (/madhubani|warli|folk|tribal|painted|mithila|gond|pichwai/.test(name)) return 'artisan';
+  if (/wood|tray|jharokha|kitchen|spatula|stool|bench|platter/.test(name)) return 'woodcraft';
+  if (/ceramic|terracotta|buddha|yoga|sculpture|pot|planter/.test(name)) return 'minimal';
+  if (/gift|set|combo|hamper/.test(name)) return 'gifting';
+  return 'artisan';
+}
+
+function getImage(p) {
+  const imgs = p.images || [];
+  return imgs.find(u => u && u.trim()) || p.image || '';
+}
+
+function catalogImg(rawUrl) {
+  if (!rawUrl || !rawUrl.trim()) return '';
+  try {
+    // For Cloudinary upload URLs, inject transformations
+    if (rawUrl.includes('res.cloudinary.com') && rawUrl.includes('/upload/')) {
+      const parts = rawUrl.split('/upload/');
+      const rest  = parts[1].replace(/^[^/]*\//, ''); // strip existing transforms
+      return `${parts[0]}/upload/f_auto,q_auto,w_600,h_600,c_pad,b_white/${rest}`;
+    }
+    return rawUrl;
+  } catch { return rawUrl; }
+}
+
+function trimName(n) {
+  if (!n) return '';
+  let s = n.split('|')[0].trim();
+  if (s.length > 60) { const c = s.indexOf(',', 28); if (c > 0) s = s.slice(0, c).trim(); }
+  return s;
+}
+
+function makeCatDivider(catKey, count, num) {
+  const m = CAT_META[catKey] || { label: catKey, icon: '✦', desc: '' };
+  const page = document.createElement('div');
+  page.className = 'page cat-divider';
+  page.innerHTML = `
+    <div class="cover-bg-pattern"></div>
+    <div class="cover-corner cover-tl"></div><div class="cover-corner cover-tr"></div>
+    <div class="cover-corner cover-bl"></div><div class="cover-corner cover-br"></div>
+    <p class="cat-divider-num">0${num}</p>
+    <div class="cat-icon">${m.icon}</div>
+    <h2 class="cat-divider-name">${m.label}</h2>
+    <p class="cat-divider-sub">Collection</p>
+    <div class="cover-divider" style="max-width:280px;margin:0 auto 28px">
+      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
+    </div>
+    <p style="color:rgba(255,255,255,.5);font-size:.82rem;letter-spacing:.06em;max-width:320px;line-height:1.8;margin-bottom:28px">${m.desc}</p>
+    <div class="cat-divider-count">${count} Piece${count!==1?'s':''}</div>`;
+  return page;
+}
+
+function makeProductPage(products, catLabel, pageNum) {
+  const page = document.createElement('div');
+  page.className = 'page prod-page';
+  const cards = products.map(p => {
+    const img = catalogImg(getImage(p));
+    const imgHTML = img
+      ? `<img src="${img}" alt="${trimName(p.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'prod-img-placeholder\\'><span>${(CAT_META[getCategory(p)]||{icon:'✦'}).icon}</span><p>${catLabel}</p></div>'"/>`
+      : `<div class="prod-img-placeholder"><span>${(CAT_META[getCategory(p)]||{icon:'✦'}).icon}</span><p>${catLabel}</p></div>`;
+    const material = p.material ? `<div class="prod-meta">Material <span>${p.material}</span></div>` : '';
+    const size     = p.size     ? `<div class="prod-meta">Size <span>${p.size}</span></div>`     : '';
+    const sub      = p.subCategory ? `<div class="prod-meta">Style <span>${p.subCategory}</span></div>` : '';
+    const badge    = p.tag || catLabel;
+    return `<div class="prod-card">
+      <div class="prod-img-wrap">${imgHTML}</div>
+      <div class="prod-info">
+        <div class="prod-badge">${badge}</div>
+        <h3 class="prod-name">${trimName(p.name)}</h3>
+        <div class="prod-divider"></div>
+        ${material}${size}${sub}
+      </div>
+    </div>`;
+  }).join('');
+
+  page.innerHTML = `
+    <div class="page-header">
+      <span class="page-header-brand">Auranest Decors</span>
+      <span class="page-header-cat">${catLabel} Collection</span>
+      <span class="page-num">${pageNum}</span>
+    </div>
+    <div class="prod-grid">${cards}</div>`;
+  return page;
+}
+
+function makeBackCover(total) {
+  const page = document.createElement('div');
+  page.className = 'page back-cover';
+  page.innerHTML = `
+    <div class="cover-bg-pattern"></div>
+    <div class="cover-corner cover-tl"></div><div class="cover-corner cover-tr"></div>
+    <div class="cover-corner cover-bl"></div><div class="cover-corner cover-br"></div>
+    <div class="cover-lotus" style="font-size:3.5rem;margin-bottom:20px">❋</div>
+    <div class="cover-divider" style="max-width:300px;margin:0 auto 28px">
+      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
+    </div>
+    <h2 class="cover-brand" style="font-size:2.2rem;margin-bottom:12px">Thank You</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.6);max-width:380px;line-height:1.8;margin-bottom:40px">
+      Every piece in this catalogue is handcrafted by skilled artisans across India — made with love, care and tradition.
+    </p>
+    <div class="cover-divider" style="max-width:300px;margin:0 auto 40px">
+      <div class="cover-divider-line"></div><div class="cover-divider-dot"></div><div class="cover-divider-line"></div>
+    </div>
+    <p style="font-size:.88rem;color:var(--gold-lt);letter-spacing:.06em;margin-bottom:8px">🌐 auranestdecors.com</p>
+    <p style="font-size:.82rem;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-bottom:4px">📧 hello@auranestdecors.com</p>
+    <p style="font-size:.8rem;color:rgba(255,255,255,.3);margin-top:8px">${total} handcrafted pieces</p>
+    <p class="back-tag">© 2025 Auranest Decors · All Rights Reserved</p>`;
+  return page;
+}
+
+async function buildCatalogue() {
+  const statusEl = document.getElementById('status');
+  const dlBtn    = document.getElementById('dlBtn');
+  const pagesEl  = document.getElementById('pages');
+
+  try {
+    statusEl.textContent = 'Connecting to database…';
+    let products = [];
+
+    // Try Firestore first
+    try {
+      products = await window._fetchProducts();
+    } catch(e) {
+      // Fallback: localStorage cache
+      statusEl.textContent = 'Using cached products…';
+      try {
+        const cached = JSON.parse(localStorage.getItem('auranest_products') || '[]');
+        products = cached.filter(p => p && p.name);
+      } catch {}
+    }
+
+    if (!products.length) {
+      statusEl.textContent = '⚠ No products found. Open the store page first to cache products, then reload.';
+      return;
+    }
+
+    statusEl.textContent = `Processing ${products.length} products…`;
+
+    // Deduplicate by image
+    const seenImgs = new Set();
+    const unique = products.filter(p => {
+      const img = getImage(p);
+      const key = img ? img.split('?')[0].split('/').slice(-2).join('/') : ('noimg_' + p.name);
+      if (seenImgs.has(key)) return false;
+      seenImgs.add(key);
+      return true;
+    });
+
+    statusEl.textContent = `Rendering ${unique.length} unique products…`;
+
+    // Group by category
+    const catOrder = ['artisan','woodcraft','minimal','gifting','home & kitchen','aura décor'];
+    const grouped = {};
+    catOrder.forEach(k => grouped[k] = []);
+    unique.forEach(p => {
+      const k = getCategory(p);
+      if (!grouped[k]) grouped[k] = [];
+      grouped[k].push(p);
+    });
+
+    let pageNum = 2; // cover = 1
+    let catNum  = 0;
+
+    catOrder.forEach(catKey => {
+      const prods = grouped[catKey];
+      if (!prods || !prods.length) return;
+      catNum++;
+      const meta  = CAT_META[catKey] || { label: catKey };
+
+      // Category divider
+      pagesEl.appendChild(makeCatDivider(catKey, prods.length, catNum));
+      pageNum++;
+
+      // Product pages (4 per page)
+      for (let i = 0; i < prods.length; i += 4) {
+        const batch = prods.slice(i, i + 4);
+        pagesEl.appendChild(makeProductPage(batch, meta.label, pageNum));
+        pageNum++;
+      }
+    });
+
+    // Back cover
+    pagesEl.appendChild(makeBackCover(unique.length));
+
+    statusEl.textContent = `✓ ${unique.length} products · ${pageNum} pages ready`;
+    dlBtn.disabled = false;
+
+  } catch(e) {
+    statusEl.textContent = '⚠ Error: ' + e.message;
+    console.error(e);
+  }
+}
+
+function downloadPDF() {
+  window.print();
+}
+
+// Wait for Firebase module to init then build
+window.addEventListener('load', () => {
+  setTimeout(buildCatalogue, 600);
+});
+</script>
+</body>
+</html>
