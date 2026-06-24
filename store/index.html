@@ -2678,14 +2678,16 @@ async function loadProducts() {
       loadTrending();
     }
     setFbStatus('⚠️ Showing cached products — offline mode');
+    openDeepLinkProduct();
   }
 }
 
 // ── DEEP LINK — open exact product from ?product=<slug|id>&v=<imgBase> (catalog Shop Now) ──
 function openDeepLinkProduct() {
   const params = new URLSearchParams(location.search);
-  const key = params.get('product');
+  const key = params.get('product') || sessionStorage.getItem('auranest_open_product');
   if (!key) return;
+  sessionStorage.removeItem('auranest_open_product');
   const imgKey = params.get('v'); // image basename or folder name from catalogue
   const all = window.$products || PRODUCTS;
   const baseOf = u => (u || '').split('/').pop().split('?')[0];
@@ -2719,8 +2721,16 @@ function openDeepLinkProduct() {
   }
   const match = matches[0];
   if (match && typeof ProductPage !== 'undefined') {
-    // Small delay lets the page finish rendering before the overlay opens
-    setTimeout(() => ProductPage.open(match.id || match.slug || key), 120);
+    setTimeout(() => ProductPage.open(match.id || match.slug || key), 300);
+  } else if (match) {
+    // ProductPage not ready yet — wait for it
+    const poll = setInterval(() => {
+      if (typeof ProductPage !== 'undefined') {
+        clearInterval(poll);
+        ProductPage.open(match.id || match.slug || key);
+      }
+    }, 100);
+    setTimeout(() => clearInterval(poll), 5000);
   } else {
     setFbStatus('⚠️ Product not found — showing all products');
   }

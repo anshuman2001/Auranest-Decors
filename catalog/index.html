@@ -865,9 +865,10 @@ function renderCards(list) {
     const name  = shortName(p.name);
     const desc  = shortDesc(p.description || p.desc);
     const label = p.subCategory || p.category || 'Handcrafted';
-    const url   = p.id
-      ? `../store/?product=${encodeURIComponent(p.id)}`
-      : '../store/';
+    const storeUrl = p.id ? `../store/?product=${encodeURIComponent(p.id)}` : '../store/';
+    const onclk = p.id
+      ? `sessionStorage.setItem('auranest_open_product','${p.id}')`
+      : '';
     const card = document.createElement('div');
     card.className = 'p-card';
     card.innerHTML = `
@@ -880,7 +881,7 @@ function renderCards(list) {
         <div class="p-name">${name}</div>
         <div class="p-desc">${desc}</div>
         <div class="p-footer">
-          <a href="${url}" class="p-cta">Explore →</a>
+          <a href="${storeUrl}" class="p-cta"${onclk ? ` onclick="${onclk}"` : ''}>Explore →</a>
           <div class="p-dot"></div>
         </div>
       </div>`;
