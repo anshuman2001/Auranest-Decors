@@ -4295,15 +4295,52 @@ function _wishToggle(id, btn) {
   if (badge) badge.textContent = PRODUCTS.length + '+';
 })();
 
+// ── CATALOG DEEP LINK — guaranteed open, runs in regular script scope ──────
+(function() {
+  var key = new URLSearchParams(location.search).get('product')
+            || sessionStorage.getItem('auranest_open_product');
+  if (!key) return;
+  sessionStorage.removeItem('auranest_open_product');
+
+  // Coming from catalog — skip the welcome screen immediately
+  var w = document.getElementById('welcome');
+  if (w) w.style.display = 'none';
+
+  function tryOpen() {
+    var prods = window.$products;
+    if (!prods || !prods.length) return false;
+    var p = null;
+    for (var i = 0; i < prods.length; i++) {
+      if (prods[i].id === key || prods[i].slug === key || String(i) === key) {
+        p = prods[i]; break;
+      }
+    }
+    if (!p) return false;
+    ProductPage.open(p.id || p.slug || key);
+    return true;
+  }
+
+  // If the pre-render IIFE above already loaded products, open immediately
+  if (!tryOpen()) {
+    // Otherwise poll every 150ms until products load (Firebase / module may not have fired yet)
+    var _start = Date.now();
+    var _poll = setInterval(function() {
+      if (tryOpen() || Date.now() - _start > 12000) clearInterval(_poll);
+    }, 150);
+  }
+})();
+
 // ── SCROLL & LOAD ──
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', scrollY>50);
 });
-// ── WELCOME SCREEN: lift away after 2.8s ──
-setTimeout(() => {
-  const w = document.getElementById('welcome');
-  if (w) w.classList.add('lift');
-}, 2800);
+// ── WELCOME SCREEN: lift away after 2.8s (skipped on deep links — handled above) ──
+if (!new URLSearchParams(location.search).get('product') && !sessionStorage.getItem('auranest_open_product')) {
+  setTimeout(() => {
+    const w = document.getElementById('welcome');
+    if (w) w.classList.add('lift');
+  }, 2800);
+}
 
 window.addEventListener('load',   () => {
   updateCartUI();
