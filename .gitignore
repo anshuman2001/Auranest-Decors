@@ -2,3 +2,5 @@
 .env*
 firebase-debug.log
 .firebase/
+node_modules/
+package-lock.json
