@@ -2719,7 +2719,8 @@ function openDeepLinkProduct() {
   }
   const match = matches[0];
   if (match && typeof ProductPage !== 'undefined') {
-    ProductPage.open(match.id || match.slug || key);
+    // Small delay lets the page finish rendering before the overlay opens
+    setTimeout(() => ProductPage.open(match.id || match.slug || key), 120);
   } else {
     setFbStatus('⚠️ Product not found — showing all products');
   }

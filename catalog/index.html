@@ -831,15 +831,14 @@ function getImg(p) {
   const raw = ((p.images || []).find(u => u && u.trim())) || p.image || '';
   if (!raw || !raw.includes('res.cloudinary.com') || !raw.includes('/upload/')) return raw;
   const [pre, post] = raw.split('/upload/');
-  // strip any existing transform segment then inject ours
   const rest = post.replace(/^((?:[a-z_]+[^\/]*,?)+\/)/, '');
   return `${pre}/upload/f_auto,q_auto,w_600/${rest}`;
 }
 
 function normCat(c) {
-  return (c || '').toLowerCase().trim()
-    .replace('aura decor', 'aura décor')
-    .replace('aura décor', 'aura décor');
+  const s = (c || '').toLowerCase().trim();
+  if (s === 'aura decor') return 'aura décor';
+  return s;
 }
 
 function shortName(n) { return (n || '').split('|')[0].trim(); }
@@ -851,13 +850,14 @@ function shortDesc(d) {
 
 const grid = document.getElementById('products-grid');
 let allProducts = [];
+let activeFilter = 'all';
 
 /* ── render cards — Explore URL uses Firebase document ID ── */
 function renderCards(list) {
   grid.innerHTML = '';
   if (!list.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--light);
-      font-family:'Cormorant Garamond',serif;font-size:1.3rem">No products found in this category.</div>`;
+      font-family:'Cormorant Garamond',serif;font-size:1.3rem">No products in this category.</div>`;
     return;
   }
   list.forEach(p => {
@@ -865,11 +865,9 @@ function renderCards(list) {
     const name  = shortName(p.name);
     const desc  = shortDesc(p.description || p.desc);
     const label = p.subCategory || p.category || 'Handcrafted';
-    // ← KEY FIX: use Firebase document ID so store matches x.id === key instantly
     const url   = p.id
       ? `../store/?product=${encodeURIComponent(p.id)}`
       : '../store/';
-
     const card = document.createElement('div');
     card.className = 'p-card';
     card.innerHTML = `
@@ -890,23 +888,41 @@ function renderCards(list) {
   });
 }
 
+function applyFilter(cat) {
+  activeFilter = cat;
+  const list = cat === 'all'
+    ? allProducts
+    : allProducts.filter(p => normCat(p.category) === cat);
+  renderCards(list);
+}
+
 /* ── filter pills ── */
 document.querySelectorAll('.filter-pill').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const cat = btn.dataset.cat;
-    const filtered = cat === 'all'
-      ? allProducts
-      : allProducts.filter(p => normCat(p.category) === cat);
-    renderCards(filtered);
+    applyFilter(btn.dataset.cat);
     grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-/* ── load Firebase products ── */
-grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--light);
-  font-family:'Cormorant Garamond',serif;font-size:1.3rem">Loading collection…</div>`;
+/* ── Step 1: show store's localStorage cache immediately (no wait) ── */
+try {
+  const cached = localStorage.getItem('auranest_products');
+  if (cached) {
+    const list = JSON.parse(cached).filter(p => p && p.name && p.id);
+    if (list.length) {
+      allProducts = list;
+      applyFilter(activeFilter);
+    }
+  }
+} catch(e) {}
+
+/* ── Step 2: Firebase fetch — refresh & get any new products ── */
+if (!allProducts.length) {
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--light);
+    font-family:'Cormorant Garamond',serif;font-size:1.3rem">Loading collection…</div>`;
+}
 
 try {
   const app = initializeApp({
@@ -917,20 +933,26 @@ try {
     messagingSenderId: "55244789649",
     appId:             "1:55244789649:web:0aab804a8933ce0cf6ec30"
   }, 'catalog-page');
-  const db  = getFirestore(app);
+  const db = getFirestore(app);
   const snap = await getDocs(collection(db, 'products'));
-  if (snap.empty) throw new Error('no products');
-  allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name);
-  renderCards(allProducts);
+  if (!snap.empty) {
+    const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name);
+    allProducts = fresh;
+    applyFilter(activeFilter);
+    // Update the store's cache so next visit is instant
+    try { localStorage.setItem('auranest_products', JSON.stringify(fresh));
+          localStorage.setItem('auranest_products_ts', String(Date.now())); } catch(e) {}
+  }
 } catch (e) {
-  console.warn('[catalog] Firebase unavailable:', e.message);
-  // Fallback — show message and link to store
-  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem">
-    <p style="color:var(--light);font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem">
-      Could not load products right now.
-    </p>
-    <a href="../store/" class="btn-primary" style="display:inline-block">Browse the Store →</a>
-  </div>`;
+  console.warn('[catalog] Firebase:', e.message);
+  if (!allProducts.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem">
+      <p style="color:var(--light);font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:1.5rem">
+        Unable to load products. Please check your connection.
+      </p>
+      <a href="../store/" class="btn-primary" style="display:inline-block">Browse the Store →</a>
+    </div>`;
+  }
 }
 </script>
 </body>
