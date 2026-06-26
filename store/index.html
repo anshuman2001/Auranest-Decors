@@ -1284,7 +1284,7 @@ body.pdp-open .wa-float{display:none;}
 </div>
 
 <div id="toast"></div>
-<div class="fb-status" id="fbStatus">⚡ Connecting to Firebase...</div>
+<div class="fb-status" id="fbStatus" style="display:none"></div>
 
 <!-- WHATSAPP FLOATING BUTTON -->
 <a class="wa-float" href="https://wa.me/918679212984?text=Hello%20Auranest%20Decors!%20I%20have%20a%20query." target="_blank" rel="noopener" title="Chat on WhatsApp">
@@ -2641,7 +2641,6 @@ async function loadProducts() {
         cacheHit = true;
         // Skip Firebase read if cache is fresh (under 30 min) — saves Firestore quota
         if (age < CACHE_TTL) {
-          setFbStatus('🟢 Products loaded', true);
           openDeepLinkProduct();
           return;
         }
@@ -2667,7 +2666,6 @@ async function loadProducts() {
       renderCollectionCounts();
       filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
       document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
-      setFbStatus('🟢 Firebase Connected', true);
       openDeepLinkProduct();
     }
   } catch (err) {
@@ -2677,9 +2675,6 @@ async function loadProducts() {
       renderProducts(PRODUCTS);
       loadTrending();
       setFbStatus('⚠️ Loading products — please wait...');
-    } else {
-      // Products already showing from cache — hide the status quietly
-      setFbStatus('🟢 Products loaded', true);
     }
     openDeepLinkProduct();
     // Silent retry after 8s — covers temporary network blips
@@ -2697,7 +2692,6 @@ async function loadProducts() {
           renderCollectionCounts();
           filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
           document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
-          setFbStatus('🟢 Firebase Connected', true);
         }
       } catch(e) { /* give up silently */ }
     }, 8000);
@@ -3030,8 +3024,10 @@ window.closeOrdersPage = function() {
 
 function setFbStatus(msg, hide=false) {
   const el = document.getElementById('fbStatus');
+  if (!msg || hide) { el.style.display = 'none'; return; }
   el.textContent = msg;
-  if (hide) setTimeout(() => el.style.opacity = '0', 3000);
+  el.style.display = '';
+  el.style.opacity = '1';
 }
 
 loadProducts();
