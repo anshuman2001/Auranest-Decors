@@ -2621,7 +2621,7 @@ onAuthStateChanged(auth, (user) => {
 });
 
 // ── LOAD PRODUCTS (cache-first, Firebase refresh max once per 30 min) ──
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+const CACHE_TTL = 2 * 60 * 60 * 1000; // 2 hours
 async function loadProducts() {
   // Always show cached products instantly
   let cacheHit = false;
@@ -2676,9 +2676,31 @@ async function loadProducts() {
       window.$products = PRODUCTS;
       renderProducts(PRODUCTS);
       loadTrending();
+      setFbStatus('⚠️ Loading products — please wait...');
+    } else {
+      // Products already showing from cache — hide the status quietly
+      setFbStatus('🟢 Products loaded', true);
     }
-    setFbStatus('⚠️ Showing cached products — offline mode');
     openDeepLinkProduct();
+    // Silent retry after 8s — covers temporary network blips
+    setTimeout(async () => {
+      try {
+        const snap2 = await getDocs(collection(db, 'products'));
+        if (!snap2.empty) {
+          window.$products = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+          try {
+            localStorage.setItem('auranest_products', JSON.stringify(window.$products));
+            localStorage.setItem('auranest_products_ts', String(Date.now()));
+          } catch(e) {}
+          renderProducts(window.$products);
+          loadTrending();
+          renderCollectionCounts();
+          filterByGiftPrice('all', document.querySelector('.gift-price-tag'));
+          document.getElementById('prodCountBadge').textContent = window.$products.length + '+';
+          setFbStatus('🟢 Firebase Connected', true);
+        }
+      } catch(e) { /* give up silently */ }
+    }, 8000);
   }
 }
 
