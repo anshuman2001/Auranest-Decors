@@ -1284,7 +1284,6 @@ body.pdp-open .wa-float{display:none;}
 </div>
 
 <div id="toast"></div>
-<div class="fb-status" id="fbStatus" style="display:none"></div>
 
 <!-- WHATSAPP FLOATING BUTTON -->
 <a class="wa-float" href="https://wa.me/918679212984?text=Hello%20Auranest%20Decors!%20I%20have%20a%20query." target="_blank" rel="noopener" title="Chat on WhatsApp">
@@ -3022,13 +3021,7 @@ window.closeOrdersPage = function() {
   document.body.style.overflow = '';
 };
 
-function setFbStatus(msg, hide=false) {
-  const el = document.getElementById('fbStatus');
-  if (!msg || hide) { el.style.display = 'none'; return; }
-  el.textContent = msg;
-  el.style.display = '';
-  el.style.opacity = '1';
-}
+function setFbStatus(msg, hide=false) { /* status badge removed */ }
 
 loadProducts();
 </script>
