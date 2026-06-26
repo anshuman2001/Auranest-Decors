@@ -3667,10 +3667,7 @@ const ProductPage = {
 
     // ── Narrative bits for tabs ──
     const storyText = rawDesc || `This piece is part of Auranest Decors' handcrafted collection, made by skilled Indian artisans who carry centuries of folk art tradition. Every detail reflects the maker's heritage and precision.`;
-    const craftRegion = p.material?.toLowerCase().includes('wood')
-      ? 'Rajasthan & Gujarat'
-      : (p.material?.toLowerCase().includes('ceramic') || p.material?.toLowerCase().includes('terracotta'))
-      ? 'Uttar Pradesh & West Bengal' : 'India';
+    const craftRegion = 'India';
     const giftOccasions = {
       'Home & Kitchen':      ['Housewarming', 'Diwali', 'Wedding', 'Anniversary'],
       'Aura décor':          ['Housewarming', 'Diwali', 'Raksha Bandhan', 'Corporate Gifting'],
