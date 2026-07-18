@@ -330,6 +330,7 @@ function init() {
   /* ─── state ─── */
   let phone         = '';
   let isForgot      = false;
+  let isOtpLogin    = false;   // returning-customer passwordless OTP login
   let confirmResult = null;
   let authedUser    = null;
   let recapVerifier = null;
@@ -413,13 +414,13 @@ function init() {
     try {
       const existing = await window._lookupPhone(phone).catch(()=>null);
       if (existing) {
-        /* existing customer → password login */
-        document.getElementById('sub-pw').textContent = '+91 '+phone;
-        document.getElementById('inp-pw').value = '';
-        go('password');
-        document.getElementById('inp-pw').focus();
+        /* existing customer → passwordless OTP login */
+        isOtpLogin = true; isForgot = false;
+        setBtn('btn-phone','txt-phone',true,'Sending OTP…');
+        await sendOTP(); // sends OTP and advances to the OTP phase
       } else {
         /* no customer record → registration */
+        isOtpLogin = false;
         document.getElementById('inp-name').value  = '';
         document.getElementById('inp-email').value = '';
         document.getElementById('inp-reg-pw').value  = '';
@@ -501,7 +502,7 @@ function init() {
       setTimeout(()=>document.querySelector('#otp-boxes .otp-box')?.focus(), 80);
     } catch(e) {
       resetRc();
-      const errId = isForgot ? 'err-pw' : 'err-reg';
+      const errId = isOtpLogin ? 'err-phone' : (isForgot ? 'err-pw' : 'err-reg');
       showErr(errId, mapErr(e));
     }
   }
@@ -510,7 +511,7 @@ function init() {
   document.getElementById('btn-otp').onclick = handleOtp;
   document.getElementById('btn-otp-back').onclick = ()=>{
     resetRc(); clearInterval(timerInterval);
-    go(isForgot ? 'password' : 'register');
+    go(isOtpLogin ? 'phone' : (isForgot ? 'password' : 'register'));
   };
 
   async function handleOtp() {
@@ -523,7 +524,11 @@ function init() {
       const cred = await confirmResult.confirm(code);
       authedUser = cred.user;
       clearInterval(timerInterval);
-      if (isForgot) {
+      if (isOtpLogin) {
+        /* returning customer → OTP verified, sign straight in */
+        await window._upsertCustomer(authedUser.uid, phone, '', '');
+        redirect();
+      } else if (isForgot) {
         /* forgot password flow → set new password */
         document.getElementById('inp-newpw').value  = '';
         document.getElementById('inp-newcpw').value = '';
