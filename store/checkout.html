@@ -58,9 +58,15 @@ window._fbLinkPass    = (user, phone, pass) => linkWithCredential(user, EmailAut
 window._fbUpdatePw    = (user, pass) => updatePassword(user, pass);
 window._fbSignOut     = () => signOut(auth);
 window._fbQueryMobile = async (mobile) => {
-  const q = query(collection(db,'customers'), where('mobile','==',mobile));
-  const snap = await getDocs(q);
-  return snap.empty ? null : {id:snap.docs[0].id,...snap.docs[0].data()};
+  // Server-side existence check (customers no longer publicly readable).
+  try {
+    const r = await fetch('/api/lookup-phone', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: mobile }),
+    });
+    const d = await r.json();
+    return d.exists ? { exists: true } : null;
+  } catch (e) { return null; }
 };
 window._checkOrCreateCustomer = async (uid, phone) => {
   try {

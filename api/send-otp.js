@@ -8,7 +8,7 @@
 
 const crypto = require('crypto');
 
-const SECRET       = process.env.OTP_SECRET || 'auranest-otp-secret-change-me-2026';
+const SECRET       = process.env.OTP_SECRET; // no fallback — fail closed if unset
 const F2S_KEY      = process.env.FAST2SMS_API_KEY || '';
 const OTP_TTL_MS   = 10 * 60 * 1000; // 10 minutes
 
@@ -36,6 +36,11 @@ module.exports = async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  if (!SECRET) {
+    console.error('[send-otp] OTP_SECRET not configured — refusing to issue tokens');
+    return res.status(503).json({ error: 'OTP service is not configured. Please contact support.' });
+  }
 
   const { phone } = req.body || {};
   if (!phone || !/^\d{10}$/.test(phone)) {

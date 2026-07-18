@@ -46,9 +46,19 @@ window._linkPass  = (u, p, pw) => linkWithCredential(u, EmailAuthProvider.creden
 window._updatePw  = (u, pw) => updatePassword(u, pw);
 
 window._lookupPhone = async (mobile) => {
-  const q = query(collection(db,'customers'), where('mobile','==', mobile));
-  const s = await getDocs(q);
-  return s.empty ? null : { id: s.docs[0].id, ...s.docs[0].data() };
+  // Server-side existence check (customers collection is no longer publicly
+  // readable). Returns a truthy marker if an account exists, else null —
+  // preserving the existing "existing user vs register" branch.
+  try {
+    const r = await fetch('/api/lookup-phone', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: mobile }),
+    });
+    const d = await r.json();
+    return d.exists ? { exists: true } : null;
+  } catch (e) {
+    return null; // fail to register path — user can still continue
+  }
 };
 
 window._upsertCustomer = async (uid, phone, name, email) => {

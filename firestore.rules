@@ -2,10 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Customers — anyone can read (for phone lookup during login),
-    // only the account owner can write their own doc
+    // Customers — owner-only read & write. Phone-existence lookup during login
+    // is handled server-side (api/lookup-phone) via the Admin SDK, so no public
+    // read is needed. This closes the PII-exposure hole (SEC-01).
     match /customers/{userId} {
-      allow read: if true;
+      allow read:  if request.auth != null && request.auth.uid == userId;
       allow write: if request.auth != null && request.auth.uid == userId;
 
       // Addresses subcollection — owner only
