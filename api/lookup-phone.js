@@ -10,7 +10,7 @@ const { getDb } = require('../lib/firebaseAdmin');
 const { rateLimit, clientIp } = require('../lib/rateLimit');
 
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.auranestdecors.com');
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

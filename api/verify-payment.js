@@ -10,7 +10,7 @@ const SHIPROCKET_API = 'https://apiv2.shiprocket.in/v1/external';
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://www.auranestdecors.com');
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();

@@ -14,7 +14,7 @@ const F2S_KEY      = process.env.FAST2SMS_API_KEY || '';
 const OTP_TTL_MS   = 10 * 60 * 1000; // 10 minutes
 
 function cors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.auranestdecors.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }

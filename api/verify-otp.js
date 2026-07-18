@@ -12,7 +12,7 @@ const SECRET     = process.env.OTP_SECRET; // no fallback — fail closed if uns
 const OTP_TTL_MS = 10 * 60 * 1000;
 
 function cors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.auranestdecors.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
