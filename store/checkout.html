@@ -690,6 +690,11 @@ function addressNext() {
 
 // ── Step 4: Payment ──────────────────────────────────────
 let payMethod = 'online';
+// Online gateway: 'phonepe' (live) or 'razorpay' (backup). Flip to switch back.
+const ONLINE_GATEWAY = 'phonepe';
+const ONLINE_COPY = ONLINE_GATEWAY === 'phonepe'
+  ? 'Pay securely via PhonePe — supports UPI, debit/credit cards, net banking & wallets.'
+  : 'Pay securely via Razorpay — supports UPI, debit/credit cards, net banking & wallets.';
 
 function renderPayment() {
   const { sub, disc, ship, total } = calcTotals();
@@ -712,7 +717,7 @@ function renderPayment() {
         </div>
         <div id="payDetails">
           <p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">
-            Pay securely via Razorpay — supports UPI, debit/credit cards, net banking & wallets.
+            ${ONLINE_COPY}
           </p>
         </div>
       </div>
@@ -738,7 +743,7 @@ function setPayMethod(m) {
     details.innerHTML = `<p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">Pay cash when your order arrives. COD fee ₹40 may apply on orders below ₹500.</p>`;
     const payBtn = $('payBtn'); if(payBtn) payBtn.textContent = `Place Order (COD) →`;
   } else {
-    details.innerHTML = `<p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">Pay securely via Razorpay — supports UPI, debit/credit cards, net banking & wallets.</p>`;
+    details.innerHTML = `<p style="font-size:.82rem;color:var(--muted);background:#f7f4ef;padding:10px 14px;border-radius:8px">${ONLINE_COPY}</p>`;
     const payBtn = $('payBtn'); if(payBtn) payBtn.textContent = `Pay ${rupee(total)} →`;
   }
 }
@@ -767,7 +772,13 @@ async function placeOrder() {
       S.result = { orderId, method:'Cash on Delivery', total };
       S.step = 5; render(); return;
     }
-    // Razorpay
+    // ── Online payment ──
+    if (ONLINE_GATEWAY === 'phonepe') {
+      await payWithPhonePe({ customer, items, sub, disc, ship, total });
+      return; // browser redirects to PhonePe; page unloads here
+    }
+
+    // Razorpay (backup gateway)
     const res = await fetch('/api/create-order', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ amount: total, currency: 'INR' })
@@ -804,6 +815,114 @@ async function placeOrder() {
     if (errEl) errEl.textContent = e.message === 'Payment cancelled' ? 'Payment was cancelled.' : (e.message || 'Payment failed. Try again.');
     if (btn) { btn.disabled = false; btn.textContent = payMethod==='cod' ? 'Place Order (COD) →' : `Pay ${rupee(total)} →`; }
   }
+}
+
+// ── PhonePe redirect flow ────────────────────────────────
+async function payWithPhonePe({ customer, items, sub, disc, ship, total }) {
+  // Unique merchant order id (letters + digits, no special chars)
+  const merchantOrderId = 'AN' + Date.now().toString(36).toUpperCase()
+    + Math.floor(1000 + Math.random() * 9000);
+
+  // Persist the pending order so we can save it after the customer returns
+  const pending = {
+    merchantOrderId, customerId: S.customerId || null,
+    customer, items, subtotal: sub, discount: disc, shipping: ship, totalAmount: total,
+  };
+  sessionStorage.setItem('auranest_pending_order', JSON.stringify(pending));
+
+  const redirectUrl = `${location.origin}/store/checkout.html?phonepe=return&order=${encodeURIComponent(merchantOrderId)}`;
+
+  const res = await fetch('/api/phonepe-create-payment', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: total, merchantOrderId, redirectUrl }),
+  });
+  if (!res.ok) throw new Error('Could not start PhonePe payment. Please try again.');
+  const data = await res.json();
+  if (!data.redirectUrl) throw new Error('Could not start PhonePe payment. Please try again.');
+
+  // Hand off to PhonePe's hosted checkout
+  window.location.href = data.redirectUrl;
+}
+
+// Resolve once Firebase auth has settled after the redirect reload.
+function waitForAuth(timeoutMs) {
+  return new Promise((resolve) => {
+    if (window._fbUser) return resolve(window._fbUser);
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(window._fbUser || null); } };
+    // onAuthStateChanged sets window._fbUser + calls _onAuthReady; chain onto it
+    const prev = window._onAuthReady;
+    window._onAuthReady = (user, profile) => { if (prev) prev(user, profile); finish(); };
+    setTimeout(finish, timeoutMs || 4000);
+  });
+}
+
+// ── PhonePe return handler (runs when customer comes back) ─
+async function handlePhonePeReturn(merchantOrderId) {
+  app().innerHTML = `<div class="a-fade" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center">
+    <span class="spinner-dark" style="width:40px;height:40px;border-width:4px"></span>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin:24px 0 6px">Confirming your payment…</h2>
+    <p style="color:var(--muted);font-size:.88rem">Please wait, do not close this window.</p>
+  </div>`;
+
+  let pending = null;
+  try { pending = JSON.parse(sessionStorage.getItem('auranest_pending_order') || 'null'); } catch(e) {}
+
+  try {
+    const orderData = pending
+      ? { orderId: merchantOrderId, customer: pending.customer, items: pending.items, subtotal: pending.subtotal }
+      : { orderId: merchantOrderId };
+
+    const res  = await fetch('/api/phonepe-status', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ merchantOrderId, orderData }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      // Payment confirmed by backend. Try to save the order record — wait for
+      // Firebase auth to restore first (it reloads async after the redirect).
+      // A save failure must NOT hide the success screen: the money is taken and
+      // the Shiprocket order already exists.
+      if (pending && window._saveOrder) {
+        try {
+          await waitForAuth(4000);
+          await window._saveOrder({
+            orderId: merchantOrderId, customerId: pending.customerId, customer: pending.customer,
+            items: pending.items, subtotal: pending.subtotal, discount: pending.discount,
+            shipping: pending.shipping, totalAmount: pending.totalAmount,
+            paymentMethod: 'PhonePe', paymentStatus: 'paid', orderStatus: 'confirmed',
+            phonepeTxnId: data.phonepeTxnId || '', merchantOrderId,
+          });
+        } catch(saveErr) {
+          console.error('[phonepe] order save failed (payment still OK):', saveErr);
+        }
+      }
+      CartStore.clear();
+      sessionStorage.removeItem('auranest_pending_order');
+      S.result = { orderId: merchantOrderId, method: 'PhonePe', total: pending ? pending.totalAmount : 0 };
+      S.step = 5; render();
+    } else {
+      showPhonePeFailure(data.state || 'FAILED');
+    }
+  } catch(e) {
+    showPhonePeFailure('ERROR');
+  }
+}
+
+function showPhonePeFailure(state) {
+  const msg = state === 'PENDING'
+    ? 'Your payment is still processing. If money was debited, it will reflect shortly — please check My Orders before retrying.'
+    : 'Your payment was not completed. No money has been deducted. Please try again.';
+  app().innerHTML = `<div class="a-fade" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">
+    <div style="width:80px;height:80px;border-radius:50%;background:#fdecec;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:2.2rem">⚠️</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;margin-bottom:10px">Payment ${state === 'PENDING' ? 'Pending' : 'Not Completed'}</h2>
+    <p style="color:var(--muted);font-size:.88rem;max-width:420px;margin-bottom:28px">${msg}</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <a href="/store/checkout.html" class="btn btn-gold">Try Again</a>
+      <a href="/store/" class="btn btn-outline">Back to Store</a>
+    </div>
+  </div>`;
 }
 
 // ── Step 5: Success ──────────────────────────────────────
@@ -878,6 +997,13 @@ window.addEventListener('DOMContentLoaded', () => {
     if (user) S.customerId = user.uid;
   };
   if (window._fbCustomer) window._onAuthReady(window._fbUser, window._fbCustomer);
+
+  // Returning from PhonePe? Verify payment instead of rendering the cart.
+  const _params = new URLSearchParams(location.search);
+  if (_params.get('phonepe') === 'return' && _params.get('order')) {
+    handlePhonePeReturn(_params.get('order'));
+    return;
+  }
 
   render();
 });
