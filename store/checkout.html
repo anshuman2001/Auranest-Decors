@@ -861,25 +861,40 @@ async function handlePhonePeReturn(merchantOrderId) {
   let pending = null;
   try { pending = JSON.parse(sessionStorage.getItem('auranest_pending_order') || 'null'); } catch(e) {}
 
-  try {
-    // The server saves & fulfils the order (webhook or this call — whichever is
-    // first). We just confirm the state and show the right screen.
-    const res  = await fetch('/api/phonepe-status', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ merchantOrderId }),
-    });
-    const data = await res.json();
+  const showSuccess = () => {
+    CartStore.clear();
+    sessionStorage.removeItem('auranest_pending_order');
+    S.result = { orderId: merchantOrderId, method: 'PhonePe', total: pending ? pending.totalAmount : 0 };
+    S.step = 5; render();
+  };
 
-    if (data.success) {
-      CartStore.clear();
-      sessionStorage.removeItem('auranest_pending_order');
-      S.result = { orderId: merchantOrderId, method: 'PhonePe', total: pending ? pending.totalAmount : 0 };
-      S.step = 5; render();
-    } else {
-      showPhonePeFailure(data.state || 'FAILED');
+  // The verdict comes from PhonePe. PENDING/UNKNOWN can happen right after
+  // payment (settlement lag) — retry a few times before deciding it failed.
+  const MAX_TRIES = 6;
+  let lastState = 'FAILED';
+  for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
+    try {
+      const res  = await fetch('/api/phonepe-status', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ merchantOrderId }),
+      });
+      const data = await res.json();
+      if (data.fulfilError) console.error('[phonepe] fulfil issue:', data.fulfilError);
+
+      if (data.success) { showSuccess(); return; }
+      lastState = data.state || 'FAILED';
+
+      if (data.retry || lastState === 'PENDING' || lastState === 'UNKNOWN') {
+        if (attempt < MAX_TRIES) { await new Promise(r => setTimeout(r, 2500)); continue; }
+        showPhonePeFailure('PENDING'); return; // still not settled — treat as pending, not failed
+      }
+      // Definitive FAILED from PhonePe
+      showPhonePeFailure(lastState); return;
+    } catch(e) {
+      console.error('[phonepe] status check error:', e);
+      if (attempt < MAX_TRIES) { await new Promise(r => setTimeout(r, 2500)); continue; }
+      showPhonePeFailure('PENDING'); return; // network issue — safer to say pending than failed
     }
-  } catch(e) {
-    showPhonePeFailure('ERROR');
   }
 }
 
