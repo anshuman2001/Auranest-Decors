@@ -823,18 +823,20 @@ async function payWithPhonePe({ customer, items, sub, disc, ship, total }) {
   const merchantOrderId = 'AN' + Date.now().toString(36).toUpperCase()
     + Math.floor(1000 + Math.random() * 9000);
 
-  // Persist the pending order so we can save it after the customer returns
-  const pending = {
-    merchantOrderId, customerId: S.customerId || null,
+  // Full order data — sent to the server so the webhook/status-check can fulfil
+  // the order even if the customer never returns to the site.
+  const orderData = {
+    customerId: S.customerId || null,
     customer, items, subtotal: sub, discount: disc, shipping: ship, totalAmount: total,
   };
-  sessionStorage.setItem('auranest_pending_order', JSON.stringify(pending));
+  // Keep a copy locally just for the success-screen figures on return
+  sessionStorage.setItem('auranest_pending_order', JSON.stringify({ merchantOrderId, totalAmount: total }));
 
   const redirectUrl = `${location.origin}/store/checkout.html?phonepe=return&order=${encodeURIComponent(merchantOrderId)}`;
 
   const res = await fetch('/api/phonepe-create-payment', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: total, merchantOrderId, redirectUrl }),
+    body: JSON.stringify({ amount: total, merchantOrderId, redirectUrl, orderData }),
   });
   if (!res.ok) throw new Error('Could not start PhonePe payment. Please try again.');
   const data = await res.json();
@@ -842,19 +844,6 @@ async function payWithPhonePe({ customer, items, sub, disc, ship, total }) {
 
   // Hand off to PhonePe's hosted checkout
   window.location.href = data.redirectUrl;
-}
-
-// Resolve once Firebase auth has settled after the redirect reload.
-function waitForAuth(timeoutMs) {
-  return new Promise((resolve) => {
-    if (window._fbUser) return resolve(window._fbUser);
-    let done = false;
-    const finish = () => { if (!done) { done = true; resolve(window._fbUser || null); } };
-    // onAuthStateChanged sets window._fbUser + calls _onAuthReady; chain onto it
-    const prev = window._onAuthReady;
-    window._onAuthReady = (user, profile) => { if (prev) prev(user, profile); finish(); };
-    setTimeout(finish, timeoutMs || 4000);
-  });
 }
 
 // ── PhonePe return handler (runs when customer comes back) ─
@@ -869,35 +858,15 @@ async function handlePhonePeReturn(merchantOrderId) {
   try { pending = JSON.parse(sessionStorage.getItem('auranest_pending_order') || 'null'); } catch(e) {}
 
   try {
-    const orderData = pending
-      ? { orderId: merchantOrderId, customer: pending.customer, items: pending.items, subtotal: pending.subtotal }
-      : { orderId: merchantOrderId };
-
+    // The server saves & fulfils the order (webhook or this call — whichever is
+    // first). We just confirm the state and show the right screen.
     const res  = await fetch('/api/phonepe-status', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ merchantOrderId, orderData }),
+      body: JSON.stringify({ merchantOrderId }),
     });
     const data = await res.json();
 
     if (data.success) {
-      // Payment confirmed by backend. Try to save the order record — wait for
-      // Firebase auth to restore first (it reloads async after the redirect).
-      // A save failure must NOT hide the success screen: the money is taken and
-      // the Shiprocket order already exists.
-      if (pending && window._saveOrder) {
-        try {
-          await waitForAuth(4000);
-          await window._saveOrder({
-            orderId: merchantOrderId, customerId: pending.customerId, customer: pending.customer,
-            items: pending.items, subtotal: pending.subtotal, discount: pending.discount,
-            shipping: pending.shipping, totalAmount: pending.totalAmount,
-            paymentMethod: 'PhonePe', paymentStatus: 'paid', orderStatus: 'confirmed',
-            phonepeTxnId: data.phonepeTxnId || '', merchantOrderId,
-          });
-        } catch(saveErr) {
-          console.error('[phonepe] order save failed (payment still OK):', saveErr);
-        }
-      }
       CartStore.clear();
       sessionStorage.removeItem('auranest_pending_order');
       S.result = { orderId: merchantOrderId, method: 'PhonePe', total: pending ? pending.totalAmount : 0 };
