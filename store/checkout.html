@@ -834,13 +834,17 @@ async function payWithPhonePe({ customer, items, sub, disc, ship, total }) {
 
   const redirectUrl = `${location.origin}/store/checkout.html?phonepe=return&order=${encodeURIComponent(merchantOrderId)}`;
 
-  const res = await fetch('/api/phonepe-create-payment', {
+  const res  = await fetch('/api/phonepe-create-payment', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount: total, merchantOrderId, redirectUrl, orderData }),
   });
-  if (!res.ok) throw new Error('Could not start PhonePe payment. Please try again.');
-  const data = await res.json();
-  if (!data.redirectUrl) throw new Error('Could not start PhonePe payment. Please try again.');
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.redirectUrl) {
+    let d = data.detail;
+    if (d && typeof d === 'object') d = d.message || d.code || JSON.stringify(d);
+    console.error('[phonepe] create-payment failed:', res.status, data);
+    throw new Error('Could not start PhonePe payment. ' + (d || data.error || `(HTTP ${res.status})`));
+  }
 
   // Hand off to PhonePe's hosted checkout
   window.location.href = data.redirectUrl;
