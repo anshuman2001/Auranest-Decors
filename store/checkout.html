@@ -284,7 +284,7 @@ const CartStore = {
 function calcTotals() {
   const sub  = S.cart.reduce((a, x) => a + x.price * x.qty, 0);
   const disc = S.discount ? Math.round(sub * 0.1) : 0;
-  const ship = sub >= 999 ? 0 : 79;
+  const ship = 0; // Free shipping on all orders
   return { sub, disc, ship, total: sub - disc + ship };
 }
 
