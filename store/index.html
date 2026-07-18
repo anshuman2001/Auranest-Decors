@@ -319,6 +319,14 @@ nav.scrolled{box-shadow:0 4px 32px rgba(18,12,6,.10);background:rgba(255,252,247
 .marquee-strip{background:linear-gradient(90deg,var(--gold-dk),var(--gold),var(--gold-lt),var(--gold),var(--gold-dk));padding:.85rem 0;overflow:hidden;margin-top:20px;margin-bottom:0;}
 .marquee-track{display:flex;gap:2.5rem;width:max-content;animation:marquee 30s linear infinite;}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* Accessibility: skip link + honour reduced-motion */
+.skip-link{position:absolute;left:-999px;top:0;z-index:2000;background:#1c1a18;color:#fff;
+  padding:12px 20px;border-radius:0 0 8px 0;font-size:.85rem;text-decoration:none}
+.skip-link:focus{left:0}
+@media (prefers-reduced-motion:reduce){
+  .marquee-track{animation:none!important}
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
 .m-item{font-family:'Cormorant Garamond',serif;font-size:1rem;color:#fff;white-space:nowrap;display:flex;align-items:center;gap:1rem;}
 /* ── SUBCAT ICONS ROW ── */
 .subcat-icons-row{background:#fff;border-bottom:1px solid var(--border);border-top:1px solid var(--border);padding:.9rem 3% .8rem;display:flex;justify-content:center;gap:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
@@ -1249,6 +1257,8 @@ body.pdp-open .wa-float{display:none;}
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to content</a>
+
 <!-- LUXURY WELCOME SCREEN -->
 <div id="welcome">
   <div class="wlc-inner">
@@ -1549,7 +1559,7 @@ body.pdp-open .wa-float{display:none;}
   </div>
 </div>
 
-<main>
+<main id="main">
 <!-- HERO — SPLIT LAYOUT (CREAM) -->
 <section class="hero-new" id="heroNew">
   <h1 class="sr-only">Handcrafted Indian Home Décor — Folk Art, Wooden Trays &amp; Artisan Gifts | Auranest Decors</h1>
@@ -3373,7 +3383,7 @@ function openPModal(id) {
     const mainImg = imgs[activeIdx] || '';
     const thumbs = imgs.length > 1 ? `
       <div style="display:flex;gap:.4rem;padding:.6rem;background:var(--warm);justify-content:center;flex-wrap:wrap">
-        ${imgs.map((src,i) => `<img src="${src}" onclick="setGalleryImg(${i})" style="width:52px;height:52px;object-fit:cover;cursor:pointer;border:2px solid ${i===activeIdx?'var(--terracotta)':'transparent'};transition:border-color .2s" onerror="this.style.display='none'"/>`).join('')}
+        ${imgs.map((src,i) => `<img src="${src}" alt="Product thumbnail ${i+1}" onclick="setGalleryImg(${i})" style="width:52px;height:52px;object-fit:cover;cursor:pointer;border:2px solid ${i===activeIdx?'var(--terracotta)':'transparent'};transition:border-color .2s" onerror="this.style.display='none'"/>`).join('')}
       </div>` : '';
     return `
       <div style="position:relative;flex:1">

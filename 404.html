@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Page Not Found — Auranest Decors</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#faf8f5;--ink:#1c1a18;--mid:#5a5550;--gold:#b8934a;--gold-lt:#d4a85c;--gold-pale:#f5ecd8;--border:#ece8e1}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:2rem 1.5rem;overflow-x:hidden}
+  .glyph{font-family:'Cormorant Garamond',serif;font-size:clamp(6rem,22vw,12rem);font-weight:600;
+    line-height:1;color:var(--gold);letter-spacing:.02em;position:relative}
+  .glyph::after{content:'';display:block;width:64px;height:2px;background:var(--gold-lt);margin:1.2rem auto 0;opacity:.7}
+  h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:600;margin:1.6rem 0 .6rem;letter-spacing:.01em}
+  p{color:var(--mid);font-size:.95rem;max-width:38ch;margin:0 auto 2rem;line-height:1.7}
+  .btns{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center}
+  a.btn{text-decoration:none;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    padding:.85rem 1.8rem;border-radius:50px;transition:transform .15s,background .2s,color .2s}
+  a.solid{background:var(--ink);color:#fff}
+  a.solid:hover{background:var(--gold);transform:translateY(-1px)}
+  a.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+  a.ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .brand{position:absolute;top:1.6rem;left:50%;transform:translateX(-50%);
+    font-family:'Cormorant Garamond',serif;font-size:1.15rem;letter-spacing:.12em;color:var(--ink);text-decoration:none}
+  @media (prefers-reduced-motion:reduce){a.btn{transition:none}}
+</style>
+</head>
+<body>
+  <a href="/store/" class="brand">AURANEST DECORS</a>
+  <div class="glyph">404</div>
+  <h1>This page has wandered off</h1>
+  <p>The page you're looking for isn't here — it may have been moved, or the link was mistyped. Let's get you back to something beautiful.</p>
+  <div class="btns">
+    <a href="/store/" class="btn solid">Back to Store</a>
+    <a href="/catalog/" class="btn ghost">Browse Catalogue</a>
+  </div>
+</body>
+</html>
