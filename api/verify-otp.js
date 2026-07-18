@@ -6,6 +6,7 @@
 //   OTP_SECRET  — must match the value used when the token was created
 
 const crypto = require('crypto');
+const { rateLimit, clientIp } = require('../lib/rateLimit');
 
 const SECRET     = process.env.OTP_SECRET; // no fallback — fail closed if unset
 const OTP_TTL_MS = 10 * 60 * 1000;
@@ -67,6 +68,13 @@ module.exports = async function handler(req, res) {
   }
   if (!otp || !/^\d{6}$/.test(otp)) {
     return res.status(400).json({ error: 'Enter the complete 6-digit OTP.' });
+  }
+
+  // Attempt cap: max 8 verify attempts per IP / 10 min. Makes online brute-force
+  // of the 6-digit code (1,000,000 combinations) infeasible within the TTL.
+  const rl = await rateLimit(`otp-verify-ip:${clientIp(req)}`, 8, 10 * 60 * 1000);
+  if (!rl.allowed) {
+    return res.status(429).json({ error: 'Too many incorrect attempts. Please request a new OTP in a few minutes.' });
   }
 
   const result = checkToken(token, otp);

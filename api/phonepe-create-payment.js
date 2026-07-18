@@ -8,6 +8,7 @@
 
 const { HOSTS, getAccessToken } = require('../lib/phonepe');
 const { savePendingOrder }      = require('../lib/firebaseAdmin');
+const { computeAuthoritativeTotal } = require('../lib/pricing');
 const axios = require('axios');
 
 module.exports = async function handler(req, res) {
@@ -25,17 +26,38 @@ module.exports = async function handler(req, res) {
   if (!redirectUrl)            return res.status(400).json({ error: 'Missing redirectUrl' });
 
   try {
-    // 1. Persist the pending order (best-effort — don't block payment on it)
+    // 1. Recompute the payable amount from REAL product prices (SEC-05).
+    //    The client-sent `amount` is never trusted for charging. Falls back to
+    //    the client amount only if the server can't price the cart at all, so a
+    //    Firestore hiccup never hard-breaks checkout.
+    let chargeAmount = amount;
+    if (orderData && Array.isArray(orderData.items) && orderData.items.length) {
+      try {
+        const couponApplied = Number(orderData.discount) > 0;
+        const priced = await computeAuthoritativeTotal(orderData.items, couponApplied);
+        if (priced.ok && priced.total > 0) {
+          chargeAmount = priced.total;
+          orderData.subtotal    = priced.subtotal;
+          orderData.discount    = priced.discount;
+          orderData.totalAmount = priced.total;
+          if (Math.abs(priced.total - Number(amount)) > 1) {
+            console.warn(`[phonepe-create-payment] amount mismatch: client=${amount} server=${priced.total} order=${merchantOrderId}`);
+          }
+        }
+      } catch (e) { console.error('[phonepe-create-payment] pricing failed, using client amount:', e.message); }
+    }
+
+    // 2. Persist the pending order (best-effort — don't block payment on it)
     if (orderData) {
       try { await savePendingOrder(merchantOrderId, orderData); }
       catch (e) { console.error('[phonepe-create-payment] savePendingOrder failed:', e.message); }
     }
 
-    // 2. OAuth + create payment
+    // 3. OAuth + create payment
     const token = await getAccessToken();
     const payload = {
       merchantOrderId,
-      amount: Math.round(amount * 100), // rupees → paise
+      amount: Math.round(chargeAmount * 100), // rupees → paise
       expireAfter: 1200,
       metaInfo: { udf1: 'AuraNest Decors' },
       paymentFlow: {

@@ -7,6 +7,7 @@
 //   OTP_SECRET        — any random 32+ char string for HMAC signing
 
 const crypto = require('crypto');
+const { rateLimit, clientIp } = require('../lib/rateLimit');
 
 const SECRET       = process.env.OTP_SECRET; // no fallback — fail closed if unset
 const F2S_KEY      = process.env.FAST2SMS_API_KEY || '';
@@ -45,6 +46,17 @@ module.exports = async function handler(req, res) {
   const { phone } = req.body || {};
   if (!phone || !/^\d{10}$/.test(phone)) {
     return res.status(400).json({ error: 'Enter a valid 10-digit mobile number.' });
+  }
+
+  // Rate limit: max 3 OTPs per phone / 10 min, and 10 per IP / 10 min.
+  // Prevents SMS-bombing and direct Fast2SMS cost abuse.
+  const perPhone = await rateLimit(`otp-send:${phone}`, 3, 10 * 60 * 1000);
+  if (!perPhone.allowed) {
+    return res.status(429).json({ error: 'Too many OTP requests. Please wait 10 minutes before trying again.' });
+  }
+  const perIp = await rateLimit(`otp-send-ip:${clientIp(req)}`, 10, 10 * 60 * 1000);
+  if (!perIp.allowed) {
+    return res.status(429).json({ error: 'Too many requests from this network. Please try again later.' });
   }
 
   const otp   = makeOtp();
