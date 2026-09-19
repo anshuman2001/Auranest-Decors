@@ -4,6 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Auranest Admin – Dashboard</title>
+<link rel="manifest" href="/admin/manifest.json"/>
+<link rel="icon" type="image/jpeg" href="/assets/logo.jpg"/>
+<link rel="apple-touch-icon" href="/assets/logo.jpg"/>
+<meta name="theme-color" content="#0f0d0b"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Auranest Admin"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#0f0d0b;--surface:#1a1612;--card:#221e19;--border:rgba(184,147,63,0.15);--border2:rgba(255,255,255,0.06);--gold:#b8933f;--gold-lt:#d4aa5f;--gold-dim:rgba(184,147,63,0.12);--terra:#c07b4f;--terra-dim:rgba(192,123,79,0.12);--green:#4caf7d;--green-dim:rgba(76,175,125,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.12);--blue:#5c8fe0;--blue-dim:rgba(92,143,224,0.12);--text:#f0ebe3;--muted:#8a7d6e;--subtle:#3a342d;--sw:240px;}
@@ -1855,6 +1863,12 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e) {}
   }, 2000);
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/admin/sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>

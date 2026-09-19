@@ -2947,8 +2947,12 @@ window.placeOrder = async function() {
   // ── COD ───────────────────────────────────────────────────────────────────
   if (payment === 'cod') {
     try {
-      await saveOrderToFirebase({ paymentStatus: 'pending' });
+      const savedOrder = await saveOrderToFirebase({ paymentStatus: 'pending' });
       showToast(`🎉 Order placed! ID: ${orderId} — Pay on delivery`);
+      fetch('/api/notify-order', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderData: savedOrder }),
+      }).catch(() => {});
     } catch (err) { showToast('❌ Order failed: ' + err.message);
     } finally     { resetBtn(); }
     return;

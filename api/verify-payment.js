@@ -5,6 +5,7 @@
 
 const crypto = require('crypto');
 const axios  = require('axios');
+const { notifyNewOrder } = require('../lib/notify');
 
 const SHIPROCKET_API = 'https://apiv2.shiprocket.in/v1/external';
 
@@ -37,6 +38,10 @@ module.exports = async function handler(req, res) {
   if (expected !== razorpay_signature) {
     return res.status(400).json({ success: false, error: 'Payment verification failed' });
   }
+
+  // Alert the owner — best-effort, never blocks the response below.
+  notifyNewOrder({ ...orderData, paymentMethod: 'Razorpay', paymentStatus: 'paid' })
+    .catch(e => console.error('[verify-payment] notify:', e.message));
 
   // ── 2. CREATE SHIPROCKET ORDER ────────────────────────────────────────────
   let shiprocketOrderId   = null;
