@@ -153,6 +153,16 @@ h1.hero-title em{font-style:italic;color:var(--gold-lt);}
 @media(max-width:1100px){.prod-grid{grid-template-columns:repeat(3,1fr);}.intro-section{grid-template-columns:1fr;gap:2rem;}.intro-img{order:-1;}}
 @media(max-width:900px){.cat-hero,.nav,.subcat-section,.products-section,.blog-section,.faq-section,.site-footer,.intro-section{padding-left:3rem;padding-right:3rem;}.subcat-grid{grid-template-columns:repeat(2,1fr);}.prod-grid{grid-template-columns:repeat(2,1fr);}.blog-inner{grid-template-columns:1fr;}.blog-grid{grid-template-columns:1fr;}}
 @media(max-width:600px){.cat-hero,.nav,.subcat-section,.products-section,.blog-section,.faq-section,.site-footer,.intro-section{padding-left:1.5rem;padding-right:1.5rem;}.subcat-grid{grid-template-columns:1fr;}.nav-links .hide-mob{display:none;}}
+
+.shop-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding:1rem 6%;border-bottom:1px solid var(--border);background:var(--cream)}
+.price-pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.pr-pill{font-family:'Outfit',sans-serif;font-size:.72rem;letter-spacing:.04em;padding:.45rem 1rem;border:1px solid var(--border);background:transparent;color:var(--mid);border-radius:50px;cursor:pointer;transition:.2s}
+.pr-pill:hover{border-color:var(--forest);color:var(--forest)}
+.pr-pill.active{background:var(--forest);color:#F8F3EA;border-color:var(--forest)}
+.sort-wrap{display:flex;align-items:center;gap:.5rem}
+.sort-wrap label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sort-wrap select{font-family:'Outfit',sans-serif;font-size:.8rem;padding:.45rem .8rem;border:1px solid var(--border);background:var(--white);color:var(--dark);border-radius:6px;cursor:pointer;outline:none}
+.prod-disc{position:absolute;top:.6rem;right:.6rem;background:var(--gold);color:var(--forest);font-size:.62rem;font-weight:700;letter-spacing:.03em;padding:.2rem .5rem;border-radius:4px;z-index:2}
 </style>
 </head>
 <body>
@@ -228,6 +238,24 @@ h1.hero-title em{font-style:italic;color:var(--gold-lt);}
 <section class="products-section" id="products">
   <div class="sec-eye">Our Products</div>
   <div class="sec-title">Aura Décor Collection</div>
+  <div class="shop-bar">
+  <div class="price-pills">
+    <button class="pr-pill active" onclick="setPrice(0,0,this)">All Prices</button>
+    <button class="pr-pill" onclick="setPrice(0,499,this)">Under ₹499</button>
+    <button class="pr-pill" onclick="setPrice(500,999,this)">₹500–999</button>
+    <button class="pr-pill" onclick="setPrice(1000,1999,this)">₹1000–1999</button>
+    <button class="pr-pill" onclick="setPrice(2000,0,this)">₹2000+</button>
+  </div>
+  <div class="sort-wrap">
+    <label>Sort</label>
+    <select onchange="setSort(this.value)">
+      <option value="popular">Popularity</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="newest">Newest</option>
+    </select>
+  </div>
+</div>
   <div class="prod-grid" id="prodGrid">
     <div class="loading-state">
       <div class="spinner"></div>
@@ -349,6 +377,7 @@ function renderProducts(products) {
       <div class="prod-img-wrap">
         ${img ? `<img src="${img}" alt="${p.name} — Auranest Aura Décor" loading="lazy"/>` : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem">🏺</div>'}
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
+        ${p.mrp && p.mrp>p.price ? `<span class="prod-disc">${Math.round((1-p.price/p.mrp)*100)}% OFF</span>` : ''}
       </div>
       <div class="prod-body">
         <div class="prod-sub">${p.subCategory || 'Aura Décor'}</div>
@@ -366,6 +395,21 @@ window.scrollToProducts = function(sub) {
     renderProducts(filtered.length ? filtered : window._decorProducts);
   }
 };
+let _priceMin=0,_priceMax=0,_sortBy='popular';
+function applyFilters(){
+  let list=(window._decorProducts||[]).slice();
+  if(_priceMin||_priceMax) list=list.filter(p=>{const pr=Number(p.price)||0;return pr>=_priceMin&&(_priceMax?pr<=_priceMax:true);});
+  const ts=p=>(p.createdAt&&(p.createdAt.seconds||p.createdAt._seconds))||0;
+  if(_sortBy==='price-asc')list.sort((a,b)=>(Number(a.price)||0)-(Number(b.price)||0));
+  else if(_sortBy==='price-desc')list.sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
+  else if(_sortBy==='newest')list.sort((a,b)=>ts(b)-ts(a));
+  else list.sort((a,b)=>(Number(b.sold)||0)-(Number(a.sold)||0));
+  const g=document.getElementById('prodGrid');
+  if(!list.length){g.innerHTML='<div class="loading-state"><p>No products match these filters.</p></div>';return;}
+  renderProducts(list);
+}
+window.setPrice=function(min,max,btn){_priceMin=min;_priceMax=max;document.querySelectorAll('.pr-pill').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');applyFilters();};
+window.setSort=function(v){_sortBy=v;applyFilters();};
 loadProducts();
 </script>
 <script>
