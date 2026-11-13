@@ -49,15 +49,17 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:        #faf8f5;
+    --bg:        #F8F3EA;
     --white:     #ffffff;
-    --charcoal:  #1c1a18;
-    --mid:       #5a5550;
-    --light:     #aca89f;
-    --gold:      #b8934a;
-    --gold-lt:   #d4a85c;
-    --gold-pale: #f5ecd8;
-    --border:    #ece8e1;
+    --charcoal:  #30251F;
+    --mid:       #5a4a3f;
+    --light:     #8a7768;
+    --gold:      #C69736;
+    --gold-lt:   #d9b35a;
+    --gold-pale: #EDE3D3;
+    --border:    #e3d8c6;
+    --forest:    #123D2E;
+    --forest-dk: #0d2c21;
     --card-bg:   #ffffff;
     --shadow-sm: 0 2px 12px rgba(0,0,0,.06);
     --shadow-md: 0 8px 32px rgba(0,0,0,.10);
@@ -325,7 +327,7 @@
     border: none; border-radius: 50px; padding: 9px 20px; cursor: pointer;
     transition: all .2s; text-decoration: none; display: inline-block;
   }
-  .p-cta:hover { background: var(--charcoal); color: var(--white); }
+  .p-cta:hover { background: var(--forest); color: var(--white); }
   .p-dot {
     width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
     opacity: .6;
@@ -458,7 +460,7 @@
       content: '';
       display: block;
       height: 14mm;
-      background: #1c1a18;
+      background: #30251F;
     }
 
     /* Products grid — 2 columns for print */
@@ -472,7 +474,7 @@
     .p-card {
       break-inside: avoid;
       page-break-inside: avoid;
-      border: 1px solid #ece8e1 !important;
+      border: 1px solid #e3d8c6 !important;
       border-radius: 6mm !important;
       overflow: hidden;
       box-shadow: none !important;
@@ -481,7 +483,7 @@
 
     .p-img-wrap {
       height: 52mm !important;
-      background: #f5ecd8 !important;
+      background: #EDE3D3 !important;
     }
 
     .p-img-wrap img {
@@ -491,7 +493,7 @@
     }
 
     .p-cat-tag {
-      background: #b8934a !important;
+      background: #C69736 !important;
       color: #fff !important;
       font-size: 7pt !important;
       padding: 2mm 3mm !important;
@@ -503,14 +505,14 @@
     .p-name {
       font-size: 10pt !important;
       font-weight: 700 !important;
-      color: #1c1a18 !important;
+      color: #30251F !important;
       margin-bottom: 2mm !important;
       font-family: 'Cormorant Garamond', Georgia, serif !important;
     }
 
     .p-desc {
       font-size: 8pt !important;
-      color: #5a5550 !important;
+      color: #5a4a3f !important;
       line-height: 1.4 !important;
     }
 
@@ -528,10 +530,10 @@
       font-family: Georgia, serif;
       font-size: 16pt;
       font-weight: 700;
-      color: #b8934a;
+      color: #C69736;
       text-align: center;
       padding: 4mm 0 6mm;
-      border-bottom: 0.5mm solid #b8934a;
+      border-bottom: 0.5mm solid #C69736;
       margin-bottom: 4mm;
       letter-spacing: 0.05em;
     }
