@@ -1505,6 +1505,22 @@ body.pdp-open .wa-float{display:none;}
         <p class="pp-short" id="ppShort"></p>
         <div class="pp-price-box" id="ppPriceRow"></div>
         <div class="pp-stock in" id="ppStock"></div>
+        <style>
+        .pp-qty{display:flex;align-items:center;gap:1rem;margin:.2rem 0 1.1rem}
+        .pp-qty-label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+        .pp-qty-ctrl{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:50px;overflow:hidden}
+        .pp-qty-ctrl button{width:38px;height:38px;border:none;background:transparent;color:var(--forest);font-size:1.2rem;cursor:pointer;transition:background .15s}
+        .pp-qty-ctrl button:hover{background:var(--warm)}
+        .pp-qty-ctrl input{width:44px;text-align:center;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:.95rem;color:var(--dark);outline:none}
+        </style>
+        <div class="pp-qty">
+          <span class="pp-qty-label">Quantity</span>
+          <div class="pp-qty-ctrl">
+            <button type="button" onclick="ppQtyStep(-1)" aria-label="Decrease quantity">−</button>
+            <input id="ppQty" type="text" value="1" readonly aria-label="Quantity"/>
+            <button type="button" onclick="ppQtyStep(1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
         <div class="pp-actions" id="ppActions">
           <button class="btn-pp-add" id="ppAddBtn">🛒 Add to Cart</button>
           <button class="btn-pp-buy" id="ppBuyBtn">⚡ Buy Now</button>
@@ -3399,13 +3415,17 @@ function searchProds(query) {
   }
 }
 
-function addToCart(id) {
+function addToCart(id, qty=1) {
   const all = window.$products || PRODUCTS;
   const p = all.find((x,i) => x.id === id || String(i) === id);
   if (!p) return;
-  Cart.add(p); updateCartUI();
+  const n = Math.max(1, parseInt(qty) || 1);
+  for (let k=0;k<n;k++) Cart.add(p);
+  updateCartUI();
   showToast(`✓ ${p.name.slice(0,28)}… added!`);
 }
+function ppQtyStep(d){ const el=document.getElementById('ppQty'); if(!el)return; let v=(parseInt(el.value)||1)+d; el.value=Math.max(1,Math.min(99,v)); }
+function ppGetQty(){ const el=document.getElementById('ppQty'); return Math.max(1,parseInt(el&&el.value)||1); }
 
 function updateCartUI() {
   const cart = Cart.get();
@@ -3819,21 +3839,23 @@ const ProductPage = {
     if (!this._imgs.length && p.image) this._imgs = [p.image];
     this._renderGallery(p.icon);
 
+    // ── Quantity (reset to 1 each open) ──
+    const _qEl = document.getElementById('ppQty'); if (_qEl) _qEl.value = 1;
+
     // ── Add to cart / Buy now ──
     document.getElementById('ppAddBtn').onclick = () => {
-      addToCart(id);
-      showToast(`✓ ${p.name.slice(0, 30)}… added to cart!`);
+      addToCart(id, ppGetQty());
     };
     const buyBtn = document.getElementById('ppBuyBtn');
-    if (buyBtn) buyBtn.onclick = () => { addToCart(id); window.location.href = 'checkout.html'; };
+    if (buyBtn) buyBtn.onclick = () => { addToCart(id, ppGetQty()); window.location.href = 'checkout.html'; };
 
     // ── Mobile sticky bar ──
     const sp = document.getElementById('ppStickyPrice');
     if (sp) sp.innerHTML = `<span class="sp-now">₹${p.price.toLocaleString('en-IN')}</span>${p.mrp > p.price ? `<span class="sp-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>` : ''}`;
     const sAdd = document.getElementById('ppStickyAdd');
     const sBuy = document.getElementById('ppStickyBuy');
-    if (sAdd) sAdd.onclick = () => { addToCart(id); showToast(`✓ added to cart!`); };
-    if (sBuy) sBuy.onclick = () => { addToCart(id); window.location.href = 'checkout.html'; };
+    if (sAdd) sAdd.onclick = () => { addToCart(id, ppGetQty()); };
+    if (sBuy) sBuy.onclick = () => { addToCart(id, ppGetQty()); window.location.href = 'checkout.html'; };
 
     // ── Wishlist (bottom + image float) ──
     const wishBtn    = document.getElementById('ppWishBtn');
