@@ -1760,6 +1760,13 @@ body.pdp-open .wa-float{display:none;}
   </div>
 </div>
 
+<!-- ══ NEW ARRIVALS ══ -->
+<section class="section" id="newArrivals">
+  <div class="sec-hdr"><p class="sec-eye">Just In</p><h2 class="sec-title">New Arrivals</h2></div>
+  <div class="prod-grid" id="newArrivalsGrid"></div>
+  <div style="text-align:center;margin-top:2.4rem"><a href="#shop" class="btn-gold">View All Products</a></div>
+</section>
+
 <!-- ══ SOCIAL PROOF ══ -->
 <section class="reviews-section">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:2rem;">
@@ -1995,6 +2002,54 @@ body.pdp-open .wa-float{display:none;}
 </section>
 
 </main>
+<style>
+.insta-section{padding:4.5rem 6% 3.5rem;background:var(--beige);}
+.insta-sub{font-size:.9rem;color:var(--muted);margin-top:.5rem;}
+.insta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.8rem;margin-top:2.2rem;}
+.insta-cell{position:relative;aspect-ratio:1;overflow:hidden;border-radius:10px;display:block;background:var(--warm);}
+.insta-cell img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
+.insta-cell:hover img{transform:scale(1.08);}
+.insta-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(18,61,46,.55);opacity:0;transition:opacity .3s;}
+.insta-cell:hover .insta-ov{opacity:1;}
+.news-section{padding:5rem 6%;background:var(--forest);text-align:center;}
+.news-inner{max-width:620px;margin:0 auto;}
+.news-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.6vw,3rem);font-weight:400;color:#F8F3EA;margin:.4rem 0 .8rem;}
+.news-desc{font-size:.95rem;line-height:1.7;color:rgba(248,243,234,.78);margin-bottom:2rem;}
+.news-form{display:flex;gap:.6rem;max-width:460px;margin:0 auto;flex-wrap:wrap;justify-content:center;}
+.news-form input{flex:1;min-width:220px;padding:.9rem 1.2rem;border:1px solid rgba(198,151,54,.5);background:rgba(255,255,255,.06);color:#F8F3EA;font-family:'Outfit',sans-serif;font-size:.9rem;border-radius:4px;outline:none;}
+.news-form input::placeholder{color:rgba(248,243,234,.55);}
+.news-form input:focus{border-color:var(--gold);}
+.news-btn{background:var(--gold);color:var(--forest);border:none;padding:.9rem 2rem;font-family:'Outfit',sans-serif;font-weight:600;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:background .2s,transform .2s;}
+.news-btn:hover{background:var(--gold-lt);transform:translateY(-1px);}
+.news-note{margin-top:1rem;font-size:.85rem;min-height:1.2em;color:rgba(248,243,234,.8);}
+@media(max-width:860px){.insta-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:480px){.insta-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+
+<!-- ══ INSTAGRAM GALLERY ══ -->
+<section class="insta-section" id="instaGallery">
+  <div class="sec-hdr" style="text-align:center">
+    <p class="sec-eye">@auranestdecors</p>
+    <h2 class="sec-title">Follow Our Journey</h2>
+    <p class="insta-sub">Handcrafted moments from Indian homes. Tag us to be featured.</p>
+  </div>
+  <div class="insta-grid" id="instaGrid"></div>
+</section>
+
+<!-- ══ NEWSLETTER ══ -->
+<section class="news-section">
+  <div class="news-inner">
+    <p class="sec-eye" style="color:var(--gold-lt);justify-content:center">Stay Connected</p>
+    <h2 class="news-title">Join the AuraNest Circle</h2>
+    <p class="news-desc">Be first to know about new collections, artisan stories and members-only offers — delivered with care.</p>
+    <form class="news-form" onsubmit="return subscribeNews(event)">
+      <input type="email" id="newsEmail" placeholder="Your email address" aria-label="Email address" required/>
+      <button type="submit" class="news-btn">Subscribe</button>
+    </form>
+    <p class="news-note" id="newsNote"></p>
+  </div>
+</section>
+
 <footer>
 
 <!-- MAIN FOOTER GRID -->
@@ -4103,6 +4158,65 @@ function loadTrending() {
   }).join('');
   // Enable drag-to-scroll on desktop
   trendDragInit(grid);
+  loadNewArrivals();
+  loadInstagram();
+}
+
+// ── NEW ARRIVALS (newest products) ──
+function loadNewArrivals() {
+  const all = window.$products || PRODUCTS;
+  if (!all || !all.length) return;
+  const grid = document.getElementById('newArrivalsGrid');
+  if (!grid) return;
+  const ts = p => (p.createdAt && (p.createdAt.seconds || p.createdAt._seconds)) || 0;
+  const list = [...all].sort((a,b) => ts(b) - ts(a)).slice(0, 8);
+  grid.innerHTML = list.map((p,i) => {
+    const img = p.images?.[0] || p.image || '';
+    const pid = p.id || String(i);
+    return `<div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
+      <div class="prod-img-wrap" style="border-radius:14px">
+        ${img ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>` : `<div class="prod-emoji">${p.icon||'🏺'}</div>`}
+        <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
+        <span class="prod-tag" style="background:var(--forest);color:#F8F3EA">New</span>
+      </div>
+      <p class="prod-sub">${p.subCategory || ''}</p>
+      <p class="prod-name">${p.name}</p>
+      <p class="prod-price">₹${p.price.toLocaleString('en-IN')}${p.mrp > p.price ? `<span class="prod-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>` : ''}</p>
+    </div>`;
+  }).join('');
+}
+
+// ── INSTAGRAM GALLERY (lifestyle grid → profile) ──
+function loadInstagram() {
+  const all = window.$products || PRODUCTS;
+  const grid = document.getElementById('instaGrid');
+  if (!grid || !all || !all.length) return;
+  const withImg = all.filter(p => (p.images?.[0] || p.image));
+  const picks = withImg.slice(0, 6);
+  grid.innerHTML = picks.map(p => {
+    const img = p.images?.[0] || p.image;
+    return `<a class="insta-cell" href="https://www.instagram.com/auranestdecors" target="_blank" rel="noopener" aria-label="View on Instagram">
+      <img src="${cdnImg(img,400)}" alt="${p.name}" loading="lazy"/>
+      <span class="insta-ov"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg></span>
+    </a>`;
+  }).join('');
+}
+
+// ── NEWSLETTER SUBSCRIBE ──
+async function subscribeNews(e) {
+  e.preventDefault();
+  const inp = document.getElementById('newsEmail');
+  const note = document.getElementById('newsNote');
+  const email = (inp.value || '').trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = 'Please enter a valid email address.'; note.style.color = '#c0392b'; return false; }
+  note.textContent = 'Subscribing…'; note.style.color = 'var(--muted)';
+  try {
+    await fetch('/api/newsletter', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email }) });
+  } catch(err) {}
+  try { localStorage.setItem('auranest_subscribed', email); } catch(e){}
+  note.textContent = '✓ Thank you — welcome to the AuraNest circle.'; note.style.color = 'var(--forest)';
+  inp.value = '';
+  return false;
 }
 
 // ── TRENDING CAROUSEL SCROLL ──
