@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>About Us — AuraNest Decors | Handcrafted Indian Home Décor</title>
+<meta name="description" content="AuraNest Decors brings India's artisanal heritage into modern homes. Discover our story, our values, and our promise — handcrafted, soulful, timeless."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://www.auranestdecors.com/store/about.html"/>
+<link rel="icon" type="image/jpeg" href="../assets/logo.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F8F3EA;--white:#FFFFFF;--beige:#EDE3D3;--forest:#123D2E;--forest-dk:#0d2c21;--gold:#C69736;--gold-lt:#d9b35a;--espresso:#30251F;--mid:#5a4a3f;--muted:#8a7768;--border:#e3d8c6}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--espresso);-webkit-font-smoothing:antialiased;line-height:1.6}
+a{color:inherit;text-decoration:none}
+nav{position:sticky;top:0;z-index:100;background:rgba(248,243,234,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 5%;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--forest);letter-spacing:.06em}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+@media(max-width:720px){.nav-links{display:none}}
+.hero{background:var(--forest);color:#F8F3EA;text-align:center;padding:5.5rem 8% 5rem;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hero .eyebrow{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:1.2rem}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:400;line-height:1.05;letter-spacing:.01em}
+.hero p{max-width:40ch;margin:1.4rem auto 0;color:rgba(248,243,234,.82);font-size:1.02rem}
+.wrap{max-width:1080px;margin:0 auto;padding:0 5%}
+.lead{max-width:760px;margin:5rem auto;text-align:center}
+.lead .em{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:400;color:var(--forest);line-height:1.4}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;margin:5rem auto;max-width:1080px;padding:0 5%}
+.story h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.4vw,2.8rem);font-weight:400;color:var(--forest);margin-bottom:1.2rem}
+.story p{color:var(--mid);margin-bottom:1rem;font-size:.98rem}
+.story-img{aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:var(--beige);box-shadow:0 20px 60px rgba(48,37,31,.12)}
+.story-img img{width:100%;height:100%;object-fit:cover}
+.values{background:var(--beige);padding:5rem 5%}
+.values-grid{max-width:1080px;margin:2.5rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.val{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:2.2rem 1.8rem;text-align:center}
+.val .ic{font-size:2rem;margin-bottom:1rem}
+.val h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--forest);margin-bottom:.6rem}
+.val p{font-size:.9rem;color:var(--muted)}
+.sec-center{text-align:center;max-width:620px;margin:0 auto}
+.eyebrow2{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
+h2.block{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.4vw,2.8rem);font-weight:400;color:var(--forest)}
+.promise{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1080px;margin:3rem auto 0;padding:0 5%}
+.pr{text-align:center;padding:1.5rem}
+.pr .n{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold)}
+.pr .l{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-top:.4rem}
+.cta{background:var(--forest);color:#F8F3EA;text-align:center;padding:4.5rem 5%;margin-top:5rem}
+.cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.4vw,2.8rem);font-weight:400;margin-bottom:1.5rem}
+.btn{display:inline-block;background:var(--gold);color:var(--forest);font-weight:600;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;padding:.95rem 2.2rem;border-radius:4px;transition:.2s}
+.btn:hover{background:var(--gold-lt);transform:translateY(-1px)}
+footer{background:var(--forest);color:rgba(248,243,234,.6);text-align:center;padding:2.8rem 5%;font-size:.82rem}
+footer a{color:rgba(248,243,234,.55);margin:0 .7rem;transition:color .2s}
+footer a:hover{color:var(--gold)}
+@media(max-width:760px){.story,.values-grid,.promise{grid-template-columns:1fr}.story-img{order:-1}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../store/" class="nav-brand">AuraNest Decors</a>
+  <ul class="nav-links">
+    <li><a href="artisan.html">Artisan</a></li>
+    <li><a href="woodcraft.html">Woodcraft</a></li>
+    <li><a href="our-artisans.html">Our Artisans</a></li>
+    <li><a href="../catalog/">Catalogue</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">Our Story</p>
+  <h1>Feel the Beauty<br/>of Home</h1>
+  <p>Bringing India's artisanal heritage into modern homes — one handcrafted piece at a time.</p>
+</header>
+
+<section class="lead">
+  <p class="em">"Every piece we make carries the quiet imprint of the hands that shaped it — and the soul of the home it's destined for."</p>
+</section>
+
+<section class="story">
+  <div>
+    <h2>Rooted in heritage</h2>
+    <p>AuraNest Decors began with a simple belief: that the beauty of a home lies in the stories its objects tell. We work directly with skilled Indian artisans who have carried folk-art traditions — Madhubani, Warli, tribal and beyond — across generations.</p>
+    <p>From hand-painted terracotta planters to carved woodcraft and serene minimal pieces, each creation is made slowly, deliberately, and with genuine care. No two are ever exactly alike.</p>
+  </div>
+  <div class="story-img"><img src="https://res.cloudinary.com/dnqtv2gsn/image/upload/f_auto,q_auto,w_700/auranest/ceramic-planter-with-blue-leaf/img1.jpg" alt="Handcrafted AuraNest décor" onerror="this.parentElement.style.background='var(--forest)'"/></div>
+</section>
+
+<section class="values">
+  <div class="sec-center"><p class="eyebrow2">What We Stand For</p><h2 class="block">Handcrafted · Soulful · Timeless</h2></div>
+  <div class="values-grid">
+    <div class="val"><div class="ic">🪔</div><h3>Handcrafted</h3><p>Every piece is made by hand by Indian artisans — never mass-produced, always one of a kind.</p></div>
+    <div class="val"><div class="ic">🌿</div><h3>Soulful</h3><p>We celebrate folk art and natural materials that bring warmth, character and meaning into modern homes.</p></div>
+    <div class="val"><div class="ic">✦</div><h3>Timeless</h3><p>Designs that transcend trends — made to be loved for years and passed on with pride.</p></div>
+  </div>
+</section>
+
+<section style="padding:5rem 5%">
+  <div class="sec-center"><p class="eyebrow2">Our Promise</p><h2 class="block">Thoughtfully Made, Carefully Delivered</h2></div>
+  <div class="promise">
+    <div class="pr"><div class="n">100%</div><div class="l">Handcrafted in India</div></div>
+    <div class="pr"><div class="n">Free</div><div class="l">Shipping on All Orders</div></div>
+    <div class="pr"><div class="n">2–3</div><div class="l">Day Delivery</div></div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Discover pieces made with heart</h2>
+  <a href="../store/" class="btn">Shop the Collection →</a>
+</section>
+
+<footer>
+  <div style="margin-bottom:.8rem;font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:rgba(248,243,234,.85)">AuraNest Decors</div>
+  <a href="../store/">Home</a><a href="our-artisans.html">Our Artisans</a><a href="../catalog/">Catalogue</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a>
+  <div style="margin-top:1.2rem;font-size:.7rem;opacity:.5">© 2026 AuraNest Decors · Made in India 🇮🇳</div>
+</footer>
+</body>
+</html>
