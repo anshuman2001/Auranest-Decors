@@ -4434,7 +4434,7 @@ if (!new URLSearchParams(location.search).get('product') && !sessionStorage.getI
     // Fire the GSAP hero entrance AFTER the loader lifts
     if (window.__playHero) window.__playHero();
     try { window.dispatchEvent(new Event('auranest:heroReady')); } catch(e){}
-  }, 1600);
+  }, 900);
 } else {
   // Deep link / no loader — play hero immediately
   setTimeout(() => { if (window.__playHero) window.__playHero(); }, 200);
@@ -4489,6 +4489,47 @@ window.addEventListener('load',   () => {
   document.getElementById('cbAccept').onclick=function(){decide('accepted');};
   document.getElementById('cbDecline').onclick=function(){decide('declined');};
   setTimeout(function(){ bar.classList.add('show'); }, 1200);
+})();
+</script>
+
+<!-- ══ ECOMMERCE MICRO-INTERACTIONS: fly-to-cart, count bounce, wishlist pop ══ -->
+<style>
+@keyframes cartPop{0%{transform:scale(1)}40%{transform:scale(1.55)}70%{transform:scale(.85)}100%{transform:scale(1)}}
+.cart-pop{animation:cartPop .5s ease}
+@keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.6)}55%{transform:scale(.8)}100%{transform:scale(1)}}
+.heart-pop{animation:heartPop .45s ease}
+</style>
+<script>
+(function(){
+  function cartEl(){ return document.getElementById('cartBadge') || document.querySelector('.cart-badge'); }
+  function bounceCart(){ var c=cartEl(); if(!c)return; c.classList.remove('cart-pop'); void c.offsetWidth; c.classList.add('cart-pop'); }
+  function flyToCart(srcImg){
+    var cart=cartEl(); if(!srcImg||!cart){ bounceCart(); return; }
+    var s=srcImg.getBoundingClientRect(), c=cart.getBoundingClientRect();
+    if(!s.width){ bounceCart(); return; }
+    var fly=srcImg.cloneNode(true);
+    fly.className='';
+    fly.style.cssText='position:fixed;left:'+s.left+'px;top:'+s.top+'px;width:'+s.width+'px;height:'+s.height+'px;object-fit:cover;border-radius:14px;z-index:99999;pointer-events:none;transition:all .8s cubic-bezier(.5,-.25,.25,1);opacity:.95;box-shadow:0 10px 30px rgba(0,0,0,.2)';
+    document.body.appendChild(fly);
+    requestAnimationFrame(function(){
+      fly.style.left=(c.left+c.width/2-16)+'px'; fly.style.top=(c.top+c.height/2-16)+'px';
+      fly.style.width='32px'; fly.style.height='32px'; fly.style.opacity='.25'; fly.style.borderRadius='50%';
+    });
+    setTimeout(function(){ try{fly.remove();}catch(e){} bounceCart(); }, 800);
+  }
+  // Add-to-cart clicks → fly animation (capture phase, before existing onclick)
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.prod-card-add,.prod-qadd,.btn-pp-add,.pp-sticky-add,[onclick*="addToCart"]');
+    if(!btn) return;
+    var scope=btn.closest('.prod-card')||btn.closest('.prod-page')||btn.closest('.pp-main')||document;
+    var img=scope.querySelector('.prod-img-wrap img, #ppMainImg img, img');
+    flyToCart(img);
+  },true);
+  // Wishlist heart pop
+  document.addEventListener('click',function(e){
+    var hbtn=e.target.closest('.prod-wish-heart,.pp-img-wish,[onclick*="_wishToggle"],[onclick*="Wishlist.toggle"]');
+    if(!hbtn) return; hbtn.classList.remove('heart-pop'); void hbtn.offsetWidth; hbtn.classList.add('heart-pop');
+  },true);
 })();
 </script>
 
