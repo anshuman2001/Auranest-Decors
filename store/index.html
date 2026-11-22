@@ -1236,6 +1236,8 @@ body.pdp-open .wa-float{display:none;}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);will-change:opacity,transform}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important;transition:none}}
+.prod-img-wrap .pi-hover{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;opacity:0;transition:opacity .55s ease;z-index:1}
+.prod-card:hover .pi-hover{opacity:1}
 </style>
 <!-- Always start at top on refresh -->
 <script>
@@ -3122,6 +3124,7 @@ function renderProducts(list) {
   if (!list.length) { g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No products found</div>'; return; }
   g.innerHTML = list.map((p,i) => {
     const img     = p.images?.[0] || p.image || '';
+    const img2    = (p.images && p.images[1]) ? p.images[1] : '';
     const pid     = p.id || String(i);
     const stock   = p.stock || 0;
     // Simulated urgency ("people viewing"), scarcity copy and stock bar removed
@@ -3133,8 +3136,9 @@ function renderProducts(list) {
     <div class="prod-card" style="animation-delay:${i*.05}s" onclick="ProductPage.open('${pid}')">
       <div class="prod-img-wrap" style="border-radius:16px">
         ${img
-          ? `<img src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px" loading="lazy" onerror="this.style.display='none'"/>`
+          ? `<img class="pi-main" src="${cdnImg(img,400)}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px" loading="lazy" onerror="this.style.display='none'"/>`
           : `<div class="prod-emoji">${p.icon}</div>`}
+        ${img2 ? `<img class="pi-hover" src="${cdnImg(img2,400)}" alt="" aria-hidden="true" loading="lazy"/>` : ''}
         <button class="prod-wish-heart ${Wishlist.has(pid)?'wished':''}" onclick="event.stopPropagation();_wishToggle('${pid}',this)" aria-label="Save to wishlist">♡</button>
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
         <button class="prod-qadd" onclick="event.stopPropagation();addToCart('${pid}')">Add to Cart</button>
