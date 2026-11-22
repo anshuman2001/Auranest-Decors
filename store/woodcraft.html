@@ -165,6 +165,7 @@ async function loadProducts() {
   }
 }
 
+function cdnImg(u,w){return u?('https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_'+(w||600)+'/'+encodeURIComponent(u)):'';}
 function renderProducts(list) {
   const grid = document.getElementById('prodGrid');
   document.getElementById('prodCount').textContent = list.length + ' products';
@@ -175,7 +176,7 @@ function renderProducts(list) {
     const mrp   = p.mrp && p.mrp > p.price ? `<span class="prod-mrp">₹${Number(p.mrp).toLocaleString('en-IN')}</span>` : '';
     return `<div class="prod-card" onclick="window.location.href='../store/?product=${p.id}'">
       <div class="prod-img-wrap">
-        ${img ? `<img src="${img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
+        ${img ? `<img src="${cdnImg(img,600)}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
         ${p.tag ? `<span class="prod-tag">${p.tag}</span>` : ''}
         ${p.mrp && p.mrp>p.price ? `<span class="prod-disc">${Math.round((1-p.price/p.mrp)*100)}% OFF</span>` : ''}
       </div>
