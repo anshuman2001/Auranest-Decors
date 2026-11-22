@@ -367,7 +367,7 @@ async function loadProducts() {
     grid.innerHTML = '<div class="loading-state"><p>Could not load products. Please try again.</p></div>';
   }
 }
-function cdnImg(u,w){return u?('https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,w_'+(w||600)+'/'+encodeURIComponent(u)):'';}
+function cdnImg(u,w){return u?('https://res.cloudinary.com/dnqtv2gsn/image/fetch/f_auto,q_auto,c_pad,b_white,ar_1:1,w_'+(w||600)+'/'+encodeURIComponent(u)):'';}
 function renderProducts(products) {
   const grid = document.getElementById('prodGrid');
   grid.innerHTML = products.map(p => {

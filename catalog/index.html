@@ -834,7 +834,7 @@ function getImg(p) {
   if (!raw || !raw.includes('res.cloudinary.com') || !raw.includes('/upload/')) return raw;
   const [pre, post] = raw.split('/upload/');
   const rest = post.replace(/^((?:[a-z_]+[^\/]*,?)+\/)/, '');
-  return `${pre}/upload/f_auto,q_auto,w_600/${rest}`;
+  return `${pre}/upload/f_auto,q_auto,c_pad,b_white,ar_1:1,w_600/${rest}`;
 }
 
 function normCat(c) {
