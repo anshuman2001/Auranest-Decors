@@ -1976,6 +1976,39 @@ body.pdp-open .wa-float{display:none;}
 @media(max-width:480px){.insta-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 
+<!-- ══ ANIMATED STATS (real, verifiable numbers only) ══ -->
+<style>
+.stats-band{background:var(--forest);padding:3.2rem 6%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:500;color:#D8C3A4;line-height:1;font-variant-numeric:tabular-nums}
+.stat-plus{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:#D8C3A4}
+.stat-lbl{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.75)}
+.stat-divider{display:none}
+@media(max-width:620px){.stats-band{grid-template-columns:1fr 1fr;gap:2rem}}
+</style>
+<section class="stats-band" id="statsBand">
+  <div><span class="stat-num" data-count="114">0</span><span class="stat-plus">+</span><span class="stat-lbl">Handcrafted Products</span></div>
+  <div><span class="stat-num" data-count="6">0</span><span class="stat-lbl">Artisan Collections</span></div>
+  <div><span class="stat-num">2–3</span><span class="stat-lbl">Day Delivery</span></div>
+  <div><span class="stat-num">100%</span><span class="stat-lbl">Made in India</span></div>
+</section>
+<script>
+(function(){
+  var band=document.getElementById('statsBand'); if(!band) return;
+  function run(){
+    band.querySelectorAll('.stat-num[data-count]').forEach(function(el){
+      var end=parseInt(el.getAttribute('data-count'))||0, t0=null, dur=1400;
+      function step(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1);
+        el.textContent=Math.round((1-Math.pow(1-p,3))*end); if(p<1)requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    });
+  }
+  if('IntersectionObserver'in window){
+    var io=new IntersectionObserver(function(e){ if(e[0].isIntersecting){ run(); io.disconnect(); } },{threshold:.4});
+    io.observe(band);
+  } else run();
+})();
+</script>
+
 <!-- ══ INSTAGRAM GALLERY ══ -->
 <section class="insta-section" id="instaGallery">
   <div class="sec-hdr" style="text-align:center">
@@ -4534,6 +4567,32 @@ window.addEventListener('load',   () => {
     var hbtn=e.target.closest('.prod-wish-heart,.pp-img-wish,[onclick*="_wishToggle"],[onclick*="Wishlist.toggle"]');
     if(!hbtn) return; hbtn.classList.remove('heart-pop'); void hbtn.offsetWidth; hbtn.classList.add('heart-pop');
   },true);
+})();
+</script>
+
+<!-- ══ PRODUCT PAGE IMAGE MAGNIFIER ZOOM (desktop) ══ -->
+<style>
+#ppMainImg{overflow:hidden}
+#ppMainImg img{transition:transform .25s ease;will-change:transform}
+@media(min-width:769px){#ppMainImg{cursor:zoom-in}}
+</style>
+<script>
+(function(){
+  function init(){
+    var box=document.getElementById('ppMainImg');
+    if(!box || box.__zoom) return; box.__zoom=1;
+    box.addEventListener('mousemove',function(e){
+      if(window.innerWidth<=768) return;
+      var img=box.querySelector('img'); if(!img) return;
+      var r=box.getBoundingClientRect();
+      var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
+      img.style.transformOrigin=x+'% '+y+'%'; img.style.transform='scale(2.1)';
+    });
+    box.addEventListener('mouseleave',function(){
+      var img=box.querySelector('img'); if(img){ img.style.transform=''; img.style.transformOrigin='center'; }
+    });
+  }
+  if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',init);
 })();
 </script>
 
