@@ -68,7 +68,6 @@
     "contactOption": "TollFree"
   },
   "sameAs": [
-    "https://www.instagram.com/auranestdecors",
     "https://www.facebook.com/auranestdecors"
   ],
   "address": {
@@ -1953,14 +1952,6 @@ body.pdp-open .wa-float{display:none;}
 
 </main>
 <style>
-.insta-section{padding:4.5rem 6% 3.5rem;background:var(--beige);}
-.insta-sub{font-size:.9rem;color:var(--muted);margin-top:.5rem;}
-.insta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.8rem;margin-top:2.2rem;}
-.insta-cell{position:relative;aspect-ratio:1;overflow:hidden;border-radius:10px;display:block;background:var(--warm);}
-.insta-cell img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;}
-.insta-cell:hover img{transform:scale(1.08);}
-.insta-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(18,61,46,.55);opacity:0;transition:opacity .3s;}
-.insta-cell:hover .insta-ov{opacity:1;}
 .news-section{padding:5rem 6%;background:var(--forest);text-align:center;}
 .news-inner{max-width:620px;margin:0 auto;}
 .news-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.6vw,3rem);font-weight:400;color:#F5F0E8;margin:.4rem 0 .8rem;}
@@ -2009,16 +2000,6 @@ body.pdp-open .wa-float{display:none;}
 })();
 </script>
 
-<!-- ══ INSTAGRAM GALLERY ══ -->
-<section class="insta-section" id="instaGallery">
-  <div class="sec-hdr" style="text-align:center">
-    <p class="sec-eye">@auranestdecors</p>
-    <h2 class="sec-title">Follow Our Journey</h2>
-    <p class="insta-sub">Handcrafted moments from Indian homes. Tag us to be featured.</p>
-  </div>
-  <div class="insta-grid" id="instaGrid"></div>
-</section>
-
 <!-- ══ NEWSLETTER ══ -->
 <section class="news-section">
   <div class="news-inner">
@@ -2054,9 +2035,6 @@ body.pdp-open .wa-float{display:none;}
     <p class="pf-desc">Bringing India's artisanal heritage into modern homes. Every piece is handcrafted with love, tradition, and purpose.</p>
     <p class="pf-social-label">Follow Us</p>
     <div class="pf-socials">
-      <a class="pf-social-btn" href="https://www.instagram.com/auranestdecors" target="_blank" rel="noopener" title="Instagram">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="#2B2118" stroke="none"/></svg>
-      </a>
       <a class="pf-social-btn" href="https://www.facebook.com/auranestdecors" target="_blank" rel="noopener" title="Facebook">
         <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
       </a>
@@ -3105,7 +3083,7 @@ const PRODUCTS = [
   {name:"African Art Wooden Coasters Set of 4",category:"Home & Kitchen",subCategory:"Tableware",material:"Wood",icon:"☕",price:649,mrp:799,tag:"Gift Set",color:"Brown & Black",size:"Ø10cm each",description:"Set of 4 handcrafted wooden coasters with African-inspired artwork. Heat-resistant and stylish.",image:""},
   {name:"African Art Wooden Storage Canister",category:"Home & Kitchen",subCategory:"Kitchen Tools",material:"Wood",icon:"🫙",price:899,mrp:1099,tag:"Kitchen",color:"Multicolors",size:"Ø9.5cm × H10.5cm",description:"Handcrafted wooden canister with African folk art. Secure lid and handle. Perfect for kitchen storage.",image:""},
   {name:"Crescent-Shaped Bird Art Platter",category:"Home & Kitchen",subCategory:"Serveware",material:"Wood",icon:"🌙",price:799,mrp:999,tag:"Unique Shape",color:"Multicolors",size:"18×15cm",description:"Crescent moon shaped wooden platter with hand-painted bird and foliage art. Unique serving or décor piece.",image:""},
-  {name:"Moonlit Melody Folk Art Platter",category:"Aura décor",subCategory:"Wall Décor",material:"Wood",icon:"🌕",price:1199,mrp:1499,tag:"Wall Art",color:"Multicolors",size:"Ø24.5cm",description:"Rustic round platter with folk art design. Perfect for serving pizzas, flatbreads, or as wall display.",image:""},
+  {name:"Moonlit Melody Folk Art Platter",category:"Aura décor",subCategory:"Wall Décor",material:"Wood",icon:"🌕",price:1199,mrp:1499,tag:"Wall Art",color:"Multicolors",size:"Ø24.5cm",description:"Rustic round platter with folk art design. Perfect for serving pizzas, flatbreads, or as wall display.",image:""}
 ];
 
 const FAQS = [
@@ -3116,7 +3094,7 @@ const FAQS = [
   {q:"What payment options are available?",a:"India: Credit & Debit Cards, Net Banking, UPI, COD. Other Countries: Credit Cards, Debit Cards, PayPal."},
   {q:"Are there any customs duties?",a:"No! All customs duties and taxes are borne by Auranest Decors. You only pay the product price + shipping."},
   {q:"Can I buy wholesale or for reselling?",a:"Yes! Email us at info@auranestdecors.com for wholesale and reseller orders. We have a dedicated team."},
-  {q:"How can I contact you?",a:"📧 info@auranestdecors.com | 💬 WhatsApp: +91 97591 25330. We respond within 24 hours."},
+  {q:"How can I contact you?",a:"📧 info@auranestdecors.com | 💬 WhatsApp: +91 97591 25330. We respond within 24 hours."}
 ];
 
 // ── CART (localStorage) ──
@@ -3231,7 +3209,7 @@ const STORE_ART_KW = [
   'madhubani','mithila','warli','folk','painted','hand paint','tribal',
   'cow art','lady','matka','farming','peacock','cultural','lotus',
   'bloom','diffuser','plume','keepsake','two lady','lady with',
-  'deer','fish','ethnic','dhokra',
+  'deer','fish','ethnic','dhokra'
 ];
 
 function getCollection(p) {
@@ -3985,7 +3963,7 @@ const CategoryPage = {
         {key:'Warli & Tribal',       emoji:'🌿', desc:'Warli & tribal art pieces'},
         {key:'Painted Planters',     emoji:'🌸', desc:'Hand-painted ceramic planters'},
         {key:'Painted Wooden Decor', emoji:'🪵', desc:'Folk-art painted wooden décor'},
-        {key:'Folk Art Trays',       emoji:'🍱', desc:'Hand-painted trays & platters'},
+        {key:'Folk Art Trays',       emoji:'🍱', desc:'Hand-painted trays & platters'}
       ]
     },
     'Woodcraft': {
@@ -3996,7 +3974,7 @@ const CategoryPage = {
         {key:'Trays & Platters',     emoji:'🍽️', desc:'Round, oval & rectangular wooden trays'},
         {key:'Jharokha Mirrors',     emoji:'🪞', desc:'Hand-carved Jharokha wall mirrors'},
         {key:'Kitchen Tools',        emoji:'🔪', desc:'Chopping boards, spatulas & utensils'},
-        {key:'Key Holders',          emoji:'🗝️', desc:'Wooden key holder boards'},
+        {key:'Key Holders',          emoji:'🗝️', desc:'Wooden key holder boards'}
       ]
     },
     'Minimal': {
@@ -4007,7 +3985,7 @@ const CategoryPage = {
         {key:'Ceramic Figurines', emoji:'🦢', desc:'Sculptural ceramic figurines'},
         {key:'Wind Chimes',       emoji:'🎐', desc:'Handcrafted hanging wind chimes'},
         {key:'Natural Terracotta',emoji:'🏺', desc:'Natural terracotta pots & pans'},
-        {key:'Modern Decor',      emoji:'⬜', desc:'Clean-form contemporary décor'},
+        {key:'Modern Decor',      emoji:'⬜', desc:'Clean-form contemporary décor'}
       ]
     },
     'Gifting': {
@@ -4017,7 +3995,7 @@ const CategoryPage = {
         {key:'Wedding Gifts',      emoji:'💍', desc:'Wedding & celebration gifts'},
         {key:'Housewarming Gifts', emoji:'🏠', desc:'Housewarming & new home gifts'},
         {key:'Festive Gifts',      emoji:'🎊', desc:'Diwali, Holi & festival gifts'},
-        {key:'Under ₹999',         emoji:'💰', desc:'Artisan gifts under ₹999'},
+        {key:'Under ₹999',         emoji:'💰', desc:'Artisan gifts under ₹999'}
       ]
     }
   },
@@ -4123,7 +4101,6 @@ function loadTrending() {
   trendDragInit(grid);
   loadNewArrivals();
   loadShopByRoom();
-  loadInstagram();
 }
 
 // ── SHOP BY ROOM (real categories → best-matching collection) ──
@@ -4173,22 +4150,6 @@ function loadNewArrivals() {
       <p class="prod-name">${p.name}</p>
       <p class="prod-price">₹${p.price.toLocaleString('en-IN')}${p.mrp > p.price ? `<span class="prod-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>` : ''}</p>
     </div>`;
-  }).join('');
-}
-
-// ── INSTAGRAM GALLERY (lifestyle grid → profile) ──
-function loadInstagram() {
-  const all = window.$products || PRODUCTS;
-  const grid = document.getElementById('instaGrid');
-  if (!grid || !all || !all.length) return;
-  const withImg = all.filter(p => (p.images?.[0] || p.image));
-  const picks = withImg.slice(0, 6);
-  grid.innerHTML = picks.map(p => {
-    const img = p.images?.[0] || p.image;
-    return `<a class="insta-cell" href="https://www.instagram.com/auranestdecors" target="_blank" rel="noopener" aria-label="View on Instagram">
-      <img src="${cdnImg(img,400)}" alt="${p.name}" loading="lazy"/>
-      <span class="insta-ov"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#fff" stroke="none"/></svg></span>
-    </a>`;
   }).join('');
 }
 
