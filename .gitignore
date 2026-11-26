@@ -7,3 +7,4 @@ package-lock.json
 
 # Catalogue PDF build output
 catalog_pdf_build/
+newhd/
