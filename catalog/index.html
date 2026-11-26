@@ -913,7 +913,7 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
 try {
   const cached = localStorage.getItem('auranest_products');
   if (cached) {
-    const list = JSON.parse(cached).filter(p => p && p.name && p.id && normCat(p.category) !== 'artisan');
+    const list = JSON.parse(cached).filter(p => p && p.name && p.id && normCat(p.category) !== 'artisan' && !p.hideFromCatalog);
     if (list.length) {
       allProducts = list;
       applyFilter(activeFilter);
@@ -939,7 +939,7 @@ try {
   const db = getFirestore(app);
   const snap = await getDocs(collection(db, 'products'));
   if (!snap.empty) {
-    const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name && normCat(p.category) !== 'artisan');
+    const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name && normCat(p.category) !== 'artisan' && !p.hideFromCatalog);
     allProducts = fresh;
     applyFilter(activeFilter);
     // Update the store's cache so next visit is instant
