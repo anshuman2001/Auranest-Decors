@@ -4,3 +4,6 @@ firebase-debug.log
 .firebase/
 node_modules/
 package-lock.json
+
+# Catalogue PDF build output
+catalog_pdf_build/
