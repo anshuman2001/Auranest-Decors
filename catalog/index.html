@@ -723,7 +723,7 @@
 <!-- ── FILTER BAR ── -->
 <div class="filter-bar">
   <button class="filter-pill active" data-cat="all">All Products</button>
-  <button class="filter-pill" data-cat="artisan">Artisan</button>
+  <button class="filter-pill" data-cat="aesthetic furniture">Furniture</button>
   <button class="filter-pill" data-cat="woodcraft">Woodcraft</button>
   <button class="filter-pill" data-cat="minimal">Minimal</button>
   <button class="filter-pill" data-cat="gifting">Gifting</button>
@@ -913,7 +913,7 @@ document.querySelectorAll('.filter-pill').forEach(btn => {
 try {
   const cached = localStorage.getItem('auranest_products');
   if (cached) {
-    const list = JSON.parse(cached).filter(p => p && p.name && p.id);
+    const list = JSON.parse(cached).filter(p => p && p.name && p.id && normCat(p.category) !== 'artisan');
     if (list.length) {
       allProducts = list;
       applyFilter(activeFilter);
@@ -939,7 +939,7 @@ try {
   const db = getFirestore(app);
   const snap = await getDocs(collection(db, 'products'));
   if (!snap.empty) {
-    const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name);
+    const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.name && normCat(p.category) !== 'artisan');
     allProducts = fresh;
     applyFilter(activeFilter);
     // Update the store's cache so next visit is instant
